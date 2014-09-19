@@ -1,0 +1,77 @@
+body{
+	font-family: Helvetica,Arial,sans-serif,simsun;
+	font-size: 12px;
+	line-height: 20px;
+	color: #474747;
+}
+
+p{
+	margin:30px auto;
+}
+
+
+
+/*****************
+	容器div样式
+*****************/
+.container{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.wrong{
+	margin:50px 0px;
+}
+
+.text-center{
+	text-align:center;
+}
+
+.wrong-num{
+	font-size: 116px;
+	line-height: 120px;
+	font-weight: bolder;
+	color: #dc181e;
+	margin: 0px 0 20px;
+}
+.wrong-sorry{
+	font-size: 30px;
+	color: #b3b3b3;
+	font-family: Microsoft Yahei;
+}
+
+.btn{
+	margin-top: 30px;
+	padding: 8px 30px;
+	text-decoration:none;
+}
+
+.btn-success{
+	color: #fff;
+	text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+	background-color: #5bb65b;
+	border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+}
+
+.btn-large{
+	padding: 12px 40px;
+	font-size: 15px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.btn:hover{
+	color: #fff;
+	background-color: #51a351;
+}
+
+.footer{
+	width: 100%;
+	border-top: solid 1px #dcdcdc;
+	color: #989898;
+	text-align: center;
+	padding: 13px 0;
+	margin-top: 20px;
+	font-size:14px;
+}

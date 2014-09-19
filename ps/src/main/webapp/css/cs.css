@@ -1,0 +1,256 @@
+* {
+	font-size: 14px;
+}
+
+body,input,textarea {
+	font-family: 微软雅黑, helvetica, tahoma, verdana, sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+input {
+	height: 28px;
+	line-height: 28px;
+	border: #95B8E7 1px solid;
+}
+
+textarea {
+	line-height: 28px;
+	border: #95B8E7 1px solid;
+}
+
+.warn {
+	background-color: #D8D828;
+}
+.error {
+	background-color: #D82828;
+}
+.readonly {
+	background: #d8d8d8;
+}
+.tree-title {
+	font-size: 14px;
+}
+
+/*输入框提示文本*/
+.tdRight {
+	text-align: right;
+	width: 110px;
+}
+/*长输入框*/
+.longInputBox {
+	width: 406px;
+}
+
+.longtext {
+	width: 100%;
+}
+
+/*企业表格*/
+.companyTable {
+	width: 730px;
+	margin-top: 20px;
+	margin-left:40px;
+}
+/*
+	显示文本域
+*/
+.textField {
+	border: 1px solid #A0A0A0;
+	height: 100px;
+	overflow-y: scroll;
+}
+
+.combobox-item {
+	font-size: 14px;
+}
+/*重写easeui .combobox-item-hover 样式*/
+.combobox-item-hover {
+	cursor: pointer;
+}
+
+.combo .combo-text {
+	font-size: 14px;
+	height: 28px;
+	line-height: 28px;
+}
+
+.datagrid-cell {
+	height: 28px;
+	line-height: 28px;
+	font-size: 14px;
+}
+
+.companyTable input {
+	width: 100%;
+}
+
+.selectall {
+	width: 100%;
+}
+.tabs-panels {
+	border-width: 0px;
+	border-style: none;
+}
+
+
+
+/*打印列表 部分  表格部分*/
+.print_tab ,.printBut{
+	margin: auto;
+	width: 850px;
+	text-align: center;
+}
+.printBut {
+	margin-top: 20px;
+}
+.print_outline{
+	width: 100px;
+}
+
+.print_content{
+	text-align:left;
+	margin-left:5px;
+	 width: 152px;
+}
+.printOverall{
+		width: 1000px;
+		text-align: center;
+		margin:auto;
+		margin-top: 50px;
+	}
+
+/*查询按钮*/
+.findBut{
+ margin: 4px 0 8px 26px;
+}
+
+.red_notice {
+    color: #FF0000;
+}
+/*提示文本*/
+.tipText{
+	width: 90px;
+	text-align: right;
+}
+
+/*提示文本*/
+.tipTextEx{
+	width: 90px;
+	text-align: center;
+}
+.workerListTip{
+	background-color: #E0ECFF;
+	margin-left: 10px;
+	width: 100%;
+	margin: 0 auto;
+}
+.reportTitle{
+	width: 90px;
+}
+
+.addtip{
+	 margin-top: 5px;
+    text-align: center;
+}
+.addtip table{
+	margin: 10px auto;'
+}
+
+/*搜索参数表格*/
+.paramsTab{
+	width: 1000px;
+	
+}
+.paramsTab .tipsText {
+    text-align: right;
+    width: 110px;
+}
+.paramsTab .long {
+	width: 200px;
+	
+}
+
+.tipsTextShort{
+text-align: right;
+    width: 60px;
+    }
+.workerListTip td{
+	height:30px;
+	font-size:12px;
+	 border: 1px solid #95B8E7;
+
+}
+/*增加残疾职工*/
+.addWorkerForm{
+	margin-top: 35px;
+	
+}
+.addWorkerForm td{
+	 height: 15px;
+	
+}
+/*引入页面*/
+
+.importTitle{
+	text-align: left;    font-size: 18px;
+    margin-bottom: 5px;
+    text-align: left;
+}
+.importTip{
+ border: 1px solid #95B8E7;
+    margin-bottom: 20px;
+    padding: 6px;
+}
+.red_notice {
+    color: #FF0000;
+}
+
+.importWorker {
+	margin: 0px auto;
+}
+
+/*导入残疾职工*/
+.importWorkerForm {
+	border: 1px solid #95B8E7;
+	margin: 20px auto auto;
+	padding: 15px;
+	width: 450px;
+}
+
+.importWorkerIframe {
+	width: 100%;
+	margin-top: 0px;
+	height:30px;
+}
+
+.importWorkerTitle {
+	text-align: center;
+	font-size: 25px;
+    margin-bottom: 10px;
+}
+    
+ .reportTab{
+ 
+ margin-top: 30px;
+  width: 1000px;
+  font-size: 12px;
+ 
+ }
+.reportTab td {
+    font-size: 12px;
+}
+.pagination-num {
+	line-height: 1px;
+	font-size: 12px;
+}
+
+/**
+ *	自定义无关闭按钮弹出框样式--主题内容部分
+ *
+ **/
+.noCloseButtonDialogBody{
+	font-size:20px;
+	text-align:center;
+}
+ 

@@ -1,43 +1,23 @@
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
+.classpath
+.project
+.settings/
 
-# Folder config file
-Desktop.ini
+common-util/target/
+common-util/.settings/
+common-util/.classpath
+common-util/.project
+common-util/.gitignore
+common-util/.mymetadata
 
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
+data-access-layer/target/
+data-access-layer/.settings/
+data-access-layer/.classpath
+data-access-layer/.project
+data-access-layer/.gitignore
+data-access-layer/.mymetadata
 
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
-
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Icon must end with two \r
-Icon
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+cs/target/
+cs/.settings/
+cs/.classpath
+cs/.project
+cs/.mymetadata
