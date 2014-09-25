@@ -41,7 +41,7 @@ List userList = (List)request.getAttribute("userlist");
 	<nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<div class="navbar-header">
-				<a href="#" class="navbar-brand"> 用户名:${loginrName}</a>
+				<a href="#" class="navbar-brand"> 管理员名称:${loginrName}</a>
 			</div>
 		</div>
 	</nav>
