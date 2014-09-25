@@ -16,8 +16,8 @@ data-access-layer/.project
 data-access-layer/.gitignore
 data-access-layer/.mymetadata
 
-cs/target/
-cs/.settings/
-cs/.classpath
-cs/.project
-cs/.mymetadata
+ps/target/
+ps/.settings/
+ps/.classpath
+ps/.project
+ps/.mymetadata
