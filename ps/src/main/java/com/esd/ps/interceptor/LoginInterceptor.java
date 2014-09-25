@@ -46,7 +46,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 					StringBuilder builder = new StringBuilder();
 					builder.append("<script type=\"text/javascript\" charset=\"UTF-8\">");
 					builder.append("window.top.location.href='");
-					builder.append("/cs/login");
+					builder.append("/ps/login");
 					builder.append("';");
 					builder.append("</script>");
 					out.print(builder.toString());
