@@ -7,7 +7,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 List packList = (List)request.getAttribute("packList");
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
   <head>
     <base href="<%=basePath%>">
@@ -19,8 +19,8 @@ List packList = (List)request.getAttribute("packList");
 	<meta http-equiv="expires" content="0">    
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/bootstrap-theme.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/login.css" />
 	<style type="text/css">
 		body {
@@ -85,7 +85,7 @@ List packList = (List)request.getAttribute("packList");
 			<button type="submit" class="btn btn-lg btn-primary btn-block">上传任务</button>
 		</form>
 	</div>
-	<script type="text/javascript" src="<%= basePath%>js/lib/jquery-1.8.0.min.js"></script>
-	<script type="text/javascript" src="<%= basePath%>js/lib/bootstrap.min.js"></script>
+	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>

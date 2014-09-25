@@ -8,7 +8,7 @@ List taskList = (List)request.getAttribute("taskList");
 String workerMark = (String)request.getAttribute("workerMark");
 %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
   <head>
     <base href="<%=basePath%>">
@@ -20,8 +20,8 @@ String workerMark = (String)request.getAttribute("workerMark");
 	<meta http-equiv="expires" content="0">    
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/bootstrap-theme.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/login.css" />
 	<style type="text/css">
 		body {
@@ -103,7 +103,7 @@ String workerMark = (String)request.getAttribute("workerMark");
 		%>
 			
 	</div>
-	<script type="text/javascript" src="<%= basePath%>js/lib/jquery-1.8.0.min.js"></script>
-	<script type="text/javascript" src="<%= basePath%>js/lib/bootstrap.min.js"></script>
+	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 </html>

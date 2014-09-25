@@ -14,8 +14,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
 	<meta content="width=device-width, initial-scale=1" name="viewport">
-	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/bootstrap-theme.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/login.css" />
 </head>  
 <body>
@@ -29,8 +29,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</form>
 </div>
 <div align="center">${loginreplay}</div>
-<script type="text/javascript" src="<%= basePath%>js/lib/jquery-1.8.0.min.js"></script>
-<script type="text/javascript" src="<%= basePath%>js/lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 
 </html>
