@@ -16,7 +16,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public int deleteByPrimaryKey(Integer taskId) {
 		
-		return 0;
+		return tm.deleteByPrimaryKey(taskId);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public int insertSelective(taskWithBLOBs record) {
 		
-		return 0;
+		return tm.insertSelective(record);
 	}
 
 	@Override
@@ -46,13 +46,13 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record) {
 		
-		return 0;
+		return tm.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(task record) {
 		
-		return 0;
+		return tm.updateByPrimaryKey(record);
 	}
 
 	@Override
@@ -65,6 +65,18 @@ public class TaskServiceImpl implements TaskService {
 	public List<task> selectAllTaskId() {
 		
 		return tm.selectAllTaskId();
+	}
+
+	@Override
+	public List<task> selAllTaskByWorkerId(Integer workerId) {
+		
+		return tm.selAllTaskByWorkerId(workerId);
+	}
+
+	@Override
+	public List<task> selAllTaskByPackId(Integer packId) {
+		
+		return tm.selAllTaskByPackId(packId);
 	}
 
 }

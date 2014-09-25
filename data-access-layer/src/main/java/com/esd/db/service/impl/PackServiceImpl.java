@@ -1,5 +1,7 @@
 package com.esd.db.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ public class PackServiceImpl implements PackService {
 	private packMapper pm;
 	@Override
 	public int deleteByPrimaryKey(Integer packId) {
-		return 0;
+		return pm.deleteByPrimaryKey(packId);
 	}
 
 	@Override
@@ -25,37 +27,42 @@ public class PackServiceImpl implements PackService {
 	@Override
 	public int insertSelective(packWithBLOBs record) {
 		
-		return 0;
+		return pm.insertSelective(record);
 	}
 
 	@Override
 	public packWithBLOBs selectByPrimaryKey(Integer packId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return pm.selectByPrimaryKey(packId);
 	}
 
 	@Override
 	public int updateByPrimaryKeySelective(packWithBLOBs record) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return pm.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKeyWithBLOBs(packWithBLOBs record) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return pm.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(pack record) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return pm.updateByPrimaryKey(record);
 	}
 
 	@Override
 	public int selectByEmployerId(Integer employerId) {
 		
 		return pm.selectByEmployerId(employerId);
+	}
+
+	@Override
+	public List<pack> selAllByEmployerId(Integer employerId) {
+		return pm.selAllByEmployerId(employerId);
 	}
 
 }

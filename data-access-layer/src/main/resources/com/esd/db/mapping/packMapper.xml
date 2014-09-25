@@ -34,11 +34,17 @@
     from pack
     where pack_id = #{packId,jdbcType=INTEGER}
   </select>
-    <select id="selectByEmployerId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+  <select id="selectByEmployerId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select 
   	pack_id
     from pack
     where employer_id = #{employerId,jdbcType=INTEGER} ORDER BY pack_id DESC LIMIT 1
+  </select>
+  <select id="selAllByEmployerId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+  	<include refid="Base_Column_List" />
+    from pack
+    where employer_id = #{employerId,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from pack

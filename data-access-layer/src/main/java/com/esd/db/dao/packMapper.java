@@ -1,5 +1,7 @@
 package com.esd.db.dao;
 
+import java.util.List;
+
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 
@@ -14,6 +16,8 @@ public interface packMapper {
     packWithBLOBs selectByPrimaryKey(Integer packId);
     
     int selectByEmployerId(Integer employerId);
+    
+    List<pack>  selAllByEmployerId(Integer employerId);
 
     int updateByPrimaryKeySelective(packWithBLOBs record);
 

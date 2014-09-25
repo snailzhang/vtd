@@ -15,7 +15,7 @@ public class WorkerServiceImpl implements WorkerService {
 
 	public int deleteByPrimaryKey(Integer workerId) {
 
-		return 0;
+		return wm.deleteByPrimaryKey(workerId);
 	}
 
 	@Override
@@ -27,13 +27,13 @@ public class WorkerServiceImpl implements WorkerService {
 	@Override
 	public int insertSelective(worker record) {
 
-		return 0;
+		return wm.insertSelective(record);
 	}
 
 	@Override
 	public worker selectByPrimaryKey(Integer workerId) {
 
-		return null;
+		return wm.selectByPrimaryKey(workerId);
 	}
 
 //	@Override
@@ -45,19 +45,19 @@ public class WorkerServiceImpl implements WorkerService {
 	@Override
 	public int updateByPrimaryKeySelective(worker record) {
 	
-		return 0;
+		return wm.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKeyWithBLOBs(worker record) {
 	
-		return 0;
+		return wm.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(worker record) {
 	
-		return 0;
+		return wm.updateByPrimaryKey(record);
 	}
 
 	public int selectByUserId(Integer userid) {

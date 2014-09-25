@@ -16,7 +16,7 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public int deleteByPrimaryKey(Integer managerId) {
 		
-		return 0;
+		return mm.deleteByPrimaryKey(managerId);
 	}
 
 	@Override
@@ -28,31 +28,31 @@ public class ManagerServiceImpl implements ManagerService {
 	@Override
 	public int insertSelective(manager record) {
 		
-		return 0;
+		return mm.insertSelective(record);
 	}
 
 	@Override
 	public manager selectByPrimaryKey(Integer managerId) {
 		
-		return null;
+		return mm.selectByPrimaryKey(managerId);
 	}
 
 	@Override
 	public List<manager> selAllManagers() {
 		
-		return null;
+		return  mm.selAllManagers();
 	}
 
 	@Override
 	public int updateByPrimaryKeySelective(manager record) {
 		
-		return 0;
+		return mm.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(manager record) {
 		
-		return 0;
+		return mm.updateByPrimaryKey(record);
 	}
 
 	@Override

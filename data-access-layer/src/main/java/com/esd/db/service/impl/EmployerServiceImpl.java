@@ -12,8 +12,8 @@ public class EmployerServiceImpl implements EmployerService {
 	private employerMapper em;
 	@Override
 	public int deleteByPrimaryKey(Integer employerId) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return em.deleteByPrimaryKey(employerId);
 	}
 
 	@Override
@@ -24,26 +24,26 @@ public class EmployerServiceImpl implements EmployerService {
 
 	@Override
 	public int insertSelective(employer record) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return em.insertSelective(record);
 	}
 
 	@Override
 	public employer selectByPrimaryKey(Integer employerId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return em.selectByPrimaryKey(employerId);
 	}
 	
 	@Override
 	public int updateByPrimaryKeySelective(employer record) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return em.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(employer record) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return em.updateByPrimaryKey(record);
 	}
 
 	@Override

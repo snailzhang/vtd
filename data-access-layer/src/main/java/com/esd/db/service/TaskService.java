@@ -16,6 +16,10 @@ public interface TaskService {
     taskWithBLOBs selectByPrimaryKey(Integer taskId);
     
     List<task> selectAllTaskId();
+    
+    List<task> selAllTaskByWorkerId(Integer workerId);
+    
+    List<task> selAllTaskByPackId(Integer packId);
 
     int updateByPrimaryKeySelective(taskWithBLOBs record);
     

@@ -15,7 +15,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int deleteByPrimaryKey(Integer userId) {
 
-		return 0;
+		return um.deleteByPrimaryKey(userId);
 	}
 	@Override
 	public int insert(user record) {
@@ -25,12 +25,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int insertSelective(user record) {
 		
-		return 0;
+		return um.insertSelective(record);
 	}
 	@Override
 	public user selectByPrimaryKey(Integer userId) {
 		
-		return null;
+		return um.selectByPrimaryKey(userId);
 	}
 	@Override
 	public List<user> selAllUsers() {
@@ -40,12 +40,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public int updateByPrimaryKeySelective(user record) {
 		
-		return 0;
+		return um.updateByPrimaryKeySelective(record);
 	}
 	@Override
 	public int updateByPrimaryKey(user record) {
 		
-		return 0;
+		return um.updateByPrimaryKey(record);
 	}
 	@Override
 	public int getMaxUserId() {
