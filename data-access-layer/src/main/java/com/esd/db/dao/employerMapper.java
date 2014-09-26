@@ -13,6 +13,8 @@ public interface employerMapper {
     employer selectByPrimaryKey(Integer employerId);
     
     employer selectByUserId(Integer userId);
+    
+    int selEmployerIdByUserId(Integer userId);
 
     int updateByPrimaryKeySelective(employer record);
 

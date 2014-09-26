@@ -50,7 +50,7 @@ public class LoginController {
 //	@Value("${address}")
 //	private String address;
 	String userDesEnglish;
-	@RequestMapping(value = "/login123", method = RequestMethod.GET)
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView loginGet() {// 登录页
 		return new ModelAndView("login");
 	}
@@ -65,15 +65,17 @@ public class LoginController {
 					.hasNext();) {
 				user user = (user) iterator.next();
 				if (user.getUsername().equals(username)) {
-					userDesEnglish = uts.seluserDesEnglish(user.getUsertype());
-					
-					replay = username;
+					if(user.getPassword().equals(password)){
+						userDesEnglish = uts.seluserDesEnglish(user.getUsertype());
+						replay = username;
+					}else{
+						
+					}
 				} else {
 				
 				}
 			}
 		}
-		System.out.println("地址:"+userDesEnglish+"\nreplay:"+replay);
 		return new ModelAndView("redirect:"+userDesEnglish,"loginrName",replay);
 
 

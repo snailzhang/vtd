@@ -23,15 +23,38 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.esd.db.model.pack;
+import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.TaskService;
+import com.esd.db.service.UserService;
+import com.esd.db.service.WorkerService;
 @Controller
 public class WorkerController {
 	int pre = (int) System.currentTimeMillis();
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
 	private TaskService ts;
+	@Autowired
+	private UserService us;
+	@Autowired
+	private WorkerService ws;
+	@RequestMapping(value = "/worker", method = RequestMethod.GET)
+	public ModelAndView employerGet(String loginrName) {// 登录页
+		return new ModelAndView("worker/worker", "loginrName", loginrName);
+	}
+
+	@RequestMapping(value = "/worker", method = RequestMethod.POST)
+	public @ResponseBody List<task> employerPost(String loginrName) {// list列表直接转json
+		int userId = us.selUserIdByUserName(loginrName);
+		int workerId = ws.selectByUserId(userId);
+		
+		return ts.selAllTaskByWorkerId(workerId);
+	}
 	
 	//下载wav
 	@RequestMapping(value = "/getAllTasks" )

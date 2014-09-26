@@ -16,6 +16,8 @@ public interface userMapper {
     
     List<user> selAllUsers();
     
+    int selUserIdByUserName(String username);
+    
     int getMaxUserId();
 
     int updateByPrimaryKeySelective(user record);

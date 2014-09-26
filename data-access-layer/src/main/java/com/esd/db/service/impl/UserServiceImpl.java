@@ -52,5 +52,10 @@ public class UserServiceImpl implements UserService {
 		
 		return um.getMaxUserId();
 	}
+	@Override
+	public int selUserIdByUserName(String username) {
+		
+		return um.selUserIdByUserName(username);
+	}
 
 }

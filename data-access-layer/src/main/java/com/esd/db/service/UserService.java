@@ -18,6 +18,8 @@ public interface UserService {
     List<user> selAllUsers();
     
     int getMaxUserId();
+    
+    int selUserIdByUserName(String username);
 
     int updateByPrimaryKeySelective(user record);
 

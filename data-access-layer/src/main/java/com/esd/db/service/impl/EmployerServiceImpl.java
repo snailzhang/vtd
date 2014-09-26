@@ -51,4 +51,10 @@ public class EmployerServiceImpl implements EmployerService {
 		return em.selectByUserId(userId);
 	}
 
+	@Override
+	public int selEmployerIdByUserId(Integer userId) {
+		
+		return em.selEmployerIdByUserId(userId);
+	}
+
 }

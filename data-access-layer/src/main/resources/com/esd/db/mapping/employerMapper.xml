@@ -29,6 +29,12 @@
     from employer
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
+  <select id="selEmployerIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select 
+    employer_id
+    from employer
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from employer
     where employer_id = #{employerId,jdbcType=INTEGER}

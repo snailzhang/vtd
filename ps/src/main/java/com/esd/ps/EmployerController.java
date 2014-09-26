@@ -20,8 +20,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.RequestWrapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,17 +31,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.alibaba.fastjson.JSON;
+import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
-import com.esd.db.model.user;
+import com.esd.db.service.EmployerService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
-import com.esd.db.service.UserTypeService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,23 +51,24 @@ public class EmployerController {
 	@Autowired
 	private UserService us;
 	@Autowired
-	private UserTypeService uts;
+	private EmployerService es;
 	@Autowired
 	private TaskService ts;
 	final static int BUFFER_SIZE = 4096;
-	@RequestMapping(value = "/employer", method = RequestMethod.GET)
-	public ModelAndView employerget(String username,int usertype) {
 
-		return new ModelAndView(""+uts.seluserDesEnglish(usertype));// 返回值没写
+	@RequestMapping(value = "/employer", method = RequestMethod.GET)
+	public ModelAndView employerGet(String loginrName) {// 登录页
+		return new ModelAndView("employer/employer", "loginrName", loginrName);
 	}
+
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
-	@ResponseBody
-	public String employerpost(String username,HttpServletRequest req) {
-		String json = JSON.toJSONString(us.selAllUsers(), true);
-		req.setAttribute("json",json);
-		return "";// 返回值没写
+	public @ResponseBody List<pack> employerPost(String loginrName) {// list列表直接转json
+		int userId = us.selUserIdByUserName(loginrName);
+		int employerId = es.selEmployerIdByUserId(userId);
+		
+		return ps.selAllByEmployerId(employerId);
 	}
-	
+
 	// 包的详细信息
 	@RequestMapping(value = "/packdetail", method = RequestMethod.POST)
 	public String detailpage(int packId, HttpServletRequest req) {
