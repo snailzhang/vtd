@@ -60,4 +60,10 @@ public class UserTypeServiceImpl implements UserTypeService {
 		return utm.seluserDesEnglish(userTypeId);
 	}
 
+	@Override
+	public String seluserDes(Integer userTypeId) {
+		
+		return utm.seluserDes(userTypeId);
+	}
+
 }

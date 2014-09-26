@@ -15,6 +15,8 @@ public interface UserTypeService {
     
     List<usertype> selAllUsertypes();
     
+    String seluserDes(Integer userTypeId );
+    
     String seluserDesEnglish(Integer userTypeId );
 
     int updateByPrimaryKeySelective(usertype record);

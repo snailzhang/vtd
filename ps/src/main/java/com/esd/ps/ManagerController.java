@@ -49,7 +49,7 @@ public class ManagerController {
 			userlist userlist = new userlist();
 			//userlist插入数据
 			userlist.setUsername(user.getUsername());
-			userlist.setUsertypeenglish(uts.seluserDesEnglish(user.getUsertype()));
+			userlist.setUsertypeenglish(uts.seluserDes(user.getUsertype()));
 			userlist.setUpdateTime(sdf.format(user.getUpdateTime()));
 			userlist.setCreateTime(sdf.format(user.getCreateTime()));
 			//List<userlist>插入数据

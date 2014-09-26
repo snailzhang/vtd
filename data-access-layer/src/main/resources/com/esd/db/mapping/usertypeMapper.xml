@@ -26,6 +26,12 @@
     from usertype
     where user_type_id= #{userTypeId,jdbcType=INTEGER}
   </select>
+  <select id="seluserDes" resultType="java.lang.String" parameterType="java.lang.Integer">
+    select 
+    user_des
+    from usertype
+    where user_type_id= #{userTypeId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from usertype
     where user_type_id = #{userTypeId,jdbcType=INTEGER}
