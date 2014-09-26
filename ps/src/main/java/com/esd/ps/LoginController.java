@@ -66,6 +66,7 @@ public class LoginController {
 				user user = (user) iterator.next();
 				if (user.getUsername().equals(username)) {
 					userDesEnglish = uts.seluserDesEnglish(user.getUsertype());
+					
 					replay = username;
 				} else {
 				
