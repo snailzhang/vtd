@@ -54,4 +54,10 @@ public class UserTypeServiceImpl implements UserTypeService {
 		return utm.updateByPrimaryKey(record);
 	}
 
+	@Override
+	public String seluserDesEnglish(Integer userTypeId) {
+		
+		return utm.seluserDesEnglish(userTypeId);
+	}
+
 }

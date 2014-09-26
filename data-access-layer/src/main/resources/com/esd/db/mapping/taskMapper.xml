@@ -47,19 +47,19 @@
 	<select id="selectAllTaskId" resultMap="ResultMapWithBLOBs">
     select 
 	task_id,task_lvl
-    from task order by task_lvl desc
+    from task order by task_lvl DESC
   </select>
   <select id="selAllTaskByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select 
 	<include refid="Base_Column_List" />
     from task
-    where worker_id = #{workerId,jdbcType=INTEGER} 
+    where worker_id = #{workerId,jdbcType=INTEGER} order by task_id DESC
   </select>
   <select id="selAllTaskByPackId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select 
 	<include refid="Base_Column_List" />
     from task
-    where pack_id = #{packId,jdbcType=INTEGER} 
+    where pack_id = #{packId,jdbcType=INTEGER} order by task_id DESC
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from task

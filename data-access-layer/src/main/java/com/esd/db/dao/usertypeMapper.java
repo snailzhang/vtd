@@ -15,6 +15,7 @@ public interface usertypeMapper {
     usertype selectByPrimaryKey(Integer userTypeId);
     
     List<usertype> selAllUsertypes();
+    String seluserDesEnglish(Integer userTypeId );
 
     int updateByPrimaryKeySelective(usertype record);
 

@@ -36,25 +36,21 @@ public class UserController {
 	private WorkerService ws;
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
 	public ModelAndView addUser(user u,HttpServletRequest req) {
-		System.out.println("mangerid:"+req.getAttribute("mangerid"));
-		u.setCreateMethod("insert(user u)");
 		String jsp="",replay="";
-		if(us.insert(u)==1){
-			if(u.getUsertype()==1){
-				jsp="vtd/manager_add";
-			}else if(u.getUsertype()==2){
-				jsp="vtd/employer_add";
-			}else if(u.getUsertype()==3){
-				
-			}else if(u.getUsertype()==4){
-				jsp="vtd/worker_add";
-			}
-			int m=us.getMaxUserId();
-			replay=m + "";
-		}else{
-			jsp="user_add";
-			replay="没存上哦";
+		u.setCreateMethod("方法是");
+		
+		if(u.getUsertype()==1){
+			jsp="vtd/manager_add";
+		}else if(u.getUsertype()==2){
+			jsp="vtd/employer_add";
+		}else if(u.getUsertype()==3){
+			
+		}else if(u.getUsertype()==4){
+			jsp="vtd/worker_add";
 		}
+		int m=us.getMaxUserId();
+		replay=m + "";
+			
 	    return new ModelAndView(jsp,"replay",replay);
 	}
 	@RequestMapping(value = "/addEmployer", method = RequestMethod.POST)

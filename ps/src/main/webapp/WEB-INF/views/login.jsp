@@ -21,7 +21,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <body>
 
 <div class="container">
-	<form action="<%=basePath%>logins" method="post" name="form1" role="form" class="form-signin">
+	<form action="<%=basePath%>login" method="post" name="form1" role="form" class="form-signin" >
 		<h2 class="form-signin-heading">请登录</h2>
 		<input type="text" name="username" autofocus="" required="" placeholder="用户名" class="form-control">
 		<input type="password" required="" placeholder="密 码" name="password" class="form-control">

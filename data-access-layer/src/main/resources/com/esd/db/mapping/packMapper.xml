@@ -44,7 +44,7 @@
     select 
   	<include refid="Base_Column_List" />
     from pack
-    where employer_id = #{employerId,jdbcType=INTEGER}
+    where employer_id = #{employerId,jdbcType=INTEGER} ORDER BY pack_id DESC
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from pack

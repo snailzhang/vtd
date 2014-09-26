@@ -44,8 +44,8 @@ public class IndexController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ModelAndView loginGet() {
+	@RequestMapping(value = "/login1", method = RequestMethod.GET)
+	public ModelAndView loginGet1() {
 		return new ModelAndView("login");
 	}
 
@@ -58,8 +58,8 @@ public class IndexController {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ModelAndView loginPost(HttpServletRequest request, RedirectAttributes redirectAttributes, HttpSession session) {
+	@RequestMapping(value = "/login1", method = RequestMethod.POST)
+	public ModelAndView loginPost1(HttpServletRequest request, RedirectAttributes redirectAttributes, HttpSession session) {
 		String userName = request.getParameter("username");
 		String passWord = request.getParameter("password");
 		logger.debug("登录成功");
