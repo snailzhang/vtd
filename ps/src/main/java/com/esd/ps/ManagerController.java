@@ -75,7 +75,7 @@ public class ManagerController {
 		return new ModelAndView("manager/"+page+"_add");
 	}
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
-	public ModelAndView add(String managerName,HttpSession session) {	
+	public ModelAndView addmanager(String managerName,HttpSession session) {	
 	    user user=new user();
 	    user.setUsername((String)session.getAttribute("addusername"));
 	    user.setPassword((String)session.getAttribute("addpassword"));
@@ -91,6 +91,27 @@ public class ManagerController {
 		if(us.insertSelective(user)==1 && ms.insertSelective(manager)==1){
 			address="manager/manager";
 		}
+	    return new ModelAndView(address);
+	}
+	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
+	public ModelAndView addemployer(String managerName,HttpSession session) {	
+	    user user=new user();
+	    user.setUsername((String)session.getAttribute("addusername"));
+	    user.setPassword((String)session.getAttribute("addpassword"));
+	    user.setUsertype((Integer)session.getAttribute("addusertype"));
+	    user.setCreateId((Integer)session.getAttribute("loginUserId"));
+	    
+	   
+	    return new ModelAndView(address);
+	}
+	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
+	public ModelAndView addworker(String managerName,HttpSession session) {	
+	    user user=new user();
+	    user.setUsername((String)session.getAttribute("addusername"));
+	    user.setPassword((String)session.getAttribute("addpassword"));
+	    user.setUsertype((Integer)session.getAttribute("addusertype"));
+	    user.setCreateId((Integer)session.getAttribute("loginUserId"));
+	    
 	    return new ModelAndView(address);
 	}
 }
