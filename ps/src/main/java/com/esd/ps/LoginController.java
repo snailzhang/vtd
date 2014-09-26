@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class LoginController {
 	private String replay;
 //	@Value("${address}")
 //	private String address;
-	String userDesEnglish;
+	String userDesEnglish="login";
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView loginGet() {// 登录页
 		return new ModelAndView("login");
@@ -57,7 +58,7 @@ public class LoginController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView loginPost(String username, String password) {
+	public ModelAndView loginPost(String username, String password,HttpSession session) {
 		if (!StringUtils.isBlank(username.trim())) {
 			// UsernameAndPasswordMd5 up=new UsernameAndPasswordMd5();
 			// up.getMd5(username, password);
@@ -68,15 +69,14 @@ public class LoginController {
 					if(user.getPassword().equals(password)){
 						userDesEnglish = uts.seluserDesEnglish(user.getUsertype());
 						replay = username;
-					}else{
+						session.setAttribute("loginUserId",user.getUserId());
 						
 					}
-				} else {
-				
 				}
 			}
 		}
-		return new ModelAndView("redirect:"+userDesEnglish,"loginrName",replay);
+		session.setAttribute("loginrName", replay);
+		return new ModelAndView("redirect:"+userDesEnglish);
 
 
 //						if (user.getUsertype() == 1) {// manager管理员
