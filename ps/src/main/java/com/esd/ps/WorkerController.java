@@ -77,7 +77,7 @@ public class WorkerController {
 			taskTrans.setTaskMarkTime(task.getTaskMarkTime());
 			taskTrans.setTaskName(task.getTaskName());
 			taskTrans.setTaskUploadTime(sdf.format(task.getTaskUploadTime()));
-			taskTrans.setTaskEffective(task.getTaskEffective());
+			//taskTrans.setTaskEffective(task.getTaskEffective());
 			
 			list.add(taskTrans);
 		}

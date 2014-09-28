@@ -37,6 +37,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.packTrans;
+import com.esd.db.model.task;
+import com.esd.db.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.PackService;
@@ -102,7 +104,7 @@ public class EmployerController {
 	@RequestMapping(value = "/packDetail", method = RequestMethod.GET)
 	public ModelAndView detailpageGet(int packId, HttpSession session) {
 		session.setAttribute("packId", packId);
-		return new ModelAndView("");// 返回值没写
+		return new ModelAndView("employer/packDetail");// 返回值没写
 	}
 /**
  * 任务包的详细list
@@ -110,10 +112,25 @@ public class EmployerController {
  * @return
  */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
-	public @ResponseBody List detailpagePost(HttpSession session) {
-		session.getAttribute("packId");
-
-		return null;// 返回值没写
+	public @ResponseBody List<taskTrans> detailpagePost(HttpSession session) {
+		int packId=Integer.parseInt(session.getAttribute("packId").toString());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		List<taskTrans> list=new ArrayList<taskTrans>();
+		for (Iterator<task> iterator = taskService.getTaskByPackId(packId).iterator(); iterator.hasNext();) {
+			task task = (task) iterator.next();
+			taskTrans taskTrans = new taskTrans();
+			
+			taskTrans.setTaskDir(task.getTaskDir());
+			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
+			taskTrans.setTaskLvl(task.getTaskLvl());
+			taskTrans.setTaskMarkTime(task.getTaskMarkTime());
+			taskTrans.setTaskName(task.getTaskName());
+			taskTrans.setTaskUploadTime(sdf.format(task.getTaskUploadTime()));
+			//taskTrans.setTaskEffective(task.getTaskEffective());
+			
+			list.add(taskTrans);
+		}
+		return list;
 	}
 
 /**

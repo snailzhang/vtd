@@ -74,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<task> selAllTaskByPackId(Integer packId) {
+	public List<task> getTaskByPackId(Integer packId) {
 		
 		return tm.selAllTaskByPackId(packId);
 	}

@@ -77,6 +77,7 @@ public class ManagerController {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
 			// userlist插入数据
+			trans.setUserStatus(user.getUserStatus());
 			trans.setUsername(user.getUsername());
 			trans.setUsertypeenglish(userTypeService.seluserDes(user.getUsertype()));
 			trans.setUpdateTime(sdf.format(user.getUpdateTime()));

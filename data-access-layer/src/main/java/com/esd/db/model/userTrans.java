@@ -1,7 +1,8 @@
 package com.esd.db.model;
 
 public class userTrans {
-
+	private Boolean userStatus;
+	
 	private String username;
 
 	private String usertypeenglish;
@@ -12,6 +13,14 @@ public class userTrans {
 
 	public String getUsername() {
 		return username;
+	}
+	
+	public Boolean getUserStatus() {
+		return userStatus;
+	}
+
+	public void setUserStatus(Boolean userStatus) {
+		this.userStatus = userStatus;
 	}
 
 	public void setUsername(String username) {

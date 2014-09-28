@@ -19,7 +19,7 @@ public interface TaskService {
     
     List<task> selAllTaskByWorkerId(Integer workerId);
     
-    List<task> selAllTaskByPackId(Integer packId);
+    List<task> getTaskByPackId(Integer packId);
 
     int updateByPrimaryKeySelective(taskWithBLOBs record);
     

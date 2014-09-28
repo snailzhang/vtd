@@ -5,6 +5,8 @@ import java.util.Date;
 public class user {
 
     private Integer userId;
+    
+    private Boolean userStatus;
 
     private String username;
 
@@ -34,7 +36,15 @@ public class user {
         this.userId = userId;
     }
 
-    public String getUsername() {
+    public Boolean getUserStatus() {
+		return userStatus;
+	}
+
+	public void setUserStatus(Boolean userStatus) {
+		this.userStatus = userStatus;
+	}
+
+	public String getUsername() {
         return username;
     }
 
