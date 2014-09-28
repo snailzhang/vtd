@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<% 
+int workerMark = (Integer)session.getAttribute("workerMark");
+%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -34,24 +37,43 @@
 			</thead>
 			<tbody></tbody>
 		</table>
+	</div>
 		<% 
-			//if(//workerMark == "down"){
+			if(workerMark == 0){
 				%>
-				<a type="button" class="btn btn-lg btn-primary btn-block" href="">下载任务</a>
+				<div class="container">
+					<a type="button" class="btn btn-lg btn-primary btn-block" href="${contextPath}/downTask">下载任务</a>
+				</div>
+				
 				<%
-			//}else{
+			}else{
 				%>
-				<form action="/logins" method="post" name="form1" role="form" class="form-signin">
-					<h2 class="form-signin-heading">选择上传文件</h2>
-					<span>TAG:</span><input type="file" name="tag" autofocus="" required="" placeholder="上传TAG文件" class="form-control">
-					<span>TextGrid:</span><input type="file" required="" placeholder="上传TextGrid文件" name="TextGrid" class="form-control">
-					<button type="submit" class="btn btn-lg btn-primary btn-block">上传文件</button>
-				</form>
+				<div class="container">
+					<form action="${contextPath}/upTagAndTextGrid" method="post" id="upTagAndTextGrid" name="upTagAndTextGrid" role="form" class="form-horizontal">
+						<div class="form-group">
+					      <label for="pack" class="col-sm-2 control-label">TAG:</label>
+					      <div class="col-sm-10">
+					         <input type="file" class="form-control" name="TAG" id="TAG" placeholder="请选择上传TAG文件">
+					      </div>
+					   </div>
+					   <div class="form-group">
+					      <label for="TextGrid" class="col-sm-2 control-label">TextGrid:</label>
+					      <div class="col-sm-10">
+					         <input type="file" class="form-control" name="TextGrid" id="TextGrid" placeholder="请选择上传TextGrid文件">
+					      </div>
+					   </div>
+					   <div class="form-group">
+					      <div class="col-sm-offset-2 col-sm-10">
+					         <button type="button" class="btn btn-default">上传文件</button>
+					      </div>
+					   </div>
+					</form>
+				</div>
 				<%
-			//}
+			}
 		%>
 			
-	</div>
+	
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$.ajax({
@@ -64,10 +86,10 @@
 						$("tbody").append(
 							"<tr>"+
 								"<td>"+(i+1)+"</td>"+
-								"<td>"+item.packName+"</td>"+
-								"<td>"+item.packStatus+"</td>"+
-								"<td>"+item.packLockTime+"</td>"+
-								"<td>"+item.createTime+"</td>"+
+								"<td>"+item.taskName+"</td>"+
+								"<td>"+item.taskMarkTime+"</td>"+
+								"<td>"+item.taskDownloadTime+"</td>"+
+								"<td>"+item.taskUploadTime+"</td>"+
 							"</tr>"
 						);
 					});
@@ -75,9 +97,8 @@
 				}
 			});
 			$("button[type=button]").click(function(){
-				var formName = $("#addmanager");
-				var pack = $("#pack").val();
-				if(checkout.text.isempty(pack,"文件不能为空！")) return;
+				var formName = $("#upTagAndTextGrid");
+				
 				formName.submit();
 				
 			});
