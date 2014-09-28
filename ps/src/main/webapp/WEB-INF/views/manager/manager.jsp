@@ -4,7 +4,7 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>vtd的 'login.jsp'page</title>
+<title>管理者页面</title>
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -30,8 +30,7 @@
 					<th>创建时间</th>
 				</tr>
 			</thead>
-			<tbody>
-			</tbody>
+			<tbody></tbody>
 		</table>
 		<form role="form" class="form-signin" action="${contextPath}/addUser" method="get">
 			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
