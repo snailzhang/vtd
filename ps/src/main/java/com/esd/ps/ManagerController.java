@@ -258,7 +258,7 @@ public class ManagerController {
 //	 */
 //	@RequestMapping(value = "/checkWorkerName", method = RequestMethod.POST)
 //	public @ResponseBody
-//	String checkWorkerName(String workerName) {
+//	String checkWorkerName(String temp,String value) {
 //		addUserReplay = "恭喜您,此用户名可用";
 //		if (employerService.getEmployerIdByEmployerName(workerName) > 0) {
 //			addUserReplay = "此用户名已被使用,请重新输入!";

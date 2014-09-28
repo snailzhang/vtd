@@ -1,7 +1,6 @@
 package com.esd.db.model;
 
 public class taskTrans {
-    private String taskDir;
 
     private String taskName;
 
@@ -9,21 +8,9 @@ public class taskTrans {
 
     private Boolean taskEffective;
 
-    private Boolean taskUpload;
-
-    private Integer taskLvl;
-
     private String taskDownloadTime;
 
     private String taskUploadTime;
-
-    public String getTaskDir() {
-        return taskDir;
-    }
-
-    public void setTaskDir(String taskDir) {
-        this.taskDir = taskDir == null ? null : taskDir.trim();
-    }
 
     public String getTaskName() {
         return taskName;
@@ -47,22 +34,6 @@ public class taskTrans {
 
     public void setTaskEffective(Boolean taskEffective) {
         this.taskEffective = taskEffective;
-    }
-
-    public Boolean getTaskUpload() {
-        return taskUpload;
-    }
-
-    public void setTaskUpload(Boolean taskUpload) {
-        this.taskUpload = taskUpload;
-    }
-
-    public Integer getTaskLvl() {
-        return taskLvl;
-    }
-
-    public void setTaskLvl(Integer taskLvl) {
-        this.taskLvl = taskLvl;
     }
 
     public String getTaskDownloadTime() {
