@@ -16,102 +16,198 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.esd.db.model.employer;
 import com.esd.db.model.manager;
 import com.esd.db.model.user;
-import com.esd.db.model.userlist;
+import com.esd.db.model.userTrans;
+import com.esd.db.model.worker;
+import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
+import com.esd.db.service.WorkerService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 管理员
+ * 
+ * @author chen
+ * 
+ */
 @Controller
 public class ManagerController {
-	int pre = (int) System.currentTimeMillis();
 	private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
 	@Autowired
-	private UserService us;
+	private UserService userService;
 	@Autowired
-	private UserTypeService uts;
+	private UserTypeService userTypeService;
 	@Autowired
-	private ManagerService ms;
-	final static int BUFFER_SIZE = 4096;
-	String address="addfail";
+	private ManagerService managerService;
+	@Autowired
+	private EmployerService employerService;
+	@Autowired
+	private WorkerService workerService;
+	String address = "addfail";
+
+	/**
+	 * 登录管理员页
+	 * 
+	 * @param loginrName
+	 * @return
+	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.GET)
-	public ModelAndView managerGet(String loginrName) {// 登录页
-		return new ModelAndView("manager/manager", "loginrName", loginrName);
+	public ModelAndView managerGet() {
+		return new ModelAndView("manager/manager");
 	}
 
+	/**
+	 * 返回user list
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	public @ResponseBody
-	List<userlist> managerPost() {// list列表直接转json
+	List<userTrans> managerPost() {// list列表直接转json
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		List<userlist> ull = new ArrayList<userlist>();
-		for (Iterator<user> iterator = us.selAllUsers().iterator(); iterator.hasNext();) {
+		List<userTrans> list = new ArrayList<userTrans>();
+		for (Iterator<user> iterator = userService.selAllUsers().iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
-			userlist userlist = new userlist();
-			//userlist插入数据
-			userlist.setUsername(user.getUsername());
-			userlist.setUsertypeenglish(uts.seluserDes(user.getUsertype()));
-			userlist.setUpdateTime(sdf.format(user.getUpdateTime()));
-			userlist.setCreateTime(sdf.format(user.getCreateTime()));
-			//List<userlist>插入数据
-			ull.add(userlist);
+			userTrans trans = new userTrans();
+			// userlist插入数据
+			trans.setUsername(user.getUsername());
+			trans.setUsertypeenglish(userTypeService.seluserDes(user.getUsertype()));
+			trans.setUpdateTime(sdf.format(user.getUpdateTime()));
+			trans.setCreateTime(sdf.format(user.getCreateTime()));
+			// List<userlist>插入数据
+			list.add(trans);
 		}
-		return ull;
+		return list;
 	}
+
+	/**
+	 * 跳转新增用户页
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.GET)
-	public ModelAndView addUserGet() {	
-	    return new ModelAndView("manager/user_add");
+	public ModelAndView addUserGet() {
+		return new ModelAndView("manager/user_add");
 	}
+
+	/**
+	 * 上传user基本信息到session
+	 * 
+	 * @param username
+	 * @param password
+	 * @param usertype
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
-	public ModelAndView addUserPost(String username,String password,int usertype,HttpSession session) {	
-	    String page=uts.seluserDesEnglish(usertype);
-	    //新增user基本值存入session
-	    session.setAttribute("addusername", username);
-	    session.setAttribute("addpassword", password);
-	    session.setAttribute("addusertype", usertype);
-	    
-		return new ModelAndView("manager/"+page+"_add");
+	public ModelAndView addUserPost(String username, String password, int usertype, HttpSession session) {
+		String page = userTypeService.seluserDesEnglish(usertype);
+		// 新增user基本值存入session
+		session.setAttribute("addusername", username);
+		session.setAttribute("addpassword", password);
+		session.setAttribute("addusertype", usertype);
+
+		return new ModelAndView("manager/" + page + "_add");
 	}
+
+	/**
+	 * 存入数据库user和mangager的信息,清空session中user信息
+	 * 
+	 * @param managerName
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
-	public ModelAndView addmanager(String managerName,HttpSession session) {	
-	    user user=new user();
-	    user.setUsername((String)session.getAttribute("addusername"));
-	    user.setPassword((String)session.getAttribute("addpassword"));
-	    user.setUsertype((Integer)session.getAttribute("addusertype"));
-	    user.setCreateId((Integer)session.getAttribute("loginUserId"));
-	    
-	    manager manager=new manager();
-	    int userId=us.selUserIdByUserName((String)session.getAttribute("addusername"));
-		manager.setManagerName(managerName);
-		manager.setUserId(userId);
-		manager.setCreateId((Integer)session.getAttribute("loginUserId"));
-		
-		if(us.insertSelective(user)==1 && ms.insertSelective(manager)==1){
-			address="manager/manager";
+	public ModelAndView addmanager(String managerName, HttpSession session) {
+		user user = new user();
+		user.setUsername(session.getAttribute("addusername").toString());
+		user.setPassword(session.getAttribute("addpassword").toString());
+		user.setUsertype(Integer.parseInt(session.getAttribute("addusertype").toString()));
+		user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
+
+		manager manager = new manager();
+		if (userService.insertSelective(user) == 1) {
+			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+			
+			manager.setManagerName(managerName);
+			manager.setUserId(userId);
+			manager.setCreateId((Integer) session.getAttribute("loginUserId"));
+			
+			if (managerService.insertSelective(manager) == 1) {
+				address = "manager/manager";
+			}
+
 		}
-	    return new ModelAndView(address);
+		session.removeAttribute("addusername");
+		session.removeAttribute("addpassword");
+		session.removeAttribute("addusertype");
+		return new ModelAndView(address);
 	}
+
+	/**
+	 * 存入数据库user和employer的信息,清空session中user信息
+	 * 
+	 * @param employerName
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
-	public ModelAndView addemployer(String managerName,HttpSession session) {	
-	    user user=new user();
-	    user.setUsername((String)session.getAttribute("addusername"));
-	    user.setPassword((String)session.getAttribute("addpassword"));
-	    user.setUsertype((Integer)session.getAttribute("addusertype"));
-	    user.setCreateId((Integer)session.getAttribute("loginUserId"));
-	    
-	   
-	    return new ModelAndView(address);
+	public ModelAndView addemployer(String employerName, HttpSession session) {
+		user user = new user();
+		user.setUsername((String) session.getAttribute("addusername"));
+		user.setPassword((String) session.getAttribute("addpassword"));
+		user.setUsertype((Integer) session.getAttribute("addusertype"));
+		user.setCreateId((Integer) session.getAttribute("loginUserId"));
+
+		employer employer = new employer();
+		int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+		employer.setEmployerName(employerName);
+		employer.setUserId(userId);
+		employer.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
+
+		if (userService.insertSelective(user) == 1 && employerService.insertSelective(employer) == 1) {
+			address = "manager/manager";
+		}
+		session.removeAttribute("addusername");
+		session.removeAttribute("addpassword");
+		session.removeAttribute("addusertype");
+		return new ModelAndView(address);
 	}
+
+	/**
+	 * 存入数据库user和worker的信息,清空session中user信息
+	 * 
+	 * @param worker
+	 * @param session
+	 * @return 上传workerImage还没做
+	 */
+	// ,@RequestParam(value = "workerImage", required = false) MultipartFile
+	// workerImage
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public ModelAndView addworker(String managerName,HttpSession session) {	
-	    user user=new user();
-	    user.setUsername((String)session.getAttribute("addusername"));
-	    user.setPassword((String)session.getAttribute("addpassword"));
-	    user.setUsertype((Integer)session.getAttribute("addusertype"));
-	    user.setCreateId((Integer)session.getAttribute("loginUserId"));
-	    
-	    return new ModelAndView(address);
+	public ModelAndView addworker(worker worker, HttpSession session) {
+		user user = new user();
+		user.setUsername((String) session.getAttribute("addusername"));
+		user.setPassword((String) session.getAttribute("addpassword"));
+		user.setUsertype((Integer) session.getAttribute("addusertype"));
+		user.setCreateId((Integer) session.getAttribute("loginUserId"));
+
+		int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+		worker.setUserId(userId);
+		worker.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
+
+		if (userService.insertSelective(user) == 1 && workerService.insertSelective(worker) == 1) {
+			address = "manager/manager";
+		}
+		session.removeAttribute("addusername");
+		session.removeAttribute("addpassword");
+		session.removeAttribute("addusertype");
+		return new ModelAndView(address);
 	}
 }

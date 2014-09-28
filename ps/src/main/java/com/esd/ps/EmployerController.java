@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -20,6 +21,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,7 +36,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
-import com.esd.db.model.task;
+import com.esd.db.model.packTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.PackService;
@@ -41,56 +44,96 @@ import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * 发包商
+ * @author chen
+ *
+ */
 @Controller
 public class EmployerController {
-	int pre = (int) System.currentTimeMillis();
 	private static final Logger logger = LoggerFactory.getLogger(EmployerController.class);
 	@Autowired
-	private PackService ps;
+	private PackService packService;
 	@Autowired
-	private UserService us;
+	private UserService userService;
 	@Autowired
-	private EmployerService es;
+	private EmployerService employerService;
 	@Autowired
-	private TaskService ts;
-	final static int BUFFER_SIZE = 4096;
-
+	private TaskService taskService;
+/**
+ * 登录发包商页
+ * @return
+ */
 	@RequestMapping(value = "/employer", method = RequestMethod.GET)
-	public ModelAndView employerGet(String loginrName) {// 登录页
-		return new ModelAndView("employer/employer", "loginrName", loginrName);
+	public ModelAndView employerGet() {// 登录页
+		return new ModelAndView("employer/employer");
 	}
-
+/**
+ * 返回发包商发过的任务包(pack)的json list
+ * @param session
+ * @return
+ */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
-	public @ResponseBody List<pack> employerPost(String loginrName) {// list列表直接转json
-		int userId = us.selUserIdByUserName(loginrName);
-		int employerId = es.selEmployerIdByUserId(userId);
-		
-		return ps.selAllByEmployerId(employerId);
+	public @ResponseBody List<packTrans> employerPost(HttpSession session) {// list列表直接转json
+		int userId = userService.selUserIdByUserName(session.getAttribute("loginrName").toString());
+		int employerId = employerService.selEmployerIdByUserId(userId);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		List<packTrans> list = new ArrayList<packTrans>();
+		for (Iterator<pack> iterator = packService.selAllByEmployerId(employerId).iterator(); iterator.hasNext();) {
+			pack pack = (pack) iterator.next();
+
+			packTrans packTrans = new packTrans();
+			packTrans.setPackName(pack.getPackName());
+			packTrans.setPackStatus(pack.getPackStatus());
+			packTrans.setPackLockTime(pack.getPackLockTime());
+			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
+
+			list.add(packTrans);
+		}
+		return list;
 	}
 
-	// 包的详细信息
-	@RequestMapping(value = "/packdetail", method = RequestMethod.POST)
-	public String detailpage(int packId, HttpServletRequest req) {
-		List<task> tl = new ArrayList<task>();
-		tl = ts.selAllTaskByPackId(packId);
-		req.setAttribute("TDL", tl);// employer页的包的详细任务列表
-		return "vtd/";// 返回值没写
+/**
+ * 任务包的详细页 
+ * @param packId
+ * @param session
+ * @return
+ */
+	@RequestMapping(value = "/packDetail", method = RequestMethod.GET)
+	public ModelAndView detailpageGet(int packId, HttpSession session) {
+		session.setAttribute("packId", packId);
+		return new ModelAndView("");// 返回值没写
+	}
+/**
+ * 任务包的详细list
+ * @param session
+ * @return
+ */
+	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
+	public @ResponseBody List detailpagePost(HttpSession session) {
+		session.getAttribute("packId");
+
+		return null;// 返回值没写
 	}
 
-	// 上传包PackService
-	@RequestMapping(value = "/uploadpack", method = RequestMethod.POST)
+/**
+ * 上传任务包zip格式
+ * @param pack
+ * @param req
+ * @param pwbs
+ * @param model
+ * @param twbs
+ * @throws IOException
+ */
+	@RequestMapping(value = "/uploadPack", method = RequestMethod.POST)
 	// 字节流上传速度较慢
-	public void uploadpack(
-			@RequestParam(value = "pack", required = false) MultipartFile pack,
-			HttpServletRequest req, packWithBLOBs pwbs, ModelMap model,
-			taskWithBLOBs twbs) throws IOException {
+	public void uploadpack(@RequestParam(value = "pack", required = false) MultipartFile pack, HttpServletRequest req, packWithBLOBs pwbs, ModelMap model, taskWithBLOBs twbs) throws IOException {
 		String name = null;
 		name = pack.getOriginalFilename();
 		pwbs.setPackFile(pack.getBytes());
 		pwbs.setPackName(name);
 		pwbs.setPackStatus(false);
-		if (ps.insert(pwbs) == 1) {
+		if (packService.insert(pwbs) == 1) {
 			System.out.println("数据库上传成功!");
 		}
 		// 上传文件存入临时文件
@@ -99,8 +142,7 @@ public class EmployerController {
 			if (!f.exists() && !f.isDirectory()) {
 				System.out.println(f.mkdir());
 			}
-			BufferedOutputStream bos = new BufferedOutputStream(
-					new FileOutputStream("D:\\temp\\" + name));
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("D:\\temp\\" + name));
 			InputStream in = pack.getInputStream();
 			BufferedInputStream bis = new BufferedInputStream(in);
 			int n = 0;
@@ -124,19 +166,19 @@ public class EmployerController {
 			in = zip.getInputStream(entry);
 			// inputstrem转成byte[]
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			byte[] data = new byte[BUFFER_SIZE];
+			byte[] data = new byte[4096];
 			int count = -1;
-			while ((count = in.read(data, 0, BUFFER_SIZE)) != -1)
+			while ((count = in.read(data, 0, 4096)) != -1)
 				outStream.write(data, 0, count);
 			data = null;
 			byte[] wav = outStream.toByteArray();
 			twbs.setTaskWav(wav);
 			// 上传的包的号
-			twbs.setPackId(ps.selectByEmployerId(pwbs.getEmployerId()));
+			twbs.setPackId(packService.selectByEmployerId(pwbs.getEmployerId()));
 			// twbs.setPackId(1);
 			twbs.setTaskName(zipEntryName);
 			twbs.setTaskDir("D:\\" + name.substring(0, (name.length() - 4)));
-			if (ts.insert(twbs) == 1)
+			if (taskService.insert(twbs) == 1)
 				;
 			System.out.println("wav上传成功!");
 		}
@@ -146,14 +188,11 @@ public class EmployerController {
 	}
 
 	// 还没有使用
-	@RequestMapping(value = "/uploadpack2", method = RequestMethod.POST)
+	@RequestMapping(value = "/uploadPack2", method = RequestMethod.POST)
 	// springmvc包装的解析器速度更快
-	public String upload2(HttpServletRequest request,
-			HttpServletResponse response) throws IllegalStateException,
-			IOException {
+	public String upload2(HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException {
 		// 创建一个通用的多部分解析器
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
-				request.getSession().getServletContext());
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
 		// 判断 request 是否有文件上传,即多部分请求
 		if (multipartResolver.isMultipart(request)) {
 			// 转换成多部分request
@@ -172,8 +211,7 @@ public class EmployerController {
 					if (myFileName.trim() != "") {
 						System.out.println(myFileName);
 						// 重命名上传后的文件名
-						String fileName = "demoUpload"
-								+ file.getOriginalFilename();
+						String fileName = "demoUpload" + file.getOriginalFilename();
 						// 定义上传路径
 						String path = "H:/" + fileName;
 						File localFile = new File(path);

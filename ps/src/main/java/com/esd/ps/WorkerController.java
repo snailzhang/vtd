@@ -11,8 +11,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,46 +28,76 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.esd.db.model.pack;
 import com.esd.db.model.task;
+import com.esd.db.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.WorkerService;
+/**
+ * 工作者
+ * @author chen
+ *
+ */
 @Controller
 public class WorkerController {
-	int pre = (int) System.currentTimeMillis();
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
-	private TaskService ts;
+	private TaskService taskService;
 	@Autowired
-	private UserService us;
+	private UserService userService;
 	@Autowired
-	private WorkerService ws;
+	private WorkerService workerService;
+	/**
+	 * 登录工作者页面
+	 * @return
+	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.GET)
-	public ModelAndView employerGet(String loginrName) {// 登录页
-		return new ModelAndView("worker/worker", "loginrName", loginrName);
+	public ModelAndView worker() {
+		return new ModelAndView("worker/worker");
 	}
-
+	/**
+	 * 返回此工作者的任务list
+	 * @param loginrName
+	 * @return
+	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
-	public @ResponseBody List<task> employerPost(String loginrName) {// list列表直接转json
-		int userId = us.selUserIdByUserName(loginrName);
-		int workerId = ws.selectByUserId(userId);
-		
-		return ts.selAllTaskByWorkerId(workerId);
+	public @ResponseBody List<taskTrans> workerPost(String loginrName) {
+		int userId = userService.selUserIdByUserName(loginrName);
+		int workerId = workerService.selectByUserId(userId);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		List<taskTrans> list=new ArrayList<taskTrans>();
+		for (Iterator<task> iterator = taskService.selAllTaskByWorkerId(workerId).iterator(); iterator.hasNext();) {
+			task task = (task) iterator.next();
+			taskTrans taskTrans = new taskTrans();
+			
+			taskTrans.setTaskDir(task.getTaskDir());
+			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
+			taskTrans.setTaskLvl(task.getTaskLvl());
+			taskTrans.setTaskMarkTime(task.getTaskMarkTime());
+			taskTrans.setTaskName(task.getTaskName());
+			taskTrans.setTaskUploadTime(sdf.format(task.getTaskUploadTime()));
+			taskTrans.setTaskEffective(task.getTaskEffective());
+			
+			list.add(taskTrans);
+		}
+		return list;
 	}
 	
-	//下载wav
+	/**
+	 * 下载任务(wav格式)
+	 * @param req
+	 * @return
+	 */
 	@RequestMapping(value = "/getAllTasks" )
 	public String getAllTasks(HttpServletRequest req){
-		req.setAttribute("TaskList",ts.selectAllTaskId());
+		req.setAttribute("TaskList",taskService.selectAllTaskId());
 		req.setAttribute("workerId",1);
 		return "vtd/downwav";
 	}
 	@RequestMapping(value = "/downTask" )
 	public void downTask(final HttpServletResponse response,taskWithBLOBs twbs,int taskId,int workerid,HttpServletRequest req){
-		twbs =ts.selectByPrimaryKey(taskId);		
+		twbs =taskService.selectByPrimaryKey(taskId);		
 		byte[] data = twbs.getTaskWav();
 		String fileName = twbs.getTaskName()== null ? "Task.wav" : twbs.getTaskName();
 		try {
@@ -87,12 +119,18 @@ public class WorkerController {
 		}
 		twbs.setTaskDownloadTime(new Date());
 		twbs.setWorkerId(workerid);
-		if(ts.updateByPrimaryKeySelective(twbs)==1){
+		if(taskService.updateByPrimaryKeySelective(twbs)==1){
 		req.setAttribute("workerMark","upload");
 		}
 		
 	}
-	 //work上传TAG和TextGrid
+	 /**
+	  * worker上传TAG和TextGrid
+	  * @param files
+	  * @param req
+	  * @param twb
+	  * @throws IOException
+	  */
 	@RequestMapping(value="/upTG",method = RequestMethod.POST)
 	 public void upTg(@RequestParam("file") CommonsMultipartFile[] files,HttpServletRequest req,taskWithBLOBs twb) throws IOException{        
 		 int pre = (int) System.currentTimeMillis();
@@ -147,7 +185,7 @@ public class WorkerController {
 	                	twb.setTaskTextgrid(b);
 	                }	                
 	        }
-                if(ts.updateByName(twb)==1){
+                if(taskService.updateByName(twb)==1){
                 		req.setAttribute("workerMark","down");	
                 }
                 int finaltime = (int) System.currentTimeMillis();
