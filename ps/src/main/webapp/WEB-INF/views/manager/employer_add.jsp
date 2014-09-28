@@ -1,33 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
-<script type="text/javascript"> 
-</script><br /><br /><div>
-<div align="center"><p>新增employer</p></div>
-	<div style="padding:15px 15px 15px 15px;" align="center">
-		<form id="form" action="${contextPath}/addEmployer" method="post">
-			<table class="parameter_tab">
-				<tr>
-					<td>用户id:</td>
-					<td><input class="easyui-validatebox" name="userId" type="text" value="${replay}"  readonly="readonly"/></td>
-				</tr>
-				<tr>
-					<td style="width: 100px;">昵称:</td>
-					<td style="width: 200px;">
-						<input class="easyui-validatebox" data-options="required:true"  id="userName" name="employerName" type="text" value="" />
-					</td>
-					<td><span id="username_message"></span>
-					</td>
-				</tr>
-				<tr>
-					<td>用户id:</td>
-					<td><input class="easyui-validatebox" name="createId" type="text" value=""/></td>
-				</tr>
-				<tr>
-					<td><input type="submit" value="提交"/></td>
-				</tr>							
-			</table>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>添加发包商</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="This is my page">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/common.js"></script>
+<body>
+	<jsp:include page="../head.jsp" />
+	<div class="container">
+		<form action="${contextPath}/addemployer" method="post" id="addemployer" name="addemployer" role="form" class="form-horizontal">
+			<div class="form-group">
+		      <label for="employerName" class="col-sm-2 control-label">发包商名称：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="employerName" id="employerName" placeholder="请输入发包商名称">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <div class="col-sm-offset-2 col-sm-10">
+		         <button type="button" class="btn btn-default">添加</button>
+		      </div>
+		   </div>
 		</form>
 	</div>
-</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("button[type=button]").click(function(){
+				var formName = $("#addemployer");
+				var managerName = $("#employerName").val();
+				if(checkout.text.isempty(managerName,"发包商名称不能为空！")) return;
+				formName.submit();
+				
+			});
+		});
+	</script>
+</body>
+</html>
+

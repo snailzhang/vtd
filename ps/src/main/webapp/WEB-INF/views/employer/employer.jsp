@@ -82,7 +82,8 @@ List packList = (List)request.getAttribute("packList");
 			</tbody>
 		</table>
 		<form role="form" class="form-signin">
-			<button type="submit" class="btn btn-lg btn-primary btn-block">上传任务</button>
+			
+			<button type="button" class="btn btn-lg btn-primary btn-block">上传任务</button>
 		</form>
 	</div>
 	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>

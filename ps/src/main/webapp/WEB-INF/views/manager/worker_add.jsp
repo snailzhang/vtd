@@ -1,42 +1,84 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
-<script type="text/javascript"> 
-</script>
-<div>
-	<div align="center"><p>新增worker</p></div>
-	<div style="padding:15px 15px 15px 15px;" align="center">
-		<form id="form" action="${contextPath }/addworker" method="post">
-			<table class="parameter_tab">
-				<tr>
-					<td>用户id:</td>
-					<td><input type="text" value="${replay}" name="userId" readonly="readonly"/></td>
-				</tr>
-				<tr>
-					<td>真实姓名:</td>
-					<td><input name="workerRealName" type="text" class="easyui-validatebox"   value="" /></td>
-					<td><span id="realname_message"></span>
-					</td>
-				</tr>
-				<tr>
-					<td>身份证号:</td>
-					<td><input name="workerIdCard" type="text" class="easyui-validatebox"   value="" /></td>
-				</tr>
-				<tr>
-					<td>残疾人证:</td>
-					<td><input name="workerDisabilityCard" type="text" class="easyui-validatebox"   value="" /></td>
-				</tr>
-				<tr>
-					<td>手机号码:</td>
-					<td><input name="workerPhone" class="easyui-validatebox"  type="text" value="" /></td>
-					<td><span id="mobile_message"></span>
-					</td>
-				</tr>
-				<tr>
-					<td><input  type="submit" value="增加工作员" /></td>
-				</tr>
-			</table>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>添加工作者</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="This is my page">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/common.js"></script>
+<body>
+	<jsp:include page="../head.jsp" />
+	<div class="container">
+		<form action="${contextPath}/addworker" method="post" id="addworker" name="addworker" role="form" class="form-horizontal">
+			<div class="form-group">
+		      <label for="workRealName" class="col-sm-2 control-label">真实姓名：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="workRealName" id="workRealName" placeholder="请输入真实姓名">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <label for="workerIdCard" class="col-sm-2 control-label">身份证号：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="workerIdCard" id="workerIdCard" placeholder="请输入身份证号">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <label for="workerDisabilityCard" class="col-sm-2 control-label">残疾证卡号：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="workerDisabilityCard" id="workerDisabilityCard" placeholder="请输入残疾证卡号">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <label for="workerBankCard" class="col-sm-2 control-label">银行卡号：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="workerBankCard" id="workerBankCard" placeholder="请输入银行卡号">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <label for="workerPaypal" class="col-sm-2 control-label">支付宝账号：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="workerPaypal" id="workerPaypal" placeholder="请输入支付宝账号">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <label for="workerImage" class="col-sm-2 control-label">照片：</label>
+		      <div class="col-sm-10">
+		         <input type="file" class="form-control" name="workerImage" id="workerImage" placeholder="请选择照片">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <div class="col-sm-offset-2 col-sm-10">
+		         <button type="button" class="btn btn-default">添加</button>
+		      </div>
+		   </div>
 		</form>
 	</div>
-</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("button[type=button]").click(function(){
+				var formName = $("#addworker");
+				var workRealName = $("#workRealName").val();
+				var workerIdCard = $("#workerIdCard").val();
+				var workerDisabilityCard = $("#workerDisabilityCard").val();
+				if(checkout.text.isempty(workRealName,"真实姓名不能为空！")) return;
+				if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
+				if(checkout.text.isempty(workerDisabilityCard,"残疾证卡号不能为空！")) return;
+				formName.submit();
+				
+			});
+		});
+	</script>
+</body>
+</html>
+

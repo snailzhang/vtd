@@ -1,0 +1,10 @@
+body{
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+div.container{
+	max-width:1000px;
+}
+table{
+	margin-top:20px;
+}

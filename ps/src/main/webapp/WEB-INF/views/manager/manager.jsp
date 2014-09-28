@@ -1,50 +1,25 @@
-<%@page import="java.text.SimpleDateFormat"%>
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%@ page import="com.esd.db.model.user" %>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-List userList = (List)request.getAttribute("userlist");
-%>
-
 <!DOCTYPE html>
-<html>
-  <head>
-    <base href="<%=basePath%>">
-    
-    <title>My JSP 'manager.jsp' starting page</title>
-    
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
-	<link rel="stylesheet" type="text/css" href="<%= basePath%>css/login.css" />
-	<style type="text/css">
-		body {
-		  padding-top: 40px;
-		  padding-bottom: 40px;
-		  background-color: #eee;
-		}
-		div.container{
-			max-width:1000px;
-		}
-		table{
-			margin-top:20px;
-		}
-	</style>
-  </head>
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>vtd的 'login.jsp'page</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="This is my page">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/common.js"></script>
+</head>
 <body>
-	<nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<a href="#" class="navbar-brand"> 管理员名称:${loginrName}</a>
-			</div>
-		</div>
-	</nav>
+	<jsp:include page="../head.jsp" />
 	<div class="container">
 		<table class="table table-striped table-bordered">
 			<thead>
@@ -56,44 +31,38 @@ List userList = (List)request.getAttribute("userlist");
 				</tr>
 			</thead>
 			<tbody>
-				<%
-					if(userList !=null){
-						for(int i=0;i<userList.size();i++){
-							user u = (user)userList.get(i);
-							int uId = u.getUserId();
-							String uName = u.getUsername();
-							int uType = u.getUsertype();
-							String ut = "";
-							if(uType == 1){
-								ut = "管理员";
-							}else if(uType == 2){
-								ut = "发包员";
-							}else if(uType == 3){
-								ut = "质检员";
-							}else if(uType == 4){
-								ut = "工作者";
-							}
-							Date cTime = u.getCreateTime();
-							String ct = new SimpleDateFormat("yyyy-MM-dd").format(cTime);
-							%>
-							<tr>
-				                <td><%=i+1 %></td>
-				                <td><%=uName %></td>
-				                <td><%=ut %></td>
-				                <td><%=ct %></td>
-				              </tr>
-							<%
-						}
-					}
-				%>
-				
 			</tbody>
 		</table>
-		<form role="form" class="form-signin">
+		<form role="form" class="form-signin" action="${contextPath}/addUser" method="get">
 			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
 		</form>
 	</div>
 	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/manager',
+				dataType:'json',
+				success:function(data){
+					$("tbody").append("");
+					$.each(data,function(i,item){
+						
+						
+						$("tbody").append(
+							"<tr>"+
+								"<td>"+(i+1)+"</td>"+
+								"<td>"+item.username+"</td>"+
+								"<td>"+item.usertypeenglish+"</td>"+
+								"<td>"+item.createTime+"</td>"+
+							"</tr>"
+						);
+					});
+					
+				}
+			});
+		});
+	</script>
 </body>
 </html>
