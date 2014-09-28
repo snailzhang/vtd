@@ -79,4 +79,10 @@ public class TaskServiceImpl implements TaskService {
 		return tm.selAllTaskByPackId(packId);
 	}
 
+	@Override
+	public taskWithBLOBs getOneTaskOrderByTaskLvl() {
+		
+		return tm.selOneTaskOrderByTaskLvl();
+	}
+
 }

@@ -20,6 +20,8 @@ public interface taskMapper {
     List<task> selAllTaskByWorkerId(Integer workerId);
     
     List<task> selAllTaskByPackId(Integer packId);
+    
+    taskWithBLOBs selOneTaskOrderByTaskLvl();
 
     int updateByPrimaryKeySelective(taskWithBLOBs record);
 

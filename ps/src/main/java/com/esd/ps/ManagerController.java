@@ -136,11 +136,11 @@ public class ManagerController {
 		manager manager = new manager();
 		if (userService.insertSelective(user) == 1) {
 			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
-			
+
 			manager.setManagerName(managerName);
 			manager.setUserId(userId);
 			manager.setCreateId((Integer) session.getAttribute("loginUserId"));
-			
+
 			if (managerService.insertSelective(manager) == 1) {
 				address = "manager/manager";
 			}

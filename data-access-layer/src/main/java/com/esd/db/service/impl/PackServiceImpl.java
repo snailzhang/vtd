@@ -65,4 +65,9 @@ public class PackServiceImpl implements PackService {
 		return pm.selAllByEmployerId(employerId);
 	}
 
+	@Override
+	public int deleteByName(String fileName) {
+		return pm.deleteByName(fileName);
+	}
+
 }

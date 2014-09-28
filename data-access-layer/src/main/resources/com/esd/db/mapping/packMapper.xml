@@ -50,6 +50,10 @@
     delete from pack
     where pack_id = #{packId,jdbcType=INTEGER}
   </delete>
+    <delete id="deleteByName" parameterType="java.lang.String" >
+    delete from pack
+    where pack_name = #{packName,jdbcType=String}
+  </delete>
   <insert id="insert" parameterType="com.esd.db.model.packWithBLOBs" >
     <!--
       WARNING - @mbggenerated

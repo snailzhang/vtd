@@ -59,7 +59,7 @@ public class LoginController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
 	public ModelAndView loginPost(String username, String password, HttpSession session) {
-		if (!StringUtils.isBlank(username.trim())) {
+		if (!StringUtils.isEmpty(username)) {
 			// UsernameAndPasswordMd5 up=new UsernameAndPasswordMd5();
 			// up.getMd5(username, password);
 			for (Iterator<user> iterator = us.selAllUsers().iterator(); iterator.hasNext();) {

@@ -8,6 +8,8 @@ import com.esd.db.model.packWithBLOBs;
 public interface PackService {
 
     int deleteByPrimaryKey(Integer packId);
+    
+    int deleteByName(String fileName);
 
     int insert(packWithBLOBs record);
 
