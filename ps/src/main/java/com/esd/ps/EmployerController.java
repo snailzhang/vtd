@@ -65,7 +65,7 @@ public class EmployerController {
 	private EmployerService employerService;
 	@Autowired
 	private TaskService taskService;
-	@Value("uploadReplay")
+	@Value("${uploadReplay}")
 	private String uploadReplay;
 
 	/**

@@ -15,6 +15,8 @@ public interface EmployerService {
     employer selectByUserId(Integer userId);
     
     int selEmployerIdByUserId(Integer userId);
+    
+    int getEmployerIdByEmployerName(String employerName);
 
     int updateByPrimaryKeySelective(employer record);
 

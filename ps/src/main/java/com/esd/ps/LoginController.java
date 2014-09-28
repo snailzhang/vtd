@@ -38,24 +38,27 @@ public class LoginController {
 	@Value("${loginFail}")
 	// 配置文件的key
 	private String replay;
-	// @Value("${address}")
-	// private String address;
-	String userDesEnglish = "login";
-/**
- * 登录页
- * @return
- */
+	@Value("${userDesEnglish}")
+	private String userDesEnglish;
+
+	/**
+	 * 登录页
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView loginGet() {
 		return new ModelAndView("login");
 	}
-/**
- * 验证用户名密码,跳转响应页面
- * @param username
- * @param password
- * @param session
- * @return
- */
+
+	/**
+	 * 验证用户名密码,跳转响应页面
+	 * 
+	 * @param username
+	 * @param password
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
 	public ModelAndView loginPost(String username, String password, HttpSession session) {
@@ -76,40 +79,5 @@ public class LoginController {
 		}
 		session.setAttribute("loginrName", replay);
 		return new ModelAndView("redirect:" + userDesEnglish);
-
-		// if (user.getUsertype() == 1) {// manager管理员
-		// manager m = ms.selectByUserId(user.getUserId());
-		// n = m.getManagerId();
-		// req.setAttribute("userlist", ul);// 用户列表
-		// address = "vtd/manager";
-		// } else if (user.getUsertype() == 2) {// employer发包商
-		// List<pack> pl = new ArrayList<pack>();
-		// employer e = es.selectByUserId(user.getUserId());
-		// n = e.getEmployerId();
-		// pl = ps.selAllByEmployerId(n);
-		// req.setAttribute("packList", pl);// 发包商发包列表
-		// address = "vtd/employer";
-		// } else if (user.getUsertype() == 3) {// 质检员
-		// address = "vtd/fault";
-		// } else if (user.getUsertype() == 4) {// worker工作者
-		// List<task> tl = new ArrayList<task>();
-		// Iterator<task> itt = tl.iterator();
-		// String workerMark = "down";
-		// while (itt.hasNext()) {
-		// task t = itt.next();
-		// if (t.getTaskMarkTime() > 0) {
-		// } else {
-		// workerMark = "upload";
-		// }
-		// }
-		// n = ws.selectByUserId(user.getUserId());
-		// tl = ts.selAllTaskByWorkerId(n);
-		// req.setAttribute("taskList", tl);// 工作者做过的任务列表
-		// req.setAttribute("workerMark", workerMark);// 工作者是否有正进行的任务
-		// address = "vtd/worker";
-		// }
-		// req.setAttribute("ewid", n);
-		// req.setAttribute("usertype", user.getUsertype());
-		// break;
 	}
 }

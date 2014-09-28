@@ -57,4 +57,9 @@ public class EmployerServiceImpl implements EmployerService {
 		return em.selEmployerIdByUserId(userId);
 	}
 
+	@Override
+	public int getEmployerIdByEmployerName(String employerName) {
+		return em.selEmployerIdByEmployerName(employerName);
+	}
+
 }

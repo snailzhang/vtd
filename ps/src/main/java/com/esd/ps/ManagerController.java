@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,7 +51,10 @@ public class ManagerController {
 	private EmployerService employerService;
 	@Autowired
 	private WorkerService workerService;
-	String address = "addfail";
+	@Value("${addUserReplay}")
+	private String addUserReplay;
+	@Value("${addUserAddress}")
+	private String addUserAddress;
 
 	/**
 	 * 登录管理员页
@@ -95,7 +99,23 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.GET)
 	public ModelAndView addUserGet() {
-		return new ModelAndView("manager/user_add");
+		return new ModelAndView("redirect: manager/user_add");
+	}
+
+	/**
+	 * 验证新增用户名是否重复
+	 * 
+	 * @param username
+	 * @return
+	 */
+	@RequestMapping(value = "/checkUserName", method = RequestMethod.POST)
+	public @ResponseBody
+	String checkUserName(String username) {
+		addUserReplay = "恭喜您,此用户名可用";
+		if (userService.selUserIdByUserName(username) > 0) {
+			addUserReplay = "此用户名已被使用,请重新输入!";
+		}
+		return addUserReplay;
 	}
 
 	/**
@@ -109,13 +129,34 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
 	public ModelAndView addUserPost(String username, String password, int usertype, HttpSession session) {
-		String page = userTypeService.seluserDesEnglish(usertype);
-		// 新增user基本值存入session
-		session.setAttribute("addusername", username);
-		session.setAttribute("addpassword", password);
-		session.setAttribute("addusertype", usertype);
+		String page;
+		if (userService.selUserIdByUserName(username) > 0) {
+			page = "user";
+			addUserReplay = "此用户名已被使用,请重新输入!";
+		} else {
+			page = userTypeService.seluserDesEnglish(usertype);
+			// 新增user基本值存入session
+			session.setAttribute("addusername", username);
+			session.setAttribute("addpassword", password);
+			session.setAttribute("addusertype", usertype);
+		}
+		return new ModelAndView("manager/" + page + "_add", "addUserReplay", addUserReplay);
+	}
 
-		return new ModelAndView("manager/" + page + "_add");
+	/**
+	 * 验证新增管理员名是否重复
+	 * 
+	 * @param managerName
+	 * @return
+	 */
+	@RequestMapping(value = "/checkManagerName", method = RequestMethod.POST)
+	public @ResponseBody
+	String checkManagerName(String managerName) {
+		addUserReplay = "恭喜您,此用户名可用";
+		if (managerService.getManagerIdByManagerName(managerName) > 0) {
+			addUserReplay = "此用户名已被使用,请重新输入!";
+		}
+		return addUserReplay;
 	}
 
 	/**
@@ -127,29 +168,51 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
 	public ModelAndView addmanager(String managerName, HttpSession session) {
-		user user = new user();
-		user.setUsername(session.getAttribute("addusername").toString());
-		user.setPassword(session.getAttribute("addpassword").toString());
-		user.setUsertype(Integer.parseInt(session.getAttribute("addusertype").toString()));
-		user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
+		if (managerService.getManagerIdByManagerName(managerName) > 0) {
+			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserAddress = "manager/manager_add";
+		} else {
+			addUserReplay = "新增管理员失败!";
+			user user = new user();
+			user.setUsername(session.getAttribute("addusername").toString());
+			user.setPassword(session.getAttribute("addpassword").toString());
+			user.setUsertype(Integer.parseInt(session.getAttribute("addusertype").toString()));
+			user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 
-		manager manager = new manager();
-		if (userService.insertSelective(user) == 1) {
-			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+			manager manager = new manager();
+			if (userService.insertSelective(user) == 1) {
+				int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
 
-			manager.setManagerName(managerName);
-			manager.setUserId(userId);
-			manager.setCreateId((Integer) session.getAttribute("loginUserId"));
+				manager.setManagerName(managerName);
+				manager.setUserId(userId);
+				manager.setCreateId((Integer) session.getAttribute("loginUserId"));
 
-			if (managerService.insertSelective(manager) == 1) {
-				address = "manager/manager";
+				if (managerService.insertSelective(manager) == 1) {
+					addUserReplay = "新增管理员成功!";
+				}
+
 			}
-
+			session.removeAttribute("addusername");
+			session.removeAttribute("addpassword");
+			session.removeAttribute("addusertype");
 		}
-		session.removeAttribute("addusername");
-		session.removeAttribute("addpassword");
-		session.removeAttribute("addusertype");
-		return new ModelAndView(address);
+		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
+	}
+
+	/**
+	 * 验证新增发包商名是否重复
+	 * 
+	 * @param managerName
+	 * @return
+	 */
+	@RequestMapping(value = "/checkEmployerName", method = RequestMethod.POST)
+	public @ResponseBody
+	String checkEmployerName(String employerName) {
+		addUserReplay = "恭喜您,此用户名可用";
+		if (employerService.getEmployerIdByEmployerName(employerName) > 0) {
+			addUserReplay = "此用户名已被使用,请重新输入!";
+		}
+		return addUserReplay;
 	}
 
 	/**
@@ -161,26 +224,47 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
 	public ModelAndView addemployer(String employerName, HttpSession session) {
-		user user = new user();
-		user.setUsername((String) session.getAttribute("addusername"));
-		user.setPassword((String) session.getAttribute("addpassword"));
-		user.setUsertype((Integer) session.getAttribute("addusertype"));
-		user.setCreateId((Integer) session.getAttribute("loginUserId"));
+		if (employerService.getEmployerIdByEmployerName(employerName) > 0) {
+			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserAddress = "manager/employer_add";
+		} else {
+			addUserReplay = "新增管理员失败!";
+			user user = new user();
+			user.setUsername(session.getAttribute("addusername").toString());
+			user.setPassword(session.getAttribute("addpassword").toString());
+			user.setUsertype(Integer.parseInt(session.getAttribute("addusertype").toString()));
+			user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 
-		employer employer = new employer();
-		int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
-		employer.setEmployerName(employerName);
-		employer.setUserId(userId);
-		employer.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
+			employer employer = new employer();
+			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+			employer.setEmployerName(employerName);
+			employer.setUserId(userId);
+			employer.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 
-		if (userService.insertSelective(user) == 1 && employerService.insertSelective(employer) == 1) {
-			address = "manager/manager";
+			if (userService.insertSelective(user) == 1 && employerService.insertSelective(employer) == 1) {
+				addUserReplay = "新增发包商成功!!!";
+			}
+			session.removeAttribute("addusername");
+			session.removeAttribute("addpassword");
+			session.removeAttribute("addusertype");
 		}
-		session.removeAttribute("addusername");
-		session.removeAttribute("addpassword");
-		session.removeAttribute("addusertype");
-		return new ModelAndView(address);
+		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
 	}
+//	/**
+//	 * 验证新增工作者名是否重复
+//	 * 
+//	 * @param managerName
+//	 * @return
+//	 */
+//	@RequestMapping(value = "/checkWorkerName", method = RequestMethod.POST)
+//	public @ResponseBody
+//	String checkWorkerName(String workerName) {
+//		addUserReplay = "恭喜您,此用户名可用";
+//		if (employerService.getEmployerIdByEmployerName(workerName) > 0) {
+//			addUserReplay = "此用户名已被使用,请重新输入!";
+//		}
+//		return addUserReplay;
+//	}
 
 	/**
 	 * 存入数据库user和worker的信息,清空session中user信息
@@ -194,21 +278,21 @@ public class ManagerController {
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
 	public ModelAndView addworker(worker worker, HttpSession session) {
 		user user = new user();
-		user.setUsername((String) session.getAttribute("addusername"));
-		user.setPassword((String) session.getAttribute("addpassword"));
-		user.setUsertype((Integer) session.getAttribute("addusertype"));
-		user.setCreateId((Integer) session.getAttribute("loginUserId"));
+		user.setUsername(session.getAttribute("addusername").toString());
+		user.setPassword(session.getAttribute("addpassword").toString());
+		user.setUsertype(Integer.parseInt(session.getAttribute("addusertype").toString()));
+		user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 
 		int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
 		worker.setUserId(userId);
 		worker.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 
 		if (userService.insertSelective(user) == 1 && workerService.insertSelective(worker) == 1) {
-			address = "manager/manager";
+			addUserReplay = "新增工作员成功!!!";
 		}
 		session.removeAttribute("addusername");
 		session.removeAttribute("addpassword");
 		session.removeAttribute("addusertype");
-		return new ModelAndView(address);
+		return new ModelAndView("manager/manager", "addUserReplay", addUserReplay);
 	}
 }

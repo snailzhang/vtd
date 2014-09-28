@@ -60,4 +60,10 @@ public class ManagerServiceImpl implements ManagerService {
 		return mm.selectByUserId(userId);
 	}
 
+	@Override
+	public int getManagerIdByManagerName(String managerName) {
+		
+		return mm.selManagerIdByManagerName(managerName);
+	}
+
 }

@@ -51,11 +51,11 @@ public class WorkerController {
 	private TaskService taskService;
 	@Autowired
 	private WorkerService workerService;
-	@Value("workerMark")
+	@Value("${workerMark}")
 	private int workerMark;
-	@Value("uploadReplay")
+	@Value("${uploadReplay}")
 	private String uploadReplay;
-	@Value("downReplay")
+	@Value("${downReplay}")
 	private String downReplay;
 
 	/**
