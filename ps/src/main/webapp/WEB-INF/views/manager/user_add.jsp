@@ -25,6 +25,7 @@
 		      <label for="username" class="col-sm-2 control-label">用户名：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
@@ -58,10 +59,29 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			var userOnly = false;
+			$("#username").blur(function(){
+				var user = $("#username").val();
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/checkUserName',
+					dataType:'json',
+					success:function(data){
+						var o = data.addUserReplay;
+						if(o ==1){
+							$(".help-block").css("color","red").text("用户名重复");
+						}else{
+							userOnly = true;
+							$(".help-block").css("color","green").text("用户名可用");
+						}
+					}
+				});
+			});
 			$("button[type=button]").click(function(){
 				var formName = $("#addUser");
 				var username = $("#username").val();
 				if(checkout.text.isempty(username,"用户名不能为空！")) return;
+				if(!userOnly)return;
 				var pwd1 = $("#password").val();
 				var pwd2 = $("#repassword").val();
 				if(checkout.text.isempty(pwd1,"密码不能为空！"))return;
