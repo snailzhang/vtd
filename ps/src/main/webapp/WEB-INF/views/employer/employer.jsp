@@ -35,8 +35,9 @@
 		</table>
 	</div>
 	<div class="container">
+		<h2>上传任务包</h2>
 		<form action="${contextPath}/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal">
-			<div class="form-group">
+			<div class="form-group" id="packUploadDiv">
 		      <label for="pack" class="col-sm-2 control-label">选择任务包：</label>
 		      <div class="col-sm-10">
 		         <input type="file" class="form-control" name="pack" id="pack" placeholder="请选择上传文件">
@@ -79,7 +80,12 @@
 				var formName = $("#addmanager");
 				var pack = $("#pack").val();
 				if(checkout.text.isempty(pack,"文件不能为空！")) return;
-				formName.submit();
+				if(checkout.file.fileType(pack,"zip","请上传zip格式文件！")){
+					formName.submit();
+				}else{
+					$("#pack").focus();
+					//$("#packUploadDiv").addClass("has-error has-feedback");
+				}
 				
 			});
 		});

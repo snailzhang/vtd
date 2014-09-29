@@ -16,6 +16,11 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
 <style type="text/css">
 	#downBtn,#upBtn{display:none;}
+	input[type=file]{
+		border:0;
+		padding:0;
+		box-shadow:none;
+	}
 </style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -39,9 +44,11 @@
 		</table>
 	</div>
 	<div class="container" id="downBtn">
+		
 		<a type="button" class="btn btn-lg btn-primary btn-block" href="${contextPath}/downTask">下载任务</a>
 	</div>
 	<div class="container" id="upBtn">
+		<h2>上传已完成的任务</h2>
 		<form action="${contextPath}/upTagAndTextGrid" method="post" id="upTagAndTextGrid" name="upTagAndTextGrid" role="form" class="form-horizontal">
 			<div class="form-group">
 		      <label for="pack" class="col-sm-2 control-label">TAG:</label>
@@ -98,10 +105,17 @@
 				}
 			});
 			$("button[type=button]").click(function(){
+				var tag = $("#TAG").val();
+				var textGrid = $("#TextGrid").val();
 				var formName = $("#upTagAndTextGrid");
-				
-				formName.submit();
-				
+				if(checkout.text.isempty(tag,"TAG文件不能为空！")) return;
+				if(checkout.text.isempty(textGrid,"TextGrid文件不能为空！")) return;
+				if(checkout.file.fileType(tag,"tag","请上传TAG格式文件！")){
+					if(checkout.file.fileType(textGrid,"textGrid","请上传TextGrid格式文件！")){
+						formName.submit();
+					}
+					
+				}
 			});
 		});
 	</script>
