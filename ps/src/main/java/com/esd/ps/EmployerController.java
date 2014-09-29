@@ -95,6 +95,7 @@ public class EmployerController {
 			pack pack = (pack) iterator.next();
 
 			packTrans packTrans = new packTrans();
+			packTrans.setPackId(pack.getPackId());
 			packTrans.setPackName(pack.getPackName());
 			packTrans.setPackStatus(pack.getPackStatus());
 			packTrans.setPackLockTime(pack.getPackLockTime());

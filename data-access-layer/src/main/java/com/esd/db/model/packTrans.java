@@ -2,7 +2,10 @@ package com.esd.db.model;
 
 public class packTrans {
 
-    private String packName;
+    private int packId;
+	
+	
+	private String packName;
 
     private Boolean packStatus;
 
@@ -41,5 +44,12 @@ public class packTrans {
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
+    public int getPackId() {
+		return packId;
+	}
+
+	public void setPackId(int packId) {
+		this.packId = packId;
+	}
 
 }

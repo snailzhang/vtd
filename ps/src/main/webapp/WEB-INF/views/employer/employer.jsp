@@ -65,7 +65,7 @@
 						$("tbody").append(
 							"<tr>"+
 								"<td>"+(i+1)+"</td>"+
-								"<td>"+item.packName+"</td>"+
+								"<td><a href='${contextPath}/packDetail?packId="+item.packId+"'>"+item.packName+"</a></td>"+
 								"<td>"+item.packStatus+"</td>"+
 								"<td>"+item.packLockTime+"</td>"+
 								"<td>"+item.createTime+"</td>"+
