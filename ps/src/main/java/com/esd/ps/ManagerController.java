@@ -114,12 +114,13 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkUserName", method = RequestMethod.POST)
 	public @ResponseBody
-	int checkUserName(String username) {
+	String checkUserName(String username) {
 		addUserReplay = 0;
 		if (userService.checkUserName(username) == 2) {
 			addUserReplay = 1;
 		}
-		return addUserReplay;
+		String json = "{\"addUserReplay\":" + addUserReplay + "}";
+		return json;
 	}
 
 	/**
@@ -167,12 +168,13 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkManagerName", method = RequestMethod.POST)
 	public @ResponseBody
-	int checkManagerName(String managerName) {
+	String checkManagerName(String managerName) {
 		addUserReplay = 0;
 		if (managerService.getCountManagerIdByManagerName(managerName) > 0) {
 			addUserReplay = 1;
 		}
-		return addUserReplay;
+		String json = "{\"addUserReplay\":" + addUserReplay + "}";
+		return json;
 	}
 
 	/**
@@ -213,12 +215,13 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkEmployerName", method = RequestMethod.POST)
 	public @ResponseBody
-	int checkEmployerName(String employerName) {
+	String checkEmployerName(String employerName) {
 		addUserReplay = 0;
 		if (employerService.getCountEmployerIdByEmployerName(employerName) > 0) {
 			addUserReplay = 1;
 		}
-		return addUserReplay;
+		String json = "{\"addUserReplay\":" + addUserReplay + "}";
+		return json;
 	}
 
 	/**
@@ -255,13 +258,14 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkWorker", method = RequestMethod.POST)
 	public @ResponseBody
-	int checkWorkerName(String temp, String value) {
-		if (workerService.checkAddWorker(temp, value) > 0){
+	String checkWorkerName(String temp, String value) {
+		if (workerService.checkAddWorker(temp, value) > 0) {
 			addUserReplay = 1;
-		}else{
+		} else {
 			addUserReplay = 0;
 		}
-		return addUserReplay;
+		String json="{\"addUserReplay\":"+addUserReplay+"}";
+		return json;
 	}
 
 	/**
@@ -270,18 +274,18 @@ public class ManagerController {
 	 * @param worker
 	 * @param session
 	 * @return 上传workerImage还没做
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	// ,@RequestParam(value = "workerImage", required = false) MultipartFile
 	// workerImage
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public ModelAndView addworker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage,worker worker, HttpSession session) throws IOException {
+	public ModelAndView addworker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, HttpSession session) throws IOException {
 		if (workerService.checkAddWorker("workerDisabilityCard", worker.getWorkerDisabilityCard()) == 0) {
 			if (workerService.checkAddWorker("workerIdCard", worker.getWorkerIdCard()) == 0) {
 				if (workerService.checkAddWorker("workerPhone", worker.getWorkerPhone().toString()) == 0) {
 					int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
 					worker.setUserId(userId);
-					if(!workerImage.isEmpty()){
+					if (!workerImage.isEmpty()) {
 						worker.setWorkerImage(workerImage.getBytes());
 					}
 					worker.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
@@ -289,19 +293,19 @@ public class ManagerController {
 					workerService.insertSelective(worker);
 					addUserReplay = 0;
 					session.removeAttribute("addusername");
-				}else{
-					addUserAddress="manager/worker_add";
-					addUserReplay=1;
+				} else {
+					addUserAddress = "manager/worker_add";
+					addUserReplay = 1;
 				}
-			}else{
-				addUserAddress="manager/worker_add";
-				addUserReplay=1;
+			} else {
+				addUserAddress = "manager/worker_add";
+				addUserReplay = 1;
 			}
-		}else{
-			addUserAddress="manager/worker_add";
-			addUserReplay=1;
+		} else {
+			addUserAddress = "manager/worker_add";
+			addUserReplay = 1;
 		}
-		
+
 		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
 	}
 }
