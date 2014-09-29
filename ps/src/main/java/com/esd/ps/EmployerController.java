@@ -134,13 +134,10 @@ public class EmployerController {
 		for (Iterator<task> iterator = taskService.getTaskByPackId(packId).iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();
-
-			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
-			taskTrans.setTaskMarkTime(task.getTaskMarkTime());
+			
 			taskTrans.setTaskName(task.getTaskName());
-			taskTrans.setTaskUploadTime(sdf.format(task.getTaskUploadTime()));
 			taskTrans.setTaskEffective(task.getTaskEffective());
-
+			taskTrans.setCreateTime(sdf.format(task.getCreateTime()));
 			list.add(taskTrans);
 		}
 		return list;

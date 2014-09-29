@@ -11,6 +11,8 @@ public class taskTrans {
     private String taskDownloadTime;
 
     private String taskUploadTime;
+    
+    private String createTime;
 
     public String getTaskName() {
         return taskName;
@@ -48,7 +50,15 @@ public class taskTrans {
         return taskUploadTime;
     }
 
-    public void setTaskUploadTime(String taskUploadTime) {
+    public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
+	public void setTaskUploadTime(String taskUploadTime) {
         this.taskUploadTime = taskUploadTime;
     }
 }
