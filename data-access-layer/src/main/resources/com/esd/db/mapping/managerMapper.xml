@@ -35,9 +35,21 @@
     from manager
     where manager_name = #{managerName,jdbcType=VARCHAR}
   </select>
+  <select id="selCountManagerIdByManagerName" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select 
+    count(manager_id) count
+    from manager
+    where manager_name = #{managerName,jdbcType=VARCHAR}
+  </select>
   <select id="selManagerIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select 
     manager_id
+    from manager
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+   <select id="selCountManagerIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select 
+    count(manager_id) count
     from manager
     where user_id = #{userId,jdbcType=VARCHAR}
   </select>

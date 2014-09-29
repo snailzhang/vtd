@@ -66,4 +66,10 @@ public class ManagerServiceImpl implements ManagerService {
 		return mm.selManagerIdByManagerName(managerName);
 	}
 
+	@Override
+	public int getCountManagerIdByManagerName(String managerName) {
+		
+		return mm.selCountManagerIdByManagerName(managerName);
+	}
+
 }

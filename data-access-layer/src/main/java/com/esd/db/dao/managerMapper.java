@@ -20,6 +20,10 @@ public interface managerMapper {
     
     int selManagerIdByUserId(Integer userId);
     
+    int selCountManagerIdByUserId(Integer userId);
+    
+    int selCountManagerIdByManagerName(String managerName);
+    
     List<manager> selAllManagers();
 
     int updateByPrimaryKeySelective(manager record);

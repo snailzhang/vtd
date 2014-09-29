@@ -17,6 +17,10 @@ public interface employerMapper {
     int selEmployerIdByEmployerName(String employerName);
     
     int selEmployerIdByUserId(Integer userId);
+    
+    int selCountEmployerIdByUserId(Integer userId);
+    
+    int selCountEmployerIdByEmployerName(String employerName);
 
     int updateByPrimaryKeySelective(employer record);
 

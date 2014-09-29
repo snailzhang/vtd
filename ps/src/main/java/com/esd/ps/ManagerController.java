@@ -103,7 +103,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.GET)
 	public ModelAndView addUserGet() {
-		return new ModelAndView("redirect: manager/user_add");
+		return new ModelAndView("manager/user_add");
 	}
 
 	/**
@@ -144,6 +144,7 @@ public class ManagerController {
 			user.setUserStatus(true);
 			user.setPassword(password);
 			user.setUsertype(usertype);
+			user.setCreateMethod("create");
 			user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 			if (replay == 0) {
 				userService.insertSelective(user);
@@ -168,7 +169,7 @@ public class ManagerController {
 	public @ResponseBody
 	int checkManagerName(String managerName) {
 		addUserReplay = 0;
-		if (managerService.getManagerIdByManagerName(managerName) > 0) {
+		if (managerService.getCountManagerIdByManagerName(managerName) > 0) {
 			addUserReplay = 1;
 		}
 		return addUserReplay;
@@ -183,7 +184,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
 	public ModelAndView addmanager(String managerName, HttpSession session) {
-		if (managerService.getManagerIdByManagerName(managerName) > 0) {
+		if (managerService.getCountManagerIdByManagerName(managerName) > 0) {
 			addUserReplay = 1;
 			addUserAddress = "manager/manager_add";
 		} else {
@@ -214,7 +215,7 @@ public class ManagerController {
 	public @ResponseBody
 	int checkEmployerName(String employerName) {
 		addUserReplay = 0;
-		if (employerService.getEmployerIdByEmployerName(employerName) > 0) {
+		if (employerService.getCountEmployerIdByEmployerName(employerName) > 0) {
 			addUserReplay = 1;
 		}
 		return addUserReplay;
@@ -229,7 +230,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
 	public ModelAndView addemployer(String employerName, HttpSession session) {
-		if (employerService.getEmployerIdByEmployerName(employerName) > 0) {
+		if (employerService.getCountEmployerIdByEmployerName(employerName) > 0) {
 			addUserReplay = 1;
 			addUserAddress = "manager/employer_add";
 		} else {

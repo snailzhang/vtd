@@ -35,9 +35,21 @@
     from employer
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
+  <select id="selCountEmployerIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select 
+    count(employer_id) count
+    from employer
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
   <select id="selEmployerIdByEmployerName" resultType="java.lang.Integer" parameterType="java.lang.String" >
     select 
     employer_id
+    from employer
+    where employer_name = #{employerName,jdbcType=VARCHAR}
+  </select>
+    <select id="selCountEmployerIdByEmployerName" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+    count(employer_id) count
     from employer
     where employer_name = #{employerName,jdbcType=VARCHAR}
   </select>

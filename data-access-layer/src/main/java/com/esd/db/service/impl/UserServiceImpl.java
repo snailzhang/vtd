@@ -82,17 +82,19 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public int checkUserName(String userName) {
-		int userType = um.selUserTypeByUserName(userName);
-		int userId = um.selUserIdByUserName(userName);
-		int replay = 0;
+		int userType=0,userId=0,replay = 0;
+		if(um.selCountByUserName(userName)>0){
+			userType = um.selUserTypeByUserName(userName);
+			userId = um.selUserIdByUserName(userName);
+		}
 		if (userType == 1) {
-			if (manager.selManagerIdByUserId(userId) > 0) {
+			if (manager.selCountManagerIdByUserId(userId) > 0) {
 				replay = 2;
 			} else {
 				replay = 1;
 			}
 		} else if (userType == 2) {
-			if (employer.selEmployerIdByUserId(userId) > 0) {
+			if (employer.selCountEmployerIdByUserId(userId) > 0) {
 				replay = 2;
 			} else {
 				replay = 1;
@@ -100,7 +102,7 @@ public class UserServiceImpl implements UserService {
 		} else if (userType == 3) {
 
 		} else if (userType == 4) {
-			if (worker.selWorkerIdByUserId(userId) > 0) {
+			if (worker.selCountWorkerIdByUserId(userId) > 0) {
 				replay = 2;
 			} else {
 				replay = 1;

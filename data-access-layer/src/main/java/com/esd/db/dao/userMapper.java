@@ -21,6 +21,8 @@ public interface userMapper {
     int selUserTypeByUserName(String username);
     
     int getMaxUserId();
+    
+    int selCountByUserName(String username);
 
     int updateByPrimaryKeySelective(user record);
 

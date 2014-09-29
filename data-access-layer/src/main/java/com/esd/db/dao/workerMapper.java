@@ -20,6 +20,8 @@ public interface workerMapper {
     
     int selWorkerIdByWorkerDisabilityCard(String workerDisabilityCard);
 
+    int selCountWorkerIdByUserId(Integer userid);
+    
     int updateByPrimaryKeySelective(worker record);
 
     int updateByPrimaryKeyWithBLOBs(worker record);

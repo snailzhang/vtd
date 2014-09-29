@@ -17,6 +17,8 @@ public interface ManagerService {
     
     List<manager> selAllManagers();
     
+    int getCountManagerIdByManagerName(String managerName);
+    
     int getManagerIdByManagerName(String managerName);
 
     int updateByPrimaryKeySelective(manager record);

@@ -21,4 +21,6 @@ public interface EmployerService {
     int updateByPrimaryKeySelective(employer record);
 
     int updateByPrimaryKey(employer record);
+    
+    int getCountEmployerIdByEmployerName(String employerName);
 }
