@@ -81,6 +81,8 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	public @ResponseBody String workerPost(HttpSession session) throws JsonProcessingException {
+		String uploadTime;
+		double taskMarkTime;
 		int userId = Integer.parseInt(session.getAttribute("loginUserId").toString());
 		int workerId = workerService.selectByUserId(userId);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -90,15 +92,26 @@ public class WorkerController {
 			taskTrans taskTrans = new taskTrans();
 
 			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
-			taskTrans.setTaskMarkTime(task.getTaskMarkTime());
+			if (task.getTaskMarkTime()==null){
+				taskMarkTime=0;
+			}else{
+				workerMark = 1;
+				taskMarkTime=task.getTaskMarkTime();
+			}
+			
+			taskTrans.setTaskMarkTime(taskMarkTime);
 			taskTrans.setTaskName(task.getTaskName());
-			taskTrans.setTaskUploadTime(sdf.format(task.getTaskUploadTime()));
+			
+			if(task.getTaskUploadTime()==null){
+				uploadTime="";
+			}else{
+				uploadTime=sdf.format(task.getTaskUploadTime());
+			}
+			taskTrans.setTaskUploadTime(uploadTime);
 			taskTrans.setTaskEffective(task.getTaskEffective());
 
 			list.add(taskTrans);
-			if (StringUtils.isEmpty(task.getTaskMarkTime().toString())){
-				workerMark = 1;
-				}
+			
 		}
 		ObjectMapper objectMapper=new ObjectMapper();  
 		String json="{\"workerMark\":"+workerMark+",\"list\":"+objectMapper.writeValueAsString(list)+"}";
