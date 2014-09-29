@@ -136,6 +136,7 @@ public class ManagerController {
 		} else {
 			page = userTypeService.seluserDesEnglish(usertype);
 			// 新增user基本值存入session
+			//RedirectAttributes redirectAttributes换这个替换session
 			session.setAttribute("addusername", username);
 			session.setAttribute("addpassword", password);
 			session.setAttribute("addusertype", usertype);

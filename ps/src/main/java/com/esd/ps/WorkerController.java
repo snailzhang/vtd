@@ -75,8 +75,7 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
-	public @ResponseBody
-	List<taskTrans> workerPost(HttpSession session) {
+	public @ResponseBody String workerPost(HttpSession session) {
 		int userId = Integer.parseInt(session.getAttribute("loginUserId").toString());
 		int workerId = workerService.selectByUserId(userId);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -92,11 +91,12 @@ public class WorkerController {
 			taskTrans.setTaskEffective(task.getTaskEffective());
 
 			list.add(taskTrans);
-			if (StringUtils.isEmpty(task.getTaskMarkTime().toString()))
+			if (StringUtils.isEmpty(task.getTaskMarkTime().toString())){
 				workerMark = 1;
+				}
 		}
-		session.setAttribute("workerMark", workerMark);
-		return list;
+		String json="{\"workerMark\":"+workerMark+",\"list\":"+list+"}";
+		return json;
 	}
 
 	/**
