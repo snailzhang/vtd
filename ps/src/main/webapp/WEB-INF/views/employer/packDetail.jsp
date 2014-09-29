@@ -27,9 +27,8 @@
 				<tr>
 					<th>序号</th>
 					<th>任务名称</th>
-					<th>任务时长</th>
-					<th>下载时间</th>
 					<th>上传时间</th>
+					<th>检测结果</th>
 				</tr>
 			</thead>
 			<tbody></tbody>
@@ -48,9 +47,8 @@
 							"<tr>"+
 								"<td>"+(i+1)+"</td>"+
 								"<td>"+item.taskName+"</td>"+
-								"<td>"+item.taskMarkTime+"</td>"+
-								"<td>"+item.taskDownloadTime+"</td>"+
-								"<td>"+item.taskUploadTime+"</td>"+
+								"<td>"+item.taskCreateTime+"</td>"+
+								"<td>"+item.taskEffective+"</td>"+
 							"</tr>"
 						);
 					});
