@@ -56,7 +56,7 @@ public class ManagerController {
 	@Autowired
 	private WorkerService workerService;
 	@Value("${addUserReplay}")
-	private String addUserReplay;
+	private int addUserReplay;
 	@Value("${addUserAddress}")
 	private String addUserAddress;
 
@@ -114,10 +114,10 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkUserName", method = RequestMethod.POST)
 	public @ResponseBody
-	String checkUserName(String username) {
-		addUserReplay = "恭喜您,此用户名可用";
+	int checkUserName(String username) {
+		addUserReplay = 0;
 		if (userService.checkUserName(username) == 2) {
-			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserReplay = 1;
 		}
 		return addUserReplay;
 	}
@@ -137,7 +137,7 @@ public class ManagerController {
 		int replay = userService.checkUserName(username);
 		if (replay == 2) {
 			page = "user";
-			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserReplay = 1;
 		} else {
 			user user = new user();
 			user.setUsername(username);
@@ -151,7 +151,7 @@ public class ManagerController {
 				user.setUserId(userService.selUserIdByUserName(username));
 				userService.updateByPrimaryKeySelective(user);
 			}
-
+			addUserReplay = 0;
 			page = userTypeService.seluserDesEnglish(usertype);
 			session.setAttribute("addusername", username);
 		}
@@ -166,10 +166,10 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkManagerName", method = RequestMethod.POST)
 	public @ResponseBody
-	String checkManagerName(String managerName) {
-		addUserReplay = "恭喜您,此用户名可用";
+	int checkManagerName(String managerName) {
+		addUserReplay = 0;
 		if (managerService.getManagerIdByManagerName(managerName) > 0) {
-			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserReplay = 1;
 		}
 		return addUserReplay;
 	}
@@ -184,10 +184,10 @@ public class ManagerController {
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
 	public ModelAndView addmanager(String managerName, HttpSession session) {
 		if (managerService.getManagerIdByManagerName(managerName) > 0) {
-			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserReplay = 1;
 			addUserAddress = "manager/manager_add";
 		} else {
-			addUserReplay = "新增管理员成功!";
+			addUserReplay = 0;
 
 			manager manager = new manager();
 
@@ -212,10 +212,10 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkEmployerName", method = RequestMethod.POST)
 	public @ResponseBody
-	String checkEmployerName(String employerName) {
-		addUserReplay = "恭喜您,此用户名可用";
+	int checkEmployerName(String employerName) {
+		addUserReplay = 0;
 		if (employerService.getEmployerIdByEmployerName(employerName) > 0) {
-			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserReplay = 1;
 		}
 		return addUserReplay;
 	}
@@ -230,7 +230,7 @@ public class ManagerController {
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
 	public ModelAndView addemployer(String employerName, HttpSession session) {
 		if (employerService.getEmployerIdByEmployerName(employerName) > 0) {
-			addUserReplay = "此用户名已被使用,请重新输入!";
+			addUserReplay = 1;
 			addUserAddress = "manager/employer_add";
 		} else {
 			employer employer = new employer();
@@ -240,7 +240,7 @@ public class ManagerController {
 			employer.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 
 			employerService.insertSelective(employer);
-			addUserReplay = "新增发包商成功!!!";
+			addUserReplay = 0;
 			session.removeAttribute("addusername");
 		}
 		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
@@ -254,9 +254,12 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkWorker", method = RequestMethod.POST)
 	public @ResponseBody
-	String checkWorkerName(String temp, String value) {
-		if (workerService.checkAddWorker(temp, value) > 0)
-			addUserReplay = "号码重复,请重新输入!!!";
+	int checkWorkerName(String temp, String value) {
+		if (workerService.checkAddWorker(temp, value) > 0){
+			addUserReplay = 1;
+		}else{
+			addUserReplay = 0;
+		}
 		return addUserReplay;
 	}
 
@@ -283,19 +286,19 @@ public class ManagerController {
 					worker.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 
 					workerService.insertSelective(worker);
-					addUserReplay = "新增工作员成功!!!";
+					addUserReplay = 0;
 					session.removeAttribute("addusername");
 				}else{
 					addUserAddress="manager/worker_add";
-					addUserReplay="手机号重复,请重新输入!!!";
+					addUserReplay=1;
 				}
 			}else{
 				addUserAddress="manager/worker_add";
-				addUserReplay="身份证号重复,请重新输入!!!";
+				addUserReplay=1;
 			}
 		}else{
 			addUserAddress="manager/worker_add";
-			addUserReplay="残疾人证号重复,请重新输入!!!";
+			addUserReplay=1;
 		}
 		
 		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
