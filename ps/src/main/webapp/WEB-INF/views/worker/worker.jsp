@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<% 
-int workerMark = (Integer)session.getAttribute("workerMark");
-%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -17,6 +14,9 @@ int workerMark = (Integer)session.getAttribute("workerMark");
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
+<style type="text/css">
+	#downBtn,#upBtn{display:none;}
+</style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
@@ -38,40 +38,31 @@ int workerMark = (Integer)session.getAttribute("workerMark");
 			<tbody></tbody>
 		</table>
 	</div>
-		<% 
-			if(workerMark == 0){
-				%>
-				<div class="container">
-					<a type="button" class="btn btn-lg btn-primary btn-block" href="${contextPath}/downTask">下载任务</a>
-				</div>
-				
-				<%
-			}else{
-				%>
-				<div class="container">
-					<form action="${contextPath}/upTagAndTextGrid" method="post" id="upTagAndTextGrid" name="upTagAndTextGrid" role="form" class="form-horizontal">
-						<div class="form-group">
-					      <label for="pack" class="col-sm-2 control-label">TAG:</label>
-					      <div class="col-sm-10">
-					         <input type="file" class="form-control" name="TAG" id="TAG" placeholder="请选择上传TAG文件">
-					      </div>
-					   </div>
-					   <div class="form-group">
-					      <label for="TextGrid" class="col-sm-2 control-label">TextGrid:</label>
-					      <div class="col-sm-10">
-					         <input type="file" class="form-control" name="TextGrid" id="TextGrid" placeholder="请选择上传TextGrid文件">
-					      </div>
-					   </div>
-					   <div class="form-group">
-					      <div class="col-sm-offset-2 col-sm-10">
-					         <button type="button" class="btn btn-default">上传文件</button>
-					      </div>
-					   </div>
-					</form>
-				</div>
-				<%
-			}
-		%>
+	<div class="container" id="downBtn">
+		<a type="button" class="btn btn-lg btn-primary btn-block" href="${contextPath}/downTask">下载任务</a>
+	</div>
+	<div class="container" id="upBtn">
+		<form action="${contextPath}/upTagAndTextGrid" method="post" id="upTagAndTextGrid" name="upTagAndTextGrid" role="form" class="form-horizontal">
+			<div class="form-group">
+		      <label for="pack" class="col-sm-2 control-label">TAG:</label>
+		      <div class="col-sm-10">
+		         <input type="file" class="form-control" name="TAG" id="TAG" placeholder="请选择上传TAG文件">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <label for="TextGrid" class="col-sm-2 control-label">TextGrid:</label>
+		      <div class="col-sm-10">
+		         <input type="file" class="form-control" name="TextGrid" id="TextGrid" placeholder="请选择上传TextGrid文件">
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <div class="col-sm-offset-2 col-sm-10">
+		         <button type="button" class="btn btn-default">上传文件</button>
+		      </div>
+		   </div>
+		</form>
+	</div>
+		
 			
 	
 	<script type="text/javascript">
@@ -82,7 +73,9 @@ int workerMark = (Integer)session.getAttribute("workerMark");
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");
-					$.each(data,function(i,item){
+					var workerMark = data.workerMark;
+					
+					$.each(data.list,function(i,item){
 						$("tbody").append(
 							"<tr>"+
 								"<td>"+(i+1)+"</td>"+
@@ -93,6 +86,14 @@ int workerMark = (Integer)session.getAttribute("workerMark");
 							"</tr>"
 						);
 					});
+					
+					if(workerMark == 0){
+						$("#downBtn").show();
+						$("#upBtn").hide();
+					}else{
+						$("#downBtn").hide();
+						$("#upBtn").show();
+					}
 					
 				}
 			});
