@@ -28,6 +28,7 @@
 					<th>姓名</th>
 					<th>用户组</th>
 					<th>创建时间</th>
+					<th>用户状态</th>
 				</tr>
 			</thead>
 			<tbody></tbody>
@@ -47,14 +48,15 @@
 				success:function(data){
 					$("tbody").append("");
 					$.each(data,function(i,item){
-						
-						
+						var status = "不可用";
+						if(item.userStatus)status = "可用";
 						$("tbody").append(
 							"<tr>"+
 								"<td>"+(i+1)+"</td>"+
 								"<td>"+item.username+"</td>"+
 								"<td>"+item.usertypeenglish+"</td>"+
 								"<td>"+item.createTime+"</td>"+
+								"<td>"+status+"</td>"+
 							"</tr>"
 						);
 					});
