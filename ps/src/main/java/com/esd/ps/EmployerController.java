@@ -128,6 +128,7 @@ public class EmployerController {
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	public @ResponseBody
 	List<taskTrans> detailpagePost(HttpSession session) {
+		String taskEffective = "";
 		int packId = Integer.parseInt(session.getAttribute("packId").toString());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		List<taskTrans> list = new ArrayList<taskTrans>();
@@ -136,7 +137,14 @@ public class EmployerController {
 			taskTrans taskTrans = new taskTrans();
 			
 			taskTrans.setTaskName(task.getTaskName());
-			taskTrans.setTaskEffective(task.getTaskEffective());
+			if(task.getTaskEffective()==null){
+				taskEffective="还没检测";
+			}else if(task.getTaskEffective()==true){
+				taskEffective="有效";
+			}else if(task.getTaskEffective()==false){
+				taskEffective="无效";
+			}
+			taskTrans.setTaskEffective(taskEffective);
 			taskTrans.setCreateTime(sdf.format(task.getCreateTime()));
 			list.add(taskTrans);
 		}

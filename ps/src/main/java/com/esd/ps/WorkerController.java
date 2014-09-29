@@ -81,7 +81,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	public @ResponseBody String workerPost(HttpSession session) throws JsonProcessingException {
-		String uploadTime;
+		String uploadTime,taskEffective="";
 		double taskMarkTime;
 		int userId = Integer.parseInt(session.getAttribute("loginUserId").toString());
 		int workerId = workerService.selectByUserId(userId);
@@ -108,7 +108,14 @@ public class WorkerController {
 				uploadTime=sdf.format(task.getTaskUploadTime());
 			}
 			taskTrans.setTaskUploadTime(uploadTime);
-			taskTrans.setTaskEffective(task.getTaskEffective());
+			if(task.getTaskEffective()==null){
+				taskEffective="还没检测";
+			}else if(task.getTaskEffective()==true){
+				taskEffective="有效";
+			}else if(task.getTaskEffective()==false){
+				taskEffective="无效";
+			}
+			taskTrans.setTaskEffective(taskEffective);
 
 			list.add(taskTrans);
 			
