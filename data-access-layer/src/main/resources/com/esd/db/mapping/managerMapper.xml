@@ -35,6 +35,12 @@
     from manager
     where manager_name = #{managerName,jdbcType=VARCHAR}
   </select>
+  <select id="selManagerIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select 
+    manager_id
+    from manager
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
   <select id="selAllManagers"  resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

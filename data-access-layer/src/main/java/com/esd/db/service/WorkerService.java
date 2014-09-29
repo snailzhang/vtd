@@ -1,6 +1,5 @@
 package com.esd.db.service;
 
-import java.util.List;
 
 import com.esd.db.model.worker;
 
@@ -14,13 +13,13 @@ public interface WorkerService {
 
     worker selectByPrimaryKey(Integer workerId);
     
-    int selectByUserId(Integer userid);
-    
-   // List<worker>selWorkers();
+    int selWorkerIdByUserId(Integer userid);
 
     int updateByPrimaryKeySelective(worker record);
 
     int updateByPrimaryKeyWithBLOBs(worker record);
 
     int updateByPrimaryKey(worker record);
+    
+    int checkAddWorker(String temp,String value);
 }

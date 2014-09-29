@@ -84,7 +84,7 @@ public class WorkerController {
 		String uploadTime,taskEffective="";
 		double taskMarkTime;
 		int userId = Integer.parseInt(session.getAttribute("loginUserId").toString());
-		int workerId = workerService.selectByUserId(userId);
+		int workerId = workerService.selWorkerIdByUserId(userId);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		for (Iterator<task> iterator = taskService.selAllTaskByWorkerId(workerId).iterator(); iterator.hasNext();) {

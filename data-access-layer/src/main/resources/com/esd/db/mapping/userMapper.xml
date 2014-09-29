@@ -41,6 +41,12 @@
     from user
     where username = #{username,jdbcType=VARCHAR} 
   </select>
+  <select id="selUserTypeByUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select 
+    usertype
+    from user
+    where username = #{username,jdbcType=VARCHAR} 
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user
     where user_id = #{userId,jdbcType=INTEGER}

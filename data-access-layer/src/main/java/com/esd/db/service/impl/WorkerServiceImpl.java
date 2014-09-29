@@ -1,7 +1,5 @@
 package com.esd.db.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,8 +58,27 @@ public class WorkerServiceImpl implements WorkerService {
 		return wm.updateByPrimaryKey(record);
 	}
 
-	public int selectByUserId(Integer userid) {
-		return wm.selectByUserId(userid);
+	public int selWorkerIdByUserId(Integer userid) {
+		return wm.selWorkerIdByUserId(userid);
+	}
+	/**
+	 * 验证身份证号,残疾人证号,手机号是否重复,
+	 * 返回1:身份证号重复,2:残疾人证号重复,3:手机号重复
+	 */
+	@Override
+	public int checkAddWorker(String temp, String value) {
+		int replay=0;
+		if (temp.equals("workerIdCard")) {
+			if(wm.selWorkerIdByWorkerIdCard(value)>0)
+				replay=1;
+		}else if(temp.equals("workerDisabilityCard")){
+			if(wm.selWorkerIdByWorkerDisabilityCard(value)>0)
+				replay=2;
+		}else if(temp.equals("workerPhone")){
+			if(wm.selWorkerIdByWorkerPhone(Integer.parseInt(value))>0)
+				replay=3;
+		}
+		return replay;
 	}
 
 }

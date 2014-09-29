@@ -10,9 +10,9 @@ public class worker {
 
     private String workerRealName;
 
-    private Integer workerIdCard;
+    private String workerIdCard;
 
-    private Integer workerDisabilityCard;
+    private String workerDisabilityCard;
 
     private Integer workerPhone;
 
@@ -62,19 +62,19 @@ public class worker {
 		this.workerRealName = workerRealName;
 	}
 
-	public Integer getWorkerIdCard() {
+	public String getWorkerIdCard() {
 		return workerIdCard;
 	}
 
-	public void setWorkerIdCard(Integer workerIdCard) {
+	public void setWorkerIdCard(String workerIdCard) {
 		this.workerIdCard = workerIdCard;
 	}
 
-	public Integer getWorkerDisabilityCard() {
+	public String getWorkerDisabilityCard() {
 		return workerDisabilityCard;
 	}
 
-	public void setWorkerDisabilityCard(Integer workerDisabilityCard) {
+	public void setWorkerDisabilityCard(String workerDisabilityCard) {
 		this.workerDisabilityCard = workerDisabilityCard;
 	}
 

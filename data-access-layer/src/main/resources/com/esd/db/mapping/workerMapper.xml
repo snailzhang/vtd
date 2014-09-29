@@ -5,8 +5,8 @@
     <id column="worker_id" property="workerId" jdbcType="INTEGER" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="worker_real_name" property="workerRealName" jdbcType="VARCHAR" />
-    <result column="worker_id_card" property="workerIdCard" jdbcType="INTEGER" />
-    <result column="worker_disability_card" property="workerDisabilityCard" jdbcType="INTEGER" />
+    <result column="worker_id_card" property="workerIdCard" jdbcType="VARCHAR" />
+    <result column="worker_disability_card" property="workerDisabilityCard" jdbcType="VARCHAR" />
     <result column="worker_phone" property="workerPhone" jdbcType="INTEGER" />
     <result column="worker_mac" property="workerMac" jdbcType="VARCHAR" />
     <result column="worker_bank_card" property="workerBankCard" jdbcType="INTEGER" />
@@ -38,11 +38,29 @@
     from worker
     where worker_id = #{workerId,jdbcType=INTEGER}
   </select>
-    <select id="selectByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    <select id="selWorkerIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select 
 	worker_id
     from worker
     where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selWorkerIdByWorkerIdCard" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+	worker_id
+    from worker
+    where worker_id_card = #{workerIdCard,jdbcType=VARCHAR}
+  </select>
+   <select id="selWorkerIdByWorkerDisabilityCard" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select 
+	worker_id
+    from worker
+    where worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR}
+  </select>
+     <select id="selWorkerIdByWorkerPhone" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select 
+	worker_id
+    from worker
+    where worker_phone = #{workerPhone,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from worker
@@ -56,7 +74,7 @@
       update_id, update_time, update_method, 
       version, worker_image)
     values (#{workerId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{workerRealName,jdbcType=VARCHAR}, 
-      #{workerIdCard,jdbcType=INTEGER}, #{workerDisabilityCard,jdbcType=INTEGER}, #{workerPhone,jdbcType=INTEGER}, 
+      #{workerIdCard,jdbcType=VARCHAR}, #{workerDisabilityCard,jdbcType=VARCHAR}, #{workerPhone,jdbcType=INTEGER}, 
       #{workerMac,jdbcType=VARCHAR}, #{workerBankCard,jdbcType=INTEGER}, #{workerPaypal,jdbcType=VARCHAR}, 
       #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR}, 
       #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}, 
@@ -133,10 +151,10 @@
         #{workerRealName,jdbcType=VARCHAR},
       </if>
       <if test="workerIdCard != null" >
-        #{workerIdCard,jdbcType=INTEGER},
+        #{workerIdCard,jdbcType=VARCHAR},
       </if>
       <if test="workerDisabilityCard != null" >
-        #{workerDisabilityCard,jdbcType=INTEGER},
+        #{workerDisabilityCard,jdbcType=VARCHAR},
       </if>
       <if test="workerPhone != null" >
         #{workerPhone,jdbcType=INTEGER},
@@ -191,10 +209,10 @@
         worker_real_name = #{workerRealName,jdbcType=VARCHAR},
       </if>
       <if test="workerIdCard != null" >
-        worker_id_card = #{workerIdCard,jdbcType=INTEGER},
+        worker_id_card = #{workerIdCard,jdbcType=VARCHAR},
       </if>
       <if test="workerDisabilityCard != null" >
-        worker_disability_card = #{workerDisabilityCard,jdbcType=INTEGER},
+        worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
       </if>
       <if test="workerPhone != null" >
         worker_phone = #{workerPhone,jdbcType=INTEGER},
@@ -244,8 +262,8 @@
     update worker
     set user_id = #{userId,jdbcType=INTEGER},
       worker_real_name = #{workerRealName,jdbcType=VARCHAR},
-      worker_id_card = #{workerIdCard,jdbcType=INTEGER},
-      worker_disability_card = #{workerDisabilityCard,jdbcType=INTEGER},
+      worker_id_card = #{workerIdCard,jdbcType=VARCHAR},
+      worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
       worker_phone = #{workerPhone,jdbcType=INTEGER},
       worker_mac = #{workerMac,jdbcType=VARCHAR},
       worker_bank_card = #{workerBankCard,jdbcType=INTEGER},
@@ -269,8 +287,8 @@
     update worker
     set user_id = #{userId,jdbcType=INTEGER},
       worker_real_name = #{workerRealName,jdbcType=VARCHAR},
-      worker_id_card = #{workerIdCard,jdbcType=INTEGER},
-      worker_disability_card = #{workerDisabilityCard,jdbcType=INTEGER},
+      worker_id_card = #{workerIdCard,jdbcType=VARCHAR},
+      worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
       worker_phone = #{workerPhone,jdbcType=INTEGER},
       worker_mac = #{workerMac,jdbcType=VARCHAR},
       worker_bank_card = #{workerBankCard,jdbcType=INTEGER},

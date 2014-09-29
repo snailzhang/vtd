@@ -12,7 +12,13 @@ public interface workerMapper {
 
     worker selectByPrimaryKey(Integer workerId);
     
-    int selectByUserId(Integer userid);
+    int selWorkerIdByUserId(Integer userid);
+    
+    int selWorkerIdByWorkerPhone(Integer workerPhone);
+    
+    int selWorkerIdByWorkerIdCard(String workerIdCard);
+    
+    int selWorkerIdByWorkerDisabilityCard(String workerDisabilityCard);
 
     int updateByPrimaryKeySelective(worker record);
 

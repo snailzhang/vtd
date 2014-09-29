@@ -18,6 +18,8 @@ public interface userMapper {
     
     int selUserIdByUserName(String username);
     
+    int selUserTypeByUserName(String username);
+    
     int getMaxUserId();
 
     int updateByPrimaryKeySelective(user record);
