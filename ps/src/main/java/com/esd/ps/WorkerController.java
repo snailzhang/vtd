@@ -32,11 +32,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.alibaba.fastjson.JSONArray;
 import com.esd.db.model.task;
 import com.esd.db.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 工作者
@@ -73,9 +77,10 @@ public class WorkerController {
 	 * 
 	 * @param loginrName
 	 * @return
+	 * @throws JsonProcessingException 
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
-	public @ResponseBody String workerPost(HttpSession session) {
+	public @ResponseBody String workerPost(HttpSession session) throws JsonProcessingException {
 		int userId = Integer.parseInt(session.getAttribute("loginUserId").toString());
 		int workerId = workerService.selectByUserId(userId);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -95,7 +100,8 @@ public class WorkerController {
 				workerMark = 1;
 				}
 		}
-		String json="{\"workerMark\":"+workerMark+",\"list\":"+list+"}";
+		ObjectMapper objectMapper=new ObjectMapper();  
+		String json="{\"workerMark\":"+workerMark+",\"list\":"+objectMapper.writeValueAsString(list)+"}";
 		return json;
 	}
 
