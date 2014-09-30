@@ -38,13 +38,14 @@
 		      <label for="repassword" class="col-sm-2 control-label">重复输入密码：</label>
 		      <div class="col-sm-10">
 		         <input type="password" class="form-control" name="repassword" id="repassword" placeholder="请输入密码">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="usertype" class="col-sm-2 control-label">选择用户类别：</label>
 		      <div class="col-sm-10">
 		         <select class="form-control" id="usertype" name="usertype">
-			         <option value="1">管理员</option>
+			         <option value="1" checked="checked">管理员</option>
 			         <option value="2">发包商</option>
 			         <option value="4">工作者</option>
 			      </select>
@@ -52,7 +53,7 @@
 		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="button" class="btn btn-default">添加</button>
+		         <button type="button" disabled="disabled" class="btn btn-default">添加</button>
 		      </div>
 		   </div>
 		</form>
@@ -60,36 +61,58 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			var userOnly = false;
+			var pwdReady = false;
+			checkSubBtnStaus = function(){
+				if(userOnly&&pwdReady){
+					$("button").removeAttr("disabled");
+				}else{
+					$("button").attr("disabled","disabled");
+				}
+			};
 			$("#username").blur(function(){
-				var user = $("#username").val();
+				var user = $("#username");
+				var userValue = user.val();
+				if(checkout.text.isempty(user,"用户名不能为空！")){
+					userOnly = false;
+					return;	
+				}
 				$.ajax({
-					type:'POST',
+					type:'get',
 					url:'${contextPath}/checkUserName',
-					dataType:'json',
+					data:"username="+userValue,
+					dataType:'text',
 					success:function(data){
-						var o = data.addUserReplay;
-						if(o ==1){
-							$(".help-block").css("color","red").text("用户名重复");
+						if(data == "true"){
+							userOnly = false;
+							user.next(".help-block").css("color","red").text("用户名重复");
 						}else{
 							userOnly = true;
-							$(".help-block").css("color","green").text("用户名可用");
+							user.next(".help-block").css("color","green").text("用户名可用");
 						}
+						checkSubBtnStaus();
 					}
 				});
+				
+			});
+			$("#repassword").blur(function(){
+				var pwd1 = $("#password").val();
+				var pwd2Obj = $("#repassword");
+				var pwd2 = pwd2Obj.val();
+				if(checkout.text.isempty(pwd2Obj,"密码不能为空！")){
+					pwdReady = false;
+					return;
+				};
+				if(pwd1 == pwd2){
+					pwdReady = true;
+				}else{
+					pwdReady = false;
+					pwd2Obj.next(".help-block").css("color","red").text("密码不一致");
+				}
+				checkSubBtnStaus();
 			});
 			$("button[type=button]").click(function(){
 				var formName = $("#addUser");
-				var username = $("#username").val();
-				if(checkout.text.isempty(username,"用户名不能为空！")) return;
-				if(!userOnly)return;
-				var pwd1 = $("#password").val();
-				var pwd2 = $("#repassword").val();
-				if(checkout.text.isempty(pwd1,"密码不能为空！"))return;
-				if(pwd1 == pwd2){
-					formName.submit();
-				}else{
-					alert("密码不一致");
-				}
+				formName.submit();
 			});
 		});
 	</script>
