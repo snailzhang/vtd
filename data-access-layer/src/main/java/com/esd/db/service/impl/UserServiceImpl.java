@@ -111,4 +111,10 @@ public class UserServiceImpl implements UserService {
 		return replay;
 	}
 
+	@Override
+	public user selAllUsersByUserName(String username) {
+		
+		return um.selAllUsersByUserName(username);
+	}
+
 }

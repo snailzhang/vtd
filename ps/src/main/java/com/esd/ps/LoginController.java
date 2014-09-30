@@ -32,9 +32,9 @@ import com.esd.db.service.UserTypeService;
 public class LoginController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@Autowired
-	private UserService us;
+	private UserService userService;
 	@Autowired
-	private UserTypeService uts;
+	private UserTypeService userTypeService;
 	@Value("${loginFail}")
 	// 配置文件的key
 	private String replay;
@@ -46,9 +46,39 @@ public class LoginController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ModelAndView loginGet() {
+	@RequestMapping(value = "/security/index", method = RequestMethod.GET)
+	public ModelAndView index() {
 		return new ModelAndView("login");
+	}
+
+	/**
+	 * 退出页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/security/quit", method = RequestMethod.GET)
+	public ModelAndView quitGet(HttpSession session) {
+		session.removeAttribute(Constants.USER_ID);
+		return new ModelAndView("login");
+	}
+
+	/**
+	 * 验证用户名是否存在
+	 * 
+	 * @param username
+	 * @return
+	 */
+	@RequestMapping(value = "/checkUserName", method = RequestMethod.GET)
+	public @ResponseBody
+	boolean checkUserName(String username) {
+		if (!StringUtils.isEmpty(username)) {
+			user user = userService.selAllUsersByUserName(username);
+			if (user != null) {
+				return true;
+			}
+		}
+		// String json = "{\"addUserReplay\":" + addUserReplay + "}";
+		return false;
 	}
 
 	/**
@@ -62,22 +92,19 @@ public class LoginController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
 	public ModelAndView loginPost(String username, String password, HttpSession session) {
+		String userTypeName=null;
+		boolean flag=false;
 		if (!StringUtils.isEmpty(username)) {
-			// UsernameAndPasswordMd5 up=new UsernameAndPasswordMd5();
-			// up.getMd5(username, password);
-			for (Iterator<user> iterator = us.selAllUsers().iterator(); iterator.hasNext();) {
-				user user = (user) iterator.next();
-				if (user.getUsername().equals(username)) {
-					if (user.getPassword().equals(password)) {
-						userDesEnglish = uts.seluserDesEnglish(user.getUsertype());
-						replay = username;
-						session.setAttribute("loginUserId", user.getUserId());
-
-					}
-				}
+			user user = userService.selAllUsersByUserName(username);
+			if (user != null) {
+				if(user.getPassword().equals(password)){
+					userTypeName=userTypeService.seluserDesEnglish(user.getUsertype());
+					session.setAttribute(Constants.USER_NAME,user.getUsername());
+					session.setAttribute(Constants.USER_ID,user.getUsername());
+					session.setAttribute(Constants.USER_TYPE,user.getUsername());
+				}	
 			}
 		}
-		session.setAttribute("loginrName", replay);
-		return new ModelAndView("redirect:" + userDesEnglish);
+		return new ModelAndView("redirect:" + userTypeName);
 	}
 }

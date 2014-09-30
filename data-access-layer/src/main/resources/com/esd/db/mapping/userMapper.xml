@@ -30,6 +30,12 @@
     <include refid="Base_Column_List" />
     from user
   </select>
+    <select id="selAllUsersByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where username = #{username,jdbcType=VARCHAR}
+  </select>
   <select id="getMaxUserId" resultType="java.lang.Integer" >
     select 
     max(user_id) user_id

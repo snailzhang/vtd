@@ -20,6 +20,8 @@ public interface userMapper {
     
     int selUserTypeByUserName(String username);
     
+    user selAllUsersByUserName(String username);
+    
     int getMaxUserId();
     
     int selCountByUserName(String username);

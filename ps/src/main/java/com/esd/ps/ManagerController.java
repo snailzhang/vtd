@@ -8,6 +8,7 @@ package com.esd.ps;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpSession;
@@ -106,22 +107,7 @@ public class ManagerController {
 		return new ModelAndView("manager/user_add");
 	}
 
-	/**
-	 * 验证新增用户名是否重复
-	 * 
-	 * @param username
-	 * @return
-	 */
-	@RequestMapping(value = "/checkUserName", method = RequestMethod.POST)
-	public @ResponseBody
-	String checkUserName(String username) {
-		addUserReplay = 0;
-		if (userService.checkUserName(username) == 2) {
-			addUserReplay = 1;
-		}
-		String json = "{\"addUserReplay\":" + addUserReplay + "}";
-		return json;
-	}
+	
 
 	/**
 	 * 上传user基本信息到session
@@ -145,6 +131,7 @@ public class ManagerController {
 			user.setUserStatus(true);
 			user.setPassword(password);
 			user.setUsertype(usertype);
+			user.setUpdateTime(new Date());
 			user.setCreateMethod("create");
 			user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
 			if (replay == 0) {
