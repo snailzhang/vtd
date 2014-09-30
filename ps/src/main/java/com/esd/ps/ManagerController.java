@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.esd.common.util.UsernameAndPasswordMd5;
 import com.esd.db.model.employer;
 import com.esd.db.model.manager;
 import com.esd.db.model.user;
@@ -56,10 +59,28 @@ public class ManagerController {
 	private EmployerService employerService;
 	@Autowired
 	private WorkerService workerService;
-	@Value("${addUserReplay}")
-	private int addUserReplay;
-	@Value("${addUserAddress}")
-	private String addUserAddress;
+	/**
+	 * 用户名不存在
+	 */
+	@Value("${MSG_USER_NOT_EXIST}")
+	private String MSG_USER_NOT_EXIST;
+
+	/**
+	 * 用户不能为空
+	 */
+	@Value("${MSG_USER_NOT_EMPTY}")
+	private String MSG_USER_NOT_EMPTY;
+
+	/**
+	 * 密码不能为空
+	 */
+	@Value("${MSG_PASSWORD_NOT_EMPTY}")
+	private String MSG_PASSWORD_NOT_EMPTY;
+	/**
+	 * 用户已存在
+	 */
+	@Value("${MSG_USER_EXIST}")
+	private String MSG_USER_EXIST;
 
 	/**
 	 * 登录管理员页
@@ -80,7 +101,7 @@ public class ManagerController {
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	public @ResponseBody
 	List<userTrans> managerPost() {// list列表直接转json
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		for (Iterator<user> iterator = userService.selAllUsers().iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
@@ -107,8 +128,6 @@ public class ManagerController {
 		return new ModelAndView("manager/user_add");
 	}
 
-	
-
 	/**
 	 * 上传user基本信息到session
 	 * 
@@ -119,49 +138,52 @@ public class ManagerController {
 	 * @return RedirectAttributes redirectAttributes
 	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
-	public ModelAndView addUserPost(String username, String password, int usertype, HttpSession session) {
-		String page;
-		int replay = userService.checkUserName(username);
-		if (replay == 2) {
-			page = "user";
-			addUserReplay = 1;
-		} else {
-			user user = new user();
-			user.setUsername(username);
-			user.setUserStatus(true);
-			user.setPassword(password);
-			user.setUsertype(usertype);
-			user.setUpdateTime(new Date());
-			user.setCreateMethod("create");
-			user.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
-			if (replay == 0) {
-				userService.insertSelective(user);
-			} else if (replay == 1) {
-				user.setUserId(userService.selUserIdByUserName(username));
-				userService.updateByPrimaryKeySelective(user);
+	public ModelAndView addUserPost(String username, String password, int usertype, RedirectAttributes redirectAttributes, HttpSession session) {
+		int replay = 0;
+		if (StringUtils.isBlank(username)) {
+			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
+			return new ModelAndView("redirect:addUser");
+		}
+		if (StringUtils.isBlank(password)) {
+			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
+			return new ModelAndView("redirect:addUser");
+		}
+		user user = userService.selAllUsersByUserName(username);
+		if (user != null) {
+			manager manager = managerService.getManagerByUserId(user.getUserId());
+			employer employer = employerService.getEmployerByUserId(user.getUserId());
+			worker worker = workerService.getWorkerByUserId(user.getUserId());
+			if (manager != null || employer != null || worker != null) {
+				replay = 2;
+				redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
+				redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
+				redirectAttributes.addFlashAttribute(Constants.MESSAGE, "MSG_USER_EXIST");
+			} else {
+				replay = 1;
 			}
-			addUserReplay = 0;
-			page = userTypeService.seluserDesEnglish(usertype);
-			session.setAttribute("addusername", username);
 		}
-		return new ModelAndView("manager/" + page + "_add", "addUserReplay", addUserReplay);
-	}
-
-	/**
-	 * 验证新增管理员名是否重复
-	 * 
-	 * @param managerName
-	 * @return
-	 */
-	@RequestMapping(value = "/checkManagerName", method = RequestMethod.POST)
-	public @ResponseBody
-	String checkManagerName(String managerName) {
-		addUserReplay = 0;
-		if (managerService.getCountManagerIdByManagerName(managerName) > 0) {
-			addUserReplay = 1;
+		if (replay < 2) {
+			user user1 = new user();
+			user1.setUsername(username);
+			user1.setUserStatus(true);
+			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
+			String md5Password = md5.getMd5(username, password);
+			user1.setPassword(md5Password);
+			user1.setUsertype(usertype);
+			user1.setUpdateTime(new Date());
+			user1.setCreateMethod("create");
+			user1.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+			if (replay == 0) {
+				userService.insertSelective(user1);
+			} else if (replay == 1) {
+				user1.setUserId(userService.selUserIdByUserName(username));
+				userService.updateByPrimaryKeySelective(user1);
+			}
+			String page = userTypeService.seluserDesEnglish(usertype);
+			session.setAttribute(Constants.ADD_USER_ID, userService.selUserIdByUserName(username));
+			return new ModelAndView("manager/" + page + "_add");
 		}
-		String json = "{\"addUserReplay\":" + addUserReplay + "}";
-		return json;
+		return new ModelAndView("redirect:addUser");
 	}
 
 	/**
@@ -173,42 +195,15 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
 	public ModelAndView addmanager(String managerName, HttpSession session) {
-		if (managerService.getCountManagerIdByManagerName(managerName) > 0) {
-			addUserReplay = 1;
-			addUserAddress = "manager/manager_add";
-		} else {
-			addUserReplay = 0;
+		manager manager = new manager();
+		manager.setManagerName(managerName);
+		manager.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
+		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
-			manager manager = new manager();
+		managerService.insertSelective(manager);
+		session.removeAttribute(Constants.ADD_USER_ID);
 
-			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
-
-			manager.setManagerName(managerName);
-			manager.setUserId(userId);
-			manager.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
-
-			managerService.insertSelective(manager);
-			session.removeAttribute("addusername");
-		}
-
-		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
-	}
-
-	/**
-	 * 验证新增发包商名是否重复
-	 * 
-	 * @param managerName
-	 * @return
-	 */
-	@RequestMapping(value = "/checkEmployerName", method = RequestMethod.POST)
-	public @ResponseBody
-	String checkEmployerName(String employerName) {
-		addUserReplay = 0;
-		if (employerService.getCountEmployerIdByEmployerName(employerName) > 0) {
-			addUserReplay = 1;
-		}
-		String json = "{\"addUserReplay\":" + addUserReplay + "}";
-		return json;
+		return new ModelAndView("redirect:manager");
 	}
 
 	/**
@@ -220,21 +215,14 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
 	public ModelAndView addemployer(String employerName, HttpSession session) {
-		if (employerService.getCountEmployerIdByEmployerName(employerName) > 0) {
-			addUserReplay = 1;
-			addUserAddress = "manager/employer_add";
-		} else {
-			employer employer = new employer();
-			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
-			employer.setEmployerName(employerName);
-			employer.setUserId(userId);
-			employer.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
+		employer employer = new employer();
+		employer.setEmployerName(employerName);
+		employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
+		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
-			employerService.insertSelective(employer);
-			addUserReplay = 0;
-			session.removeAttribute("addusername");
-		}
-		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
+		employerService.insertSelective(employer);
+		session.removeAttribute(Constants.ADD_USER_ID);
+		return new ModelAndView("redirect:employer");
 	}
 
 	/**
@@ -245,14 +233,13 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/checkWorker", method = RequestMethod.POST)
 	public @ResponseBody
-	String checkWorkerName(String temp, String value) {
-		if (workerService.checkAddWorker(temp, value) > 0) {
-			addUserReplay = 1;
-		} else {
-			addUserReplay = 0;
+	boolean checkWorkerName(String temp, String value) {
+		//workerDisabilityCard
+		//workerPhone
+		if (temp.equals("workerIdCard")) {
+			
 		}
-		String json="{\"addUserReplay\":"+addUserReplay+"}";
-		return json;
+		return false;
 	}
 
 	/**
@@ -265,34 +252,36 @@ public class ManagerController {
 	 */
 	// ,@RequestParam(value = "workerImage", required = false) MultipartFile
 	// workerImage
-	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public ModelAndView addworker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, HttpSession session) throws IOException {
-		if (workerService.checkAddWorker("workerDisabilityCard", worker.getWorkerDisabilityCard()) == 0) {
-			if (workerService.checkAddWorker("workerIdCard", worker.getWorkerIdCard()) == 0) {
-				if (workerService.checkAddWorker("workerPhone", worker.getWorkerPhone().toString()) == 0) {
-					int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
-					worker.setUserId(userId);
-					if (!workerImage.isEmpty()) {
-						worker.setWorkerImage(workerImage.getBytes());
-					}
-					worker.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
-
-					workerService.insertSelective(worker);
-					addUserReplay = 0;
-					session.removeAttribute("addusername");
-				} else {
-					addUserAddress = "manager/worker_add";
-					addUserReplay = 1;
-				}
-			} else {
-				addUserAddress = "manager/worker_add";
-				addUserReplay = 1;
-			}
-		} else {
-			addUserAddress = "manager/worker_add";
-			addUserReplay = 1;
-		}
-
-		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
-	}
+//	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
+//	public ModelAndView addworker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, HttpSession session) throws IOException {
+//		int addUserReplay;
+//		String addUserAddress = null;
+//		if (workerService.checkAddWorker("workerDisabilityCard", worker.getWorkerDisabilityCard()) == 0) {
+//			if (workerService.checkAddWorker("workerIdCard", worker.getWorkerIdCard()) == 0) {
+//				if (workerService.checkAddWorker("workerPhone", worker.getWorkerPhone().toString()) == 0) {
+//					int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+//					worker.setUserId(userId);
+//					if (!workerImage.isEmpty()) {
+//						worker.setWorkerImage(workerImage.getBytes());
+//					}
+//					worker.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
+//
+//					workerService.insertSelective(worker);
+//					addUserReplay = 0;
+//					session.removeAttribute("addusername");
+//				} else {
+//					addUserAddress = "manager/worker_add";
+//					addUserReplay = 1;
+//				}
+//			} else {
+//				addUserAddress = "manager/worker_add";
+//				addUserReplay = 1;
+//			}
+//		} else {
+//			addUserAddress = "manager/worker_add";
+//			addUserReplay = 1;
+//		}
+//
+//		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
+//	}
 }

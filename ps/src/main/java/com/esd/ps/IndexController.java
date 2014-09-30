@@ -33,7 +33,7 @@ public class IndexController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/quit", method = RequestMethod.GET)
+	@RequestMapping(value = "/quit1", method = RequestMethod.GET)
 	public ModelAndView quitGet(HttpSession session) {
 		session.removeAttribute(Constants.USER_ID);
 		return new ModelAndView("login");

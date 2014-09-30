@@ -12,7 +12,7 @@ public interface EmployerService {
 
     employer selectByPrimaryKey(Integer employerId);
     
-    employer selectByUserId(Integer userId);
+    employer getEmployerByUserId(Integer userId);
     
     int selEmployerIdByUserId(Integer userId);
     

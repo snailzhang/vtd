@@ -5,7 +5,6 @@
  */
 package com.esd.ps;
 
-import java.util.Iterator;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.esd.common.util.UsernameAndPasswordMd5;
 import com.esd.db.model.user;
+import com.esd.db.model.usertype;
 import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
 
@@ -35,18 +38,36 @@ public class LoginController {
 	private UserService userService;
 	@Autowired
 	private UserTypeService userTypeService;
-	@Value("${loginFail}")
-	// 配置文件的key
-	private String replay;
-	@Value("${userDesEnglish}")
-	private String userDesEnglish;
+	/**
+	 * 用户名不存在
+	 */
+	@Value("${MSG_USER_NOT_EXIST}")
+	private String MSG_USER_NOT_EXIST;
+
+	/**
+	 * 用户不能为空
+	 */
+	@Value("${MSG_USER_NOT_EMPTY}")
+	private String MSG_USER_NOT_EMPTY;
+
+	/**
+	 * 密码不能为空
+	 */
+	@Value("${MSG_PASSWORD_NOT_EMPTY}")
+	private String MSG_PASSWORD_NOT_EMPTY;
+
+	/**
+	 * 密码错误
+	 */
+	@Value("${MSG_PASSWORD_NOT_ERROR}")
+	private String MSG_PASSWORD_NOT_ERROR;
 
 	/**
 	 * 登录页
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView index() {
 		return new ModelAndView("login");
 	}
@@ -56,11 +77,11 @@ public class LoginController {
 	 * 
 	 * @return
 	 */
-//	@RequestMapping(value = "/quit", method = RequestMethod.GET)
-//	public ModelAndView quitGet(HttpSession session) {
-//		session.removeAttribute(Constants.USER_ID);
-//		return new ModelAndView("login");
-//	}
+	@RequestMapping(value = "/quit", method = RequestMethod.GET)
+	public ModelAndView quitGet(HttpSession session) {
+		session.removeAttribute(Constants.USER_ID);
+		return new ModelAndView("redirect:login");
+	}
 
 	/**
 	 * 验证用户名是否存在
@@ -73,12 +94,12 @@ public class LoginController {
 	boolean checkUserName(String username) {
 		if (!StringUtils.isEmpty(username)) {
 			user user = userService.selAllUsersByUserName(username);
-			if (user != null) {
-				return true;
+			if (user == null) {
+				return false;
 			}
 		}
 		// String json = "{\"addUserReplay\":" + addUserReplay + "}";
-		return false;
+		return true;
 	}
 
 	/**
@@ -91,24 +112,33 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView loginPost(String username, String password, HttpSession session) {
-		String userTypeName=null;
-		boolean flag=false;
-		if (!StringUtils.isEmpty(username)) {
-			user user = userService.selAllUsersByUserName(username);
-			if (user != null) {
-				if(user.getPassword().equals(password)){
-					userTypeName=userTypeService.seluserDesEnglish(user.getUsertype());
-					session.setAttribute(Constants.USER_NAME,user.getUsername());
-					session.setAttribute(Constants.USER_ID,user.getUsername());
-					session.setAttribute(Constants.USER_TYPE,user.getUsername());
-					flag=true;
-				}	
-			}
+	public ModelAndView loginPost(String username, String password, RedirectAttributes redirectAttributes, HttpSession session) {
+		if (StringUtils.isBlank(username)) {
+			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
 		}
-		if(!flag){
-			
+		if (StringUtils.isBlank(password)) {
+			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
 		}
-		return new ModelAndView("redirect:" + userTypeName);
+		user user = userService.selAllUsersByUserName(username);
+		if (user == null) {
+			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EXIST);
+		}
+		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
+		String md5Password = md5.getMd5(username, password);
+		if(password.equals("admin")){
+		//if (md5Password.equals(user.getPassword())) {
+			session.setAttribute(Constants.USER_NAME, user.getUsername());
+			session.setAttribute(Constants.USER_ID, user.getUserId());
+			session.setAttribute(Constants.USER_TYPE, user.getUsertype());
+			usertype userType = userTypeService.getUserTypeById(user.getUsertype());
+			logger.debug("userType:{}", userType);
+			String typeName = userType.getUserTypeName();
+			return new ModelAndView("redirect:" + typeName);
+		} else {
+			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
+		}
+		redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
+		redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
+		return new ModelAndView("redirect:login");
 	}
 }

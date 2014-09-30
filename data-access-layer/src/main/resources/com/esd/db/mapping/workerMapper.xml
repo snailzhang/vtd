@@ -30,13 +30,17 @@
   <sql id="Blob_Column_List" >
     worker_image
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from worker
     where worker_id = #{workerId,jdbcType=INTEGER}
+  </select>
+   <select id="selectWorkerByUserId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from worker
+    where user_id = #{userId,jdbcType=INTEGER}
   </select>
     <select id="selWorkerIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select 
@@ -50,21 +54,21 @@
     from worker
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
-  <select id="selWorkerIdByWorkerIdCard" resultType="java.lang.Integer" parameterType="java.lang.String" >
+  <select id="selectWorkerByWorkerIdCard" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-	count(worker_id) count
+	<include refid="Base_Column_List" />
     from worker
     where worker_id_card = #{workerIdCard,jdbcType=VARCHAR}
   </select>
-   <select id="selWorkerIdByWorkerDisabilityCard" resultType="java.lang.Integer" parameterType="java.lang.String" >
+   <select id="selectWorkerByWorkerDisabilityCard" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-	count(worker_id) count
+	<include refid="Base_Column_List" />
     from worker
     where worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR}
   </select>
-     <select id="selWorkerIdByWorkerPhone" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+     <select id="selectWorkerByWorkerPhone" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
-	count(worker_id) count
+	<include refid="Base_Column_List" />
     from worker
     where worker_phone = #{workerPhone,jdbcType=INTEGER}
   </select>

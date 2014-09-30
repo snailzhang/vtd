@@ -13,6 +13,8 @@ public interface WorkerService {
 
     worker selectByPrimaryKey(Integer workerId);
     
+    worker getWorkerByUserId(Integer userid);
+    
     int selWorkerIdByUserId(Integer userid);
 
     int updateByPrimaryKeySelective(worker record);
@@ -21,5 +23,9 @@ public interface WorkerService {
 
     int updateByPrimaryKey(worker record);
     
-    int checkAddWorker(String temp,String value);
+    worker getWorkerByWorkerPhone(Integer workerPhone);
+    
+    worker getWorkerByWorkerIdCard(String workerIdCard);
+    
+    worker getWorkerByWorkerDisabilityCard(String workerDisabilityCard);
 }

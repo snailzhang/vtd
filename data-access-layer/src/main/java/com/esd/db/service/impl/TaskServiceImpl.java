@@ -12,77 +12,77 @@ import com.esd.db.service.TaskService;
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
 	@Autowired
-	private taskMapper tm;
+	private taskMapper taskMapper;
 	@Override
 	public int deleteByPrimaryKey(Integer taskId) {
 		
-		return tm.deleteByPrimaryKey(taskId);
+		return taskMapper.deleteByPrimaryKey(taskId);
 	}
 
 	@Override
 	public int insert(taskWithBLOBs record) {
 		
-		return tm.insert(record);
+		return taskMapper.insert(record);
 	}
 
 	@Override
 	public int insertSelective(taskWithBLOBs record) {
 		
-		return tm.insertSelective(record);
+		return taskMapper.insertSelective(record);
 	}
 
 	@Override
 	public taskWithBLOBs selectByPrimaryKey(Integer taskId) {
 		
-		return tm.selectByPrimaryKey(taskId);
+		return taskMapper.selectByPrimaryKey(taskId);
 	}
 
 	@Override
 	public int updateByPrimaryKeySelective(taskWithBLOBs record) {
 		
-		return tm.updateByPrimaryKeySelective(record);
+		return taskMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record) {
 		
-		return tm.updateByPrimaryKeyWithBLOBs(record);
+		return taskMapper.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(task record) {
 		
-		return tm.updateByPrimaryKey(record);
+		return taskMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
 	public int updateByName(taskWithBLOBs record) {
 		
-		return tm.updateByName(record);
+		return taskMapper.updateByName(record);
 	}
 
 	@Override
 	public List<task> selectAllTaskId() {
 		
-		return tm.selectAllTaskId();
+		return taskMapper.selectAllTaskId();
 	}
 
 	@Override
 	public List<task> selAllTaskByWorkerId(Integer workerId) {
 		
-		return tm.selAllTaskByWorkerId(workerId);
+		return taskMapper.selAllTaskByWorkerId(workerId);
 	}
 
 	@Override
 	public List<task> getTaskByPackId(Integer packId) {
 		
-		return tm.selAllTaskByPackId(packId);
+		return taskMapper.selAllTaskByPackId(packId);
 	}
 
 	@Override
 	public taskWithBLOBs getOneTaskOrderByTaskLvl() {
 		
-		return tm.selOneTaskOrderByTaskLvl();
+		return taskMapper.selOneTaskOrderByTaskLvl();
 	}
 
 }

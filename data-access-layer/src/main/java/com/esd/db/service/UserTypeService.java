@@ -11,7 +11,7 @@ public interface UserTypeService {
 
     int insertSelective(usertype record);
 
-    usertype selectByPrimaryKey(Integer userTypeId);
+    usertype getUserTypeById(Integer userTypeId);
     
     List<usertype> selAllUsertypes();
     

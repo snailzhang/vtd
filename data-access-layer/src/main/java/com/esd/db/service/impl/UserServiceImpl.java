@@ -4,117 +4,73 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.esd.db.dao.employerMapper;
-import com.esd.db.dao.managerMapper;
 import com.esd.db.dao.userMapper;
-import com.esd.db.dao.workerMapper;
 import com.esd.db.model.user;
 import com.esd.db.service.UserService;
 
 @Service("UserService")
 public class UserServiceImpl implements UserService {
 	@Autowired
-	userMapper um;
-	@Autowired
-	private managerMapper manager;
-	@Autowired
-	private employerMapper employer;
-	@Autowired
-	private workerMapper worker;
+	userMapper userMapper;
 
 	@Override
 	public int deleteByPrimaryKey(Integer userId) {
 
-		return um.deleteByPrimaryKey(userId);
+		return userMapper.deleteByPrimaryKey(userId);
 	}
 
 	@Override
 	public int insert(user record) {
 
-		return um.insert(record);
+		return userMapper.insert(record);
 	}
 
 	@Override
 	public int insertSelective(user record) {
 
-		return um.insertSelective(record);
+		return userMapper.insertSelective(record);
 	}
 
 	@Override
 	public user selectByPrimaryKey(Integer userId) {
 
-		return um.selectByPrimaryKey(userId);
+		return userMapper.selectByPrimaryKey(userId);
 	}
 
 	@Override
 	public List<user> selAllUsers() {
 
-		return um.selAllUsers();
+		return userMapper.selAllUsers();
 	}
 
 	@Override
 	public int updateByPrimaryKeySelective(user record) {
 
-		return um.updateByPrimaryKeySelective(record);
+		return userMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(user record) {
 
-		return um.updateByPrimaryKey(record);
+		return userMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
 	public int getMaxUserId() {
 
-		return um.getMaxUserId();
+		return userMapper.getMaxUserId();
 	}
 
 	@Override
 	public int selUserIdByUserName(String username) {
 
-		return um.selUserIdByUserName(username);
+		return userMapper.selUserIdByUserName(username);
 	}
-
-	/**
-	 * 检测新增用户名是否可用
-	 */
-	@Override
-	public int checkUserName(String userName) {
-		int userType=0,userId=0,replay = 0;
-		if(um.selCountByUserName(userName)>0){
-			userType = um.selUserTypeByUserName(userName);
-			userId = um.selUserIdByUserName(userName);
-		}
-		if (userType == 1) {
-			if (manager.selCountManagerIdByUserId(userId) > 0) {
-				replay = 2;
-			} else {
-				replay = 1;
-			}
-		} else if (userType == 2) {
-			if (employer.selCountEmployerIdByUserId(userId) > 0) {
-				replay = 2;
-			} else {
-				replay = 1;
-			}
-		} else if (userType == 3) {
-
-		} else if (userType == 4) {
-			if (worker.selCountWorkerIdByUserId(userId) > 0) {
-				replay = 2;
-			} else {
-				replay = 1;
-			}
-		}
-		return replay;
-	}
-
+	
 	@Override
 	public user selAllUsersByUserName(String username) {
 		
-		return um.selAllUsersByUserName(username);
+		return userMapper.selAllUsersByUserName(username);
 	}
 
 }

@@ -12,62 +12,62 @@ import com.esd.db.service.PackService;
 @Service("PackService")
 public class PackServiceImpl implements PackService {
 	@Autowired
-	private packMapper pm;
+	private packMapper packMapper;
 	@Override
 	public int deleteByPrimaryKey(Integer packId) {
-		return pm.deleteByPrimaryKey(packId);
+		return packMapper.deleteByPrimaryKey(packId);
 	}
 
 	@Override
 	public int insert(packWithBLOBs record) {
 		
-		return pm.insert(record);
+		return packMapper.insert(record);
 	}
 
 	@Override
 	public int insertSelective(packWithBLOBs record) {
 		
-		return pm.insertSelective(record);
+		return packMapper.insertSelective(record);
 	}
 
 	@Override
 	public packWithBLOBs selectByPrimaryKey(Integer packId) {
 		
-		return pm.selectByPrimaryKey(packId);
+		return packMapper.selectByPrimaryKey(packId);
 	}
 
 	@Override
 	public int updateByPrimaryKeySelective(packWithBLOBs record) {
 		
-		return pm.updateByPrimaryKeySelective(record);
+		return packMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKeyWithBLOBs(packWithBLOBs record) {
 		
-		return pm.updateByPrimaryKeyWithBLOBs(record);
+		return packMapper.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(pack record) {
 		
-		return pm.updateByPrimaryKey(record);
+		return packMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
 	public int selectByEmployerId(Integer employerId) {
 		
-		return pm.selectByEmployerId(employerId);
+		return packMapper.selectByEmployerId(employerId);
 	}
 
 	@Override
 	public List<pack> selAllByEmployerId(Integer employerId) {
-		return pm.selAllByEmployerId(employerId);
+		return packMapper.selAllByEmployerId(employerId);
 	}
 
 	@Override
 	public int deleteByName(String fileName) {
-		return pm.deleteByName(fileName);
+		return packMapper.deleteByName(fileName);
 	}
 
 }

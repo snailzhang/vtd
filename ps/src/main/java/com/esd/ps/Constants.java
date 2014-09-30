@@ -13,6 +13,10 @@ public interface Constants {
 	public static final String PROJECT_NAME = "ps";//项目名称
 	//项目应用常量
 	public static final String USER_ID = "userId";//用户id
+	public static final String ADD_USER_ID = "addUserId";//新增用户id
 	public static final String USER_NAME = "username";//用户名
+	public static final String USER_PASSWORD = "username";//用户密码
 	public static final String USER_TYPE = "usertype";//用户类型
+	public static final String MESSAGE = "message";//信息
+	public static final String DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";//日期时间格式
 }

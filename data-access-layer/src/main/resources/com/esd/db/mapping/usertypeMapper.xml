@@ -3,11 +3,11 @@
 <mapper namespace="com.esd.db.dao.usertypeMapper">
   <resultMap id="BaseResultMap" type="com.esd.db.model.usertype">
     <id column="user_type_id" jdbcType="INTEGER" property="userTypeId" />
-    <result column="user_des" jdbcType="VARCHAR" property="userDes" />
-    <result column="user_des_english" jdbcType="VARCHAR" property="userDesEnglish" />
+    <result column="user_type_name" jdbcType="VARCHAR" property="userTypeName" />
+    <result column="user_type_name_english" jdbcType="VARCHAR" property="userTypeNameEnglish" />
   </resultMap>
   <sql id="Base_Column_List">
-    user_type_id, user_des,user_des_english
+    user_type_id, user_type_name,user_type_name_english
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -20,15 +20,15 @@
     <include refid="Base_Column_List" />
     from usertype
   </select>
-  <select id="seluserDesEnglish" resultType="java.lang.String" parameterType="java.lang.Integer">
+  <select id="seluserTypeNameEnglish" resultType="java.lang.String" parameterType="java.lang.Integer">
     select 
-    user_des_english
+    user_type_name_english
     from usertype
     where user_type_id= #{userTypeId,jdbcType=INTEGER}
   </select>
-  <select id="seluserDes" resultType="java.lang.String" parameterType="java.lang.Integer">
+  <select id="seluserTypeName" resultType="java.lang.String" parameterType="java.lang.Integer">
     select 
-    user_des
+    user_type_name
     from usertype
     where user_type_id= #{userTypeId,jdbcType=INTEGER}
   </select>
@@ -37,8 +37,8 @@
     where user_type_id = #{userTypeId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.esd.db.model.usertype">
-    insert into usertype (user_type_id, user_des)
-    values (#{userTypeId,jdbcType=INTEGER}, #{userDes,jdbcType=VARCHAR})
+    insert into usertype (user_type_id, user_type_name)
+    values (#{userTypeId,jdbcType=INTEGER}, #{userTypeName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.esd.db.model.usertype">
     insert into usertype
@@ -46,31 +46,31 @@
       <if test="userTypeId != null">
         user_type_id,
       </if>
-      <if test="userDes != null">
-        user_des,
+      <if test="userTypeName != null">
+        user_type_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userTypeId != null">
         #{userTypeId,jdbcType=INTEGER},
       </if>
-      <if test="userDes != null">
-        #{userDes,jdbcType=VARCHAR},
+      <if test="userTypeName != null">
+        #{userTypeName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.usertype">
     update usertype
     <set>
-      <if test="userDes != null">
-        user_des = #{userDes,jdbcType=VARCHAR},
+      <if test="userTypeName != null">
+        user_type_name = #{userTypeName,jdbcType=VARCHAR},
       </if>
     </set>
     where user_type_id = #{userTypeId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.esd.db.model.usertype">
     update usertype
-    set user_des = #{userDes,jdbcType=VARCHAR}
+    set user_type_name = #{userTypeName,jdbcType=VARCHAR}
     where user_type_id = #{userTypeId,jdbcType=INTEGER}
   </update>
 </mapper>

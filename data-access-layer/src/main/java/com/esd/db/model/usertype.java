@@ -4,7 +4,9 @@ public class usertype {
  
     private Integer userTypeId;
 
-    private String userDes;
+    private String userTypeName;
+    
+    private String userTypeNameEnglish;
 
     public Integer getUserTypeId() {
         return userTypeId;
@@ -14,11 +16,20 @@ public class usertype {
         this.userTypeId = userTypeId;
     }
 
-    public String getUserDes() {
-        return userDes;
+    public String getUserTypeName() {
+        return userTypeName;
     }
 
-    public void setUserDes(String userDes) {
-        this.userDes = userDes == null ? null : userDes.trim();
+    public void setUserTypeName(String userTypeName) {
+        this.userTypeName = userTypeName == null ? null : userTypeName.trim();
     }
+
+	public String getUserTypeNameEnglish() {
+		return userTypeNameEnglish;
+	}
+
+	public void setUserTypeNameEnglish(String userTypeNameEnglish) {
+		this.userTypeNameEnglish = userTypeNameEnglish;
+	}
+    
 }

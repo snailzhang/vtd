@@ -11,59 +11,59 @@ import com.esd.db.service.UserTypeService;
 @Service("UserTypeService")
 public class UserTypeServiceImpl implements UserTypeService {
 	@Autowired
-	usertypeMapper utm;
+	usertypeMapper usertypeMapper;
 	@Override
 	public int deleteByPrimaryKey(Integer userTypeId) {
 		
-		return utm.deleteByPrimaryKey(userTypeId);
+		return usertypeMapper.deleteByPrimaryKey(userTypeId);
 	}
 
 	@Override
 	public int insert(usertype record) {
 		
-		return utm.insert(record);
+		return usertypeMapper.insert(record);
 	}
 
 	@Override
 	public int insertSelective(usertype record) {
 		
-		return utm.insertSelective(record);
+		return usertypeMapper.insertSelective(record);
 	}
 
 	@Override
-	public usertype selectByPrimaryKey(Integer userTypeId) {
+	public usertype getUserTypeById(Integer userTypeId) {
 		
-		return utm.selectByPrimaryKey(userTypeId);
+		return usertypeMapper.selectByPrimaryKey(userTypeId);
 	}
 
 	@Override
 	public List<usertype> selAllUsertypes() {
 		
-		return utm.selAllUsertypes();
+		return usertypeMapper.selAllUsertypes();
 	}
 
 	@Override
 	public int updateByPrimaryKeySelective(usertype record) {
 		
-		return utm.updateByPrimaryKeySelective(record);
+		return usertypeMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(usertype record) {
 		
-		return utm.updateByPrimaryKey(record);
+		return usertypeMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
 	public String seluserDesEnglish(Integer userTypeId) {
 		
-		return utm.seluserDesEnglish(userTypeId);
+		return usertypeMapper.seluserDesEnglish(userTypeId);
 	}
 
 	@Override
 	public String seluserDes(Integer userTypeId) {
 		
-		return utm.seluserDes(userTypeId);
+		return usertypeMapper.seluserDes(userTypeId);
 	}
 
 }

@@ -13,7 +13,7 @@ public interface ManagerService {
 
     manager selectByPrimaryKey(Integer managerId);
     
-    manager selectByUserId(Integer userId);
+    manager getManagerByUserId(Integer userId);
     
     List<manager> selAllManagers();
     

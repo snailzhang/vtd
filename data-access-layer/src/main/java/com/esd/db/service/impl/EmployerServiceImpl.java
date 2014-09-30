@@ -9,63 +9,63 @@ import com.esd.db.service.EmployerService;
 @Service("EmployerService")
 public class EmployerServiceImpl implements EmployerService {
 	@Autowired
-	private employerMapper em;
+	private employerMapper employerMapper;
 	@Override
 	public int deleteByPrimaryKey(Integer employerId) {
 		
-		return em.deleteByPrimaryKey(employerId);
+		return employerMapper.deleteByPrimaryKey(employerId);
 	}
 
 	@Override
 	public int insert(employer record) {
 		
-		return em.insert(record);
+		return employerMapper.insert(record);
 	}
 
 	@Override
 	public int insertSelective(employer record) {
 		
-		return em.insertSelective(record);
+		return employerMapper.insertSelective(record);
 	}
 
 	@Override
 	public employer selectByPrimaryKey(Integer employerId) {
 		
-		return em.selectByPrimaryKey(employerId);
+		return employerMapper.selectByPrimaryKey(employerId);
 	}
 	
 	@Override
 	public int updateByPrimaryKeySelective(employer record) {
 		
-		return em.updateByPrimaryKeySelective(record);
+		return employerMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public int updateByPrimaryKey(employer record) {
 		
-		return em.updateByPrimaryKey(record);
+		return employerMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public employer selectByUserId(Integer userId) {
-		return em.selectByUserId(userId);
+	public employer getEmployerByUserId(Integer userId) {
+		return employerMapper.selectByUserId(userId);
 	}
 
 	@Override
 	public int selEmployerIdByUserId(Integer userId) {
 		
-		return em.selEmployerIdByUserId(userId);
+		return employerMapper.selEmployerIdByUserId(userId);
 	}
 
 	@Override
 	public int getEmployerIdByEmployerName(String employerName) {
-		return em.selEmployerIdByEmployerName(employerName);
+		return employerMapper.selEmployerIdByEmployerName(employerName);
 	}
 
 	@Override
 	public int getCountEmployerIdByEmployerName(String employerName) {
 
-		return em.selCountEmployerIdByEmployerName(employerName);
+		return employerMapper.selCountEmployerIdByEmployerName(employerName);
 	}
 
 }

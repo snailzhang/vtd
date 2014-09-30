@@ -26,6 +26,5 @@ public interface UserService {
     int updateByPrimaryKeySelective(user record);
 
     int updateByPrimaryKey(user record);
-    
-    int checkUserName(String userName);
+
 }
