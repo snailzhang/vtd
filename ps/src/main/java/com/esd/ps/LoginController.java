@@ -56,11 +56,11 @@ public class LoginController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/quit", method = RequestMethod.GET)
-	public ModelAndView quitGet(HttpSession session) {
-		session.removeAttribute(Constants.USER_ID);
-		return new ModelAndView("login");
-	}
+//	@RequestMapping(value = "/quit", method = RequestMethod.GET)
+//	public ModelAndView quitGet(HttpSession session) {
+//		session.removeAttribute(Constants.USER_ID);
+//		return new ModelAndView("login");
+//	}
 
 	/**
 	 * 验证用户名是否存在
