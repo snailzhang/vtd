@@ -222,7 +222,7 @@ public class ManagerController {
 
 		employerService.insertSelective(employer);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView("redirect:employer");
+		return new ModelAndView("redirect:manager");
 	}
 
 	/**
@@ -234,14 +234,26 @@ public class ManagerController {
 	@RequestMapping(value = "/checkWorker", method = RequestMethod.POST)
 	public @ResponseBody
 	boolean checkWorkerName(String temp, String value) {
-		//workerDisabilityCard
-		//workerPhone
+		worker worker = null;
 		if (temp.equals("workerIdCard")) {
-			
+			worker = workerService.getWorkerByWorkerIdCard(value);
+		} else if (temp.equals("workerDisabilityCard")) {
+			worker = workerService.getWorkerByWorkerDisabilityCard(value);
+		} else if (temp.equals("workerPhone")) {
+			worker = workerService.getWorkerByWorkerPhone(Integer.parseInt(value));
+		}
+		if (worker == null) {
+			return true;
 		}
 		return false;
 	}
-
+	/**
+	 * 
+	 */
+	@RequestMapping(value = "/addworker", method = RequestMethod.GET)
+	public ModelAndView addWorkerGET(){
+		return new ModelAndView("manager/worker_add");
+	}
 	/**
 	 * 存入数据库user和worker的信息,清空session中user信息
 	 * 
@@ -250,38 +262,55 @@ public class ManagerController {
 	 * @return 上传workerImage还没做
 	 * @throws IOException
 	 */
-	// ,@RequestParam(value = "workerImage", required = false) MultipartFile
-	// workerImage
-//	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-//	public ModelAndView addworker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, HttpSession session) throws IOException {
-//		int addUserReplay;
-//		String addUserAddress = null;
-//		if (workerService.checkAddWorker("workerDisabilityCard", worker.getWorkerDisabilityCard()) == 0) {
-//			if (workerService.checkAddWorker("workerIdCard", worker.getWorkerIdCard()) == 0) {
-//				if (workerService.checkAddWorker("workerPhone", worker.getWorkerPhone().toString()) == 0) {
-//					int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
-//					worker.setUserId(userId);
-//					if (!workerImage.isEmpty()) {
-//						worker.setWorkerImage(workerImage.getBytes());
-//					}
-//					worker.setCreateId(Integer.parseInt(session.getAttribute("loginUserId").toString()));
-//
-//					workerService.insertSelective(worker);
-//					addUserReplay = 0;
-//					session.removeAttribute("addusername");
-//				} else {
-//					addUserAddress = "manager/worker_add";
-//					addUserReplay = 1;
-//				}
-//			} else {
-//				addUserAddress = "manager/worker_add";
-//				addUserReplay = 1;
-//			}
-//		} else {
-//			addUserAddress = "manager/worker_add";
-//			addUserReplay = 1;
-//		}
-//
-//		return new ModelAndView(addUserAddress, "addUserReplay", addUserReplay);
-//	}
+	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
+	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, RedirectAttributes redirectAttributes, HttpSession session)
+			throws IOException {
+		boolean flag = true;
+		if (StringUtils.isEmpty(worker.getWorkerRealName())) {
+			redirectAttributes.addFlashAttribute(Constants.USER_NAME, MSG_USER_NOT_EMPTY);
+			flag = false;
+		}
+		if (StringUtils.isEmpty(worker.getWorkerIdCard())) {
+			redirectAttributes.addFlashAttribute("workerIdCard", "身份证号不能为空!");
+			flag = false;
+		}
+		if (StringUtils.isEmpty(worker.getWorkerDisabilityCard())) {
+			redirectAttributes.addFlashAttribute("workerDisabilityCard", "残疾人证号不能为空!");
+			flag = false;
+		}
+		if (StringUtils.isEmpty(worker.getWorkerPhone().toString())) {
+			redirectAttributes.addFlashAttribute("workerPhone", "手机号不能为空!");
+			flag = false;
+		}
+
+		if (workerService.getWorkerByWorkerIdCard(worker.getWorkerIdCard()) != null) {
+			redirectAttributes.addFlashAttribute("workerIdCard", "身份证号已存在!");
+			flag = false;
+		}
+
+		if (workerService.getWorkerByWorkerDisabilityCard(worker.getWorkerDisabilityCard()) != null) {
+			redirectAttributes.addFlashAttribute("workerDisabilityCard", "残疾人证号已存在!");
+			flag = false;
+		}
+
+		if (workerService.getWorkerByWorkerPhone(worker.getWorkerPhone()) != null) {
+			redirectAttributes.addFlashAttribute("workerPhone", "手机号已存在!");
+			flag = false;
+		}
+
+		if (flag) {
+			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+			worker.setUserId(userId);
+			if (!workerImage.isEmpty()) {
+				worker.setWorkerImage(workerImage.getBytes());
+			}
+			worker.setCreateId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
+
+			workerService.insertSelective(worker);
+			session.removeAttribute(Constants.ADD_USER_ID);
+			return new ModelAndView("redirect:manager");
+		}
+		redirectAttributes.addFlashAttribute("worker",worker);
+		return new ModelAndView("redirect:addworker");
+	}
 }
