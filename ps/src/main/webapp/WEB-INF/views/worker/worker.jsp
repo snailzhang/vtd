@@ -64,7 +64,7 @@
 		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="button" class="btn btn-default">上传文件</button>
+		         <button type="button" class="btn btn-default" disabled="disabled">上传文件</button>
 		      </div>
 		   </div>
 		</form>
@@ -104,18 +104,50 @@
 					
 				}
 			});
-			$("button[type=button]").click(function(){
-				var tag = $("#TAG").val();
-				var textGrid = $("#TextGrid").val();
-				var formName = $("#upTagAndTextGrid");
-				if(checkout.text.isempty(tag,"TAG文件不能为空！")) return;
-				if(checkout.text.isempty(textGrid,"TextGrid文件不能为空！")) return;
-				if(checkout.file.fileType(tag,"tag","请上传TAG格式文件！")){
-					if(checkout.file.fileType(textGrid,"textGrid","请上传TextGrid格式文件！")){
-						formName.submit();
-					}
-					
+			var textGridReady = false;
+			var tagReady = false;
+			checkSubBtnStaus = function(){
+				if(tagReady&&textGridReady){
+					$("button").removeAttr("disabled");
+				}else{
+					$("button").attr("disabled","disabled");
 				}
+			};
+			$("#TAG").change(function(){
+				var tag = $("#TAG");
+				
+				if(checkout.text.isempty(tag,"文件不能为空！")){
+					tagReady = false;
+					checkSubBtnStaus();
+					return;
+				}
+				if(checkout.file.fileType(tag,"tag","请上传tag格式文件！")){
+					tagReady = true;
+					checkSubBtnStaus();
+				}else{
+					tagReady = false;
+					checkSubBtnStaus();
+				}
+			});
+			$("#TextGrid").change(function(){
+				var textGrid = $("#TextGrid");
+				
+				if(checkout.text.isempty(textGrid,"文件不能为空！")){
+					textGridReady = false;
+					checkSubBtnStaus();
+					return;
+				}
+				if(checkout.file.fileType(textGrid,"textGrid","请上传textGrid格式文件！")){
+					textGridReady = true;
+					checkSubBtnStaus();
+				}else{
+					textGridReady = false;
+					checkSubBtnStaus();
+				}
+			});
+			$("button[type=button]").click(function(){
+				var formName = $("#upTagAndTextGrid");
+				formName.submit();
 			});
 		});
 	</script>

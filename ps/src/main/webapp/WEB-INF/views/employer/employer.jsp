@@ -41,11 +41,12 @@
 		      <label for="pack" class="col-sm-2 control-label">选择任务包：</label>
 		      <div class="col-sm-10">
 		         <input type="file" class="form-control" name="pack" id="pack" placeholder="请选择上传文件">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="button" class="btn btn-default">上传</button>
+		         <button type="button" class="btn btn-default" disabled="disabled">上传</button>
 		      </div>
 		   </div>
 		</form>
@@ -76,17 +77,33 @@
 					
 				}
 			});
+			
+			var fileReady = false;
+			checkSubBtnStaus = function(){
+				if(fileReady){
+					$("button").removeAttr("disabled");
+				}else{
+					$("button").attr("disabled","disabled");
+				}
+			};
+			$("#pack").change(function(){
+				var pack = $("#pack");
+				if(checkout.text.isempty(pack,"文件不能为空！")){
+					fileReady = false;
+					checkSubBtnStaus();
+					return;
+				}
+				if(checkout.file.fileType(pack,"zip","请上传zip格式文件！")){
+					fileReady = true;
+					checkSubBtnStaus();
+				}else{
+					fileReady = false;
+					checkSubBtnStaus();
+				}
+			});
 			$("button[type=button]").click(function(){
 				var formName = $("#addmanager");
-				var pack = $("#pack").val();
-				if(checkout.text.isempty(pack,"文件不能为空！")) return;
-				if(checkout.file.fileType(pack,"zip","请上传zip格式文件！")){
-					formName.submit();
-				}else{
-					$("#pack").focus();
-					//$("#packUploadDiv").addClass("has-error has-feedback");
-				}
-				
+				formName.submit();
 			});
 		});
 	</script>

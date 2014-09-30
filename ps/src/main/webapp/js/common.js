@@ -22,7 +22,7 @@ checkout.file.fileType = function(obj,fileType,message){
 	splitName = splitName.split(".");
 	index = splitName.length-1;
 	var type = splitName[index];
-	if(type == fileType){
+	if(type == fileType){//类型匹配，返回true
 		result = true;
 		obj.next(".help-block").text("");
 	}else{
