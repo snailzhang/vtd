@@ -46,7 +46,7 @@ public class LoginController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/security/index", method = RequestMethod.GET)
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public ModelAndView index() {
 		return new ModelAndView("login");
 	}
@@ -56,7 +56,7 @@ public class LoginController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/security/quit", method = RequestMethod.GET)
+	@RequestMapping(value = "/quit", method = RequestMethod.GET)
 	public ModelAndView quitGet(HttpSession session) {
 		session.removeAttribute(Constants.USER_ID);
 		return new ModelAndView("login");
@@ -102,8 +102,12 @@ public class LoginController {
 					session.setAttribute(Constants.USER_NAME,user.getUsername());
 					session.setAttribute(Constants.USER_ID,user.getUsername());
 					session.setAttribute(Constants.USER_TYPE,user.getUsername());
+					flag=true;
 				}	
 			}
+		}
+		if(!flag){
+			
 		}
 		return new ModelAndView("redirect:" + userTypeName);
 	}
