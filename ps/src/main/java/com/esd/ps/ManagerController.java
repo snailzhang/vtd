@@ -60,12 +60,6 @@ public class ManagerController {
 	@Autowired
 	private WorkerService workerService;
 	/**
-	 * 用户名不存在
-	 */
-	@Value("${MSG_USER_NOT_EXIST}")
-	private String MSG_USER_NOT_EXIST;
-
-	/**
 	 * 用户不能为空
 	 */
 	@Value("${MSG_USER_NOT_EMPTY}")
@@ -81,7 +75,21 @@ public class ManagerController {
 	 */
 	@Value("${MSG_USER_EXIST}")
 	private String MSG_USER_EXIST;
-
+	/**
+	 * 身份证号已存在
+	 */
+	@Value("${MSG_WORKERIDCARD_EXIST}")
+	private String MSG_WORKERIDCARD_EXIST;
+	/**
+	 * 残疾人证号已存在
+	 */
+	@Value("${MSG_WORKERDISABILITYCARD_EXIST}")
+	private String MSG_WORKERDISABILITYCARD_EXIST;
+	/**
+	 * 手机号已存在
+	 */
+	@Value("${MSG_WORKERPHONE_EXIST}")
+	private String MSG_WORKERPHONE_EXIST;
 	/**
 	 * 登录管理员页
 	 * 
@@ -100,19 +108,19 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	public @ResponseBody
-	List<userTrans> managerPost() {// list列表直接转json
+	List<userTrans> managerPost() {
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		for (Iterator<user> iterator = userService.selAllUsers().iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
-			// userlist插入数据
+
 			trans.setUserStatus(user.getUserStatus());
 			trans.setUsername(user.getUsername());
 			trans.setUsertypeenglish(userTypeService.seluserDes(user.getUsertype()));
 			trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 			trans.setCreateTime(sdf.format(user.getCreateTime()));
-			// List<userlist>插入数据
+
 			list.add(trans);
 		}
 		return list;
@@ -139,6 +147,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
 	public ModelAndView addUserPost(String username, String password, int usertype, RedirectAttributes redirectAttributes, HttpSession session) {
+		logger.debug("username:{},password:{},usertype:{}", username, password, usertype);
 		int replay = 0;
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
@@ -157,7 +166,7 @@ public class ManagerController {
 				replay = 2;
 				redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
 				redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
-				redirectAttributes.addFlashAttribute(Constants.MESSAGE, "MSG_USER_EXIST");
+				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_EXIST);
 			} else {
 				replay = 1;
 			}
@@ -235,11 +244,11 @@ public class ManagerController {
 	public @ResponseBody
 	boolean checkWorkerName(String temp, String value) {
 		worker worker = null;
-		if (temp.equals("workerIdCard")) {
+		if (temp.equals(Constants.USER_WORKERIDCARD)) {
 			worker = workerService.getWorkerByWorkerIdCard(value);
-		} else if (temp.equals("workerDisabilityCard")) {
+		} else if (temp.equals(Constants.USER_WORKERDISABILITYCARD)) {
 			worker = workerService.getWorkerByWorkerDisabilityCard(value);
-		} else if (temp.equals("workerPhone")) {
+		} else if (temp.equals(Constants.USER_WORKERPHONE)) {
 			worker = workerService.getWorkerByWorkerPhone(Integer.parseInt(value));
 		}
 		if (worker == null) {
@@ -247,13 +256,15 @@ public class ManagerController {
 		}
 		return false;
 	}
+
 	/**
 	 * 
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.GET)
-	public ModelAndView addWorkerGET(){
+	public ModelAndView addWorkerGET() {
 		return new ModelAndView("manager/worker_add");
 	}
+
 	/**
 	 * 存入数据库user和worker的信息,清空session中user信息
 	 * 
@@ -263,54 +274,41 @@ public class ManagerController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, RedirectAttributes redirectAttributes, HttpSession session)
-			throws IOException {
+	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, RedirectAttributes redirectAttributes, HttpSession session) {
 		boolean flag = true;
-		if (StringUtils.isEmpty(worker.getWorkerRealName())) {
-			redirectAttributes.addFlashAttribute(Constants.USER_NAME, MSG_USER_NOT_EMPTY);
-			flag = false;
-		}
-		if (StringUtils.isEmpty(worker.getWorkerIdCard())) {
-			redirectAttributes.addFlashAttribute("workerIdCard", "身份证号不能为空!");
-			flag = false;
-		}
-		if (StringUtils.isEmpty(worker.getWorkerDisabilityCard())) {
-			redirectAttributes.addFlashAttribute("workerDisabilityCard", "残疾人证号不能为空!");
-			flag = false;
-		}
-		if (StringUtils.isEmpty(worker.getWorkerPhone().toString())) {
-			redirectAttributes.addFlashAttribute("workerPhone", "手机号不能为空!");
-			flag = false;
-		}
-
 		if (workerService.getWorkerByWorkerIdCard(worker.getWorkerIdCard()) != null) {
-			redirectAttributes.addFlashAttribute("workerIdCard", "身份证号已存在!");
+			redirectAttributes.addFlashAttribute(Constants.USER_WORKERIDCARD, MSG_WORKERIDCARD_EXIST);
 			flag = false;
 		}
 
 		if (workerService.getWorkerByWorkerDisabilityCard(worker.getWorkerDisabilityCard()) != null) {
-			redirectAttributes.addFlashAttribute("workerDisabilityCard", "残疾人证号已存在!");
+			redirectAttributes.addFlashAttribute(Constants.USER_WORKERDISABILITYCARD, MSG_WORKERDISABILITYCARD_EXIST);
 			flag = false;
 		}
 
 		if (workerService.getWorkerByWorkerPhone(worker.getWorkerPhone()) != null) {
-			redirectAttributes.addFlashAttribute("workerPhone", "手机号已存在!");
+			redirectAttributes.addFlashAttribute(Constants.USER_WORKERPHONE, MSG_WORKERPHONE_EXIST);
 			flag = false;
 		}
 
 		if (flag) {
-			int userId = userService.selUserIdByUserName(session.getAttribute("addusername").toString());
+			int userId =Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString());
 			worker.setUserId(userId);
 			if (!workerImage.isEmpty()) {
-				worker.setWorkerImage(workerImage.getBytes());
+				try {
+					worker.setWorkerImage(workerImage.getBytes());
+				} catch (IOException e) {
+
+					e.printStackTrace();
+				}
 			}
-			worker.setCreateId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
+			worker.setCreateId(userId);
 
 			workerService.insertSelective(worker);
 			session.removeAttribute(Constants.ADD_USER_ID);
 			return new ModelAndView("redirect:manager");
 		}
-		redirectAttributes.addFlashAttribute("worker",worker);
+		redirectAttributes.addFlashAttribute("worker", worker);
 		return new ModelAndView("redirect:addworker");
 	}
 }

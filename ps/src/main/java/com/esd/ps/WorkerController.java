@@ -81,18 +81,19 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	public @ResponseBody String workerPost(HttpSession session) throws JsonProcessingException {
-		String uploadTime,taskEffective="";
+		logger.debug("taskTotal:{}",taskService.getTaskCount());
+		String uploadTime=null;
 		double taskMarkTime;
-		int userId = Integer.parseInt(session.getAttribute("loginUserId").toString());
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int workerId = workerService.selWorkerIdByUserId(userId);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		for (Iterator<task> iterator = taskService.selAllTaskByWorkerId(workerId).iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();
 
 			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
-			if (task.getTaskMarkTime()==null){
+			if (task.getTaskMarkTime() == null){
 				taskMarkTime=0;
 			}else{
 				workerMark = 1;
@@ -102,26 +103,18 @@ public class WorkerController {
 			taskTrans.setTaskMarkTime(taskMarkTime);
 			taskTrans.setTaskName(task.getTaskName());
 			
-			if(task.getTaskUploadTime()==null){
+			if(task.getTaskUploadTime() == null){
 				uploadTime="";
 			}else{
 				uploadTime=sdf.format(task.getTaskUploadTime());
 			}
 			taskTrans.setTaskUploadTime(uploadTime);
-			if(task.getTaskEffective()==null){
-				taskEffective="还没检测";
-			}else if(task.getTaskEffective()==true){
-				taskEffective="有效";
-			}else if(task.getTaskEffective()==false){
-				taskEffective="无效";
-			}
-			taskTrans.setTaskEffective(taskEffective);
+			taskTrans.setTaskEffective(task.getTaskEffective());
 
-			list.add(taskTrans);
-			
+			list.add(taskTrans);			
 		}
 		ObjectMapper objectMapper=new ObjectMapper();  
-		String json="{\"workerMark\":"+workerMark+",\"list\":"+objectMapper.writeValueAsString(list)+"}";
+		String json="{\"workerMark\":"+workerMark+",\"list\":"+objectMapper.writeValueAsString(list)+",\"taskTotal\":"+taskService.getTaskCount()+"}";
 		return json;
 	}
 
@@ -132,8 +125,10 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/downTask")
-	public ModelAndView downTask(final HttpServletResponse response, taskWithBLOBs taskWithBLOBs, int taskId, int workerid, HttpSession session) {
-		taskWithBLOBs = taskService.getOneTaskOrderByTaskLvl();
+	public ModelAndView downTask(final HttpServletResponse response, taskWithBLOBs taskWithBLOBs, int taskId, int workerId,int downTaskCount, HttpSession session) {
+		logger.debug("downTaskCount:{},taskId:{},workerId:{}",downTaskCount,taskId,workerId);
+		
+		taskWithBLOBs = taskService.getTaskOrderByTaskLvl(downTaskCount);
 		byte[] data = taskWithBLOBs.getTaskWav();
 		String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
 		try {
@@ -147,14 +142,12 @@ public class WorkerController {
 			outputStream.flush();
 			outputStream.close();
 		} catch (UnsupportedEncodingException e) {
-			downReplay = "下载任务失败了";
 			e.printStackTrace();
 		} catch (IOException e) {
-			downReplay = "下载任务失败了";
 			e.printStackTrace();
 		}
 		taskWithBLOBs.setTaskDownloadTime(new Date());
-		taskWithBLOBs.setWorkerId(workerid);
+		taskWithBLOBs.setWorkerId(workerId);
 		if (taskService.updateByPrimaryKeySelective(taskWithBLOBs) == 1) {
 			session.setAttribute("workerMark", 1);
 		} else {

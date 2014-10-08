@@ -137,15 +137,9 @@ public class EmployerController {
 			taskTrans taskTrans = new taskTrans();
 			
 			taskTrans.setTaskName(task.getTaskName());
-			if(task.getTaskEffective()==null){
-				taskEffective="还没检测";
-			}else if(task.getTaskEffective()==true){
-				taskEffective="有效";
-			}else if(task.getTaskEffective()==false){
-				taskEffective="无效";
-			}
-			taskTrans.setTaskEffective(taskEffective);
+			taskTrans.setTaskEffective(task.getTaskEffective());
 			taskTrans.setCreateTime(sdf.format(task.getCreateTime()));
+			
 			list.add(taskTrans);
 		}
 		return list;

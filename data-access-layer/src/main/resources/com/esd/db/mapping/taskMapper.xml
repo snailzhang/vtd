@@ -61,13 +61,19 @@
     from task
     where pack_id = #{packId,jdbcType=INTEGER} order by task_id DESC
   </select>
-  <select id="selOneTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" >
+  <select id="selectTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
     select 
 	<include refid="Base_Column_List" />
 	,
 	<include refid="Blob_Column_List" />
     from task
-    order by task_lvl DESC limit 1
+    order by task_lvl DESC limit #{downTaskCount,jdbcType=INTEGER}
+  </select>
+  <select id="selectTaskCount" resultType="java.lang.Integer" >
+    select 
+	count(task_id) total
+    from task
+    WHERE worker_id IS NULL OR worker_id = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from task

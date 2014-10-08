@@ -6,7 +6,7 @@ public class taskTrans {
 
     private Double taskMarkTime;
 
-    private String taskEffective;
+    private Boolean taskEffective;
 
     private String taskDownloadTime;
 
@@ -30,11 +30,11 @@ public class taskTrans {
         this.taskMarkTime = taskMarkTime;
     }
 
-    public String getTaskEffective() {
+    public Boolean getTaskEffective() {
         return taskEffective;
     }
 
-    public void setTaskEffective(String taskEffective) {
+    public void setTaskEffective(Boolean taskEffective) {
         this.taskEffective = taskEffective;
     }
 

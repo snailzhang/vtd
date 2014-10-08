@@ -19,4 +19,7 @@ public interface Constants {
 	public static final String USER_TYPE = "usertype";//用户类型
 	public static final String MESSAGE = "message";//信息
 	public static final String DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss";//日期时间格式
+	public static final String USER_WORKERIDCARD="workerIdCard";//工作者身份证号
+	public static final String USER_WORKERDISABILITYCARD="workerDisabilityCard";//工作者残疾人证号
+	public static final String USER_WORKERPHONE="workerPhone";//工作者电话号
 }
