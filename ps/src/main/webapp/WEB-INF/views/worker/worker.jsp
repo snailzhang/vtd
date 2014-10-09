@@ -46,7 +46,22 @@
 			<tbody></tbody>
 		</table>
 	</div>
-	
+	<div class="container" id="downBtn">
+		<h2>下载新任务</h2>
+		<form action="${contextPath}/downTask" method="get" id="downTask" name="downTask" role="form" class="form-horizontal">
+			<div class="form-group">
+		      <label for="downTaskCount" class="col-sm-2 control-label">选择下载任务个数:</label>
+		      <div class="col-sm-10">
+		      	<select class="form-control" name="downTaskCount" id="downTaskCount"></select>
+		      </div>
+		   </div>
+		   <div class="form-group">
+		      <div class="col-sm-offset-2 col-sm-10">
+		         <button type="submit" class="btn btn-default">下载任务</button>
+		      </div>
+		   </div>
+		</form>
+	</div>
 	<div class="container" id="upBtn">
 		<h2>上传已完成的任务</h2>
 		<form action="${contextPath}/upTagAndTextGrid" method="post" id="fileupload" name="upTagAndTextGrid" role="form" class="form-horizontal" enctype="multipart/form-data">
