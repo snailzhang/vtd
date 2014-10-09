@@ -44,6 +44,13 @@
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
+		   <div class="form-group" id="lockTime">
+		      <label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
+		         <span class="help-block"></span>
+		      </div>
+		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
 		         <button type="button" class="btn btn-default" disabled="disabled">上传</button>
