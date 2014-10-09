@@ -4,7 +4,7 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>发包商页面</title>
+<title>工作者页面</title>
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -23,6 +23,9 @@
 	}
 </style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.fileupload.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.iframe-transport.js"></script>
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
@@ -43,28 +46,20 @@
 			<tbody></tbody>
 		</table>
 	</div>
-	<div class="container" id="downBtn">
-		
-		<a type="button" class="btn btn-lg btn-primary btn-block" href="${contextPath}/downTask">下载任务</a>
-	</div>
+	
 	<div class="container" id="upBtn">
 		<h2>上传已完成的任务</h2>
-		<form action="${contextPath}/upTagAndTextGrid" method="post" id="upTagAndTextGrid" name="upTagAndTextGrid" role="form" class="form-horizontal">
+		<form action="${contextPath}/upTagAndTextGrid" method="post" id="fileupload" name="upTagAndTextGrid" role="form" class="form-horizontal" enctype="multipart/form-data">
 			<div class="form-group">
-		      <label for="pack" class="col-sm-2 control-label">TAG:</label>
+		      <label for="TAG" class="col-sm-2 control-label">TAG:</label>
 		      <div class="col-sm-10">
-		         <input type="file" class="form-control" name="TAG" id="TAG" placeholder="请选择上传TAG文件">
+		         <input type="file" class="form-control" name="file" id="" placeholder="请选择上传文件" multiple>
 		      </div>
 		   </div>
-		   <div class="form-group">
-		      <label for="TextGrid" class="col-sm-2 control-label">TextGrid:</label>
-		      <div class="col-sm-10">
-		         <input type="file" class="form-control" name="TextGrid" id="TextGrid" placeholder="请选择上传TextGrid文件">
-		      </div>
-		   </div>
+		   
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="button" class="btn btn-default" disabled="disabled">上传文件</button>
+		         <button type="submit" class="btn btn-default" >上传文件</button>
 		      </div>
 		   </div>
 		</form>
@@ -81,7 +76,15 @@
 				success:function(data){
 					$("tbody").append("");
 					var workerMark = data.workerMark;
-					
+					var taskTotal = data.taskTotal;
+					if(taskTotal != 0){
+						if(taskTotal>20)taskTotal = 20;//单次下载最多20个任务
+						for(var i=1;i<taskTotal+1;i++){
+							$("#downTaskCount").append("<option vale='"+i+"'>"+i+"</option>");
+						}
+					}else{
+						$("#downTaskCount").attr("disabled","disabled");
+					}
 					$.each(data.list,function(i,item){
 						$("tbody").append(
 							"<tr>"+
@@ -148,6 +151,11 @@
 			$("button[type=button]").click(function(){
 				var formName = $("#upTagAndTextGrid");
 				formName.submit();
+			});
+			$("fileupload").fileupload({
+				submit:function(e,data){
+					$(this).fileupload('send', data);
+				}
 			});
 		});
 	</script>
