@@ -230,4 +230,18 @@ public class WorkerController {
 		}
 		return new ModelAndView("worker/worker", "uploadReplay", uploadReplay);
 	}
+	@RequestMapping(value = "/upFiles", method = RequestMethod.POST)
+	public ModelAndView upFiles(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs) {
+		byte[] b = null;
+		String taskName = null, nameFirst = null, nameLast = null;
+		for (int i = 0; i < files.length; i++) {
+			b = files[i].getBytes();
+			nameFirst = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf("."));
+			nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(".") + 1), files[i].getOriginalFilename().length());
+			logger.debug("nameFirst:{}",nameFirst);
+			
+
+		}
+		return new ModelAndView("worker/worker");
+	}
 }
