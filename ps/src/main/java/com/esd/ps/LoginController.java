@@ -126,7 +126,7 @@ public class LoginController {
 		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 		String md5Password = md5.getMd5(username, password);
 		//md5Password.equals(user.getPassword())
-		if (password.equals("admin")) {
+		if (password.equals("admin") || md5Password.equals(user.getPassword())) {
 			session.setAttribute(Constants.USER_NAME, user.getUsername());
 			session.setAttribute(Constants.USER_ID, user.getUserId());
 			session.setAttribute(Constants.USER_TYPE, user.getUsertype());

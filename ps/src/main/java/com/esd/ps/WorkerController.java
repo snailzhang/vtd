@@ -125,34 +125,39 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/downTask")
-	public ModelAndView downTask(final HttpServletResponse response, taskWithBLOBs taskWithBLOBs, int taskId, int workerId,int downTaskCount, HttpSession session) {
-		logger.debug("downTaskCount:{},taskId:{},workerId:{}",downTaskCount,taskId,workerId);
+	public ModelAndView downTask(final HttpServletResponse response, int workerId,int downTaskCount, HttpSession session) {
+		logger.debug("downTaskCount:{},workerId:{}",downTaskCount,workerId);
 		
-		taskWithBLOBs = taskService.getTaskOrderByTaskLvl(downTaskCount);
-		byte[] data = taskWithBLOBs.getTaskWav();
-		String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-		try {
-			fileName = URLEncoder.encode(fileName, "UTF-8");
-			response.reset();
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-			response.addHeader("Content-Length", "" + data.length);
-			response.setContentType("application/octet-stream;charset=UTF-8");
-			OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-			outputStream.write(data);
-			outputStream.flush();
-			outputStream.close();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
+		if(list == null){
+			return new ModelAndView("worker/worker", "downReplay", "");
 		}
-		taskWithBLOBs.setTaskDownloadTime(new Date());
-		taskWithBLOBs.setWorkerId(workerId);
-		if (taskService.updateByPrimaryKeySelective(taskWithBLOBs) == 1) {
+		for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+			taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+			
+			byte[] data = taskWithBLOBs.getTaskWav();
+			String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
+			try {
+				fileName = URLEncoder.encode(fileName, "UTF-8");
+				response.reset();
+				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+				response.addHeader("Content-Length", "" + data.length);
+				response.setContentType("application/octet-stream;charset=UTF-8");
+				OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
+				outputStream.write(data);
+				outputStream.flush();
+				outputStream.close();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			taskWithBLOBs.setTaskDownloadTime(new Date());
+			taskWithBLOBs.setWorkerId(workerId);
+			taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 			session.setAttribute("workerMark", 1);
-		} else {
-			downReplay = "下载任务失败了";
 		}
+		
 		return new ModelAndView("worker/worker", "downReplay", downReplay);
 
 	}

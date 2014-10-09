@@ -19,21 +19,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
@@ -65,8 +59,6 @@ public class EmployerController {
 	private EmployerService employerService;
 	@Autowired
 	private TaskService taskService;
-	@Value("${uploadReplay}")
-	private String uploadReplay;
 
 	/**
 	 * 登录发包商页
@@ -87,18 +79,22 @@ public class EmployerController {
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	public @ResponseBody
 	List<packTrans> employerPost(HttpSession session) {// list列表直接转json
-		int userId = userService.selUserIdByUserName(session.getAttribute("loginrName").toString());
+		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.selEmployerIdByUserId(userId);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-		for (Iterator<pack> iterator = packService.selAllByEmployerId(employerId).iterator(); iterator.hasNext();) {
+		List<pack> listPack = packService.selAllByEmployerId(employerId);
+		if (listPack == null) {
+			return null;
+		}
+		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
 
 			packTrans packTrans = new packTrans();
 			packTrans.setPackId(pack.getPackId());
 			packTrans.setPackName(pack.getPackName());
 			packTrans.setPackStatus(pack.getPackStatus());
-			packTrans.setPackLockTime(pack.getPackLockTime());
+			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
 
 			list.add(packTrans);
@@ -115,6 +111,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.GET)
 	public ModelAndView detailpageGet(int packId, HttpSession session) {
+		logger.debug("packId:{}", packId);
 		session.setAttribute("packId", packId);
 		return new ModelAndView("employer/packDetail");// 返回值没写
 	}
@@ -128,18 +125,21 @@ public class EmployerController {
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	public @ResponseBody
 	List<taskTrans> detailpagePost(HttpSession session) {
-		String taskEffective = "";
 		int packId = Integer.parseInt(session.getAttribute("packId").toString());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		for (Iterator<task> iterator = taskService.getTaskByPackId(packId).iterator(); iterator.hasNext();) {
+		List<task> listTask = taskService.getTaskByPackId(packId);
+		if (listTask == null) {
+			return null;
+		}
+		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();
-			
+
 			taskTrans.setTaskName(task.getTaskName());
 			taskTrans.setTaskEffective(task.getTaskEffective());
 			taskTrans.setCreateTime(sdf.format(task.getCreateTime()));
-			
+
 			list.add(taskTrans);
 		}
 		return list;
@@ -151,112 +151,104 @@ public class EmployerController {
 	 * @param pack
 	 * @param pwbs
 	 * @param twbs
-	 * @throws IOException
 	 */
 	@RequestMapping(value = "/uploadPack", method = RequestMethod.POST)
-	public ModelAndView uploadpack(@RequestParam(value = "pack", required = false) MultipartFile pack, packWithBLOBs pwbs, taskWithBLOBs twbs) throws IOException {
+	public ModelAndView uploadpack(@RequestParam(value = "pack", required = false) MultipartFile pack, packWithBLOBs packWithBLOBs, taskWithBLOBs taskWithBLOBs, int packLockTime) {
+		logger.debug("packLockTime:{}", packLockTime);
 		String fileName = pack.getOriginalFilename();
-
-		pwbs.setPackFile(pack.getBytes());
-		pwbs.setPackName(fileName);
-		pwbs.setPackStatus(false);
-
-		if (packService.insert(pwbs) == 1) {
-			System.out.println("数据库上传成功!");
-		}
-		// 上传文件存入临时文件
-		if (!pack.isEmpty()) {
-			File f = new File("D:\\temp");
-			if (!f.exists() && !f.isDirectory()) {
-				System.out.println(f.mkdir());
-			}
-			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("D:\\temp\\" + fileName));
-			InputStream in = pack.getInputStream();
-			BufferedInputStream bis = new BufferedInputStream(in);
-			int n = 0;
-			byte[] b = new byte[1024];
-			while ((n = bis.read(b)) != -1) {
-				bos.write(b, 0, n);
-			}
-			bos.flush();
-			bos.close();
-			bis.close();
-		}
-		// 从临时文件取出要解压的文件上传TaskService
-		ZipFile zip = new ZipFile("D:\\temp\\" + fileName);
-		InputStream in = null;
-		for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
-			String zipEntryName = entry.getName();
-			if (zipEntryName.length() < 5) {
-				uploadReplay = "抱歉上传任务包失败了";
-				packService.deleteByName(fileName);
-				break;
-			}
-			in = zip.getInputStream(entry);
-			// inputstrem转成byte[]
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			byte[] data = new byte[4096];
-			int count = -1;
-			while ((count = in.read(data, 0, 4096)) != -1)
-				outStream.write(data, 0, count);
-			data = null;
-			byte[] wav = outStream.toByteArray();
-			twbs.setTaskWav(wav);
-			// 上传的包的号
-			twbs.setPackId(packService.selectByEmployerId(pwbs.getEmployerId()));
-			twbs.setTaskName(zipEntryName);
-			twbs.setTaskDir("D:\\" + fileName.substring(0, (fileName.length() - 4)));
-			if (taskService.insert(twbs) != 1) {
-				uploadReplay = "抱歉上传任务包失败了";
-				packService.deleteByName(fileName);
-			}
-		}
-
-		zip.close();
-		in.close();
-		File fd = new File("D:\\temp\\" + fileName);
-		fd.delete();
-		return new ModelAndView("employer/employer", "uploadReplay", uploadReplay);
-	}
-
-	// 还没有使用
-	@RequestMapping(value = "/uploadPack2", method = RequestMethod.POST)
-	// springmvc包装的解析器速度更快
-	public String upload2(HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException {
-		// 创建一个通用的多部分解析器
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-		// 判断 request 是否有文件上传,即多部分请求
-		if (multipartResolver.isMultipart(request)) {
-			// 转换成多部分request
-			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-			// 取得request中的所有文件名
-			Iterator<String> iter = multiRequest.getFileNames();
-			while (iter.hasNext()) {
-				// 记录上传过程起始时的时间，用来计算上传时间
-				int pre = (int) System.currentTimeMillis();
-				// 取得上传文件
-				MultipartFile file = multiRequest.getFile(iter.next());
-				if (file != null) {
-					// 取得当前上传文件的文件名称
-					String myFileName = file.getOriginalFilename();
-					// 如果名称不为“”,说明该文件存在，否则说明该文件不存在
-					if (myFileName.trim() != "") {
-						System.out.println(myFileName);
-						// 重命名上传后的文件名
-						String fileName = "demoUpload" + file.getOriginalFilename();
-						// 定义上传路径
-						String path = "H:/" + fileName;
-						File localFile = new File(path);
-						file.transferTo(localFile);
-					}
+		try {
+			if (!pack.isEmpty()) {
+				packWithBLOBs.setPackFile(pack.getBytes());
+				packWithBLOBs.setPackName(fileName);
+				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
+				packWithBLOBs.setPackStatus(false);
+				packService.insert(packWithBLOBs);
+				// 上传文件存入临时文件
+				File f = new File(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME));
+				if (!f.exists()) {
+					f.mkdir();
 				}
-				// 记录上传该文件后的时间
-				int finaltime = (int) System.currentTimeMillis();
-				System.out.println(finaltime - pre);
+				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName));
+				InputStream in = pack.getInputStream();
+				BufferedInputStream bis = new BufferedInputStream(in);
+				int n = -1;
+				byte[] b = new byte[1024];
+				while ((n = bis.read(b)) != -1) {
+					bos.write(b, 0, n);
+				}
+				bos.flush();
+				bos.close();
+				bis.close();
 			}
-
+			// 从临时文件取出要解压的文件上传TaskService
+			ZipFile zip = new ZipFile(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName);
+			InputStream in = null;
+			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				String zipEntryName = entry.getName();
+				in = zip.getInputStream(entry);
+				// inputstrem转成byte[]
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				byte[] data = new byte[4096];
+				int count = -1;
+				while ((count = in.read(data, 0, 4096)) != -1)
+					outStream.write(data, 0, count);
+				data = null;
+				byte[] wav = outStream.toByteArray();
+				taskWithBLOBs.setTaskWav(wav);
+				// 上传的包的号
+				taskWithBLOBs.setPackId(packService.selectByEmployerId(packWithBLOBs.getEmployerId()));
+				taskWithBLOBs.setTaskName(zipEntryName);
+				taskWithBLOBs.setTaskDir(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName.substring(0, (fileName.length() - 4)));
+				taskService.insert(taskWithBLOBs);
+			}
+			zip.close();
+			in.close();
+			File fd = new File(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName);
+			fd.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return "/success";
+		return new ModelAndView("employer/employer");
 	}
+
+//	// 还没有使用
+//	@RequestMapping(value = "/uploadPack2", method = RequestMethod.POST)
+//	// springmvc包装的解析器速度更快
+//	public String upload2(HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException {
+//		// 创建一个通用的多部分解析器
+//		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+//		// 判断 request 是否有文件上传,即多部分请求
+//		if (multipartResolver.isMultipart(request)) {
+//			// 转换成多部分request
+//			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+//			// 取得request中的所有文件名
+//			Iterator<String> iter = multiRequest.getFileNames();
+//			while (iter.hasNext()) {
+//				// 记录上传过程起始时的时间，用来计算上传时间
+//				int pre = (int) System.currentTimeMillis();
+//				// 取得上传文件
+//				MultipartFile file = multiRequest.getFile(iter.next());
+//				if (file != null) {
+//					// 取得当前上传文件的文件名称
+//					String myFileName = file.getOriginalFilename();
+//					// 如果名称不为“”,说明该文件存在，否则说明该文件不存在
+//					if (myFileName.trim() != "") {
+//						System.out.println(myFileName);
+//						// 重命名上传后的文件名
+//						String fileName = "demoUpload" + file.getOriginalFilename();
+//						// 定义上传路径
+//						String path = "H:/" + fileName;
+//						File localFile = new File(path);
+//						file.transferTo(localFile);
+//					}
+//				}
+//				// 记录上传该文件后的时间
+//				int finaltime = (int) System.currentTimeMillis();
+//				System.out.println(finaltime - pre);
+//			}
+//
+//		}
+//		return "/success";
+//	}
 }

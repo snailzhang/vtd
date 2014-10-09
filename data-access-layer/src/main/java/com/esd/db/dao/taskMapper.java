@@ -21,7 +21,7 @@ public interface taskMapper {
     
     List<task> selAllTaskByPackId(Integer packId);
     
-    taskWithBLOBs selectTaskOrderByTaskLvl(int downTaskCount);
+    List<taskWithBLOBs> selectTaskOrderByTaskLvl(int downTaskCount);
 
     int updateByPrimaryKeySelective(taskWithBLOBs record);
 

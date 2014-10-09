@@ -80,7 +80,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public taskWithBLOBs getTaskOrderByTaskLvl(int downTaskCount) {
+	public List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount) {
 		
 		return taskMapper.selectTaskOrderByTaskLvl(downTaskCount);
 	}
