@@ -68,15 +68,15 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<task> selAllTaskByWorkerId(Integer workerId) {
+	public List<task> getAllDoingTaskByWorkerId(Integer workerId) {
 		
-		return taskMapper.selAllTaskByWorkerId(workerId);
+		return taskMapper.selectAllDoingTaskByWorkerId(workerId);
 	}
 
 	@Override
 	public List<task> getTaskByPackId(Integer packId) {
 		
-		return taskMapper.selAllTaskByPackId(packId);
+		return taskMapper.selectAllTaskByPackId(packId);
 	}
 
 	@Override
@@ -89,6 +89,12 @@ public class TaskServiceImpl implements TaskService {
 	public int getTaskCount() {
 		
 		return taskMapper.selectTaskCount();
+	}
+
+	@Override
+	public List<task> getAllHistoryTaskByWorkerId(Integer workerId) {
+		
+		return taskMapper.selectAllHistoryTaskByWorkerId(workerId);
 	}
 
 }

@@ -77,44 +77,47 @@ public class WorkerController {
 	 * 
 	 * @param loginrName
 	 * @return
-	 * @throws JsonProcessingException 
+	 * @throws JsonProcessingException
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
-	public @ResponseBody String workerPost(HttpSession session) throws JsonProcessingException {
-		logger.debug("taskTotal:{}",taskService.getTaskCount());
-		String uploadTime=null;
+	public @ResponseBody
+	String workerPost(HttpSession session) throws JsonProcessingException {
+		logger.debug("taskTotal:{}", taskService.getTaskCount());
+		String uploadTime = null;
 		double taskMarkTime;
-		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		int workerId = workerService.selWorkerIdByUserId(userId);
+		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		for (Iterator<task> iterator = taskService.selAllTaskByWorkerId(workerId).iterator(); iterator.hasNext();) {
+		List<task> listTask = taskService.getAllHistoryTaskByWorkerId(workerId);
+		if (listTask == null) {
+			return null;
+		}
+		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();
-
 			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
-			if (task.getTaskMarkTime() == null){
-				taskMarkTime=0;
-			}else{
+			if (task.getTaskMarkTime() == null) {
+				taskMarkTime = 0;
+			} else {
 				workerMark = 1;
-				taskMarkTime=task.getTaskMarkTime();
+				taskMarkTime = task.getTaskMarkTime();
 			}
-			
+
 			taskTrans.setTaskMarkTime(taskMarkTime);
 			taskTrans.setTaskName(task.getTaskName());
-			
-			if(task.getTaskUploadTime() == null){
-				uploadTime="";
-			}else{
-				uploadTime=sdf.format(task.getTaskUploadTime());
+
+			if (task.getTaskUploadTime() == null) {
+				uploadTime = "";
+			} else {
+				uploadTime = sdf.format(task.getTaskUploadTime());
 			}
 			taskTrans.setTaskUploadTime(uploadTime);
 			taskTrans.setTaskEffective(task.getTaskEffective());
 
-			list.add(taskTrans);			
+			list.add(taskTrans);
 		}
-		ObjectMapper objectMapper=new ObjectMapper();  
-		String json="{\"workerMark\":"+workerMark+",\"list\":"+objectMapper.writeValueAsString(list)+",\"taskTotal\":"+taskService.getTaskCount()+"}";
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = "{\"workerMark\":" + workerMark + ",\"list\":" + objectMapper.writeValueAsString(list) + ",\"taskTotal\":" + taskService.getTaskCount() + "}";
 		return json;
 	}
 
@@ -125,16 +128,16 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/downTask")
-	public ModelAndView downTask(final HttpServletResponse response, int workerId,int downTaskCount, HttpSession session) {
-		logger.debug("downTaskCount:{},workerId:{}",downTaskCount,workerId);
-		
+	public ModelAndView downTask(final HttpServletResponse response, int workerId, int downTaskCount, HttpSession session) {
+		logger.debug("downTaskCount:{},workerId:{}", downTaskCount, workerId);
+
 		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
-		if(list == null){
+		if (list == null) {
 			return new ModelAndView("worker/worker", "downReplay", "");
 		}
 		for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
 			taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
-			
+
 			byte[] data = taskWithBLOBs.getTaskWav();
 			String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
 			try {
@@ -157,7 +160,7 @@ public class WorkerController {
 			taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 			session.setAttribute("workerMark", 1);
 		}
-		
+
 		return new ModelAndView("worker/worker", "downReplay", downReplay);
 
 	}
@@ -220,8 +223,8 @@ public class WorkerController {
 			}
 			if (taskService.updateByName(taskWithBLOBs) == 1) {
 				session.setAttribute("workerMark", 0);
-			}else{
-				uploadReplay="上传Tag文件和TextGrid文件失败了";
+			} else {
+				uploadReplay = "上传Tag文件和TextGrid文件失败了";
 			}
 
 		}

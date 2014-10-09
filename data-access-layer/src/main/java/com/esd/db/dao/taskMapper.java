@@ -17,9 +17,11 @@ public interface taskMapper {
     
     List<task> selectAllTaskId();
     
-    List<task> selAllTaskByWorkerId(Integer workerId);
+    List<task> selectAllDoingTaskByWorkerId(Integer workerId);
     
-    List<task> selAllTaskByPackId(Integer packId);
+    List<task> selectAllHistoryTaskByWorkerId(Integer workerId);
+    
+    List<task> selectAllTaskByPackId(Integer packId);
     
     List<taskWithBLOBs> selectTaskOrderByTaskLvl(int downTaskCount);
 

@@ -58,8 +58,8 @@ public class WorkerServiceImpl implements WorkerService {
 		return workerMapper.updateByPrimaryKey(record);
 	}
 
-	public int selWorkerIdByUserId(Integer userid) {
-		return workerMapper.selWorkerIdByUserId(userid);
+	public int getWorkerIdByUserId(Integer userid) {
+		return workerMapper.selectWorkerIdByUserId(userid);
 	}
 
 	@Override
