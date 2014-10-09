@@ -17,7 +17,7 @@ public interface taskMapper {
     
     List<task> selectAllTaskId();
     
-    List<task> selectAllDoingTaskByWorkerId(Integer workerId);
+    List<taskWithBLOBs> selectAllDoingTaskByWorkerId(Integer workerId);
     
     List<task> selectAllHistoryTaskByWorkerId(Integer workerId);
     

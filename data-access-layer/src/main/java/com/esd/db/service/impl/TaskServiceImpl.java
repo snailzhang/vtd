@@ -68,7 +68,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<task> getAllDoingTaskByWorkerId(Integer workerId) {
+	public List<taskWithBLOBs> getAllDoingTaskByWorkerId(Integer workerId) {
 		
 		return taskMapper.selectAllDoingTaskByWorkerId(workerId);
 	}

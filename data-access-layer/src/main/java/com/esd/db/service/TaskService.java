@@ -17,7 +17,7 @@ public interface TaskService {
     
     List<task> selectAllTaskId();
     
-    List<task> getAllDoingTaskByWorkerId(Integer workerId);
+    List<taskWithBLOBs> getAllDoingTaskByWorkerId(Integer workerId);
     
     List<task> getAllHistoryTaskByWorkerId(Integer workerId);
     

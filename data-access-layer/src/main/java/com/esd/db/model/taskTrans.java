@@ -13,6 +13,10 @@ public class taskTrans {
     private String taskUploadTime;
     
     private String createTime;
+    
+    private int taskTag;
+    
+    private int taskTextGrid;
 
     public String getTaskName() {
         return taskName;
@@ -61,4 +65,20 @@ public class taskTrans {
 	public void setTaskUploadTime(String taskUploadTime) {
         this.taskUploadTime = taskUploadTime;
     }
+
+	public int getTaskTag() {
+		return taskTag;
+	}
+
+	public void setTaskTag(int taskTag) {
+		this.taskTag = taskTag;
+	}
+
+	public int getTaskTextGrid() {
+		return taskTextGrid;
+	}
+
+	public void setTaskTextGrid(int taskTextGrid) {
+		this.taskTextGrid = taskTextGrid;
+	}
 }
