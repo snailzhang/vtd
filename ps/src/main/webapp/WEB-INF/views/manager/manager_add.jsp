@@ -38,7 +38,7 @@
 		$(document).ready(function(){
 			$("button[type=button]").click(function(){
 				var formName = $("#addmanager");
-				var managerName = $("#managerName").val();
+				var managerName = $("#managerName");
 				if(checkout.text.isempty(managerName,"管理员名称不能为空！")) return;
 				formName.submit();
 				
