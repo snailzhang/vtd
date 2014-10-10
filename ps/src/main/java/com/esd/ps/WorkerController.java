@@ -315,7 +315,7 @@ public class WorkerController {
 		// 数据查询判断
 		// session.setAttribute("workerMark", 0);
 		List<task> listTask1 = taskService.getAllDoingTaskByWorkerId(workerId);
-		if (listTask1 == null) {
+		if (listTask1 == null || listTask1.isEmpty()) {
 			workerMark = 0;
 		} else {
 			workerMark = 1;
