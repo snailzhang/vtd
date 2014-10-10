@@ -51,6 +51,12 @@
 		         <input type="text" class="form-control" name="workerPaypal" id="workerPaypal" placeholder="请输入支付宝账号">
 		      </div>
 		   </div>
+		    <div class="form-group">
+		      <label for="workerPhone" class="col-sm-2 control-label">电话号：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="workerPhone" id="workerPhone" placeholder="请输入电话号码">
+		      </div>
+		   </div>
 		   <div class="form-group">
 		      <label for="workerImage" class="col-sm-2 control-label">照片：</label>
 		      <div class="col-sm-10">
@@ -71,9 +77,11 @@
 				var workRealName = $("#workRealName");
 				var workerIdCard = $("#workerIdCard");
 				var workerDisabilityCard = $("#workerDisabilityCard");
+				var workerPhone = $("workerPhone");
 				if(checkout.text.isempty(workRealName,"真实姓名不能为空！")) return;
 				if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
 				if(checkout.text.isempty(workerDisabilityCard,"残疾证卡号不能为空！")) return;
+				if(checkout.text.isempty(workerPhone,"电话号号不能为空！")) return;
 				formName.submit();
 				
 			});
