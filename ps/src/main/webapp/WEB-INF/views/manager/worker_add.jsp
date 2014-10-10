@@ -20,7 +20,7 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<div class="container">
-		<form action="${contextPath}/addworker" method="post" id="addworker" name="addworker" role="form" class="form-horizontal">
+		<form action="${contextPath}/addworker" method="post" id="addworker" name="addworker" role="form" class="form-horizontal" enctype="multipart/form-data">
 			<div class="form-group">
 		      <label for="workRealName" class="col-sm-2 control-label">真实姓名：</label>
 		      <div class="col-sm-10">

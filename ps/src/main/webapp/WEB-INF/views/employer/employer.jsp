@@ -36,7 +36,7 @@
 	</div>
 	<div class="container">
 		<h2>上传任务包</h2>
-		<form action="${contextPath}/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal">
+		<form action="${contextPath}/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
 			<div class="form-group" id="packUploadDiv">
 		      <label for="pack" class="col-sm-2 control-label">选择任务包：</label>
 		      <div class="col-sm-10">
