@@ -117,7 +117,7 @@ public class ManagerController {
 
 			trans.setUserStatus(user.getUserStatus());
 			trans.setUsername(user.getUsername());
-			trans.setUsertypeenglish(userTypeService.seluserDes(user.getUsertype()));
+			trans.setUsertypeenglish(userTypeService.getUserTypeNameEnglish(user.getUsertype()));
 			trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 			trans.setCreateTime(sdf.format(user.getCreateTime()));
 
@@ -188,8 +188,9 @@ public class ManagerController {
 				user1.setUserId(userService.selUserIdByUserName(username));
 				userService.updateByPrimaryKeySelective(user1);
 			}
-			String page = userTypeService.seluserDesEnglish(usertype);
+			String page = userTypeService.getUserTypeNameEnglish(usertype);
 			session.setAttribute(Constants.ADD_USER_ID, userService.selUserIdByUserName(username));
+			logger.debug("page:{}",page);
 			return new ModelAndView("manager/" + page + "_add");
 		}
 		return new ModelAndView("redirect:addUser");

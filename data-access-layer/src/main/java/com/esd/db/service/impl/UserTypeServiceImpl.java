@@ -55,15 +55,15 @@ public class UserTypeServiceImpl implements UserTypeService {
 	}
 
 	@Override
-	public String seluserDesEnglish(Integer userTypeId) {
+	public String getUserTypeNameEnglish(Integer userTypeId) {
 		
-		return usertypeMapper.seluserDesEnglish(userTypeId);
+		return usertypeMapper.selectUserTypeNameEnglish(userTypeId);
 	}
 
 	@Override
-	public String seluserDes(Integer userTypeId) {
+	public String getUserTypeName(Integer userTypeId) {
 		
-		return usertypeMapper.seluserDes(userTypeId);
+		return usertypeMapper.selectUserTypeName(userTypeId);
 	}
 
 }

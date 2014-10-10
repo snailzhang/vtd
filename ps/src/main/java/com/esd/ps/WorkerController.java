@@ -77,7 +77,7 @@ public class WorkerController {
 	String workerPost(HttpSession session) {
 		logger.debug("taskTotal:{}", taskService.getTaskCount());
 		String uploadTime = null;
-		double taskMarkTime;
+		double taskMarkTime = 0;
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
@@ -90,6 +90,7 @@ public class WorkerController {
 			taskTrans taskTrans = new taskTrans();
 			taskTrans.setTaskDownloadTime(sdf.format(taskWithBLOBs.getTaskDownloadTime()));
 			if (taskWithBLOBs.getTaskMarkTime() == null) {
+				workerMark = 0;
 				taskMarkTime = 0;
 			} else {
 				workerMark = 1;
@@ -97,12 +98,12 @@ public class WorkerController {
 			}
 			if (taskWithBLOBs.getTaskTag() == null) {
 				taskTrans.setTaskTag(0);
-			}else{
+			} else {
 				taskTrans.setTaskTag(1);
 			}
 			if (taskWithBLOBs.getTaskTextgrid() == null) {
 				taskTrans.setTaskTextGrid(0);
-			}else{
+			} else {
 				taskTrans.setTaskTextGrid(1);
 			}
 			taskTrans.setTaskMarkTime(taskMarkTime);
@@ -197,8 +198,9 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/downTask")
-	public ModelAndView downTask(final HttpServletResponse response, int workerId, int downTaskCount, HttpSession session) {
-		logger.debug("downTaskCount:{},workerId:{}", downTaskCount, workerId);
+	public ModelAndView downTask(final HttpServletResponse response, int downTaskCount, HttpSession session) {
+		logger.debug("downTaskCount:{}", downTaskCount);
+		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
 		if (list == null) {
 			return new ModelAndView("worker/worker", "downReplay", "");
@@ -251,22 +253,20 @@ public class WorkerController {
 		}
 		List<String> listMath = new ArrayList<String>();
 		List<String> listNoMath = new ArrayList<String>();
-		for (int i = 0; i < files.length; i++) {
-			String nameFirst = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + ".wav";
-			int mark = 0;
-			for (Iterator<taskWithBLOBs> iterator = listTask.iterator(); iterator.hasNext();) {
-				task task = (task) iterator.next();
-				String taskName = task.getTaskName();
-				if (nameFirst.equals(taskName)) {
+		for (Iterator<taskWithBLOBs> iterator = listTask.iterator(); iterator.hasNext();) {
+			task task = (task) iterator.next();
+			String taskName = task.getTaskName();
+			int markTag = 0, markTextGrid = 0;
+			for (int i = 0; i < files.length; i++) {
+				String nameFirst = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + ".wav";
+				if (taskName.equals(nameFirst)) {
 					byte[] b = files[i].getBytes();
 					String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(".") + 1), files[i].getOriginalFilename().length());
-					taskWithBLOBs.setTaskName(nameFirst);
-					taskWithBLOBs.setTaskUploadTime(new Date());
 					if (nameLast.equals("TAG")) {
-						mark = 1;
+						markTag = 1;
 						taskWithBLOBs.setTaskTag(b);
 					} else if (nameLast.equals("TextGrid")) {
-						mark = 1;
+						markTextGrid = 1;
 						BufferedReader reader = null;
 						double d = 0;
 						try {
@@ -300,15 +300,17 @@ public class WorkerController {
 						taskWithBLOBs.setTaskMarkTime(d);
 						taskWithBLOBs.setTaskTextgrid(b);
 					}
-					taskService.updateByName(taskWithBLOBs);
+					if (markTag == 1 && markTextGrid == 1) {
+						taskWithBLOBs.setTaskName(nameFirst);
+						taskWithBLOBs.setTaskUploadTime(new Date());
+						taskService.updateByName(taskWithBLOBs);
+						listMath.add(files[i].getOriginalFilename());
+					}
+					if (markTag == 0 || markTextGrid == 0) {
+						listNoMath.add(files[i].getOriginalFilename());
+					}
+
 				}
-			}
-			if (mark == 1) {
-				mark = 0;
-				listMath.add(files[i].getOriginalFilename());
-			}
-			if (mark == 0) {
-				listNoMath.add(files[i].getOriginalFilename());
 			}
 
 		}

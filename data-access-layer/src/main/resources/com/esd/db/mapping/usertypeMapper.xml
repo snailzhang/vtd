@@ -20,13 +20,13 @@
     <include refid="Base_Column_List" />
     from usertype
   </select>
-  <select id="seluserTypeNameEnglish" resultType="java.lang.String" parameterType="java.lang.Integer">
+  <select id="selectUserTypeNameEnglish" resultType="java.lang.String" parameterType="java.lang.Integer">
     select 
     user_type_name_english
     from usertype
     where user_type_id= #{userTypeId,jdbcType=INTEGER}
   </select>
-  <select id="seluserTypeName" resultType="java.lang.String" parameterType="java.lang.Integer">
+  <select id="selectUserTypeName" resultType="java.lang.String" parameterType="java.lang.Integer">
     select 
     user_type_name
     from usertype
