@@ -207,6 +207,7 @@ public class ManagerController {
 	public ModelAndView addmanager(String managerName, HttpSession session) {
 		manager manager = new manager();
 		manager.setManagerName(managerName);
+		manager.setUpdateTime(new Date());
 		manager.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
@@ -227,6 +228,7 @@ public class ManagerController {
 	public ModelAndView addemployer(String employerName, HttpSession session) {
 		employer employer = new employer();
 		employer.setEmployerName(employerName);
+		employer.setUpdateTime(new Date());
 		employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
@@ -304,7 +306,7 @@ public class ManagerController {
 				}
 			}
 			worker.setCreateId(userId);
-
+			worker.setUpdateTime(new Date());
 			workerService.insertSelective(worker);
 			session.removeAttribute(Constants.ADD_USER_ID);
 			return new ModelAndView("redirect:manager");
