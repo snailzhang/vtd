@@ -81,9 +81,11 @@ public class WorkerController {
 	String workerPost(HttpSession session) {
 		logger.debug("taskTotal:{}", taskService.getTaskCount());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		logger.debug("workerId:{}",workerId);
 		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
+		logger.debug("listTask:{}",listTask.isEmpty());
 		// 没有正在进行的任务
-		if (listTask == null) {
+		if (listTask == null || listTask.isEmpty()) {
 			workerMark = 0;
 			// 可做任务的包数
 			int countPackDoing = packService.getCountPackDoing();
@@ -107,6 +109,7 @@ public class WorkerController {
 
 			list.add(taskTrans);
 		}
+		logger.debug("packId:{}",packId);
 		int packLockTime = packService.getPackLockTime(packId);
 		String json = null;
 		try {
