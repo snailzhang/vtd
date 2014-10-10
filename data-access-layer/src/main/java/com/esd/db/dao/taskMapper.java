@@ -17,7 +17,7 @@ public interface taskMapper {
     
     List<task> selectAllTaskId();
     
-    List<taskWithBLOBs> selectAllDoingTaskByWorkerId(Integer workerId);
+    List<task> selectAllDoingTaskByWorkerId(Integer workerId);
     
     List<task> selectAllHistoryTaskByWorkerId(Integer workerId);
     
@@ -34,4 +34,8 @@ public interface taskMapper {
     int updateByPrimaryKey(task record);
     
     int selectTaskCount();
+    
+    int selectFirstPackIdOrderByTaskLvl();
+    
+    int selectCountTaskByPackId(int packId);
 }

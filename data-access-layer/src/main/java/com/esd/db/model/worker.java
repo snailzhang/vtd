@@ -14,11 +14,11 @@ public class worker {
 
     private String workerDisabilityCard;
 
-    private Integer workerPhone;
+    private String workerPhone;
 
     private String workerMac;
 
-    private Integer workerBankCard;
+    private String workerBankCard;
 
     private String workerPaypal;
 
@@ -78,11 +78,11 @@ public class worker {
 		this.workerDisabilityCard = workerDisabilityCard;
 	}
 
-	public Integer getWorkerPhone() {
+	public String getWorkerPhone() {
 		return workerPhone;
 	}
 
-	public void setWorkerPhone(Integer workerPhone) {
+	public void setWorkerPhone(String workerPhone) {
 		this.workerPhone = workerPhone;
 	}
 
@@ -94,11 +94,11 @@ public class worker {
 		this.workerMac = workerMac;
 	}
 
-	public Integer getWorkerBankCard() {
+	public String getWorkerBankCard() {
 		return workerBankCard;
 	}
 
-	public void setWorkerBankCard(Integer workerBankCard) {
+	public void setWorkerBankCard(String workerBankCard) {
 		this.workerBankCard = workerBankCard;
 	}
 

@@ -117,7 +117,7 @@ public class ManagerController {
 
 			trans.setUserStatus(user.getUserStatus());
 			trans.setUsername(user.getUsername());
-			trans.setUsertypeenglish(userTypeService.getUserTypeNameEnglish(user.getUsertype()));
+			trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
 			trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 			trans.setCreateTime(sdf.format(user.getCreateTime()));
 
@@ -252,7 +252,7 @@ public class ManagerController {
 		} else if (temp.equals(Constants.USER_WORKERDISABILITYCARD)) {
 			worker = workerService.getWorkerByWorkerDisabilityCard(value);
 		} else if (temp.equals(Constants.USER_WORKERPHONE)) {
-			worker = workerService.getWorkerByWorkerPhone(Integer.parseInt(value));
+			worker = workerService.getWorkerByWorkerPhone(value);
 		}
 		if (worker == null) {
 			return true;
@@ -277,23 +277,26 @@ public class ManagerController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, worker worker, RedirectAttributes redirectAttributes, HttpSession session) {
+	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, 
+			String workerRealName,String workerIdCard,String workerDisabilityCard,String workerBankCard,String workerPaypal,String workerPhone, 
+			RedirectAttributes redirectAttributes, HttpSession session) {
+		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}",workerRealName,workerIdCard,workerDisabilityCard,workerBankCard,workerPaypal,workerPhone);
 		boolean flag = true;
-		if (workerService.getWorkerByWorkerIdCard(worker.getWorkerIdCard()) != null) {
+		if (workerService.getWorkerByWorkerIdCard(workerIdCard) != null) {
 			redirectAttributes.addFlashAttribute(Constants.USER_WORKERIDCARD, MSG_WORKERIDCARD_EXIST);
 			flag = false;
 		}
 
-		if (workerService.getWorkerByWorkerDisabilityCard(worker.getWorkerDisabilityCard()) != null) {
+		if (workerService.getWorkerByWorkerDisabilityCard(workerDisabilityCard) != null) {
 			redirectAttributes.addFlashAttribute(Constants.USER_WORKERDISABILITYCARD, MSG_WORKERDISABILITYCARD_EXIST);
 			flag = false;
 		}
 
-		if (workerService.getWorkerByWorkerPhone(worker.getWorkerPhone()) != null) {
+		if (workerService.getWorkerByWorkerPhone(workerPhone) != null) {
 			redirectAttributes.addFlashAttribute(Constants.USER_WORKERPHONE, MSG_WORKERPHONE_EXIST);
 			flag = false;
 		}
-
+		worker worker = new worker();
 		if (flag) {
 			int userId =Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString());
 			worker.setUserId(userId);
@@ -305,6 +308,13 @@ public class ManagerController {
 					e.printStackTrace();
 				}
 			}
+			worker.setWorkerBankCard(workerBankCard);
+			worker.setWorkerDisabilityCard(workerDisabilityCard);
+			worker.setWorkerIdCard(workerIdCard);
+			worker.setWorkerPaypal(workerPaypal);
+			worker.setWorkerPhone(workerPhone);
+			worker.setWorkerRealName(workerRealName);
+			
 			worker.setCreateId(userId);
 			worker.setUpdateTime(new Date());
 			workerService.insertSelective(worker);

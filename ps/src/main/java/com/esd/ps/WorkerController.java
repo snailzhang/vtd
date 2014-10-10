@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.task;
 import com.esd.db.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
+import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,6 +53,8 @@ public class WorkerController {
 	private TaskService taskService;
 	@Autowired
 	private WorkerService workerService;
+	@Autowired
+	private PackService packService;
 	@Value("${workerMark}")
 	private int workerMark;
 	@Value("${downReplay}")
@@ -76,56 +80,47 @@ public class WorkerController {
 	public @ResponseBody
 	String workerPost(HttpSession session) {
 		logger.debug("taskTotal:{}", taskService.getTaskCount());
-		String uploadTime = null;
-		double taskMarkTime = 0;
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
+		// 没有正在进行的任务
+		if (listTask == null) {
+			workerMark = 0;
+			// 可做任务的包数
+			int countPackDoing = packService.getCountPackDoing();
+			// 当前下载的任务包的任务书
+			int countTaskDoing = taskService.getCountTaskDoing();
+			String json = "{\"countPackDoing\":" + countPackDoing + ",\"countTaskDoing\":" + countTaskDoing + ",\"workerMark\":" + workerMark + "}";
+			return json;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		List<taskWithBLOBs> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
-		if (listTask == null) {
-			return null;
-		}
-		for (Iterator<taskWithBLOBs> iterator = listTask.iterator(); iterator.hasNext();) {
-			taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+		Date downloadTime = new Date();
+		int packId = 0;
+		workerMark = 1;
+		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
+			task task = (task) iterator.next();
+			downloadTime = task.getTaskDownloadTime();
+			packId = task.getPackId();
 			taskTrans taskTrans = new taskTrans();
-			taskTrans.setTaskDownloadTime(sdf.format(taskWithBLOBs.getTaskDownloadTime()));
-			if (taskWithBLOBs.getTaskMarkTime() == null) {
-				workerMark = 0;
-				taskMarkTime = 0;
-			} else {
-				workerMark = 1;
-				taskMarkTime = taskWithBLOBs.getTaskMarkTime();
-			}
-			if (taskWithBLOBs.getTaskTag() == null) {
-				taskTrans.setTaskTag(0);
-			} else {
-				taskTrans.setTaskTag(1);
-			}
-			if (taskWithBLOBs.getTaskTextgrid() == null) {
-				taskTrans.setTaskTextGrid(0);
-			} else {
-				taskTrans.setTaskTextGrid(1);
-			}
-			taskTrans.setTaskMarkTime(taskMarkTime);
-			taskTrans.setTaskName(taskWithBLOBs.getTaskName());
-
-			if (taskWithBLOBs.getTaskUploadTime() == null) {
-				uploadTime = "";
-			} else {
-				uploadTime = sdf.format(taskWithBLOBs.getTaskUploadTime());
-			}
-			taskTrans.setTaskUploadTime(uploadTime);
-			taskTrans.setTaskEffective(taskWithBLOBs.getTaskEffective());
+			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
+			taskTrans.setTaskName(task.getTaskName());
 
 			list.add(taskTrans);
 		}
-		ObjectMapper objectMapper = new ObjectMapper();
+		int packLockTime = packService.getPackLockTime(packId);
 		String json = null;
 		try {
-			json = "{\"workerMark\":" + workerMark + ",\"list\":" + objectMapper.writeValueAsString(list) + ",\"taskTotal\":" + taskService.getTaskCount() + "}";
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+			Date begin = sdf.parse(sdf.format(downloadTime));
+			Date end = sdf.parse(sdf.format(new Date()));
+			long between = (end.getTime() - begin.getTime()) ;//毫秒
+			long mm=packLockTime - between;
+			ObjectMapper objectMapper = new ObjectMapper();
+			
+			json = "{\"workerMark\":" + workerMark + ",\"list\":" + objectMapper.writeValueAsString(list) + ",\"mm\":" + mm + "}";
+		} catch (ParseException | JsonProcessingException e1) {
+			e1.printStackTrace();
 		}
+
 		return json;
 	}
 
@@ -247,13 +242,13 @@ public class WorkerController {
 	String upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs) {
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);
-		List<taskWithBLOBs> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
+		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
 		if (files.length == 0) {
 			return null;
 		}
 		List<String> listMath = new ArrayList<String>();
 		List<String> listNoMath = new ArrayList<String>();
-		for (Iterator<taskWithBLOBs> iterator = listTask.iterator(); iterator.hasNext();) {
+		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			String taskName = task.getTaskName();
 			int markTag = 0, markTextGrid = 0;
@@ -316,7 +311,7 @@ public class WorkerController {
 		}
 		// 数据查询判断
 		// session.setAttribute("workerMark", 0);
-		List<taskWithBLOBs> listTask1 = taskService.getAllDoingTaskByWorkerId(workerId);
+		List<task> listTask1 = taskService.getAllDoingTaskByWorkerId(workerId);
 		if (listTask1 == null) {
 			workerMark = 0;
 		} else {

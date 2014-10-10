@@ -7,9 +7,9 @@
     <result column="worker_real_name" property="workerRealName" jdbcType="VARCHAR" />
     <result column="worker_id_card" property="workerIdCard" jdbcType="VARCHAR" />
     <result column="worker_disability_card" property="workerDisabilityCard" jdbcType="VARCHAR" />
-    <result column="worker_phone" property="workerPhone" jdbcType="INTEGER" />
+    <result column="worker_phone" property="workerPhone" jdbcType="VARCHAR" />
     <result column="worker_mac" property="workerMac" jdbcType="VARCHAR" />
-    <result column="worker_bank_card" property="workerBankCard" jdbcType="INTEGER" />
+    <result column="worker_bank_card" property="workerBankCard" jdbcType="VARCHAR" />
     <result column="worker_paypal" property="workerPaypal" jdbcType="VARCHAR" />
     <result column="create_id" property="createId" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -70,7 +70,7 @@
     select 
 	<include refid="Base_Column_List" />
     from worker
-    where worker_phone = #{workerPhone,jdbcType=INTEGER}
+    where worker_phone = #{workerPhone,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from worker
@@ -84,8 +84,8 @@
       update_id, update_time, update_method, 
       version, worker_image)
     values (#{workerId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{workerRealName,jdbcType=VARCHAR}, 
-      #{workerIdCard,jdbcType=VARCHAR}, #{workerDisabilityCard,jdbcType=VARCHAR}, #{workerPhone,jdbcType=INTEGER}, 
-      #{workerMac,jdbcType=VARCHAR}, #{workerBankCard,jdbcType=INTEGER}, #{workerPaypal,jdbcType=VARCHAR}, 
+      #{workerIdCard,jdbcType=VARCHAR}, #{workerDisabilityCard,jdbcType=VARCHAR}, #{workerPhone,jdbcType=VARCHAR}, 
+      #{workerMac,jdbcType=VARCHAR}, #{workerBankCard,jdbcType=VARCHAR}, #{workerPaypal,jdbcType=VARCHAR}, 
       #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR}, 
       #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}, 
       #{version,jdbcType=INTEGER}, #{workerImage,jdbcType=LONGVARBINARY})
@@ -167,13 +167,13 @@
         #{workerDisabilityCard,jdbcType=VARCHAR},
       </if>
       <if test="workerPhone != null" >
-        #{workerPhone,jdbcType=INTEGER},
+        #{workerPhone,jdbcType=VARCHAR},
       </if>
       <if test="workerMac != null" >
         #{workerMac,jdbcType=VARCHAR},
       </if>
       <if test="workerBankCard != null" >
-        #{workerBankCard,jdbcType=INTEGER},
+        #{workerBankCard,jdbcType=VARCHAR},
       </if>
       <if test="workerPaypal != null" >
         #{workerPaypal,jdbcType=VARCHAR},
@@ -225,13 +225,13 @@
         worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
       </if>
       <if test="workerPhone != null" >
-        worker_phone = #{workerPhone,jdbcType=INTEGER},
+        worker_phone = #{workerPhone,jdbcType=VARCHAR},
       </if>
       <if test="workerMac != null" >
         worker_mac = #{workerMac,jdbcType=VARCHAR},
       </if>
       <if test="workerBankCard != null" >
-        worker_bank_card = #{workerBankCard,jdbcType=INTEGER},
+        worker_bank_card = #{workerBankCard,jdbcType=VARCHAR},
       </if>
       <if test="workerPaypal != null" >
         worker_paypal = #{workerPaypal,jdbcType=VARCHAR},
@@ -274,9 +274,9 @@
       worker_real_name = #{workerRealName,jdbcType=VARCHAR},
       worker_id_card = #{workerIdCard,jdbcType=VARCHAR},
       worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
-      worker_phone = #{workerPhone,jdbcType=INTEGER},
+      worker_phone = #{workerPhone,jdbcType=VARCHAR},
       worker_mac = #{workerMac,jdbcType=VARCHAR},
-      worker_bank_card = #{workerBankCard,jdbcType=INTEGER},
+      worker_bank_card = #{workerBankCard,jdbcType=VARCHAR},
       worker_paypal = #{workerPaypal,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -299,9 +299,9 @@
       worker_real_name = #{workerRealName,jdbcType=VARCHAR},
       worker_id_card = #{workerIdCard,jdbcType=VARCHAR},
       worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
-      worker_phone = #{workerPhone,jdbcType=INTEGER},
+      worker_phone = #{workerPhone,jdbcType=VARCHAR},
       worker_mac = #{workerMac,jdbcType=VARCHAR},
-      worker_bank_card = #{workerBankCard,jdbcType=INTEGER},
+      worker_bank_card = #{workerBankCard,jdbcType=VARCHAR},
       worker_paypal = #{workerPaypal,jdbcType=VARCHAR},
       create_id = #{createId,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},

@@ -23,7 +23,7 @@ public interface WorkerService {
 
     int updateByPrimaryKey(worker record);
     
-    worker getWorkerByWorkerPhone(Integer workerPhone);
+    worker getWorkerByWorkerPhone(String workerPhone);
     
     worker getWorkerByWorkerIdCard(String workerIdCard);
     

@@ -26,4 +26,8 @@ public interface packMapper {
     int updateByPrimaryKeyWithBLOBs(packWithBLOBs record);
 
     int updateByPrimaryKey(pack record);
+    
+    int selectCountPackDoing();
+    
+    int selectPackLockTime(Integer packId);
 }

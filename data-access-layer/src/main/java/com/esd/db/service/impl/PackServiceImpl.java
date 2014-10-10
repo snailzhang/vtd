@@ -70,4 +70,16 @@ public class PackServiceImpl implements PackService {
 		return packMapper.deleteByName(fileName);
 	}
 
+	@Override
+	public int getCountPackDoing() {
+		
+		return packMapper.selectCountPackDoing();
+	}
+
+	@Override
+	public int getPackLockTime(Integer packId) {
+		
+		return packMapper.selectPackLockTime(packId);
+	}
+
 }

@@ -17,7 +17,7 @@ public interface TaskService {
     
     List<task> selectAllTaskId();
     
-    List<taskWithBLOBs> getAllDoingTaskByWorkerId(Integer workerId);
+    List<task> getAllDoingTaskByWorkerId(Integer workerId);
     
     List<task> getAllHistoryTaskByWorkerId(Integer workerId);
     
@@ -34,4 +34,6 @@ public interface TaskService {
     int updateByPrimaryKey(task record);
     
     int getTaskCount();
+    
+    int getCountTaskDoing();
 }

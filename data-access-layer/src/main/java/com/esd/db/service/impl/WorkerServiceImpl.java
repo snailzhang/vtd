@@ -68,7 +68,7 @@ public class WorkerServiceImpl implements WorkerService {
 	}
 
 	@Override
-	public worker getWorkerByWorkerPhone(Integer workerPhone) {
+	public worker getWorkerByWorkerPhone(String workerPhone) {
 		
 		return workerMapper.selectWorkerByWorkerPhone(workerPhone);
 	}

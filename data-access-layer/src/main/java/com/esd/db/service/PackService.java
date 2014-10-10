@@ -26,4 +26,8 @@ public interface PackService {
     int updateByPrimaryKeyWithBLOBs(packWithBLOBs record);
 
     int updateByPrimaryKey(pack record);
+    
+    int getCountPackDoing();
+    
+    int getPackLockTime(Integer packId);
 }

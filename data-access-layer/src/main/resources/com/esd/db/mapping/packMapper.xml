@@ -46,6 +46,18 @@
     from pack
     where employer_id = #{employerId,jdbcType=INTEGER} ORDER BY pack_id DESC
   </select>
+   <select id="selectCountPackDoing" resultType="java.lang.Integer">
+    select 
+  	Count(pack_id) total
+    from pack
+    where pack_status = 0 
+  </select>
+    <select id="selectPackLockTime" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    select 
+	pack_lock_time
+    from pack
+    WHERE pack_id = #{packId,jdbcType=INTEGER} 
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from pack
     where pack_id = #{packId,jdbcType=INTEGER}

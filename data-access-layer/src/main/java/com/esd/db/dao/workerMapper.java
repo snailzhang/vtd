@@ -16,7 +16,7 @@ public interface workerMapper {
     
     int selectWorkerIdByUserId(Integer userid);
     
-    worker selectWorkerByWorkerPhone(Integer workerPhone);
+    worker selectWorkerByWorkerPhone(String workerPhone);
     
     worker selectWorkerByWorkerIdCard(String workerIdCard);
     
