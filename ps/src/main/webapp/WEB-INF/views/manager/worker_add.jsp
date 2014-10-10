@@ -77,7 +77,7 @@
 				var workRealName = $("#workerRealName");
 				var workerIdCard = $("#workerIdCard");
 				var workerDisabilityCard = $("#workerDisabilityCard");
-				var workerPhone = $("workerPhone");
+				var workerPhone = $("#workerPhone");
 				if(checkout.text.isempty(workRealName,"真实姓名不能为空！")) return;
 				if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
 				if(checkout.text.isempty(workerDisabilityCard,"残疾证卡号不能为空！")) return;
