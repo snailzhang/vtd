@@ -22,9 +22,9 @@
 	<div class="container">
 		<form action="${contextPath}/addworker" method="post" id="addworker" name="addworker" role="form" class="form-horizontal" enctype="multipart/form-data">
 			<div class="form-group">
-		      <label for="workRealName" class="col-sm-2 control-label">真实姓名：</label>
+		      <label for="workerRealName" class="col-sm-2 control-label">真实姓名：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workRealName" id="workRealName" placeholder="请输入真实姓名">
+		         <input type="text" class="form-control" name="workerRealName" id="workerRealName" placeholder="请输入真实姓名">
 		      </div>
 		   </div>
 		   <div class="form-group">
@@ -74,7 +74,7 @@
 		$(document).ready(function(){
 			$("button[type=button]").click(function(){
 				var formName = $("#addworker");
-				var workRealName = $("#workRealName");
+				var workRealName = $("#workerRealName");
 				var workerIdCard = $("#workerIdCard");
 				var workerDisabilityCard = $("#workerDisabilityCard");
 				var workerPhone = $("workerPhone");
