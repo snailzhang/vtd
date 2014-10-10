@@ -68,9 +68,9 @@
 		$(document).ready(function(){
 			$("button[type=button]").click(function(){
 				var formName = $("#addworker");
-				var workRealName = $("#workRealName").val();
-				var workerIdCard = $("#workerIdCard").val();
-				var workerDisabilityCard = $("#workerDisabilityCard").val();
+				var workRealName = $("#workRealName");
+				var workerIdCard = $("#workerIdCard");
+				var workerDisabilityCard = $("#workerDisabilityCard");
 				if(checkout.text.isempty(workRealName,"真实姓名不能为空！")) return;
 				if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
 				if(checkout.text.isempty(workerDisabilityCard,"残疾证卡号不能为空！")) return;

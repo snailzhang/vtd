@@ -38,7 +38,7 @@
 		$(document).ready(function(){
 			$("button[type=button]").click(function(){
 				var formName = $("#addemployer");
-				var managerName = $("#employerName").val();
+				var managerName = $("#employerName");
 				if(checkout.text.isempty(managerName,"发包商名称不能为空！")) return;
 				formName.submit();
 				
