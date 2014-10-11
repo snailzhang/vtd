@@ -31,57 +31,116 @@
 </head>
 <body>
 	<jsp:include page="../head.jsp" />
-	<div class="container">
-		<h2>已完成任务列表</h2>
-		<table class="table table-striped table-bordered">
-			<thead>
-				<tr>
-					<th>序号</th>
-					<th>任务名称</th>
-					<th>任务时长</th>
-					<th>下载时间</th>
-					<th>上传时间</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
+	
 	<div class="container" id="downBtn">
-		<h2>下载新任务</h2>
-		<form action="${contextPath}/downTask" method="get" id="downTask" name="downTask" role="form" class="form-horizontal">
-			<div class="form-group">
-		      <label for="downTaskCount" class="col-sm-2 control-label">选择下载任务个数:</label>
-		      <div class="col-sm-10">
-		      	<select class="form-control" name="downTaskCount" id="downTaskCount"></select>
-		      </div>
-		   </div>
-		   <div class="form-group">
-		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="submit" class="btn btn-default">下载任务</button>
-		      </div>
-		   </div>
-		</form>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"></h3>
+			</div>
+			<form action="${contextPath}/downTask" method="get" id="downTask" name="downTask" role="form" class="form-horizontal">
+				<div class="form-group">
+			      <label for="downTaskCount" class="col-sm-2 control-label">选择下载任务个数:</label>
+			      <div class="col-sm-10">
+			      	<select class="form-control" name="downTaskCount" id="downTaskCount"></select>
+			      </div>
+			   </div>
+			   <div class="form-group">
+			      <div class="col-sm-offset-2 col-sm-10">
+			         <button type="submit" class="btn btn-default">下载任务</button>
+			      </div>
+			   </div>
+			</form>
+		</div>
 	</div>
 	<div class="container" id="upBtn">
-		<h2>上传已完成的任务</h2>
-		<form action="${contextPath}/upTagAndTextGrid" method="post" id="fileupload" name="upTagAndTextGrid" role="form" class="form-horizontal" enctype="multipart/form-data">
-			<div class="form-group">
-		      <label for="TAG" class="col-sm-2 control-label">TAG:</label>
-		      <div class="col-sm-10">
-		         <input type="file" class="form-control" name="file" id="" placeholder="请选择上传文件" multiple>
-		      </div>
-		   </div>
-		   
-		   <div class="form-group">
-		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="submit" class="btn btn-default" >上传文件</button>
-		      </div>
-		   </div>
-		</form>
-	</div>
-		
+		<div class="container">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title" id="taskLeftTimeInterval">距离任务完成时间还剩:<span class="text-danger"></span></h3>
+				</div>
+				<form action="${contextPath}/upTagAndTextGrid" method="post" name="upTagAndTextGrid" role="form" class="form-horizontal" enctype="multipart/form-data">
+					<div class="form-group">
+				      <label for="TAG" class="col-sm-2 control-label">选择已完成任务</label>
+				      <div class="col-sm-10">
+				         <input type="file" class="form-control" name="file" id="fileupload" placeholder="请选择上传文件" multiple>
+				      </div>
+				   </div>
+				   
+				   <div class="form-group">
+				      <div class="col-sm-offset-2 col-sm-10">
+				         <button id="uploadBtn" type="button" class="btn btn-default" >上传文件</button>
+				      </div>
+				   </div>
+				</form>
+				
+			</div>
 			
-	
+		</div>
+		<div class="container">
+			<div id="uploadFalTable" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">待上传任务列表</h3>
+				</div>
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>任务名称</th>
+							<th>下载时间</th>
+						</tr>
+					</thead>
+					<tbody id="waitForUpTable"></tbody>
+				</table>
+			</div>
+			<div id="uploadSucTable" class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">待上传任务列表</h3>
+				</div>
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>任务名称</th>
+							<th>下载时间</th>
+						</tr>
+					</thead>
+					<tbody id="waitForUpTable"></tbody>
+				</table>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">待上传任务列表</h3>
+				</div>
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>任务名称</th>
+							<th>下载时间</th>
+						</tr>
+					</thead>
+					<tbody id="waitForUpTable"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">Modal title</h4>
+				</div>
+				<div class="modal-body">
+					<p>One fine body&hellip;</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$.ajax({
@@ -91,37 +150,52 @@
 				success:function(data){
 					$("tbody").append("");
 					var workerMark = data.workerMark;
-					var taskTotal = data.taskTotal;
-					if(taskTotal != 0){
-						if(taskTotal>20)taskTotal = 20;//单次下载最多20个任务
-						for(var i=1;i<taskTotal+1;i++){
-							$("#downTaskCount").append("<option vale='"+i+"'>"+i+"</option>");
+					if(workerMark == 0){//下载
+						var taskTotal = data.countTaskDoing;
+						var packTotal = data.countPackDoing;
+						$("#downBtn h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个");
+						if(taskTotal != 0){
+							if(taskTotal>20)taskTotal = 20;//单次下载最多20个任务
+							for(var i=1;i<taskTotal+1;i++){
+								$("#downTaskCount").append("<option vale='"+i+"'>"+i+"</option>");
+							}
+						}else{
+							$("#downTaskCount").attr("disabled","disabled");
 						}
-					}else{
-						$("#downTaskCount").attr("disabled","disabled");
-					}
-					$.each(data.list,function(i,item){
-						$("tbody").append(
-							"<tr>"+
-								"<td>"+(i+1)+"</td>"+
-								"<td>"+item.taskName+"</td>"+
-								"<td>"+item.taskMarkTime+"</td>"+
-								"<td>"+item.taskDownloadTime+"</td>"+
-								"<td>"+item.taskUploadTime+"</td>"+
-							"</tr>"
-						);
-					});
-					
-					if(workerMark == 0){
-						$("#downBtn").show();
 						$("#upBtn").hide();
-					}else{
+						$("#downBtn").show();
+					}else{//上传
+						var mm = data.mm;
+						$.each(data.list,function(i,item){
+							$("#waitForUpTable").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.taskName+"</td>"+
+									"<td>"+item.taskDownloadTime+"</td>"+
+								"</tr>"
+							);
+						});
+						var tltInterval = 1000; 
+						window.setInterval(function(){ShowCountDown(mm);}, tltInterval);
 						$("#downBtn").hide();
 						$("#upBtn").show();
 					}
 					
 				}
 			});
+			
+			function ShowCountDown(endTime){//倒计时
+				var now = new Date(); 
+				var leftTime=endTime-now.getTime(); 
+				var leftsecond = parseInt(leftTime/1000); 
+				var day1=Math.floor(leftsecond/(60*60*24)); 
+				var hour=Math.floor((leftsecond-day1*24*60*60)/3600); 
+				var minute=Math.floor((leftsecond-day1*24*60*60-hour*3600)/60); 
+				var second=Math.floor(leftsecond-day1*24*60*60-hour*3600-minute*60); 
+				
+				$("#taskLeftTimeInterval span").text(day1+"天"+hour+"小时"+minute+"分"+second+"秒"); 
+			}
+			 
 			var textGridReady = false;
 			var tagReady = false;
 			checkSubBtnStaus = function(){
@@ -163,15 +237,23 @@
 					checkSubBtnStaus();
 				}
 			});
-			$("button[type=button]").click(function(){
-				var formName = $("#upTagAndTextGrid");
-				formName.submit();
-			});
-			$("fileupload").fileupload({
-				submit:function(e,data){
-					$(this).fileupload('send', data);
-				}
-			});
+			//$("button[type=button]").click(function(){
+				//var formName = $("#upTagAndTextGrid");
+				//formName.submit();
+			//});
+			//$("#uploadBtn").click(function(){
+				//alert("a");
+				$("fileupload").fileupload('send',{//多文件上传
+					url:"${contextPath}/upTagAndTextGrid",
+					typ:"POST",
+					dataType:"json",
+					done:function(e,data){
+						$(".modal").modal('show');
+					}
+					
+				});
+			//});
+			
 		});
 	</script>
 </body>
