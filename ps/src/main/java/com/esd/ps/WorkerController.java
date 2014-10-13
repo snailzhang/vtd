@@ -5,11 +5,21 @@
  */
 package com.esd.ps;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -18,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -81,9 +95,9 @@ public class WorkerController {
 	String workerPost(HttpSession session) {
 		logger.debug("taskTotal:{}", taskService.getTaskCount());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		logger.debug("workerId:{}",workerId);
+		logger.debug("workerId:{}", workerId);
 		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
-		logger.debug("listTask:{}",listTask.isEmpty());
+		logger.debug("listTask:{}", listTask.isEmpty());
 		// 没有正在进行的任务
 		if (listTask == null || listTask.isEmpty()) {
 			workerMark = 0;
@@ -109,16 +123,16 @@ public class WorkerController {
 
 			list.add(taskTrans);
 		}
-		logger.debug("packId:{}",packId);
+		logger.debug("packId:{}", packId);
 		int packLockTime = packService.getPackLockTime(packId);
 		String json = null;
 		try {
 			Date begin = sdf.parse(sdf.format(downloadTime));
 			Date end = sdf.parse(sdf.format(new Date()));
-			long between = (end.getTime() - begin.getTime()) ;//毫秒
-			long mm=packLockTime - between;
+			long between = (end.getTime() - begin.getTime());// 毫秒
+			long mm = packLockTime - between;
 			ObjectMapper objectMapper = new ObjectMapper();
-			
+
 			json = "{\"workerMark\":" + workerMark + ",\"list\":" + objectMapper.writeValueAsString(list) + ",\"mm\":" + mm + "}";
 		} catch (ParseException | JsonProcessingException e1) {
 			e1.printStackTrace();
@@ -196,40 +210,68 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/downTask")
-	public ModelAndView downTask(final HttpServletResponse response, int downTaskCount, HttpSession session) {
+	public @ResponseBody
+	String downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
 		logger.debug("downTaskCount:{}", downTaskCount);
+		String userName = session.getAttribute(Constants.USER_NAME).toString();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
 		if (list == null) {
-			return new ModelAndView("worker/worker", "downReplay", "");
+			return null;
 		}
-		for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
-			taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+		String url = request.getServletContext().getRealPath("/");
+		url = url + "fileToZip";
+		logger.debug("url:{}", url);
+		File zipFile = new File(url + "/" + userName + "_task.zip");
+		if (zipFile.exists()) {
+			zipFile.delete();
+		}
+		try {
+			zipFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(zipFile);
+			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
+			byte[] bufs = new byte[1024 * 10];
+			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
+				System.out.println(fileName);
+				// 创建ZIP实体,并添加进压缩包
+				ZipEntry zipEntry = new ZipEntry(fileName);
+				zos.putNextEntry(zipEntry);
+				byte[] data = taskWithBLOBs.getTaskWav();
+				InputStream is = new ByteArrayInputStream(data);
 
-			byte[] data = taskWithBLOBs.getTaskWav();
-			String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-			try {
-				fileName = URLEncoder.encode(fileName, "UTF-8");
-				response.reset();
-				response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-				response.addHeader("Content-Length", "" + data.length);
-				response.setContentType("application/octet-stream;charset=UTF-8");
-				OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-				outputStream.write(data);
-				outputStream.flush();
-				outputStream.close();
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+				// 读取待压缩的文件并写进压缩包里
+				BufferedInputStream bis = new BufferedInputStream(is, 1024);
+				int read;
+				while ((read = bis.read(bufs)) > 0) {// , 0, 2048
+					zos.write(bufs, 0, read);//
+				}
+				// zos.closeEntry();
+				bis.close();
+				is.close();
+				taskWithBLOBs.setTaskDownloadTime(new Date());
+				taskWithBLOBs.setWorkerId(workerId);
+				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 			}
-			taskWithBLOBs.setTaskDownloadTime(new Date());
-			taskWithBLOBs.setWorkerId(workerId);
-			taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 			session.setAttribute("workerMark", 1);
-		}
+			zos.close();// 不关闭,最后一个文件写入为0kb
+			fos.flush();
+			fos.close();
 
-		return new ModelAndView("worker/worker", "downReplay", downReplay);
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		// 项目在服务器上的远程绝对地址
+		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		// 文件所谓的远程绝对路径
+		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + userName + "_task.zip";
+		logger.debug("wrongPath:{}", wrongPath);
+		return wrongPath;
 
 	}
 
