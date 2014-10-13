@@ -109,7 +109,7 @@
 				}
 			});
 			$("button[type=button]").click(function(){
-				var formName = $("#addmanager");
+				var formName = $("#uploadPack");
 				formName.submit();
 			});
 		});

@@ -36,38 +36,38 @@
 		</div>
 	</form>
 </div>
-<div align="center">${loginreplay}</div>
+<div align="center">${message}</div>
 
 <script type="text/javascript">
 	$(document).ready(function(){
 		
 		$("#username").blur(function(){
-				var user = $("#username");
-				var userValue = user.val();
-				if(checkout.text.isempty(user,"用户名不能为空！")){
-					return;	
-				}
-				$.ajax({
-					type:'get',
-					url:'${contextPath}/checkUserName',
-					data:"username="+userValue,
-					dataType:'text',
-					success:function(data){
-						if(data == "false"){
-							user.next(".help-block").css("color","red").text("用户不存在");
-						}
+			var user = $("#username");
+			var userValue = user.val();
+			if(checkout.text.isempty(user,"用户名不能为空！")){
+				return;	
+			}
+			$.ajax({
+				type:'get',
+				url:'${contextPath}/checkUserName',
+				data:"username="+userValue,
+				dataType:'text',
+				success:function(data){
+					if(data == "false"){
+						user.next(".help-block").css("color","red").text("用户不存在");
 					}
-				});
-				
+				}
 			});
-			$("button[type=button]").click(function(){
-				var formName = $("#login");
-				var user = $("#username");
-				var pwd = $("#pwd");
-				if(checkout.text.isempty(user,"请填写用户名！"))return;
-				if(checkout.text.isempty(pwd,"请填写密码！"))return;
-				formName.submit();
-			});
+			
+		});
+		$("button[type=button]").click(function(){
+			var formName = $("#login");
+			var user = $("#username");
+			var pwd = $("#pwd");
+			if(checkout.text.isempty(user,"请填写用户名！"))return;
+			if(checkout.text.isempty(pwd,"请填写密码！"))return;
+			formName.submit();
+		});
 	});
 </script>
 </body>
