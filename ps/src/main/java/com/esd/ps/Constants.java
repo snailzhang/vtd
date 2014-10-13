@@ -14,6 +14,7 @@ public interface Constants {
 	//项目应用常量
 	public static final String USER_ID = "userId";//用户id
 	public static final String ADD_USER_ID = "addUserId";//新增用户id
+	public static final String EMPLOYER_ID = "employerId";//发包商id
 	public static final String USER_NAME = "username";//用户名
 	public static final String USER_PASSWORD = "password";//用户密码
 	public static final String USER_TYPE = "usertype";//用户类型

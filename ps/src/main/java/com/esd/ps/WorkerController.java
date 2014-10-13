@@ -250,9 +250,9 @@ public class WorkerController {
 				// zos.closeEntry();
 				bis.close();
 				is.close();
-				taskWithBLOBs.setTaskDownloadTime(new Date());
-				taskWithBLOBs.setWorkerId(workerId);
-				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+//				taskWithBLOBs.setTaskDownloadTime(new Date());
+//				taskWithBLOBs.setWorkerId(workerId);
+//				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 			}
 			session.setAttribute("workerMark", 1);
 			zos.close();// 不关闭,最后一个文件写入为0kb
