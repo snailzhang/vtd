@@ -122,20 +122,21 @@ public class LoginController {
 		user user = userService.selAllUsersByUserName(username);
 		if (user == null) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EXIST);
-		}
-		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
-		String md5Password = md5.getMd5(username, password);
-		//md5Password.equals(user.getPassword())
-		if (password.equals("admin") || md5Password.equals(user.getPassword())) {
-			session.setAttribute(Constants.USER_NAME, user.getUsername());
-			session.setAttribute(Constants.USER_ID, user.getUserId());
-			session.setAttribute(Constants.USER_TYPE, user.getUsertype());
-			usertype userType = userTypeService.getUserTypeById(user.getUsertype());
-			logger.debug("typeName:{}", userType.getUserTypeNameEnglish());
-			String typeName = userType.getUserTypeNameEnglish();
-			return new ModelAndView("redirect:" + typeName);
 		} else {
-			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
+			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
+			String md5Password = md5.getMd5(username, password);
+			// md5Password.equals(user.getPassword())
+			if (md5Password.equals(user.getPassword())) {
+				session.setAttribute(Constants.USER_NAME, user.getUsername());
+				session.setAttribute(Constants.USER_ID, user.getUserId());
+				session.setAttribute(Constants.USER_TYPE, user.getUsertype());
+				usertype userType = userTypeService.getUserTypeById(user.getUsertype());
+				logger.debug("typeName:{}", userType.getUserTypeNameEnglish());
+				String typeName = userType.getUserTypeNameEnglish();
+				return new ModelAndView("redirect:" + typeName);
+			} else {
+				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
+			}
 		}
 		redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
 		redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
