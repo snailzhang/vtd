@@ -234,6 +234,8 @@ public class EmployerController {
 				taskWithBLOBs.setTaskName(zipEntryName);
 				// 存入压缩包的层次结构
 				taskWithBLOBs.setTaskDir(taskDir);
+				//包内任务的上传状态
+				taskWithBLOBs.setTaskUpload(false);
 				taskService.insert(taskWithBLOBs);
 			}
 			zip.close();
@@ -251,7 +253,7 @@ public class EmployerController {
 	 * @param req
 	 * @return
 	 */
-	@RequestMapping(value = "/downTask")
+	@RequestMapping(value = "/downPack")
 	public @ResponseBody
 	String downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
 		logger.debug("downTaskCount:{}", downTaskCount);
