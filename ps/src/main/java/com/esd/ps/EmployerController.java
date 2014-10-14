@@ -85,7 +85,8 @@ public class EmployerController {
 	public @ResponseBody
 	List<packTrans> employerPost(HttpSession session) {// list列表直接转json
 		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
-		int employerId = employerService.selEmployerIdByUserId(userId);
+		int employerId = employerService.getEmployerIdByUserId(userId);
+		session.setAttribute("employerId", employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
 		List<pack> listPack = packService.selAllByEmployerId(employerId);
@@ -158,22 +159,27 @@ public class EmployerController {
 	 * @param twbs
 	 */
 	@RequestMapping(value = "/uploadPack", method = RequestMethod.POST)
-	public ModelAndView uploadpack(@RequestParam(value = "pack", required = false) MultipartFile pack, packWithBLOBs packWithBLOBs, taskWithBLOBs taskWithBLOBs, int packLockTime) {
+	public ModelAndView uploadpack(@RequestParam(value = "pack", required = false) MultipartFile pack, packWithBLOBs packWithBLOBs, taskWithBLOBs taskWithBLOBs, int packLockTime,
+			HttpServletRequest request, HttpSession session) {
 		logger.debug("packLockTime:{}", packLockTime);
 		String fileName = pack.getOriginalFilename();
+		// 临时文件路径
+		String url = request.getServletContext().getRealPath("/") + "zipToWav";
 		try {
-			if (!pack.isEmpty()) {
+			if (!pack.isEmpty()) {			
+				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
 				packWithBLOBs.setPackFile(pack.getBytes());
 				packWithBLOBs.setPackName(fileName);
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
 				packWithBLOBs.setPackStatus(false);
+				packWithBLOBs.setVersion(1);
 				packService.insert(packWithBLOBs);
 				// 上传文件存入临时文件
-				File f = new File(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME));
+				File f = new File(url);
 				if (!f.exists()) {
 					f.mkdir();
 				}
-				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName));
+				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(url + "/" + fileName));
 				InputStream in = pack.getInputStream();
 				BufferedInputStream bis = new BufferedInputStream(in);
 				int n = -1;
@@ -186,11 +192,25 @@ public class EmployerController {
 				bis.close();
 			}
 			// 从临时文件取出要解压的文件上传TaskService
-			ZipFile zip = new ZipFile(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName);
+			ZipFile zip = new ZipFile(url + "/" + fileName);
 			InputStream in = null;
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
+				String taskDir = "";
+				if (entry.isDirectory()) {
+					continue;
+				}
 				String zipEntryName = entry.getName();
+				if (zipEntryName.indexOf("/") > 0) {
+					String str[] = zipEntryName.split("/");
+					taskDir = str[1];
+					zipEntryName = str[(str.length - 1)];
+				}
+				String noMatch = "";
+				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
+					noMatch = zipEntryName;
+					continue;
+				}
 				in = zip.getInputStream(entry);
 				// inputstrem转成byte[]
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -204,12 +224,13 @@ public class EmployerController {
 				// 上传的包的号
 				taskWithBLOBs.setPackId(packService.selectByEmployerId(packWithBLOBs.getEmployerId()));
 				taskWithBLOBs.setTaskName(zipEntryName);
-				taskWithBLOBs.setTaskDir(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName.substring(0, (fileName.length() - 4)));
+				// 存入压缩包的层次结构
+				taskWithBLOBs.setTaskDir(taskDir);
 				taskService.insert(taskWithBLOBs);
 			}
 			zip.close();
 			in.close();
-			File fd = new File(System.getProperty(Constants.USER_DIR_TEMP, Constants.USER_DIR_TEMP_NAME) + "/" + fileName);
+			File fd = new File(url + "/" + fileName);
 			fd.delete();
 		} catch (IOException e) {
 			e.printStackTrace();
