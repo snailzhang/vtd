@@ -15,11 +15,12 @@
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
 <style type="text/css">
-	#downBtn,#upBtn{display:none;}
+	#downloadPanel,#uploadPanel{display:none;}
 	input[type=file]{
 		border:0;
 		padding:0;
 		box-shadow:none;
+		width:70px;
 	}
 </style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
@@ -31,8 +32,8 @@
 </head>
 <body>
 	<jsp:include page="../head.jsp" />
-	
-	<div class="container" id="downBtn">
+	<!-------------------------------- 下载任务 -------------------------------------------------->
+	<div class="container" id="downloadPanel">
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title"></h3>
@@ -46,13 +47,14 @@
 			   </div>
 			   <div class="form-group">
 			      <div class="col-sm-offset-2 col-sm-10">
-			         <button type="submit" class="btn btn-default">下载任务</button>
+			         <button type="button" id="doneLoadBtn" class="btn btn-default">下载任务</button>
 			      </div>
 			   </div>
 			</form>
 		</div>
 	</div>
-	<div class="container" id="upBtn">
+	<!-------------------------------- 上传任务 -------------------------------------------------->
+	<div class="container" id="uploadPanel">
 		<div class="container">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -62,7 +64,8 @@
 					<div class="form-group">
 				      <label for="TAG" class="col-sm-2 control-label">选择已完成任务</label>
 				      <div class="col-sm-10">
-				         <input type="file" class="form-control" name="file" id="fileupload" placeholder="请选择上传文件" autocomplete="off" multiple>
+				         <input type="file" class="form-control" name="file" id="fileupload" autocomplete="off" multiple>
+				      	<span class="help-block" id="uploadHelp">已选择0个文件</span>
 				      </div>
 				   </div>
 				   
@@ -95,6 +98,7 @@
 			
 		</div>
 	</div>
+	<!-------------------------------- 弹出窗口 -------------------------------------------------->
 	<div class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -120,6 +124,7 @@
 	</div><!-- /.modal -->
 	<script type="text/javascript">
 		$(document).ready(function(){
+			/*******************************加载页面**************************************************/
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/worker',
@@ -130,7 +135,7 @@
 					if(workerMark == 0){//下载
 						var taskTotal = data.countTaskDoing;
 						var packTotal = data.countPackDoing;
-						$("#downBtn h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个");
+						$("#downloadPanel h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个");
 						if(taskTotal != 0){
 							if(taskTotal>20)taskTotal = 20;//单次下载最多20个任务
 							for(var i=1;i<taskTotal+1;i++){
@@ -139,8 +144,8 @@
 						}else{
 							$("#downTaskCount").attr("disabled","disabled");
 						}
-						$("#upBtn").hide();
-						$("#downBtn").show();
+						$("#uploadPanel").hide();
+						$("#downloadPanel").show();
 					}else{//上传
 						var mm = data.mm;
 						$.each(data.list,function(i,item){
@@ -154,14 +159,14 @@
 						});
 						var tltInterval = 1000; 
 						window.setInterval(function(){ShowCountDown(mm);}, tltInterval);
-						$("#downBtn").hide();
-						$("#upBtn").show();
+						$("#downloadPanel").hide();
+						$("#uploadPanel").show();
 					}
 					
 				}
 			});
-			
-			function ShowCountDown(endTime){//倒计时
+			/*******************************倒计时**************************************************/
+			function ShowCountDown(endTime){
 				var now = new Date(); 
 				var leftTime=endTime-now.getTime(); 
 				var leftsecond = parseInt(leftTime/1000); 
@@ -172,7 +177,7 @@
 				
 				$("#taskLeftTimeInterval span").text(day1+"天"+hour+"小时"+minute+"分"+second+"秒"); 
 			}
-			 
+			 /*******************************上传check**************************************************/
 			var textGridReady = false;
 			var tagReady = false;
 			checkSubBtnStaus = function(){
@@ -214,13 +219,9 @@
 					checkSubBtnStaus();
 				}
 			});
-			//$("button[type=button]").click(function(){
-				//var formName = $("#upTagAndTextGrid");
-				//formName.submit();
-			//});
 			
-			
-				$("#fileupload").fileupload({//多文件上传
+			/*******************************多文件上传**************************************************/
+				$("#fileupload").fileupload({
 					singleFileUploads:false,
 					typ:"POST",
 					dataType:"json",
@@ -228,14 +229,16 @@
 					add:function(e,data){
 						var $this = $(this);
 						data.autoUpload = false;
+						var fileNum = data.files.length;
+						$("#uploadHelp").text("已选择"+fileNum+"个文件");
 						$("#uploadBtn").click(function(){
-							//$this.fileupload('send', {
-								//files:data.files
-							//});
+							if(data.files.length == 0){
+								$("#uploadHelp").text("请选择上传的文件");
+								return false;
+							};
 							data.submit();
 						});
 					},
-					
 					done:function(e,result){
 						var taskListNoMath = $("#taskListNoMath ul");
 						var taskListMath = $("#taskListMath ul");
@@ -264,15 +267,34 @@
 								);
 							});
 						}else{
-							taskListMath.html("<li class='text-success'>无匹配内容</li>");
+							taskListMath.html("<li class='text-danger'>无匹配内容</li>");
 						}
 						$(".modal").modal('show');
 					}
 				});
+			/*******************************modal关闭时刷新页面**************************************************/
 			$(".modal").on('hidden.bs.modal', function (e) {
 				window.location.reload();
 			});
-				
+			/*******************************下载任务**************************************************/
+			$("#doneLoadBtn").click(function(){
+				var downTaskCount = $("#downTaskCount").val();
+				if(downTaskCount == 0){
+					return false;
+				}else{
+					$.ajax({
+						type:'GET',
+						url:'${contextPath}/downTask',
+						data:{"downTaskCount":downTaskCount},
+						dataType:'text',
+						success:function(data){
+							if(data != ""){
+								window.open(data);
+							}
+						}
+					});
+				}
+			});
 			
 		});
 	</script>
