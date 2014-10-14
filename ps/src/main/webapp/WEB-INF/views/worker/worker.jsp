@@ -114,7 +114,6 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
 				</div>
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
@@ -237,15 +236,16 @@
 						});
 					},
 					
-					done:function(result){
+					done:function(e,result){
 						var taskListNoMath = $("#taskListNoMath ul");
 						var taskListMath = $("#taskListMath ul");
-						if(result.listNoMath!=null){
+						var jsonData = result.result;
+						if(jsonData.listNoMath!=""){
 							taskListNoMath.html("");
-							$.each(result.listNoMath,function(i,item){
+							$.each(jsonData.listNoMath,function(i,item){
 								taskListNoMath.append(
 									"<li>"+
-										"<span>"+(i+1)+"</span>"+
+										
 										"<span>"+item+"</span>"+
 									"</li>"
 								);
@@ -253,12 +253,12 @@
 						}else{
 							taskListNoMath.html("<li class='text-success'>全部通过</li>");
 						}
-						if(result.listMath!=null){
+						if(jsonData.listMath!=""){
 							taskListMath.html("");
-							$.each(result.listMath,function(i,item){
+							$.each(jsonData.listMath,function(i,item){
 								taskListMath.append(
 									"<li>"+
-										"<span>"+(i+1)+"</span>"+
+										
 										"<span>"+item+"</span>"+
 									"</li>"
 								);
@@ -268,9 +268,10 @@
 						}
 						$(".modal").modal('show');
 					}
-					
 				});
-			
+			$(".modal").on('hidden.bs.modal', function (e) {
+				window.location.reload();
+			});
 				
 			
 		});
