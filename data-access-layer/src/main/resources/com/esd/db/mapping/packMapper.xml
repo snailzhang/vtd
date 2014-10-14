@@ -13,6 +13,7 @@
     <result column="update_id" property="updateId" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
+    <result column="down_count" property="downCount" jdbcType="INTEGER" />
     <result column="version" property="version" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.esd.db.model.packWithBLOBs" extends="BaseResultMap" >
@@ -21,7 +22,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     pack_id, employer_id, pack_name, pack_status, pack_lock_time, create_id, create_time, 
-    create_method, update_id, update_time, update_method, version
+    create_method, update_id, update_time, update_method,down_count, version
   </sql>
   <sql id="Blob_Column_List" >
     pack_file, pack_format
@@ -81,12 +82,12 @@
     insert into pack (pack_id, employer_id, pack_name, 
       pack_status, pack_lock_time, create_id, 
       create_time, create_method, update_id, 
-      update_time, update_method, version, 
+      update_time, update_method,down_count, version, 
       pack_file, pack_format)
     values (#{packId,jdbcType=INTEGER}, #{employerId,jdbcType=INTEGER}, #{packName,jdbcType=VARCHAR}, 
       #{packStatus,jdbcType=BIT}, #{packLockTime,jdbcType=INTEGER}, #{createId,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR}, #{updateId,jdbcType=INTEGER}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}, #{downCount,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, 
       #{packFile,jdbcType=LONGVARBINARY}, #{packFormat,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.esd.db.model.packWithBLOBs" >
@@ -124,6 +125,9 @@
       </if>
       <if test="updateMethod != null" >
         update_method,
+      </if>
+      <if test="downCount != null" >
+        down_count,
       </if>
       <if test="version != null" >
         version,
@@ -168,6 +172,9 @@
       </if>
       <if test="updateMethod != null" >
         #{updateMethod,jdbcType=VARCHAR},
+      </if>
+         <if test="downCount != null" >
+        #{downCount,jdbcType=INTEGER},
       </if>
       <if test="version != null" >
         #{version,jdbcType=INTEGER},
@@ -218,6 +225,9 @@
       <if test="updateMethod != null" >
         update_method = #{updateMethod,jdbcType=VARCHAR},
       </if>
+        <if test="downCount != null" >
+        down_count = #{downCount,jdbcType=INTEGER},
+      </if>
       <if test="version != null" >
         version = #{version,jdbcType=INTEGER},
       </if>
@@ -247,6 +257,7 @@
       update_id = #{updateId,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_method = #{updateMethod,jdbcType=VARCHAR},
+      down_count = #{downCount,jdbcType=INTEGER},
       version = #{version,jdbcType=INTEGER},
       pack_file = #{packFile,jdbcType=LONGVARBINARY},
       pack_format = #{packFormat,jdbcType=LONGVARCHAR}
@@ -269,6 +280,7 @@
       update_id = #{updateId,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_method = #{updateMethod,jdbcType=VARCHAR},
+      down_count = #{downCount,jdbcType=INTEGER},
       version = #{version,jdbcType=INTEGER}
     where pack_id = #{packId,jdbcType=INTEGER}
   </update>
