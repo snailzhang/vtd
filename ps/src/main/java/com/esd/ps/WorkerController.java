@@ -250,9 +250,9 @@ public class WorkerController {
 				// zos.closeEntry();
 				bis.close();
 				is.close();
-//				taskWithBLOBs.setTaskDownloadTime(new Date());
-//				taskWithBLOBs.setWorkerId(workerId);
-//				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+				// taskWithBLOBs.setTaskDownloadTime(new Date());
+				// taskWithBLOBs.setWorkerId(workerId);
+				// taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 			}
 			session.setAttribute("workerMark", 1);
 			zos.close();// 不关闭,最后一个文件写入为0kb
@@ -344,12 +344,18 @@ public class WorkerController {
 						taskWithBLOBs.setTaskName(nameFirst);
 						taskWithBLOBs.setTaskUploadTime(new Date());
 						taskService.updateByName(taskWithBLOBs);
-						listMath.add(files[i].getOriginalFilename());
+						String fileName=files[i].getOriginalFilename();
+						listMath.add(fileName);
 					}
+					logger.debug("markTag:{},markTextGrid:{},fileName",markTag,markTextGrid,files[i].getOriginalFilename());
 					if (markTag == 0 || markTextGrid == 0) {
-						listNoMath.add(files[i].getOriginalFilename());
+						String fileName=files[i].getOriginalFilename();
+						listNoMath.add(fileName);
 					}
-
+				}else{
+					String fileName=files[i].getOriginalFilename();
+					System.out.println("fileName:"+fileName);
+					listNoMath.add(fileName);
 				}
 			}
 
@@ -365,6 +371,7 @@ public class WorkerController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String json = null;
 		try {
+			logger.debug("listMath:{},listNoMath:{}",listMath,listNoMath);
 			json = "{\"listMath\":" + objectMapper.writeValueAsString(listMath) + ",\"listNoMath\":" + objectMapper.writeValueAsString(listNoMath) + ",\"workerMark\":" + workerMark + "}";
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();

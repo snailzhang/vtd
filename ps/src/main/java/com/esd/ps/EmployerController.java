@@ -163,10 +163,15 @@ public class EmployerController {
 			HttpServletRequest request, HttpSession session) {
 		logger.debug("packLockTime:{}", packLockTime);
 		String fileName = pack.getOriginalFilename();
+		//没改完,待续...
+		pack pack2=packService.getPackByPackName(fileName);
+		if(pack2 != null){
+			return new ModelAndView("employer/employer","match",1);
+		}
 		// 临时文件路径
 		String url = request.getServletContext().getRealPath("/") + "zipToWav";
 		try {
-			if (!pack.isEmpty()) {			
+			if (!pack.isEmpty()) {
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
 				packWithBLOBs.setPackFile(pack.getBytes());
 				packWithBLOBs.setPackName(fileName);
@@ -203,9 +208,10 @@ public class EmployerController {
 				String zipEntryName = entry.getName();
 				if (zipEntryName.indexOf("/") > 0) {
 					String str[] = zipEntryName.split("/");
-					taskDir = str[1];
+					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
 					zipEntryName = str[(str.length - 1)];
 				}
+				// 收集没有匹配的文件
 				String noMatch = "";
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
 					noMatch = zipEntryName;
@@ -236,45 +242,5 @@ public class EmployerController {
 			e.printStackTrace();
 		}
 		return new ModelAndView("employer/employer");
-	}
-
-	// 还没有使用
-	@RequestMapping(value = "/uploadPack2", method = RequestMethod.POST)
-	// springmvc包装的解析器速度更快
-	public String upload2(HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException {
-		// 创建一个通用的多部分解析器
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
-		// 判断 request 是否有文件上传,即多部分请求
-		if (multipartResolver.isMultipart(request)) {
-			// 转换成多部分request
-			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-			// 取得request中的所有文件名
-			Iterator<String> iter = multiRequest.getFileNames();
-			while (iter.hasNext()) {
-				// 记录上传过程起始时的时间，用来计算上传时间
-				int pre = (int) System.currentTimeMillis();
-				// 取得上传文件
-				MultipartFile file = multiRequest.getFile(iter.next());
-				if (file != null) {
-					// 取得当前上传文件的文件名称
-					String myFileName = file.getOriginalFilename();
-					// 如果名称不为“”,说明该文件存在，否则说明该文件不存在
-					if (myFileName.trim() != "") {
-						System.out.println(myFileName);
-						// 重命名上传后的文件名
-						String fileName = "demoUpload" + file.getOriginalFilename();
-						// 定义上传路径
-						String path = "E:/" + fileName;
-						File localFile = new File(path);
-						file.transferTo(localFile);
-					}
-				}
-				// 记录上传该文件后的时间
-				int finaltime = (int) System.currentTimeMillis();
-				System.out.println(finaltime - pre);
-			}
-
-		}
-		return "/success";
 	}
 }
