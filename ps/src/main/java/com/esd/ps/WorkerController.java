@@ -8,20 +8,13 @@ package com.esd.ps;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.task;
-import com.esd.db.model.taskTrans;
+import com.esd.ps.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
@@ -71,8 +64,6 @@ public class WorkerController {
 	private PackService packService;
 	@Value("${workerMark}")
 	private int workerMark;
-	@Value("${downReplay}")
-	private String downReplay;
 
 	/**
 	 * 登录工作者页面
@@ -214,7 +205,7 @@ public class WorkerController {
 	String downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
 		logger.debug("downTaskCount:{}", downTaskCount);
 		String userName = session.getAttribute(Constants.USER_NAME).toString();
-		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		//int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
 		if (list == null) {
 			return null;

@@ -7,8 +7,10 @@ package com.esd.ps;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,14 +34,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
-import com.esd.db.model.packTrans;
+import com.esd.ps.model.packTrans;
 import com.esd.db.model.task;
-import com.esd.db.model.taskTrans;
+import com.esd.ps.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.PackService;
@@ -173,7 +174,7 @@ public class EmployerController {
 		try {
 			if (!pack.isEmpty()) {
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
-				packWithBLOBs.setPackFile(pack.getBytes());
+				//packWithBLOBs.setPackFile(pack.getBytes());
 				packWithBLOBs.setPackName(fileName);
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
 				packWithBLOBs.setPackStatus(false);
@@ -208,7 +209,8 @@ public class EmployerController {
 				String zipEntryName = entry.getName();
 				if (zipEntryName.indexOf("/") > 0) {
 					String str[] = zipEntryName.split("/");
-					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
+					//(zipEntryName.indexOf("/") + 1)
+					taskDir = zipEntryName.substring(0, zipEntryName.lastIndexOf("/"));
 					zipEntryName = str[(str.length - 1)];
 				}
 				// 收集没有匹配的文件
@@ -242,5 +244,76 @@ public class EmployerController {
 			e.printStackTrace();
 		}
 		return new ModelAndView("employer/employer");
+	}
+	/**
+	 * 发包商下载已完成的任务包(zip格式,原包目录,wav,TAG,TextGrid文件)
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping(value = "/downTask")
+	public @ResponseBody
+	String downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
+		logger.debug("downTaskCount:{}", downTaskCount);
+		String userName = session.getAttribute(Constants.USER_NAME).toString();
+		//int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
+		if (list == null) {
+			return null;
+		}
+		String url = request.getServletContext().getRealPath("/");
+		url = url + "fileToZip";
+		logger.debug("url:{}", url);
+		File zipFile = new File(url + "/" + userName + "_task.zip");
+		if (zipFile.exists()) {
+			zipFile.delete();
+		}
+		try {
+			zipFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(zipFile);
+			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
+			byte[] bufs = new byte[1024 * 10];
+			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
+				System.out.println(fileName);
+				// 创建ZIP实体,并添加进压缩包
+				ZipEntry zipEntry = new ZipEntry(fileName);
+				zos.putNextEntry(zipEntry);
+				byte[] data = taskWithBLOBs.getTaskWav();
+				InputStream is = new ByteArrayInputStream(data);
+
+				// 读取待压缩的文件并写进压缩包里
+				BufferedInputStream bis = new BufferedInputStream(is, 1024);
+				int read;
+				while ((read = bis.read(bufs)) > 0) {// , 0, 2048
+					zos.write(bufs, 0, read);//
+				}
+				// zos.closeEntry();
+				bis.close();
+				is.close();
+				// taskWithBLOBs.setTaskDownloadTime(new Date());
+				// taskWithBLOBs.setWorkerId(workerId);
+				// taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+			}
+			session.setAttribute("workerMark", 1);
+			zos.close();// 不关闭,最后一个文件写入为0kb
+			fos.flush();
+			fos.close();
+
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		// 项目在服务器上的远程绝对地址
+		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		// 文件所谓的远程绝对路径
+		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + userName + "_task.zip";
+		logger.debug("wrongPath:{}", wrongPath);
+		return wrongPath;
+
 	}
 }
