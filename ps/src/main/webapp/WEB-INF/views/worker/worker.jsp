@@ -62,7 +62,7 @@
 					<div class="form-group">
 				      <label for="TAG" class="col-sm-2 control-label">选择已完成任务</label>
 				      <div class="col-sm-10">
-				         <input type="file" class="form-control" name="file" id="fileupload" placeholder="请选择上传文件" multiple>
+				         <input type="file" class="form-control" name="file" id="fileupload" placeholder="请选择上传文件" autocomplete="off" multiple>
 				      </div>
 				   </div>
 				   
@@ -92,36 +92,7 @@
 					<tbody id="waitForUpTable"></tbody>
 				</table>
 			</div>
-			<div id="uploadSucTable" class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">待上传任务列表</h3>
-				</div>
-				<table class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>序号</th>
-							<th>任务名称</th>
-							<th>下载时间</th>
-						</tr>
-					</thead>
-					<tbody id="waitForUpTable"></tbody>
-				</table>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">待上传任务列表</h3>
-				</div>
-				<table class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>序号</th>
-							<th>任务名称</th>
-							<th>下载时间</th>
-						</tr>
-					</thead>
-					<tbody id="waitForUpTable"></tbody>
-				</table>
-			</div>
+			
 		</div>
 	</div>
 	<div class="modal fade">
@@ -132,7 +103,14 @@
 					<h4 class="modal-title">Modal title</h4>
 				</div>
 				<div class="modal-body">
-					<p>One fine body&hellip;</p>
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="active"><a href="#taskListNoMath" role="tab" data-toggle="tab">未匹配任务</a></li>
+						<li><a href="#taskListMath" role="tab" data-toggle="tab">已匹配任务</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="taskListNoMath"><ul></ul></div>
+						<div class="tab-pane" id="taskListMath"><ul></ul></div>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -241,18 +219,59 @@
 				//var formName = $("#upTagAndTextGrid");
 				//formName.submit();
 			//});
-			//$("#uploadBtn").click(function(){
-				//alert("a");
-				$("fileupload").fileupload('send',{//多文件上传
-					url:"${contextPath}/upTagAndTextGrid",
+			
+			
+				$("#fileupload").fileupload({//多文件上传
+					singleFileUploads:false,
 					typ:"POST",
 					dataType:"json",
-					done:function(e,data){
+					url:"${contextPath}/upTagAndTextGrid",
+					add:function(e,data){
+						var $this = $(this);
+						data.autoUpload = false;
+						$("#uploadBtn").click(function(){
+							//$this.fileupload('send', {
+								//files:data.files
+							//});
+							data.submit();
+						});
+					},
+					
+					done:function(result){
+						var taskListNoMath = $("#taskListNoMath ul");
+						var taskListMath = $("#taskListMath ul");
+						if(result.listNoMath!=null){
+							taskListNoMath.html("");
+							$.each(result.listNoMath,function(i,item){
+								taskListNoMath.append(
+									"<li>"+
+										"<span>"+(i+1)+"</span>"+
+										"<span>"+item+"</span>"+
+									"</li>"
+								);
+							});
+						}else{
+							taskListNoMath.html("<li class='text-success'>全部通过</li>");
+						}
+						if(result.listMath!=null){
+							taskListMath.html("");
+							$.each(result.listMath,function(i,item){
+								taskListMath.append(
+									"<li>"+
+										"<span>"+(i+1)+"</span>"+
+										"<span>"+item+"</span>"+
+									"</li>"
+								);
+							});
+						}else{
+							taskListMath.html("<li class='text-success'>无匹配内容</li>");
+						}
 						$(".modal").modal('show');
 					}
 					
 				});
-			//});
+			
+				
 			
 		});
 	</script>
