@@ -82,4 +82,10 @@ public class PackServiceImpl implements PackService {
 		return packMapper.selectPackLockTime(packId);
 	}
 
+	@Override
+	public pack getPackByPackName(String packName) {
+
+		return packMapper.selectPackByPackName(packName);
+	}
+
 }

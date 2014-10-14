@@ -14,7 +14,7 @@ public interface EmployerService {
     
     employer getEmployerByUserId(Integer userId);
     
-    int selEmployerIdByUserId(Integer userId);
+    int getEmployerIdByUserId(Integer userId);
     
     int getEmployerIdByEmployerName(String employerName);
 

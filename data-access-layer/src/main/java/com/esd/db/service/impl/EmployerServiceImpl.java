@@ -52,9 +52,9 @@ public class EmployerServiceImpl implements EmployerService {
 	}
 
 	@Override
-	public int selEmployerIdByUserId(Integer userId) {
+	public int getEmployerIdByUserId(Integer userId) {
 		
-		return employerMapper.selEmployerIdByUserId(userId);
+		return employerMapper.selectEmployerIdByUserId(userId);
 	}
 
 	@Override

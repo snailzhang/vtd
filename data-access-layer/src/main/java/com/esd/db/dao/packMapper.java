@@ -30,4 +30,6 @@ public interface packMapper {
     int selectCountPackDoing();
     
     int selectPackLockTime(Integer packId);
+    
+    pack selectPackByPackName(String packName);
 }

@@ -46,6 +46,12 @@
     from pack
     where employer_id = #{employerId,jdbcType=INTEGER} ORDER BY pack_id DESC
   </select>
+  <select id="selectPackByPackName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+  	<include refid="Base_Column_List" />
+    from pack
+    where pack_name = #{packName,jdbcType=VARCHAR}
+  </select>
    <select id="selectCountPackDoing" resultType="java.lang.Integer">
     select 
   	Count(pack_id) total

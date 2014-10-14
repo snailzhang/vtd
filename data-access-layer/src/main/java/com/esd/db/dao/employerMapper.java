@@ -16,7 +16,7 @@ public interface employerMapper {
     
     int selEmployerIdByEmployerName(String employerName);
     
-    int selEmployerIdByUserId(Integer userId);
+    int selectEmployerIdByUserId(Integer userId);
     
     int selCountEmployerIdByUserId(Integer userId);
     
