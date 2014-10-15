@@ -374,7 +374,7 @@ public class WorkerController {
 				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
 				if (packLockTime > 0) {
 					workerRecord.setTaskLockTime(packLockTime);
-				}
+				}	
 				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
 				workerRecord.setTaskStatu(0);
 				workerRecord.setWorkerId(workerId);
