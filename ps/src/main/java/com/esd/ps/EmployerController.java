@@ -217,7 +217,7 @@ public class EmployerController {
 				if (zipEntryName.indexOf("/") > 0) {
 					String str[] = zipEntryName.split("/");
 					// (zipEntryName.indexOf("/") + 1)
-					taskDir = zipEntryName.substring(0, zipEntryName.lastIndexOf("/"));
+					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
 					zipEntryName = str[(str.length - 1)];
 				}
 				// 收集没有匹配的文件
@@ -265,16 +265,13 @@ public class EmployerController {
 	public @ResponseBody
 	String downPackPOST(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
 		logger.debug("downTaskCount:{}", packId);
-		String userName = session.getAttribute(Constants.USER_NAME).toString();
-		// int workerId =
-		// workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
 		if (list == null) {
 			return null;
 		}
+		String packName = packService.getPackNameByPackId(packId);
 		String url = request.getServletContext().getRealPath("/");
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
-		String zipName = "fileToZip/" + sdf.format(new Date()) + "_" + packService.getDownCountByPackId(packId) + "_" + Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()) + "e.zip";
+		String zipName = "fileToZip/" + packName;
 		logger.debug("url:{}", url + zipName);
 		File zipFile = new File(url + zipName);
 		if (zipFile.exists()) {
@@ -288,25 +285,30 @@ public class EmployerController {
 			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-				// 创建ZIP实体,并添加进压缩包
-				ZipEntry zipEntry = new ZipEntry(fileName);
+				// 创建ZIP实体,并添加进压缩包,按原目录结构
+				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() + fileName);
 				zos.putNextEntry(zipEntry);
-				byte[] data = taskWithBLOBs.getTaskWav();
-				InputStream is = new ByteArrayInputStream(data);
-				// 读取待压缩的文件并写进压缩包里
-				BufferedInputStream bis = new BufferedInputStream(is, 1024);
-				int read;
-				while ((read = bis.read(bufs)) > 0) {// , 0, 2048
-					zos.write(bufs, 0, read);//
+				byte[] data1 = null;
+				for (int i = 1; i < 4; i++) {
+					if (i == 1) {
+						data1 = taskWithBLOBs.getTaskWav();
+					} else if (i == 2) {
+						data1 = taskWithBLOBs.getTaskTag();
+					} else if (i == 3) {
+						data1 = taskWithBLOBs.getTaskTextgrid();
+					}
+					InputStream is = new ByteArrayInputStream(data1);
+					// 读取待压缩的文件并写进压缩包里
+					BufferedInputStream bis = new BufferedInputStream(is, 1024);
+					int read;
+					while ((read = bis.read(bufs)) > 0) {// , 0, 2048
+						zos.write(bufs, 0, read);//
+					}
+					// zos.closeEntry();
+					bis.close();
+					is.close();
 				}
-				// zos.closeEntry();
-				bis.close();
-				is.close();
-				// taskWithBLOBs.setTaskDownloadTime(new Date());
-				// taskWithBLOBs.setWorkerId(workerId);
-				// taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 			}
-			session.setAttribute("workerMark", 1);
 			zos.close();// 不关闭,最后一个文件写入为0kb
 			fos.flush();
 			fos.close();
@@ -318,6 +320,12 @@ public class EmployerController {
 
 			e.printStackTrace();
 		}
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setUpdateTime(new Date());
+		pack.setDownCount((packService.getDownCountByPackId(packId) + 1));
+		packService.updateByPrimaryKeySelective(pack);
+		// session.setAttribute("workerMark", 1);
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
