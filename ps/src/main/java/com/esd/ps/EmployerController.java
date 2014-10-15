@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +46,8 @@ import com.esd.db.service.EmployerService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
+import com.esd.db.service.WorkerRecordService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +68,8 @@ public class EmployerController {
 	private EmployerService employerService;
 	@Autowired
 	private TaskService taskService;
+	@Autowired
+	private WorkerRecordService workerRecordService;
 
 	/**
 	 * 登录发包商页
@@ -96,10 +101,12 @@ public class EmployerController {
 		}
 		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
-
 			packTrans packTrans = new packTrans();
 			packTrans.setPackId(pack.getPackId());
 			packTrans.setPackName(pack.getPackName());
+			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
+			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId()));
+			packTrans.setDownCount(pack.getDownCount());
 			packTrans.setPackStatus(pack.getPackStatus());
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
@@ -135,7 +142,7 @@ public class EmployerController {
 		int packId = Integer.parseInt(session.getAttribute("packId").toString());
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		List<task> listTask = taskService.getTaskByPackId(packId);
+		List<task> listTask = taskService.getAllTaskByPackId(packId);
 		if (listTask == null) {
 			return null;
 		}
@@ -255,18 +262,21 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/downPack")
 	public @ResponseBody
-	String downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
-		logger.debug("downTaskCount:{}", downTaskCount);
+	String downTask(final HttpServletResponse response,int packId, HttpSession session, HttpServletRequest request) {
+		logger.debug("downTaskCount:{}", packId);
 		String userName = session.getAttribute(Constants.USER_NAME).toString();
 		//int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
+		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
 		if (list == null) {
 			return null;
 		}
+		int packDownCount=packService.getDownCountByPackId(packId);
 		String url = request.getServletContext().getRealPath("/");
-		url = url + "fileToZip";
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
+		int employerId=Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
+		url = url + "fileToZip/"+sdf.format(new Date())+"_"+packDownCount+"_"+employerId+".zip";
 		logger.debug("url:{}", url);
-		File zipFile = new File(url + "/" + userName + "_task.zip");
+		File zipFile = new File(url);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
@@ -313,7 +323,7 @@ public class EmployerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + userName + "_task.zip";
+		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/"+sdf.format(new Date())+"_"+packDownCount+"_"+employerId+".zip";
 		logger.debug("wrongPath:{}", wrongPath);
 		return wrongPath;
 
