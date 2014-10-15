@@ -93,9 +93,7 @@ public class LoginController {
 	public @ResponseBody
 	boolean checkUserName(String username) {
 		if (!StringUtils.isEmpty(username)) {
-			System.out.println(username);
 			user user = userService.getAllUsersByUserName(username);
-			System.out.println(1234566);
 			if (user == null) {
 				return false;
 			}

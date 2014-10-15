@@ -308,7 +308,7 @@ public class WorkerController {
 	 * @param req
 	 * @return
 	 */
-	@RequestMapping(value = "/downTask", method = RequestMethod.POST)
+	@RequestMapping(value = "/downTask", method = RequestMethod.GET)
 	public @ResponseBody
 	String downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
 		logger.debug("downTaskCount:{}", downTaskCount);
