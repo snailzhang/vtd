@@ -30,7 +30,7 @@
     <include refid="Base_Column_List" />
     from user
   </select>
-    <select id="selAllUsersByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <select id="selectAllUsersByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
     select 
     <include refid="Base_Column_List" />
     from user

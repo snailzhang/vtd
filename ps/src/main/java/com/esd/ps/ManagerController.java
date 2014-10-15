@@ -157,7 +157,7 @@ public class ManagerController {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
 			return new ModelAndView("redirect:addUser");
 		}
-		user user = userService.selAllUsersByUserName(username);
+		user user = userService.getAllUsersByUserName(username);
 		if (user != null) {
 			manager manager = managerService.getManagerByUserId(user.getUserId());
 			employer employer = employerService.getEmployerByUserId(user.getUserId());

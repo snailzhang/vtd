@@ -171,17 +171,17 @@ public class EmployerController {
 			HttpServletRequest request, HttpSession session) {
 		logger.debug("packLockTime:{}", packLockTime);
 		String fileName = pack.getOriginalFilename();
-		//没改完,待续...
-		pack pack2=packService.getPackByPackName(fileName);
-		if(pack2 != null){
-			return new ModelAndView("employer/employer","match",1);
+		// 没改完,待续...
+		pack pack2 = packService.getPackByPackName(fileName);
+		if (pack2 != null) {
+			return new ModelAndView("employer/employer", "match", 1);
 		}
 		// 临时文件路径
 		String url = request.getServletContext().getRealPath("/") + "zipToWav";
 		try {
 			if (!pack.isEmpty()) {
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
-				//packWithBLOBs.setPackFile(pack.getBytes());
+				// packWithBLOBs.setPackFile(pack.getBytes());
 				packWithBLOBs.setPackName(fileName);
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
 				packWithBLOBs.setPackStatus(false);
@@ -216,7 +216,7 @@ public class EmployerController {
 				String zipEntryName = entry.getName();
 				if (zipEntryName.indexOf("/") > 0) {
 					String str[] = zipEntryName.split("/");
-					//(zipEntryName.indexOf("/") + 1)
+					// (zipEntryName.indexOf("/") + 1)
 					taskDir = zipEntryName.substring(0, zipEntryName.lastIndexOf("/"));
 					zipEntryName = str[(str.length - 1)];
 				}
@@ -241,7 +241,7 @@ public class EmployerController {
 				taskWithBLOBs.setTaskName(zipEntryName);
 				// 存入压缩包的层次结构
 				taskWithBLOBs.setTaskDir(taskDir);
-				//包内任务的上传状态
+				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
 				taskService.insert(taskWithBLOBs);
 			}
@@ -254,29 +254,29 @@ public class EmployerController {
 		}
 		return new ModelAndView("employer/employer");
 	}
+
 	/**
 	 * 发包商下载已完成的任务包(zip格式,原包目录,wav,TAG,TextGrid文件)
 	 * 
 	 * @param req
 	 * @return
 	 */
-	@RequestMapping(value = "/downPack")
+	@RequestMapping(value = "/downPack", method = RequestMethod.POST)
 	public @ResponseBody
-	String downTask(final HttpServletResponse response,int packId, HttpSession session, HttpServletRequest request) {
+	String downPackPOST(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
 		logger.debug("downTaskCount:{}", packId);
 		String userName = session.getAttribute(Constants.USER_NAME).toString();
-		//int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		// int workerId =
+		// workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
 		if (list == null) {
 			return null;
 		}
-		int packDownCount=packService.getDownCountByPackId(packId);
 		String url = request.getServletContext().getRealPath("/");
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
-		int employerId=Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
-		url = url + "fileToZip/"+sdf.format(new Date())+"_"+packDownCount+"_"+employerId+".zip";
-		logger.debug("url:{}", url);
-		File zipFile = new File(url);
+		String zipName = "fileToZip/" + sdf.format(new Date()) + "_" + packService.getDownCountByPackId(packId) + "_" + Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()) + "e.zip";
+		logger.debug("url:{}", url + zipName);
+		File zipFile = new File(url + zipName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
@@ -288,13 +288,11 @@ public class EmployerController {
 			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-				System.out.println(fileName);
 				// 创建ZIP实体,并添加进压缩包
 				ZipEntry zipEntry = new ZipEntry(fileName);
 				zos.putNextEntry(zipEntry);
 				byte[] data = taskWithBLOBs.getTaskWav();
 				InputStream is = new ByteArrayInputStream(data);
-
 				// 读取待压缩的文件并写进压缩包里
 				BufferedInputStream bis = new BufferedInputStream(is, 1024);
 				int read;
@@ -323,7 +321,7 @@ public class EmployerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/"+sdf.format(new Date())+"_"+packDownCount+"_"+employerId+".zip";
+		String wrongPath = "http://" + serverAndProjectPath + "/" + zipName;
 		logger.debug("wrongPath:{}", wrongPath);
 		return wrongPath;
 

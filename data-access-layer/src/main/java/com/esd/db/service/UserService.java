@@ -21,7 +21,7 @@ public interface UserService {
     
     int selUserIdByUserName(String username);
     
-    user selAllUsersByUserName(String username);
+    user getAllUsersByUserName(String username);
 
     int updateByPrimaryKeySelective(user record);
 

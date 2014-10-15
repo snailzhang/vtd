@@ -82,19 +82,19 @@
 		from worker_record
 		where worker_id = #{workerId,jdbcType=Integer} group by down_pack_name
 	</select>
-	<select id="selectTaskCountByDownPackName" resultMap="java.lang.Integer" parameterType="java.lang.String">
+	<select id="selectTaskCountByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select
 		count(record_id) count
 		from worker_record
 		where  down_pack_name = #{downPackName, jdbcType=VARCHAR}
 	</select>
-	<select id="selectPackStatuByDownPackName" resultMap="java.lang.Integer" parameterType="java.lang.String">
+	<select id="selectPackStatuByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select
 		count(record_id) count
 		from worker_record
 		where  down_pack_name = #{downPackName, jdbcType=VARCHAR} and task_statu = 0
 	</select>
-	<select id="selectFinishTaskCountByPackId" resultMap="java.lang.Integer" parameterType="java.lang.Integer">
+	<select id="selectFinishTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		count(record_id) count
 		from worker_record

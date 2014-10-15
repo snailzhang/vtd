@@ -20,7 +20,7 @@ public interface userMapper {
     
     int selUserTypeByUserName(String username);
     
-    user selAllUsersByUserName(String username);
+    user selectAllUsersByUserName(String username);
     
     int getMaxUserId();
     

@@ -93,7 +93,9 @@ public class LoginController {
 	public @ResponseBody
 	boolean checkUserName(String username) {
 		if (!StringUtils.isEmpty(username)) {
-			user user = userService.selAllUsersByUserName(username);
+			System.out.println(username);
+			user user = userService.getAllUsersByUserName(username);
+			System.out.println(1234566);
 			if (user == null) {
 				return false;
 			}
@@ -119,7 +121,7 @@ public class LoginController {
 		if (StringUtils.isBlank(password)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
 		}
-		user user = userService.selAllUsersByUserName(username);
+		user user = userService.getAllUsersByUserName(username);
 		if (user == null) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EXIST);
 		} else {

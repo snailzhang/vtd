@@ -325,18 +325,17 @@ public class WorkerController {
 			return null;
 		}
 		String url = request.getServletContext().getRealPath("/");
-		url = url + "fileToZip";
 		logger.debug("url:{}", url);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
-		String downPackName = sdf.format(new Date()) + "_" + downTaskCount + "_" + userId + ".zip";
-		File zipFile = new File(url + "/" + downPackName);
+		String downPackName = "fileToZip/"+sdf.format(new Date()) + "_" + downTaskCount + "_" + userId + "w.zip";
+		File zipFile = new File(url + downPackName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + downPackName;
+		String wrongPath = "http://" + serverAndProjectPath + "/" + downPackName;
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
@@ -360,28 +359,28 @@ public class WorkerController {
 				bis.close();
 				is.close();
 				// 更新task表
-				taskWithBLOBs.setTaskDownloadTime(new Date());
-				taskWithBLOBs.setWorkerId(workerId);
-				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-				// 更新worker_record 工作者的任务记录
-				workerRecord workerRecord = new workerRecord();
-				workerRecord.setCreateTime(new Date());
-				workerRecord.setDownPackName(downPackName);
-				workerRecord.setDownUrl(wrongPath);
-				workerRecord.setPackId(taskWithBLOBs.getPackId());
-				workerRecord.setTaskDownTime(new Date());
-				workerRecord.setTaskEffective(false);
-				workerRecord.setTaskId(taskWithBLOBs.getTaskId());
-				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
-				if (packLockTime > 0) {
-					workerRecord.setTaskLockTime(packLockTime);
-				}
-				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
-				workerRecord.setTaskStatu(0);
-				workerRecord.setWorkerId(workerId);
-				workerRecordService.insertSelective(workerRecord);
+//				taskWithBLOBs.setTaskDownloadTime(new Date());
+//				taskWithBLOBs.setWorkerId(workerId);
+//				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+//				// 更新worker_record 工作者的任务记录
+//				workerRecord workerRecord = new workerRecord();
+//				workerRecord.setCreateTime(new Date());
+//				workerRecord.setDownPackName(downPackName);
+//				workerRecord.setDownUrl(wrongPath);
+//				workerRecord.setPackId(taskWithBLOBs.getPackId());
+//				workerRecord.setTaskDownTime(new Date());
+//				workerRecord.setTaskEffective(false);
+//				workerRecord.setTaskId(taskWithBLOBs.getTaskId());
+//				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
+//				if (packLockTime > 0) {
+//					workerRecord.setTaskLockTime(packLockTime);
+//				}
+//				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
+//				workerRecord.setTaskStatu(0);
+//				workerRecord.setWorkerId(workerId);
+//				workerRecordService.insertSelective(workerRecord);
 			}
-			session.setAttribute("workerMark", 1);
+			//session.setAttribute("workerMark", 1);
 			zos.close();// 必须关闭,否则最后一个文件写入为0kb
 			fos.flush();
 			fos.close();
