@@ -119,6 +119,12 @@
 		from task
 		WHERE pack_id = #{packId,jdbcType=Integer}
 	</select>
+	<select id="selectTaskDirByTaskId" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select
+		task_dir
+		from task
+		WHERE task_id = #{taskId,jdbcType=Integer}
+	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from task
 		where task_id = #{taskId,jdbcType=INTEGER}

@@ -34,4 +34,6 @@ public interface packMapper {
     pack selectPackByPackName(String packName);
     
     int selectDownCountByPackId(Integer packId);
+    
+    String selectPackNameByPackId(Integer packId);
 }

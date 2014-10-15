@@ -94,4 +94,10 @@ public class PackServiceImpl implements PackService {
 		return packMapper.selectDownCountByPackId(packId);
 	}
 
+	@Override
+	public String getPackNameByPackId(Integer packId) {
+		
+		return packMapper.selectPackNameByPackId(packId);
+	}
+
 }

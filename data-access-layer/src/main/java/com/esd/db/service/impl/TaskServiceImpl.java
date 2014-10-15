@@ -106,25 +106,29 @@ public class TaskServiceImpl implements TaskService {
 			return taskMapper.selectUndoTaskCountByPackId(packId);
 		}
 		return taskMapper.selectUndoTaskCountByPackId(0);
-
 	}
 
 	@Override
 	public byte[] getTaskWav(String taskName) {
-		
+
 		return taskMapper.selectTaskWav(taskName);
 	}
 
 	@Override
 	public int getTaskCountByPackId(Integer packId) {
-		
+
 		return taskMapper.selectTaskCountByPackId(packId);
 	}
 
 	@Override
 	public List<taskWithBLOBs> getFinishTaskByPackId(Integer packId) {
-		
+
 		return taskMapper.selectFinishTaskByPackId(packId);
+	}
+
+	@Override
+	public String getTaskDirByTaskId(Integer taskId) {
+		return taskMapper.selectTaskDirByTaskId(taskId);
 	}
 
 }

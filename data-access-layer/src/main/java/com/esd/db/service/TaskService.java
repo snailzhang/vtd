@@ -42,4 +42,6 @@ public interface TaskService {
     int getTaskCountByPackId(Integer packId);
     
     List<taskWithBLOBs> getFinishTaskByPackId(Integer packId);
+    
+    String getTaskDirByTaskId(Integer taskId);
 }
