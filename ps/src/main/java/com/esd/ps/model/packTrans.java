@@ -14,9 +14,7 @@ public class packTrans {
     
     private Integer taskCount;
     
-    private Integer doTaskCount;
-    
-    private Integer undoTaskCount;
+    private Integer finishTaskCount;
     
     private Integer downCount;
 
@@ -67,20 +65,12 @@ public class packTrans {
 		this.taskCount = taskCount;
 	}
 
-	public Integer getDoTaskCount() {
-		return doTaskCount;
+	public Integer getFinishTaskCount() {
+		return finishTaskCount;
 	}
 
-	public void setDoTaskCount(Integer doTaskCount) {
-		this.doTaskCount = doTaskCount;
-	}
-
-	public Integer getUndoTaskCount() {
-		return undoTaskCount;
-	}
-
-	public void setUndoTaskCount(Integer undoTaskCount) {
-		this.undoTaskCount = undoTaskCount;
+	public void setFinishTaskCount(Integer finishTaskCount) {
+		this.finishTaskCount = finishTaskCount;
 	}
 
 	public Integer getDownCount() {

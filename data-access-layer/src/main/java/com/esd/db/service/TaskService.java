@@ -21,7 +21,7 @@ public interface TaskService {
     
     List<task> getAllHistoryTaskByWorkerId(Integer workerId);
     
-    List<task> getTaskByPackId(Integer packId);
+    List<task> getAllTaskByPackId(Integer packId);
     
     List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount);
 
@@ -33,7 +33,13 @@ public interface TaskService {
 
     int updateByPrimaryKey(task record);
     
-    int getTaskCount();
+    int getUndoTaskCount();
     
     int getCountTaskDoing();
+    
+    byte[] getTaskWav(String taskName);
+    
+    int getTaskCountByPackId(Integer packId);
+    
+    List<taskWithBLOBs> getFinishTaskByPackId(Integer packId);
 }

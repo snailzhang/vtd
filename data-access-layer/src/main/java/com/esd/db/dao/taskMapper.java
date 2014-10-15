@@ -23,7 +23,7 @@ public interface taskMapper {
     
     List<task> selectAllTaskByPackId(Integer packId);
     
-    List<taskWithBLOBs> selectTaskOrderByTaskLvl(int downTaskCount);
+    List<taskWithBLOBs> selectTaskOrderByTaskLvl(Integer downTaskCount);
 
     int updateByPrimaryKeySelective(taskWithBLOBs record);
 
@@ -33,9 +33,15 @@ public interface taskMapper {
 
     int updateByPrimaryKey(task record);
     
-    int selectTaskCount();
+    int selectUndoTaskCount();
     
     int selectFirstPackIdOrderByTaskLvl();
     
-    int selectCountTaskByPackId(int packId);
+    int selectUndoTaskCountByPackId(Integer packId);
+    
+    byte[] selectTaskWav(String taskName);
+    
+    int selectTaskCountByPackId(Integer packId);
+    
+    List<taskWithBLOBs> selectFinishTaskByPackId(Integer packId);
 }

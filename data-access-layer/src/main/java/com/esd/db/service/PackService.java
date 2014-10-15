@@ -32,4 +32,6 @@ public interface PackService {
     int getPackLockTime(Integer packId);
     
     pack getPackByPackName(String packName);
+    
+    int getDownCountByPackId(Integer packId);
 }

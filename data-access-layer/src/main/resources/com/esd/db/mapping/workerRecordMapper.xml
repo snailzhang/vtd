@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esd.db.dao.workerRecordMapper">
+	<resultMap id="BaseResultMap" type="com.esd.db.model.workerRecord">
+		<id column="record_id" property="recordId" jdbcType="INTEGER" />
+		<result column="worker_id" property="workerId" jdbcType="INTEGER" />
+		<result column="pack_id" property="packId" jdbcType="INTEGER" />
+		<result column="task_id" property="taskId" jdbcType="INTEGER" />
+		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="pack_name" property="packName" jdbcType="VARCHAR" />
+		<result column="down_pack_name" property="downPackName" jdbcType="VARCHAR" />
+		<result column="down_url" property="downUrl" jdbcType="VARCHAR" />
+		<result column="task_down_time" property="taskDownTime" jdbcType="TIMESTAMP" />
+		<result column="task_upload_time" property="taskUploadTime" jdbcType="TIMESTAMP" />
+		<result column="task_statu" property="taskStatu" jdbcType="INTEGER" />
+		<result column="task_lock_time" property="taskLockTime" jdbcType="INTEGER" />
+		<result column="task_mark_time" property="taskMarkTime" jdbcType="DOUBLE" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_method" property="createMethod" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
+		<result column="task_effective" property="taskEffective" jdbcType="BIT" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		record_id, worker_id, pack_id, task_id, task_name, pack_name,down_pack_name,down_url, task_down_time, task_upload_time,
+		task_statu, task_lock_time, task_mark_time, create_time,
+		create_method, update_time,
+		update_method, task_effective
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		where record_id = #{recordId,jdbcType=INTEGER}
+	</select>
+	<select id="selectAllByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		where worker_id = #{workerId,jdbcType=INTEGER}
+	</select>
+	<select id="selectAllByDownTaskName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		where down_pack_name = #{downPackName,jdbcType=VARCHAR}
+	</select>
+	<select id="selectDownUrlByTaskName" resultType="java.lang.String" parameterType="java.lang.String">
+		select
+		down_url
+		from worker_record
+		where task_name = #{taskName,jdbcType=VARCHAR}
+	</select>
+	<select id="selectOldTask" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		where task_statu = 0
+	</select>
+	<select id="selectPkIDByTaskName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select
+		record_id
+		from worker_record
+		where task_name = #{taskName,jdbcType=VARCHAR}
+	</select>
+	<select id="selectWorkerRecordByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		where worker_id = #{workerId,jdbcType=Integer} order by record_id desc limit 1
+	</select>
+	<select id="selectDoingTaskCountByWorkerId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		count(record_id) count
+		from worker_record
+		where worker_id = #{workerId,jdbcType=Integer} and
+		task_statu=0
+	</select>
+	<select id="selectDownNameAndTimeByWorkerIdGroupByDownPackName" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		down_pack_name,task_down_time
+		from worker_record
+		where worker_id = #{workerId,jdbcType=Integer} group by down_pack_name
+	</select>
+	<select id="selectTaskCountByDownPackName" resultMap="java.lang.Integer" parameterType="java.lang.String">
+		select
+		count(record_id) count
+		from worker_record
+		where  down_pack_name = #{downPackName, jdbcType=VARCHAR}
+	</select>
+	<select id="selectPackStatuByDownPackName" resultMap="java.lang.Integer" parameterType="java.lang.String">
+		select
+		count(record_id) count
+		from worker_record
+		where  down_pack_name = #{downPackName, jdbcType=VARCHAR} and task_statu = 0
+	</select>
+	<select id="selectFinishTaskCountByPackId" resultMap="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		count(record_id) count
+		from worker_record
+		where  pack_id = #{packId, jdbcType=Integer} and task_statu = 1
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from worker_record
+		where record_id = #{recordId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.esd.db.model.workerRecord">
+		insert into worker_record (record_id, worker_id, pack_id,
+		task_id, task_name, pack_name,down_pack_name,down_url
+		task_down_time, task_upload_time, task_statu,
+		task_lock_time, task_mark_time, create_time,
+		create_method, update_time, update_method,
+		task_effective)
+		values (#{recordId,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER}, #{packId,jdbcType=INTEGER},
+		#{taskId,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{packName,jdbcType=VARCHAR},
+		#{downPackName,jdbcType=VARCHAR},#{downUrl,jdbcType=VARCHAR},
+		#{taskDownTime,jdbcType=TIMESTAMP},
+		#{taskUploadTime,jdbcType=TIMESTAMP}, #{taskStatu,jdbcType=INTEGER},
+		#{taskLockTime,jdbcType=INTEGER}, #{taskMarkTime,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
+		#{createMethod,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
+		#{taskEffective,jdbcType=BIT})
+	</insert>
+	<insert id="insertSelective" parameterType="com.esd.db.model.workerRecord">
+		insert into worker_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="recordId != null">
+				record_id,
+			</if>
+			<if test="workerId != null">
+				worker_id,
+			</if>
+			<if test="packId != null">
+				pack_id,
+			</if>
+			<if test="taskId != null">
+				task_id,
+			</if>
+			<if test="taskName != null">
+				task_name,
+			</if>
+			<if test="packName != null">
+				pack_name,
+			</if>
+			<if test="downPackName != null">
+				down_pack_name,
+			</if>
+			<if test="downUrl != null">
+				down_url,
+			</if>
+			<if test="taskDownTime != null">
+				task_down_time,
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time,
+			</if>
+			<if test="taskStatu != null">
+				task_statu,
+			</if>
+			<if test="taskLockTime != null">
+				task_lock_time,
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createMethod != null">
+				create_method,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateMethod != null">
+				update_method,
+			</if>
+			<if test="taskEffective != null">
+				task_effective,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="recordId != null">
+				#{recordId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId != null">
+				#{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="packId != null">
+				#{packId,jdbcType=INTEGER},
+			</if>
+			<if test="taskId != null">
+				#{taskId,jdbcType=INTEGER},
+			</if>
+			<if test="taskName != null">
+				#{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="packName != null">
+				#{packName,jdbcType=VARCHAR},
+			</if>
+			<if test="downPackName != null">
+				#{downPackName,jdbcType=VARCHAR},
+			</if>
+			<if test="downUrl != null">
+				#{downUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="taskDownTime != null">
+				#{taskDownTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				#{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskStatu != null">
+				#{taskStatu,jdbcType=INTEGER},
+			</if>
+			<if test="taskLockTime != null">
+				#{taskLockTime,jdbcType=INTEGER},
+			</if>
+			<if test="taskMarkTime != null">
+				#{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				#{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				#{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="taskEffective != null">
+				#{taskEffective,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.workerRecord">
+		update worker_record
+		<set>
+			<if test="workerId != null">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="packId != null">
+				pack_id = #{packId,jdbcType=INTEGER},
+			</if>
+			<if test="taskId != null">
+				task_id = #{taskId,jdbcType=INTEGER},
+			</if>
+			<if test="taskName != null">
+				task_name = #{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="packName != null">
+				pack_name = #{packName,jdbcType=VARCHAR},
+			</if>
+			<if test="downPackName != null">
+				down_pack_name = #{downPackName,jdbcType=VARCHAR},
+			</if>
+			<if test="downUrl != null">
+				down_url = #{downUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="taskDownTime != null">
+				task_down_time = #{taskDownTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskStatu != null">
+				task_statu = #{taskStatu,jdbcType=INTEGER},
+			</if>
+			<if test="taskLockTime != null">
+				task_lock_time = #{taskLockTime,jdbcType=INTEGER},
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				create_method = #{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective,jdbcType=BIT},
+			</if>
+		</set>
+		where record_id = #{recordId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.workerRecord">
+		update worker_record
+		set worker_id = #{workerId,jdbcType=INTEGER},
+		pack_id = #{packId,jdbcType=INTEGER},
+		task_id = #{taskId,jdbcType=INTEGER},
+		task_name = #{taskName,jdbcType=VARCHAR},
+		pack_name = #{packName,jdbcType=VARCHAR},
+		down_pack_name = #{downPackName,jdbcType=VARCHAR},
+		down_url = #{downUrl,jdbcType=VARCHAR},
+		task_down_time =
+		#{taskDownTime,jdbcType=TIMESTAMP},
+		task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+		task_statu = #{taskStatu,jdbcType=INTEGER},
+		task_lock_time = #{taskLockTime,jdbcType=INTEGER},
+		task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		create_method = #{createMethod,jdbcType=VARCHAR},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_method = #{updateMethod,jdbcType=VARCHAR},
+		task_effective = #{taskEffective,jdbcType=BIT}
+		where record_id = #{recordId,jdbcType=INTEGER}
+	</update>
+</mapper>

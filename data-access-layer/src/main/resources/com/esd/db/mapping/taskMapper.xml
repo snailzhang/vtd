@@ -1,462 +1,483 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.esd.db.dao.taskMapper" >
-  <resultMap id="BaseResultMap" type="com.esd.db.model.task" >
-    <id column="task_id" property="taskId" jdbcType="INTEGER" />
-    <result column="pack_id" property="packId" jdbcType="INTEGER" />
-    <result column="inspector_id" property="inspectorId" jdbcType="INTEGER" />
-    <result column="fault_id" property="faultId" jdbcType="INTEGER" />
-    <result column="worker_id" property="workerId" jdbcType="INTEGER" />
-    <result column="task_dir" property="taskDir" jdbcType="VARCHAR" />
-    <result column="task_name" property="taskName" jdbcType="VARCHAR" />
-    <result column="task_mark_time" property="taskMarkTime" jdbcType="DOUBLE" />
-    <result column="task_effective" property="taskEffective" jdbcType="BIT" />
-    <result column="task_upload" property="taskUpload" jdbcType="BIT" />
-    <result column="task_lvl" property="taskLvl" jdbcType="INTEGER" />
-    <result column="task_download_time" property="taskDownloadTime" jdbcType="TIMESTAMP" />
-    <result column="task_upload_time" property="taskUploadTime" jdbcType="TIMESTAMP" />
-    <result column="create_id" property="createId" jdbcType="INTEGER" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="create_method" property="createMethod" jdbcType="VARCHAR" />
-    <result column="update_id" property="updateId" jdbcType="INTEGER" />
-    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="VARCHAR" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.esd.db.model.taskWithBLOBs" extends="BaseResultMap" >
-    <result column="task_wav" property="taskWav" jdbcType="LONGVARBINARY" />
-    <result column="task_tag" property="taskTag" jdbcType="LONGVARBINARY" />
-    <result column="task_textgrid" property="taskTextgrid" jdbcType="LONGVARBINARY" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    task_id, pack_id, inspector_id, fault_id, worker_id, task_dir, task_name, task_mark_time, 
-    task_effective, task_upload, task_lvl, task_download_time, task_upload_time, create_id, 
-    create_time, create_method, update_id, update_time, update_method, version
-  </sql>
-  <sql id="Blob_Column_List" >
-    task_wav, task_tag, task_textgrid
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from task
-    where task_id = #{taskId,jdbcType=INTEGER}
-  </select>
+<mapper namespace="com.esd.db.dao.taskMapper">
+	<resultMap id="BaseResultMap" type="com.esd.db.model.task">
+		<id column="task_id" property="taskId" jdbcType="INTEGER" />
+		<result column="pack_id" property="packId" jdbcType="INTEGER" />
+		<result column="inspector_id" property="inspectorId" jdbcType="INTEGER" />
+		<result column="fault_id" property="faultId" jdbcType="INTEGER" />
+		<result column="worker_id" property="workerId" jdbcType="INTEGER" />
+		<result column="task_dir" property="taskDir" jdbcType="VARCHAR" />
+		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="task_mark_time" property="taskMarkTime" jdbcType="DOUBLE" />
+		<result column="task_effective" property="taskEffective" jdbcType="BIT" />
+		<result column="task_upload" property="taskUpload" jdbcType="BIT" />
+		<result column="task_lvl" property="taskLvl" jdbcType="INTEGER" />
+		<result column="task_download_time" property="taskDownloadTime" jdbcType="TIMESTAMP" />
+		<result column="task_upload_time" property="taskUploadTime" jdbcType="TIMESTAMP" />
+		<result column="create_id" property="createId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_method" property="createMethod" jdbcType="VARCHAR" />
+		<result column="update_id" property="updateId" jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.esd.db.model.taskWithBLOBs" extends="BaseResultMap">
+		<result column="task_wav" property="taskWav" jdbcType="LONGVARBINARY" />
+		<result column="task_tag" property="taskTag" jdbcType="LONGVARBINARY" />
+		<result column="task_textgrid" property="taskTextgrid" jdbcType="LONGVARBINARY" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		task_id, pack_id, inspector_id, fault_id, worker_id, task_dir, task_name, task_mark_time,
+		task_effective, task_upload, task_lvl, task_download_time, task_upload_time, create_id,
+		create_time, create_method, update_id, update_time, update_method, version
+	</sql>
+	<sql id="Blob_Column_List">
+		task_wav, task_tag, task_textgrid
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from task
+		where task_id = #{taskId,jdbcType=INTEGER}
+	</select>
 	<select id="selectAllTaskId" resultMap="ResultMapWithBLOBs">
-    select 
-	task_id,task_lvl
-    from task order by task_lvl DESC
-  </select>
-  <select id="selectAllDoingTaskByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-    select 
-	<include refid="Base_Column_List" />
-    from task
-    where worker_id = #{workerId,jdbcType=INTEGER} and task_mark_time = 0 order by task_id DESC
-  </select>
-   <select id="selectAllHistoryTaskByWorkerId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
-    select 
-	<include refid="Base_Column_List" />
-    from task
-    where worker_id = #{workerId,jdbcType=INTEGER} and task_mark_time > 0  order by task_id DESC
-  </select>
-  <select id="selectAllTaskByPackId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-    select 
-	<include refid="Base_Column_List" />
-    from task
-    where pack_id = #{packId,jdbcType=INTEGER} order by task_id DESC
-  </select>
-  <select id="selectTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
-    select 
-	<include refid="Base_Column_List" />
-	,
-	<include refid="Blob_Column_List" />
-    from task
-    order by task_lvl DESC limit #{downTaskCount,jdbcType=INTEGER}
-  </select>
-   <select id="selectFirstPackIdOrderByTaskLvl" resultType="java.lang.Integer" >
-    select 
-	pack_id
-    from task
-    where worker_id is null order by task_lvl DESC limit 1
-  </select>
-  <select id="selectCountTaskByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-    select 
-	count(task_id) total
-    from task
-    where pack_id = #{packId,jdbcType=INTEGER} and worker_id is null
-  </select>
-  <select id="selectTaskCount" resultType="java.lang.Integer" >
-    select 
-	count(task_id) total
-    from task
-    WHERE worker_id IS NULL OR worker_id = 0
-  </select>
-
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from task
-    where task_id = #{taskId,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.esd.db.model.taskWithBLOBs" >
-    insert into task (task_id, pack_id, inspector_id, 
-      fault_id, worker_id, task_dir, 
-      task_name, task_mark_time, task_effective, 
-      task_upload, task_lvl, task_download_time, 
-      task_upload_time, create_id, create_time, 
-      create_method, update_id, update_time, 
-      update_method, version, task_wav, 
-      task_tag, task_textgrid)
-    values (#{taskId,jdbcType=INTEGER}, #{packId,jdbcType=INTEGER}, #{inspectorId,jdbcType=INTEGER}, 
-      #{faultId,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER}, #{taskDir,jdbcType=VARCHAR}, 
-      #{taskName,jdbcType=VARCHAR}, #{taskMarkTime,jdbcType=DOUBLE}, #{taskEffective,jdbcType=BIT}, 
-      #{taskUpload,jdbcType=BIT}, #{taskLvl,jdbcType=INTEGER}, #{taskDownloadTime,jdbcType=TIMESTAMP}, 
-      #{taskUploadTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createMethod,jdbcType=VARCHAR}, #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateMethod,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{taskWav,jdbcType=LONGVARBINARY}, 
-      #{taskTag,jdbcType=LONGVARBINARY}, #{taskTextgrid,jdbcType=LONGVARBINARY})
-  </insert>
-  <insert id="insertSelective" parameterType="com.esd.db.model.taskWithBLOBs" >
-    insert into task
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="taskId != null" >
-        task_id,
-      </if>
-      <if test="packId != null" >
-        pack_id,
-      </if>
-      <if test="inspectorId != null" >
-        inspector_id,
-      </if>
-      <if test="faultId != null" >
-        fault_id,
-      </if>
-      <if test="workerId != null" >
-        worker_id,
-      </if>
-      <if test="taskDir != null" >
-        task_dir,
-      </if>
-      <if test="taskName != null" >
-        task_name,
-      </if>
-      <if test="taskMarkTime != null" >
-        task_mark_time,
-      </if>
-      <if test="taskEffective != null" >
-        task_effective,
-      </if>
-      <if test="taskUpload != null" >
-        task_upload,
-      </if>
-      <if test="taskLvl != null" >
-        task_lvl,
-      </if>
-      <if test="taskDownloadTime != null" >
-        task_download_time,
-      </if>
-      <if test="taskUploadTime != null" >
-        task_upload_time,
-      </if>
-      <if test="createId != null" >
-        create_id,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="createMethod != null" >
-        create_method,
-      </if>
-      <if test="updateId != null" >
-        update_id,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="updateMethod != null" >
-        update_method,
-      </if>
-      <if test="version != null" >
-        version,
-      </if>
-      <if test="taskWav != null" >
-        task_wav,
-      </if>
-      <if test="taskTag != null" >
-        task_tag,
-      </if>
-      <if test="taskTextgrid != null" >
-        task_textgrid,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="taskId != null" >
-        #{taskId,jdbcType=INTEGER},
-      </if>
-      <if test="packId != null" >
-        #{packId,jdbcType=INTEGER},
-      </if>
-      <if test="inspectorId != null" >
-        #{inspectorId,jdbcType=INTEGER},
-      </if>
-      <if test="faultId != null" >
-        #{faultId,jdbcType=INTEGER},
-      </if>
-      <if test="workerId != null" >
-        #{workerId,jdbcType=INTEGER},
-      </if>
-      <if test="taskDir != null" >
-        #{taskDir,jdbcType=VARCHAR},
-      </if>
-      <if test="taskName != null" >
-        #{taskName,jdbcType=VARCHAR},
-      </if>
-      <if test="taskMarkTime != null" >
-        #{taskMarkTime,jdbcType=DOUBLE},
-      </if>
-      <if test="taskEffective != null" >
-        #{taskEffective,jdbcType=BIT},
-      </if>
-      <if test="taskUpload != null" >
-        #{taskUpload,jdbcType=BIT},
-      </if>
-      <if test="taskLvl != null" >
-        #{taskLvl,jdbcType=INTEGER},
-      </if>
-      <if test="taskDownloadTime != null" >
-        #{taskDownloadTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="taskUploadTime != null" >
-        #{taskUploadTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createId != null" >
-        #{createId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createMethod != null" >
-        #{createMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="updateId != null" >
-        #{updateId,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateMethod != null" >
-        #{updateMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        #{version,jdbcType=VARCHAR},
-      </if>
-      <if test="taskWav != null" >
-        #{taskWav,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="taskTag != null" >
-        #{taskTag,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="taskTextgrid != null" >
-        #{taskTextgrid,jdbcType=LONGVARBINARY},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.taskWithBLOBs" >
-    update task
-    <set >
-      <if test="packId != null" >
-        pack_id = #{packId,jdbcType=INTEGER},
-      </if>
-      <if test="inspectorId != null" >
-        inspector_id = #{inspectorId,jdbcType=INTEGER},
-      </if>
-      <if test="faultId != null" >
-        fault_id = #{faultId,jdbcType=INTEGER},
-      </if>
-      <if test="workerId != null" >
-        worker_id = #{workerId,jdbcType=INTEGER},
-      </if>
-      <if test="taskDir != null" >
-        task_dir = #{taskDir,jdbcType=VARCHAR},
-      </if>
-      <if test="taskName != null" >
-        task_name = #{taskName,jdbcType=VARCHAR},
-      </if>
-      <if test="taskMarkTime != null" >
-        task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
-      </if>
-      <if test="taskEffective != null" >
-        task_effective = #{taskEffective,jdbcType=BIT},
-      </if>
-      <if test="taskUpload != null" >
-        task_upload = #{taskUpload,jdbcType=BIT},
-      </if>
-      <if test="taskLvl != null" >
-        task_lvl = #{taskLvl,jdbcType=INTEGER},
-      </if>
-      <if test="taskDownloadTime != null" >
-        task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="taskUploadTime != null" >
-        task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createId != null" >
-        create_id = #{createId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createMethod != null" >
-        create_method = #{createMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="updateId != null" >
-        update_id = #{updateId,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateMethod != null" >
-        update_method = #{updateMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        version = #{version,jdbcType=VARCHAR},
-      </if>
-      <if test="taskWav != null" >
-        task_wav = #{taskWav,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="taskTag != null" >
-        task_tag = #{taskTag,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="taskTextgrid != null" >
-        task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY},
-      </if>
-    </set>
-    where task_id = #{taskId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByName" parameterType="com.esd.db.model.taskWithBLOBs" >
-    update task
-    <set >
-      <if test="packId != null" >
-        pack_id = #{packId,jdbcType=INTEGER},
-      </if>
-      <if test="inspectorId != null" >
-        inspector_id = #{inspectorId,jdbcType=INTEGER},
-      </if>
-      <if test="faultId != null" >
-        fault_id = #{faultId,jdbcType=INTEGER},
-      </if>
-      <if test="workerId != null" >
-        worker_id = #{workerId,jdbcType=INTEGER},
-      </if>
-      <if test="taskDir != null" >
-        task_dir = #{taskDir,jdbcType=VARCHAR},
-      </if>
-      <if test="taskName != null" >
-        task_name = #{taskName,jdbcType=VARCHAR},
-      </if>
-      <if test="taskMarkTime != null" >
-        task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
-      </if>
-      <if test="taskEffective != null" >
-        task_effective = #{taskEffective,jdbcType=BIT},
-      </if>
-      <if test="taskUpload != null" >
-        task_upload = #{taskUpload,jdbcType=BIT},
-      </if>
-      <if test="taskLvl != null" >
-        task_lvl = #{taskLvl,jdbcType=INTEGER},
-      </if>
-      <if test="taskDownloadTime != null" >
-        task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="taskUploadTime != null" >
-        task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createId != null" >
-        create_id = #{createId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createMethod != null" >
-        create_method = #{createMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="updateId != null" >
-        update_id = #{updateId,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateMethod != null" >
-        update_method = #{updateMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null" >
-        version = #{version,jdbcType=VARCHAR},
-      </if>
-      <if test="taskWav != null" >
-        task_wav = #{taskWav,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="taskTag != null" >
-        task_tag = #{taskTag,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="taskTextgrid != null" >
-        task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY},
-      </if>
-    </set>
-    where task_name = #{taskName,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esd.db.model.taskWithBLOBs">
-    update task
-    set pack_id = #{packId,jdbcType=INTEGER},
-      inspector_id = #{inspectorId,jdbcType=INTEGER},
-      fault_id = #{faultId,jdbcType=INTEGER},
-      worker_id = #{workerId,jdbcType=INTEGER},
-      task_dir = #{taskDir,jdbcType=VARCHAR},
-      task_name = #{taskName,jdbcType=VARCHAR},
-      task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
-      task_effective = #{taskEffective,jdbcType=BIT},
-      task_upload = #{taskUpload,jdbcType=BIT},
-      task_lvl = #{taskLvl,jdbcType=INTEGER},
-      task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
-      task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
-      create_id = #{createId,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_method = #{createMethod,jdbcType=VARCHAR},
-      update_id = #{updateId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_method = #{updateMethod,jdbcType=VARCHAR},
-      version = #{version,jdbcType=VARCHAR},
-      task_wav = #{taskWav,jdbcType=LONGVARBINARY},
-      task_tag = #{taskTag,jdbcType=LONGVARBINARY},
-      task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY}
-    where task_id = #{taskId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.esd.db.model.task" >
-    <!--
-      WARNING - @mbggenerated
-      This element is automatically generated by MyBatis Generator, do not modify.
-      This element was generated on Mon Aug 25 13:54:58 CST 2014.
-    -->
-    update task
-    set pack_id = #{packId,jdbcType=INTEGER},
-      inspector_id = #{inspectorId,jdbcType=INTEGER},
-      fault_id = #{faultId,jdbcType=INTEGER},
-      worker_id = #{workerId,jdbcType=INTEGER},
-      task_dir = #{taskDir,jdbcType=VARCHAR},
-      task_name = #{taskName,jdbcType=VARCHAR},
-      task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
-      task_effective = #{taskEffective,jdbcType=BIT},
-      task_upload = #{taskUpload,jdbcType=BIT},
-      task_lvl = #{taskLvl,jdbcType=INTEGER},
-      task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
-      task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
-      create_id = #{createId,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_method = #{createMethod,jdbcType=VARCHAR},
-      update_id = #{updateId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_method = #{updateMethod,jdbcType=VARCHAR},
-      version = #{version,jdbcType=VARCHAR}
-    where task_id = #{taskId,jdbcType=INTEGER}
-  </update>
+		select
+		task_id,task_lvl
+		from task order by task_lvl DESC
+	</select>
+	<select id="selectAllDoingTaskByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from task
+		where worker_id = #{workerId,jdbcType=INTEGER} and task_mark_time = 0 order by task_id DESC
+	</select>
+	<select id="selectAllHistoryTaskByWorkerId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from task
+		where worker_id = #{workerId,jdbcType=INTEGER} and task_mark_time > 0 order by task_id DESC
+	</select>
+	<select id="selectAllTaskByPackId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from task
+		where pack_id = #{packId,jdbcType=INTEGER} order by task_id DESC
+	</select>
+	<select id="selectTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from task
+		order by task_lvl DESC limit #{downTaskCount,jdbcType=INTEGER}
+	</select>
+	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from task
+		where pack_id = {packId,jdbcType=INTEGER}
+	</select>
+	<select id="selectFirstPackIdOrderByTaskLvl" resultType="java.lang.Integer">
+		select
+		pack_id
+		from task
+		where worker_id is null order by task_lvl DESC limit 1
+	</select>
+	<select id="selectUndoTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		count(task_id) total
+		from task
+		where pack_id = #{packId,jdbcType=INTEGER} and worker_id is null
+	</select>
+	<select id="selectTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		count(task_id) total
+		from task
+		where pack_id = #{packId,jdbcType=INTEGER}
+	</select>
+	<select id="selectUndoTaskCount" resultType="java.lang.Integer">
+		select
+		count(task_id) total
+		from task
+		WHERE worker_id IS NULL OR worker_id = 0
+	</select>
+	<select id="selectTaskWav" resultType="java.lang.Byte" parameterType="java.lang.String">
+		select
+		task_wav
+		from task
+		WHERE task_name = #{taskName,jdbcType=VARCHAR}
+	</select>
+	<select id="selectDownCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		down_count
+		from task
+		WHERE pack_id = #{packId,jdbcType=Integer}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from task
+		where task_id = #{taskId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.esd.db.model.taskWithBLOBs">
+		insert into task (task_id, pack_id, inspector_id,
+		fault_id, worker_id, task_dir,
+		task_name, task_mark_time, task_effective,
+		task_upload, task_lvl, task_download_time,
+		task_upload_time, create_id, create_time,
+		create_method, update_id, update_time,
+		update_method, version, task_wav,
+		task_tag, task_textgrid)
+		values (#{taskId,jdbcType=INTEGER}, #{packId,jdbcType=INTEGER}, #{inspectorId,jdbcType=INTEGER},
+		#{faultId,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER}, #{taskDir,jdbcType=VARCHAR},
+		#{taskName,jdbcType=VARCHAR}, #{taskMarkTime,jdbcType=DOUBLE}, #{taskEffective,jdbcType=BIT},
+		#{taskUpload,jdbcType=BIT}, #{taskLvl,jdbcType=INTEGER}, #{taskDownloadTime,jdbcType=TIMESTAMP},
+		#{taskUploadTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		#{createMethod,jdbcType=VARCHAR}, #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
+		#{updateMethod,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, #{taskWav,jdbcType=LONGVARBINARY},
+		#{taskTag,jdbcType=LONGVARBINARY}, #{taskTextgrid,jdbcType=LONGVARBINARY})
+	</insert>
+	<insert id="insertSelective" parameterType="com.esd.db.model.taskWithBLOBs">
+		insert into task
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="taskId != null">
+				task_id,
+			</if>
+			<if test="packId != null">
+				pack_id,
+			</if>
+			<if test="inspectorId != null">
+				inspector_id,
+			</if>
+			<if test="faultId != null">
+				fault_id,
+			</if>
+			<if test="workerId != null">
+				worker_id,
+			</if>
+			<if test="taskDir != null">
+				task_dir,
+			</if>
+			<if test="taskName != null">
+				task_name,
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time,
+			</if>
+			<if test="taskEffective != null">
+				task_effective,
+			</if>
+			<if test="taskUpload != null">
+				task_upload,
+			</if>
+			<if test="taskLvl != null">
+				task_lvl,
+			</if>
+			<if test="taskDownloadTime != null">
+				task_download_time,
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time,
+			</if>
+			<if test="createId != null">
+				create_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createMethod != null">
+				create_method,
+			</if>
+			<if test="updateId != null">
+				update_id,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateMethod != null">
+				update_method,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+			<if test="taskWav != null">
+				task_wav,
+			</if>
+			<if test="taskTag != null">
+				task_tag,
+			</if>
+			<if test="taskTextgrid != null">
+				task_textgrid,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="taskId != null">
+				#{taskId,jdbcType=INTEGER},
+			</if>
+			<if test="packId != null">
+				#{packId,jdbcType=INTEGER},
+			</if>
+			<if test="inspectorId != null">
+				#{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="faultId != null">
+				#{faultId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId != null">
+				#{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="taskDir != null">
+				#{taskDir,jdbcType=VARCHAR},
+			</if>
+			<if test="taskName != null">
+				#{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="taskMarkTime != null">
+				#{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskEffective != null">
+				#{taskEffective,jdbcType=BIT},
+			</if>
+			<if test="taskUpload != null">
+				#{taskUpload,jdbcType=BIT},
+			</if>
+			<if test="taskLvl != null">
+				#{taskLvl,jdbcType=INTEGER},
+			</if>
+			<if test="taskDownloadTime != null">
+				#{taskDownloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				#{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createId != null">
+				#{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				#{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				#{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				#{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=VARCHAR},
+			</if>
+			<if test="taskWav != null">
+				#{taskWav,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTag != null">
+				#{taskTag,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTextgrid != null">
+				#{taskTextgrid,jdbcType=LONGVARBINARY},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.taskWithBLOBs">
+		update task
+		<set>
+			<if test="packId != null">
+				pack_id = #{packId,jdbcType=INTEGER},
+			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="faultId != null">
+				fault_id = #{faultId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId != null">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="taskDir != null">
+				task_dir = #{taskDir,jdbcType=VARCHAR},
+			</if>
+			<if test="taskName != null">
+				task_name = #{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective,jdbcType=BIT},
+			</if>
+			<if test="taskUpload != null">
+				task_upload = #{taskUpload,jdbcType=BIT},
+			</if>
+			<if test="taskLvl != null">
+				task_lvl = #{taskLvl,jdbcType=INTEGER},
+			</if>
+			<if test="taskDownloadTime != null">
+				task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				create_method = #{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=VARCHAR},
+			</if>
+			<if test="taskWav != null">
+				task_wav = #{taskWav,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTag != null">
+				task_tag = #{taskTag,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTextgrid != null">
+				task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY},
+			</if>
+		</set>
+		where task_id = #{taskId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByName" parameterType="com.esd.db.model.taskWithBLOBs">
+		update task
+		<set>
+			<if test="packId != null">
+				pack_id = #{packId,jdbcType=INTEGER},
+			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="faultId != null">
+				fault_id = #{faultId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId != null">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="taskDir != null">
+				task_dir = #{taskDir,jdbcType=VARCHAR},
+			</if>
+			<if test="taskName != null">
+				task_name = #{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective,jdbcType=BIT},
+			</if>
+			<if test="taskUpload != null">
+				task_upload = #{taskUpload,jdbcType=BIT},
+			</if>
+			<if test="taskLvl != null">
+				task_lvl = #{taskLvl,jdbcType=INTEGER},
+			</if>
+			<if test="taskDownloadTime != null">
+				task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				create_method = #{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=VARCHAR},
+			</if>
+			<if test="taskWav != null">
+				task_wav = #{taskWav,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTag != null">
+				task_tag = #{taskTag,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTextgrid != null">
+				task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY},
+			</if>
+		</set>
+		where task_name = #{taskName,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esd.db.model.taskWithBLOBs">
+		update task
+		set pack_id = #{packId,jdbcType=INTEGER},
+		inspector_id = #{inspectorId,jdbcType=INTEGER},
+		fault_id = #{faultId,jdbcType=INTEGER},
+		worker_id = #{workerId,jdbcType=INTEGER},
+		task_dir = #{taskDir,jdbcType=VARCHAR},
+		task_name = #{taskName,jdbcType=VARCHAR},
+		task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+		task_effective = #{taskEffective,jdbcType=BIT},
+		task_upload = #{taskUpload,jdbcType=BIT},
+		task_lvl = #{taskLvl,jdbcType=INTEGER},
+		task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+		task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+		create_id = #{createId,jdbcType=INTEGER},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		create_method = #{createMethod,jdbcType=VARCHAR},
+		update_id = #{updateId,jdbcType=INTEGER},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_method = #{updateMethod,jdbcType=VARCHAR},
+		version = #{version,jdbcType=VARCHAR},
+		task_wav = #{taskWav,jdbcType=LONGVARBINARY},
+		task_tag = #{taskTag,jdbcType=LONGVARBINARY},
+		task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY}
+		where task_id = #{taskId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.task">
+		<!-- WARNING - @mbggenerated This element is automatically generated by MyBatis Generator, do not modify. This element was generated on Mon Aug 25 13:54:58 CST 2014. -->
+		update task
+		set pack_id = #{packId,jdbcType=INTEGER},
+		inspector_id = #{inspectorId,jdbcType=INTEGER},
+		fault_id = #{faultId,jdbcType=INTEGER},
+		worker_id = #{workerId,jdbcType=INTEGER},
+		task_dir = #{taskDir,jdbcType=VARCHAR},
+		task_name = #{taskName,jdbcType=VARCHAR},
+		task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+		task_effective = #{taskEffective,jdbcType=BIT},
+		task_upload = #{taskUpload,jdbcType=BIT},
+		task_lvl = #{taskLvl,jdbcType=INTEGER},
+		task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+		task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+		create_id = #{createId,jdbcType=INTEGER},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		create_method = #{createMethod,jdbcType=VARCHAR},
+		update_id = #{updateId,jdbcType=INTEGER},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_method = #{updateMethod,jdbcType=VARCHAR},
+		version = #{version,jdbcType=VARCHAR}
+		where task_id = #{taskId,jdbcType=INTEGER}
+	</update>
 </mapper>

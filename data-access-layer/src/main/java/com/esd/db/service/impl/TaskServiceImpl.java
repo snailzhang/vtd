@@ -76,7 +76,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<task> getTaskByPackId(Integer packId) {
+	public List<task> getAllTaskByPackId(Integer packId) {
 
 		return taskMapper.selectAllTaskByPackId(packId);
 	}
@@ -88,9 +88,9 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public int getTaskCount() {
+	public int getUndoTaskCount() {
 
-		return taskMapper.selectTaskCount();
+		return taskMapper.selectUndoTaskCount();
 	}
 
 	@Override
@@ -103,10 +103,28 @@ public class TaskServiceImpl implements TaskService {
 	public int getCountTaskDoing() {
 		int packId = taskMapper.selectFirstPackIdOrderByTaskLvl();
 		if (packId > 0) {
-			return taskMapper.selectCountTaskByPackId(packId);
+			return taskMapper.selectUndoTaskCountByPackId(packId);
 		}
-		return taskMapper.selectCountTaskByPackId(0);
+		return taskMapper.selectUndoTaskCountByPackId(0);
 
+	}
+
+	@Override
+	public byte[] getTaskWav(String taskName) {
+		
+		return taskMapper.selectTaskWav(taskName);
+	}
+
+	@Override
+	public int getTaskCountByPackId(Integer packId) {
+		
+		return taskMapper.selectTaskCountByPackId(packId);
+	}
+
+	@Override
+	public List<taskWithBLOBs> getFinishTaskByPackId(Integer packId) {
+		
+		return taskMapper.selectFinishTaskByPackId(packId);
 	}
 
 }
