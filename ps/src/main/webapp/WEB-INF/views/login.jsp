@@ -46,20 +46,7 @@
 			if(checkout.text.isempty(user,"请填写用户名！")){
 				return false;	
 			}
-			$.ajax({
-				type:'get',
-				url:'${contextPath}/checkUserName',
-				data:"username="+userValue,
-				dataType:'json',
-				success:function(data){
-					if(data == "false"){
-						user.next(".help-block").css("color","red").text("用户不存在");
-						return false;
-					}else{
-						return true;
-					}
-				}
-			});
+			return true;
 		};
 		checkUserPWD = function(){
 			var pwd = $("#pwd");
@@ -70,6 +57,19 @@
 		};
 		$("#username").blur(function(){
 			checkUserName();
+			var user = $("#username");
+			var userValue = user.val();
+			$.ajax({
+				type:'get',
+				url:'${contextPath}/checkUserName',
+				data:"username="+userValue,
+				dataType:'json',
+				success:function(data){
+					if(data == "false"){
+						user.next(".help-block").css("color","red").text("用户不存在");
+					}
+				}
+			});
 		});
 		$("button[type=button]").click(function(){
 			var formName = $("#login");
