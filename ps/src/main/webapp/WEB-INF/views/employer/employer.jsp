@@ -20,20 +20,7 @@
 </head>
 <body>
 	<jsp:include page="../head.jsp" />
-	<div class="container">
-		<table class="table table-striped table-bordered">
-			<thead>
-				<tr>
-					<th>序号</th>
-					<th>任务名称</th>
-					<th>完成情况</th>
-					<th>回传时间</th>
-					<th>上传时间</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
+	<!-------------------------------- 上传区域 -------------------------------------------------->
 	<div class="container">
 		<h2>上传任务包</h2>
 		<form action="${contextPath}/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
@@ -58,6 +45,78 @@
 		   </div>
 		</form>
 	</div>
+	<!-------------------------------- 选项卡区域 -------------------------------------------------->
+	<div class="container">
+		<ul class="nav nav-tabs" role="tablist">
+			<li class="active"><a href="#packUncomplete" role="tab" data-toggle="tab">未完成任务包列表</a></li>
+			<li><a href="#packComplete" role="tab" data-toggle="tab">已完成任务包列表</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="packUncomplete">
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>任务包名称</th>
+							<th>任务总数</th>
+							<th>未完成任务数</th>
+							<th>已完成任务数</th>
+							<th>完成任务比例</th>
+							<th>下载次数</th>
+							<th>回传时间</th>
+							<th>创建时间</th>
+							<th>下载任务包</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+			<div class="tab-pane" id="packComplete">
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>任务包名称</th>
+							<th>任务总数</th>
+							<th>下载次数</th>
+							<th>回传时间</th>
+							<th>创建时间</th>
+							<th>下载任务包</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		
+	</div>
+	<!-------------------------------- 弹出窗口 -------------------------------------------------->
+	<div class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">任务包详细内容</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>任务名称</th>
+								<th>上传时间</th>
+								<th>检测结果</th>
+							</tr>
+						</thead>
+						<tbody id="packDetailTBody"></tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$.ajax({
@@ -70,21 +129,83 @@
 						if(item.packLockTime == null){
 							item.packLockTime = "";
 						}
+						var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
+						var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
+						var downloadPack = "<td></td>";
+						if(item.finishTaskCount != 0){
+							downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'></a>下载</td>";
+						}
+						if(item.packStatus == 0){//判断任务包的状态为未完成
+							$("#packUncomplete tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+									"<td>"+item.taskCount+"</td>"+
+									"<td>"+surplusTask+"</td>"+
+									"<td>"+item.finishTaskCount+"</td>"+
+									"<td>"+finishTaskRatio+"%</td>"+
+									"<td>"+item.DownCount+"</td>"+
+									"<td>"+item.packLockTime+"</td>"+
+									"<td>"+item.createTime+"</td>"+
+									downloadPack+
+								"</tr>"
+							);
+						}else{
+							$("#packComplete tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+									"<td>"+item.taskCount+"</td>"+
+									"<td>"+item.DownCount+"</td>"+
+									"<td>"+item.packLockTime+"</td>"+
+									"<td>"+item.createTime+"</td>"+
+									downloadPack+
+								"</tr>"
+							);
+						}
 						
-						$("tbody").append(
-							"<tr>"+
-								"<td>"+(i+1)+"</td>"+
-								"<td><a href='${contextPath}/packDetail?packId="+item.packId+"'>"+item.packName+"</a></td>"+
-								"<td>"+item.packStatus+"</td>"+
-								"<td>"+item.packLockTime+"</td>"+
-								"<td>"+item.createTime+"</td>"+
-							"</tr>"
-						);
 					});
 					
 				}
 			});
-			
+			/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
+			var showPackDetail = function(packId){
+				$("#packDetailTBody").append("");
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/packDetail',
+					data:{"packId":packId},
+					dataType:'json',
+					success:function(data){
+						$.each(data,function(i,item){
+							$("#packDetailTBody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.taskName+"</td>"+
+									"<td>"+item.taskCreateTime+"</td>"+
+									"<td>"+item.taskEffective+"</td>"+
+								"</tr>"
+							);
+						});
+						
+					}
+				});
+			};
+			/*---------------------------------------下载任务包---------------------------------------------------------------*/
+			var downloadPackFn = function(packId){
+				$.ajax({
+					type:'GET',
+					url:'${contextPath}/downPack',
+					data:{"packId":packId},
+					dataType:'text',
+					success:function(data){
+						if(data != ""){
+							window.open(data);
+						}
+					}
+				});
+			};
+			/*---------------------------------------上传文件check-------------------------------------------------------------------*/
 			var fileReady = false;
 			checkSubBtnStaus = function(){
 				if(fileReady){
@@ -97,16 +218,15 @@
 				var pack = $("#pack");
 				if(checkout.text.isempty(pack,"文件不能为空！")){
 					fileReady = false;
-					checkSubBtnStaus();
-					return;
-				}
-				if(checkout.file.fileType(pack,"zip","请上传zip格式文件！")){
+				}else if(checkout.file.fileType(pack,"zip","请上传zip格式文件！")){
+					var fileData = pack.val().split("/");
+					var lastIndex = fileData.length()-1;
+					var fileName = fileData[lastIndex];
 					fileReady = true;
-					checkSubBtnStaus();
 				}else{
 					fileReady = false;
-					checkSubBtnStaus();
 				}
+				checkSubBtnStaus();
 			});
 			$("button[type=button]").click(function(){
 				var formName = $("#uploadPack");
