@@ -1,15 +1,22 @@
-body{
+@CHARSET "utf-8";
+
+body {
+	font-family: "微软雅黑";
 	padding-top: 60px;
 	padding-bottom: 40px;
+	padding-top: 60px;
 }
-div.container{
-	max-width:1000px;
+
+div.container {
+	max-width: 1000px;
 }
-table.marginTop{
-	margin-top:20px;
+
+table.marginTop {
+	margin-top: 20px;
 }
-input[type=file]{
-	border:0;
-	padding:0;
-	box-shadow:none;
+
+input[type=file] {
+	border: 0;
+	padding: 0;
+	box-shadow: none;
 }
