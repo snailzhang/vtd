@@ -4,7 +4,7 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>vtd的 'login.jsp'page</title>
+<title>登录页面</title>
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -21,7 +21,7 @@
 <body>
 
 <div class="container">
-	<form action="${contextPath}/security/login" method="post" id="login" name="login" role="form" class="form-signin" >
+	<form action="${contextPath}/login" method="post" id="login" name="login" role="form" class="form-signin" >
 		<h2 class="form-signin-heading">请登录</h2>
 		<div class="form-group">
 			<input type="text" id="username" name="username" autofocus="" required="" placeholder="用户名" class="form-control">
@@ -40,33 +40,40 @@
 
 <script type="text/javascript">
 	$(document).ready(function(){
-		
-		$("#username").blur(function(){
+		checkUserName = function(){
 			var user = $("#username");
 			var userValue = user.val();
-			if(checkout.text.isempty(user,"用户名不能为空！")){
-				return;	
+			if(checkout.text.isempty(user,"请填写用户名！")){
+				return false;	
 			}
 			$.ajax({
 				type:'get',
-				url:'${contextPath}/security/checkUserName',
+				url:'${contextPath}/checkUserName',
 				data:"username="+userValue,
-				dataType:'text',
+				dataType:'json',
 				success:function(data){
 					if(data == "false"){
 						user.next(".help-block").css("color","red").text("用户不存在");
+						return false;
+					}else{
+						return true;
 					}
 				}
 			});
-			
+		};
+		checkUserPWD = function(){
+			var pwd = $("#pwd");
+			if(checkout.text.isempty(pwd,"请填写密码！")){
+				return false;	
+			}
+			return true;
+		};
+		$("#username").blur(function(){
+			checkUserName();
 		});
 		$("button[type=button]").click(function(){
-			var formName = $("#login");
-			var user = $("#username");
-			var pwd = $("#pwd");
-			if(checkout.text.isempty(user,"请填写用户名！"))return;
-			if(checkout.text.isempty(pwd,"请填写密码！"))return;
-			formName.submit();
+			if(checkUserName()&&checkUserPWD())formName.submit();
+			
 		});
 	});
 </script>

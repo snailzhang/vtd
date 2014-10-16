@@ -36,7 +36,7 @@
 	<div class="container" id="downloadPanel">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"></h3>
+				<h3 class="panel-title"></h3><button type="button" id="refreshPage" class="btn btn-default">刷新</button>
 			</div>
 			<form action="${contextPath}/security/downTask" method="get" id="downTask" name="downTask" role="form" class="form-horizontal">
 				<div class="form-group">
@@ -286,7 +286,7 @@
 						type:'GET',
 						url:'${contextPath}/security/downTask',
 						data:{"downTaskCount":downTaskCount},
-						dataType:'text',
+						dataType:'json',
 						success:function(data){
 							if(data != ""){
 								window.open(data);
@@ -296,7 +296,10 @@
 					});
 				}
 			});
-			
+			/*******************************刷新按钮**************************************************/
+			$("#refreshPage").click(function(){
+				window.location.reload();
+			});
 		});
 	</script>
 </body>

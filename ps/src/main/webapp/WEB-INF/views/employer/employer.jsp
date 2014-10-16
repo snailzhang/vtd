@@ -118,9 +118,9 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	<script type="text/javascript">
-	if('${match}' == '1'){
-		alert("文件已存在");
-	}
+		if('${match}' == '1'){
+			alert("文件已存在");
+		}
 		$(document).ready(function(){
 			$.ajax({
 				type:'POST',
@@ -195,7 +195,7 @@
 				});
 			};
 			/*---------------------------------------下载任务包---------------------------------------------------------------*/
-			var downloadPackFn = function(packId){
+			downloadPackFn = function(packId){
 				$.ajax({
 					type:'GET',
 					url:'${contextPath}/security/downPack',
@@ -222,9 +222,9 @@
 				if(checkout.text.isempty(pack,"文件不能为空！")){
 					fileReady = false;
 				}else if(checkout.file.fileType(pack,"zip","请上传zip格式文件！")){
-					var fileData = pack.val().split("/");
-					var lastIndex = fileData.length()-1;
-					var fileName = fileData[lastIndex];
+					//var fileData = pack.val().split("/");
+					//var lastIndex = fileData.length()-1;
+					//var fileName = fileData[lastIndex];
 					fileReady = true;
 				}else{
 					fileReady = false;

@@ -24,27 +24,27 @@
 			<div class="form-group">
 		      <label for="username" class="col-sm-2 control-label">用户名：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名">
+		         <input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名" autocomplete="off">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="password" class="col-sm-2 control-label">登录密码：</label>
 		      <div class="col-sm-10">
-		         <input type="password" class="form-control" name="password" id="password" placeholder="请输入密码">
+		         <input type="password" class="form-control" name="password" id="password" placeholder="请输入密码" autocomplete="off">
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="repassword" class="col-sm-2 control-label">重复输入密码：</label>
 		      <div class="col-sm-10">
-		         <input type="password" class="form-control" name="repassword" id="repassword" placeholder="请输入密码">
+		         <input type="password" class="form-control" name="repassword" id="repassword" placeholder="请输入密码" autocomplete="off">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="usertype" class="col-sm-2 control-label">选择用户类别：</label>
 		      <div class="col-sm-10">
-		         <select class="form-control" id="usertype" name="usertype">
+		         <select class="form-control" id="usertype" name="usertype" autocomplete="off">
 			         <option value="1" checked="checked">管理员</option>
 			         <option value="2">发包商</option>
 			         <option value="4">工作者</option>
@@ -53,28 +53,18 @@
 		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="button" disabled="disabled" class="btn btn-default">添加</button>
+		         <button type="button" class="btn btn-default">添加</button>
 		      </div>
 		   </div>
 		</form>
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			var userOnly = false;
-			var pwdReady = false;
-			checkSubBtnStaus = function(){
-				if(userOnly&&pwdReady){
-					$("button").removeAttr("disabled");
-				}else{
-					$("button").attr("disabled","disabled");
-				}
-			};
-			$("#username").blur(function(){
+			checkUserName = function(){
 				var user = $("#username");
 				var userValue = user.val();
 				if(checkout.text.isempty(user,"用户名不能为空！")){
-					userOnly = false;
-					return;	
+					return false;	
 				}
 				$.ajax({
 					type:'get',
@@ -83,36 +73,42 @@
 					dataType:'text',
 					success:function(data){
 						if(data == "true"){
-							userOnly = false;
 							user.next(".help-block").css("color","red").text("用户名重复");
+							return false;
 						}else{
-							userOnly = true;
 							user.next(".help-block").css("color","green").text("用户名可用");
+							return true;
 						}
-						checkSubBtnStaus();
 					}
 				});
-				
-			});
-			$("#repassword").blur(function(){
-				var pwd1 = $("#password").val();
+			};
+			checkUserPWD = function(){
+				var pwd1Obj = $("#password");
+				var pwd1 = pwd1Obj.val();
 				var pwd2Obj = $("#repassword");
 				var pwd2 = pwd2Obj.val();
-				if(checkout.text.isempty(pwd2Obj,"密码不能为空！")){
-					pwdReady = false;
-					return;
+				if(checkout.text.isempty(pwd1Obj,"密码不能为空！")){
+					return false;
 				};
-				if(pwd1 == pwd2){
-					pwdReady = true;
-				}else{
-					pwdReady = false;
+				if(checkout.text.isempty(pwd2Obj,"密码不能为空！")){
+					return false;
+				};
+				if(pwd1 != pwd2){
 					pwd2Obj.next(".help-block").css("color","red").text("密码不一致");
+					return false;
 				}
-				checkSubBtnStaus();
+				return true;
+			};
+			
+			$("#username").blur(function(){
+				checkUserName();
+			});
+			$("#repassword").blur(function(){
+				checkUserPWD();
 			});
 			$("button[type=button]").click(function(){
 				var formName = $("#addUser");
-				formName.submit();
+				if(checkUserName()&&checkUserPWD())formName.submit();
 			});
 		});
 	</script>
