@@ -72,6 +72,7 @@
 			checkUserName();
 		});
 		$("button[type=button]").click(function(){
+			var formName = $("#login");
 			if(checkUserName()&&checkUserPWD())formName.submit();
 			
 		});
