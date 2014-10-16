@@ -73,7 +73,8 @@
 		,
 		<include refid="Blob_Column_List" />
 		from task
-		order by task_lvl DESC limit #{downTaskCount,jdbcType=INTEGER}
+		where worker_id IS NULL
+		order by task_lvl DESC limit #{downTaskCount,jdbcType=INTEGER} 
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
