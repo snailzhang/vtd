@@ -54,9 +54,9 @@
 				url:'${contextPath}/security/workerHistoryPack',
 				dataType:'json',
 				success:function(data){
-					if(data.list != ""){
+					if(data.list == ""){
 						$("tbody").empty();
-						$("tbody").append("<tr class='text-danger'>无内容</tr>");
+						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
 						$.each(data.list,function(i,item){
 							var ps = "";

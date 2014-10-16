@@ -128,9 +128,9 @@
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");
-					if(data.list != ""){
+					if(data.list == ""){
 						$("#packUncomplete tbody,#packComplete tbody").empty();
-						$("#packUncomplete tbody,#packComplete tbody").append("<tr class='text-danger'>无内容</tr>");
+						$("#packUncomplete tbody,#packComplete tbody").append("<tr class='text-danger'><td>无内容</td></tr>");
 					}else{
 						$.each(data.list,function(i,item){
 							if(item.packLockTime == null){
@@ -184,9 +184,9 @@
 					data:{"packId":packId},
 					dataType:'json',
 					success:function(data){
-						if(data.list != ""){
+						if(data.list == ""){
 							$("#packDetailTBody").empty();
-							$("#packDetailTBody").append("<tr class='text-danger'>无内容</tr>");
+							$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
 						}else{
 							$.each(data.list,function(i,item){
 								$("#packDetailTBody").append(

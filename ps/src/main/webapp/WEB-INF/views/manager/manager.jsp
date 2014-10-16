@@ -47,9 +47,9 @@
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");
-					if(data.list != ""){
+					if(data.list == ""){
 						$("tbody").empty();
-						$("tbody").append("<tr class='text-danger'>无内容</tr>");
+						$("tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
 					}else{
 						$.each(data.list,function(i,item){
 							var status = "不可用";

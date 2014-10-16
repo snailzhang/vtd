@@ -148,9 +148,9 @@
 						$("#downloadPanel").show();
 					}else{//上传
 						var mm = data.mm;
-						if(data.list != ""){
+						if(data.list == ""){
 							$("#waitForUpTable").empty();
-							$("#waitForUpTable").append("<tr class='text-danger'>无内容</tr>");
+							$("#waitForUpTable").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
 						}else{
 							$.each(data.list,function(i,item){
 								$("#waitForUpTable").append(
