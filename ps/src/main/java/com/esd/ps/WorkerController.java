@@ -264,7 +264,7 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + downPackName;
+		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + downPackName;
 		map.put("wrongPath", wrongPath);
 		return map;
 	}
@@ -340,7 +340,7 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + downPackName;
+		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + downPackName;
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
