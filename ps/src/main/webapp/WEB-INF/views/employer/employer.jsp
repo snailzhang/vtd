@@ -128,47 +128,51 @@
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");
-					$.each(data,function(i,item){
-						if(item.packLockTime == null){
-							item.packLockTime = "";
-						}
-						var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
-						var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
-						var downloadPack = "<td></td>";
-						if(item.finishTaskCount != 0){
-							downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'></a>下载</td>";
-						}
-						if(item.packStatus == 0){//判断任务包的状态为未完成
-							$("#packUncomplete tbody").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
-									"<td>"+item.taskCount+"</td>"+
-									"<td>"+surplusTask+"</td>"+
-									"<td>"+item.finishTaskCount+"</td>"+
-									"<td>"+finishTaskRatio+"%</td>"+
-									"<td>"+item.DownCount+"</td>"+
-									"<td>"+item.packLockTime+"</td>"+
-									"<td>"+item.createTime+"</td>"+
-									downloadPack+
-								"</tr>"
-							);
-						}else{
-							$("#packComplete tbody").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
-									"<td>"+item.taskCount+"</td>"+
-									"<td>"+item.DownCount+"</td>"+
-									"<td>"+item.packLockTime+"</td>"+
-									"<td>"+item.createTime+"</td>"+
-									downloadPack+
-								"</tr>"
-							);
-						}
-						
-					});
-					
+					if(data.list != ""){
+						$("#packUncomplete tbody,#packComplete tbody").empty();
+						$("#packUncomplete tbody,#packComplete tbody").append("<tr class='text-danger'>无内容</tr>");
+					}else{
+						$.each(data.list,function(i,item){
+							if(item.packLockTime == null){
+								item.packLockTime = "";
+							}
+							var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
+							var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
+							var downloadPack = "<td></td>";
+							if(item.finishTaskCount != 0){
+								downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'></a>下载</td>";
+							}
+							if(item.packStatus == 0){//判断任务包的状态为未完成
+								$("#packUncomplete tbody").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+										"<td>"+item.taskCount+"</td>"+
+										"<td>"+surplusTask+"</td>"+
+										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>"+finishTaskRatio+"%</td>"+
+										"<td>"+item.DownCount+"</td>"+
+										"<td>"+item.packLockTime+"</td>"+
+										"<td>"+item.createTime+"</td>"+
+										downloadPack+
+									"</tr>"
+								);
+							}else{
+								$("#packComplete tbody").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+										"<td>"+item.taskCount+"</td>"+
+										"<td>"+item.DownCount+"</td>"+
+										"<td>"+item.packLockTime+"</td>"+
+										"<td>"+item.createTime+"</td>"+
+										downloadPack+
+									"</tr>"
+								);
+							}
+							
+						});
+					}
 				}
 			});
 			/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
@@ -180,16 +184,22 @@
 					data:{"packId":packId},
 					dataType:'json',
 					success:function(data){
-						$.each(data,function(i,item){
-							$("#packDetailTBody").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td>"+item.taskName+"</td>"+
-									"<td>"+item.taskCreateTime+"</td>"+
-									"<td>"+item.taskEffective+"</td>"+
-								"</tr>"
-							);
-						});
+						if(data.list != ""){
+							$("#packDetailTBody").empty();
+							$("#packDetailTBody").append("<tr class='text-danger'>无内容</tr>");
+						}else{
+							$.each(data.list,function(i,item){
+								$("#packDetailTBody").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td>"+item.taskName+"</td>"+
+										"<td>"+item.taskCreateTime+"</td>"+
+										"<td>"+item.taskEffective+"</td>"+
+									"</tr>"
+								);
+							});
+						}
+						
 						
 					}
 				});
@@ -200,9 +210,9 @@
 					type:'GET',
 					url:'${contextPath}/security/downPack',
 					data:{"packId":packId},
-					dataType:'text',
+					dataType:'json',
 					success:function(data){
-						if(data != ""){
+						if(data.wrongPath != ""){
 							window.open(data);
 						}
 					}

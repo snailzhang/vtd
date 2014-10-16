@@ -148,15 +148,21 @@
 						$("#downloadPanel").show();
 					}else{//上传
 						var mm = data.mm;
-						$.each(data.list,function(i,item){
-							$("#waitForUpTable").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td>"+item.taskName+"</td>"+
-									"<td>"+item.taskDownloadTime+"</td>"+
-								"</tr>"
-							);
-						});
+						if(data.list != ""){
+							$("#waitForUpTable").empty();
+							$("#waitForUpTable").append("<tr class='text-danger'>无内容</tr>");
+						}else{
+							$.each(data.list,function(i,item){
+								$("#waitForUpTable").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td>"+item.taskName+"</td>"+
+										"<td>"+item.taskDownloadTime+"</td>"+
+									"</tr>"
+								);
+							});
+						}
+						
 						var tltInterval = 1000; 
 						window.setInterval(function(){ShowCountDown(mm);}, tltInterval);
 						$("#downloadPanel").hide();
