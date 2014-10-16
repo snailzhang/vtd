@@ -327,15 +327,19 @@ public class WorkerController {
 		String url = request.getServletContext().getRealPath("/");
 		logger.debug("url:{}", url);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
-		String downPackName = "fileToZip/"+sdf.format(new Date()) + "_" + downTaskCount + "_" + userId + "w.zip";
-		File zipFile = new File(url + downPackName);
+		String downPackName = sdf.format(new Date()) + "_" + downTaskCount + "_" + userId + "w.zip";
+		File f=new File(url + "fileToZip");
+		if(f.exists() == false){
+			f.mkdir();
+		}
+		File zipFile = new File(url + "fileToZip/"+downPackName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/" + downPackName;
+		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + downPackName;
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);

@@ -271,6 +271,10 @@ public class EmployerController {
 		}
 		String packName = packService.getPackNameByPackId(packId);
 		String url = request.getServletContext().getRealPath("/");
+		File f=new File(url + "fileToZip");
+		if(f.exists() == false){
+			f.mkdir();
+		}
 		String zipName = "fileToZip/" + packName;
 		logger.debug("url:{}", url + zipName);
 		File zipFile = new File(url + zipName);
