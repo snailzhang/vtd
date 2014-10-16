@@ -290,6 +290,7 @@
 						success:function(data){
 							if(data != ""){
 								window.open(data);
+								window.location.reload();
 							}
 						}
 					});
