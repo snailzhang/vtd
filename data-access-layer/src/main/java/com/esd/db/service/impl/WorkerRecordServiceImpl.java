@@ -116,6 +116,17 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectFinishTaskCountByPackId(packId);
 	}
 
+	@Override
+	public String getDownPackNameByTaskName(String taskName) {
+	
+		return workerRecordMapper.selectDownPackNameByTaskName(taskName);
+	}
+
+	@Override
+	public String getDownUrlByDownPackName(String downPackName) {
+		return workerRecordMapper.selectDownUrlByDownPackName(downPackName);
+	}
+
 	
 
 }

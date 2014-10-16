@@ -85,4 +85,10 @@ public class WorkerServiceImpl implements WorkerService {
 		return workerMapper.selectWorkerByWorkerDisabilityCard(workerDisabilityCard);
 	}
 
+	@Override
+	public int getCountWorkerIdByUserId(Integer userId) {
+		
+		return workerMapper.selectCountWorkerIdByUserId(userId);
+	}
+
 }

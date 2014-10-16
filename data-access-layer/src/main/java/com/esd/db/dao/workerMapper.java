@@ -22,7 +22,7 @@ public interface workerMapper {
     
     worker selectWorkerByWorkerDisabilityCard(String workerDisabilityCard);
 
-    int selectCountWorkerIdByUserId(Integer userid);
+    int selectCountWorkerIdByUserId(Integer userId);
     
     int updateByPrimaryKeySelective(worker record);
 

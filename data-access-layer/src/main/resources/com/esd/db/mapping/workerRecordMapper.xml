@@ -52,6 +52,19 @@
 		from worker_record
 		where task_name = #{taskName,jdbcType=VARCHAR}
 	</select>
+	<select id="selectDownUrlByDownPackName" resultType="java.lang.String" parameterType="java.lang.String">
+		select
+		down_url
+		from worker_record
+		where down_pack_name = #{downPackName,jdbcType=VARCHAR} limit 1
+	</select>
+	<select id="selectDownPackNameByTaskName" resultType="java.lang.String" parameterType="java.lang.String">
+		select
+		down_pack_name
+		from worker_record
+		where task_name = #{taskName,jdbcType=VARCHAR}
+	</select>
+	
 	<select id="selectOldTask" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

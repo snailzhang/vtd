@@ -71,4 +71,10 @@ public class ManagerServiceImpl implements ManagerService {
 		return managerMapper.selCountManagerIdByManagerName(managerName);
 	}
 
+	@Override
+	public int getCountManagerIdByUserId(Integer userId) {
+		
+		return managerMapper.selectCountManagerIdByUserId(userId);
+	}
+
 }

@@ -46,4 +46,6 @@ public interface taskMapper {
     List<taskWithBLOBs> selectFinishTaskByPackId(Integer packId);
     
     String selectTaskDirByTaskId(Integer taskId);
+    
+    List<taskWithBLOBs> selectDoingTaskByWorkerId(Integer workerId);
 }

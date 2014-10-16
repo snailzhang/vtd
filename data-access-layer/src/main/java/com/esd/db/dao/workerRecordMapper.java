@@ -39,4 +39,8 @@ public interface workerRecordMapper {
 	List<workerRecord> selectAllByDownTaskName(String downPackName);
 	
 	int selectFinishTaskCountByPackId(Integer packId);
+	
+	String selectDownPackNameByTaskName(String taskName);
+	
+	String  selectDownUrlByDownPackName(String downPackName);
 }

@@ -20,7 +20,7 @@ public interface managerMapper {
     
     int selManagerIdByUserId(Integer userId);
     
-    int selCountManagerIdByUserId(Integer userId);
+    int selectCountManagerIdByUserId(Integer userId);
     
     int selCountManagerIdByManagerName(String managerName);
     
@@ -29,4 +29,5 @@ public interface managerMapper {
     int updateByPrimaryKeySelective(manager record);
 
     int updateByPrimaryKey(manager record);
+
 }

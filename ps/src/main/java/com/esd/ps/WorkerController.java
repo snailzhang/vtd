@@ -22,8 +22,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -64,6 +66,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * 
  */
 @Controller
+@RequestMapping("/security")
 public class WorkerController {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
@@ -94,48 +97,10 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
-	public @ResponseBody
-	String workerPost(HttpSession session, HttpServletRequest request) {
+	@ResponseBody
+	public Map<String, Object> workerPost(HttpSession session, HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		// 查找是否有过时的任务,如果有就释放
-		List<workerRecord> workerRecordList = workerRecordService.getOldTask();
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		if (workerRecordList.isEmpty() == false) {
-			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
-				workerRecord workerRecord = (workerRecord) iterator.next();
-				Date begin, end;
-				try {
-					begin = sdf.parse(sdf.format(workerRecord.getTaskDownTime()));
-					end = sdf.parse(sdf.format(new Date()));
-					long between = (end.getTime() - begin.getTime());// 毫秒
-					int packLockTime = workerRecord.getTaskLockTime();
-					if ((packLockTime - between) > 0 == false) {
-						// 更新worker_record表
-						workerRecord update = new workerRecord();
-						update.setTaskStatu(2);
-						update.setUpdateTime(new Date());
-						update.setRecordId(workerRecord.getRecordId());
-						workerRecordService.updateByPrimaryKeySelective(update);
-						// 更新task表
-						taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
-						taskWithBLOBs.setWorkerId(null);
-						taskWithBLOBs.setCreateTime(new Date());
-						taskWithBLOBs.setTaskDir(null);
-						taskWithBLOBs.setTaskId(workerRecord.getTaskId());
-						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-						// 删除任务的下载备份
-						String url = request.getServletContext().getRealPath("/");
-						url = url + "fileToZip";
-						File file = new File(url + "/" + workerRecord.getDownPackName());
-						if (file.exists()) {
-							file.delete();
-						}
-					}
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-
-			}
-		}
 
 		logger.debug("taskTotal:{}", taskService.getUndoTaskCount());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -149,13 +114,16 @@ public class WorkerController {
 			int countPackDoing = packService.getCountPackDoing();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
-			String json = "{\"countPackDoing\":" + countPackDoing + ",\"countTaskDoing\":" + countTaskDoing + ",\"workerMark\":" + workerMark + "}";
-			return json;
+			map.put("countPackDoing", countPackDoing);
+			map.put("countTaskDoing", countTaskDoing);
+			map.put("workerMark", workerMark);
+			return map;
 		}
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		Date downloadTime = new Date();
 		int packId = 0;
 		workerMark = 1;
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			downloadTime = task.getTaskDownloadTime();
@@ -168,20 +136,21 @@ public class WorkerController {
 		}
 		logger.debug("packId:{}", packId);
 		int packLockTime = packService.getPackLockTime(packId);
-		String json = null;
+		Date begin;
 		try {
-			Date begin = sdf.parse(sdf.format(downloadTime));
+			begin = sdf.parse(sdf.format(downloadTime));
 			Date end = sdf.parse(sdf.format(new Date()));
 			long between = (end.getTime() - begin.getTime());// 毫秒
 			long mm = packLockTime - between;
-			ObjectMapper objectMapper = new ObjectMapper();
+			map.put("workerMark", workerMark);
+			map.put("list", list);
+			map.put("mm", mm);
+		} catch (ParseException e) {
 
-			json = "{\"workerMark\":" + workerMark + ",\"list\":" + objectMapper.writeValueAsString(list) + ",\"mm\":" + mm + "}";
-		} catch (ParseException | JsonProcessingException e1) {
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
-
-		return json;
+		session.setAttribute("workerId", workerId);
+		return map;
 	}
 
 	/**
@@ -196,12 +165,14 @@ public class WorkerController {
 
 	/**
 	 * worker的down pack完成历史页列表
+	 * 
 	 * @param session
 	 * @return
 	 */
 	@RequestMapping(value = "/workerHistoryPack", method = RequestMethod.POST)
-	public @ResponseBody
-	List<WorkerDownPackHistoryTrans> workerHistoryPackPOST(HttpSession session) {
+	@ResponseBody
+	public Map<String, Object> workerHistoryPackPOST(HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<workerRecord> workerRecordList = workerRecordService.getDownNameAndTimeByWorkerIdGroupByDownPackName(workerId);
@@ -220,8 +191,8 @@ public class WorkerController {
 
 			list.add(workerDownPackHistoryTrans);
 		}
-
-		return list;
+		map.put("list", list);
+		return map;
 	}
 
 	/**
@@ -231,8 +202,9 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerHistoryTask", method = RequestMethod.POST)
-	public @ResponseBody
-	List<WorkerRecordTrans> workerHistoryTaskPOST(String downPackName) {
+	@ResponseBody
+	public Map<String, Object> workerHistoryTaskPOST(String downPackName) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downPackName:{}", downPackName);
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -255,19 +227,46 @@ public class WorkerController {
 
 			list.add(workerRecordTrans);
 		}
-		return list;
+		map.put("list", list);
+		return map;
 	}
 
 	/**
 	 * 再次下载任务包
 	 * 
-	 * @param taskName
+	 * @param downPackName
 	 * @return
 	 */
 	@RequestMapping(value = "/downOncePack", method = RequestMethod.GET)
-	public @ResponseBody
-	String downOncePack(String taskName) {
-		return workerRecordService.getDownUrlByTaskName(taskName);
+	@ResponseBody
+	public Map<String, Object> downOncePack(String downPackName, HttpServletRequest request, HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String url = WorkerController.url(request);
+		File f = new File(url);
+		File zipFile = null;
+		if (f.exists()) {
+			zipFile = new File(url + "/" + downPackName);
+			if (zipFile.exists()) {
+				map.put("wrongPath", workerRecordService.getDownUrlByDownPackName(downPackName));
+				return map;
+			}
+		} else {
+			f.mkdir();
+		}
+		try {
+			zipFile.createNewFile();
+			int workerId = Integer.parseInt(session.getAttribute("workerId").toString());
+			List<taskWithBLOBs> list = taskService.getDoingTaskByWorkerId(workerId);
+			this.wrongPath(zipFile, list);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// 项目在服务器上的远程绝对地址
+		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		// 文件所谓的远程绝对路径
+		String wrongPath = "http://" + serverAndProjectPath + "/fileToZip/" + downPackName;
+		map.put("wrongPath", wrongPath);
+		return map;
 	}
 
 	/**
@@ -309,14 +308,16 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/downTask", method = RequestMethod.GET)
-	public @ResponseBody
-	String downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
+	@ResponseBody
+	public Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", downTaskCount);
 		int countTaskDoing = taskService.getCountTaskDoing();
 		// 查看先可做任务数是否小于需求
 		if (countTaskDoing < downTaskCount) {
 			// String nowCountTaskDoing=countTaskDoing + "";
-			return countTaskDoing + "";
+			map.put(Constants.MESSAGE, "任务数不够");
+			return map;
 		}
 		String userId = session.getAttribute(Constants.USER_ID).toString();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -324,15 +325,15 @@ public class WorkerController {
 		if (list == null) {
 			return null;
 		}
-		String url = request.getServletContext().getRealPath("/");
+		String url = WorkerController.url(request);
 		logger.debug("url:{}", url);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 		String downPackName = sdf.format(new Date()) + "_" + downTaskCount + "_" + userId + "w.zip";
-		File f=new File(url + "fileToZip");
-		if(f.exists() == false){
+		File f = new File(url);
+		if (f.exists() == false) {
 			f.mkdir();
 		}
-		File zipFile = new File(url + "fileToZip/"+downPackName);
+		File zipFile = new File(url + "/" + downPackName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
@@ -378,7 +379,7 @@ public class WorkerController {
 				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
 				if (packLockTime > 0) {
 					workerRecord.setTaskLockTime(packLockTime);
-				}	
+				}
 				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
 				workerRecord.setTaskStatu(0);
 				workerRecord.setWorkerId(workerId);
@@ -397,7 +398,8 @@ public class WorkerController {
 			e.printStackTrace();
 		}
 		logger.debug("wrongPath:{}", wrongPath);
-		return wrongPath;
+		map.put("wrongPath", wrongPath);
+		return map;
 
 	}
 
@@ -409,8 +411,9 @@ public class WorkerController {
 	 * @param taskWithBLOBs
 	 */
 	@RequestMapping(value = "/upTagAndTextGrid", method = RequestMethod.POST)
-	public @ResponseBody
-	String upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs, HttpServletRequest request) {
+	@ResponseBody
+	public Map<String, Object> upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs, HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);
 		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
@@ -504,8 +507,7 @@ public class WorkerController {
 		int doingTaskCount = workerRecordService.getDoingTaskCountByWorkerId(workerId);
 		if (doingTaskCount == 0) {
 			workerRecord workerRecord = workerRecordService.getWorkerRecordByWorkerId(workerId);
-			String url = request.getServletContext().getRealPath("/");
-			url = url + "fileToZip";
+			String url = WorkerController.url(request);
 			File file = new File(url + "/" + workerRecord.getDownPackName());
 			if (file.exists()) {
 				file.delete();
@@ -520,15 +522,59 @@ public class WorkerController {
 		// } else {
 		// workerMark = 1;
 		// }
-		ObjectMapper objectMapper = new ObjectMapper();
-		String json = null;
+		map.put("listMath", listMath);
+		map.put("listNoMath", listNoMath);
+		return map;
+	}
+
+	// 取得项目根目录
+	public static String url(HttpServletRequest request) {
+		String url = request.getServletContext().getRealPath("/workerTemp");
+		return url;
+	}
+
+	/**
+	 * 打包方法
+	 * 
+	 * @param zipFile
+	 * @param list
+	 * @return
+	 */
+	public String wrongPath(File zipFile, List<taskWithBLOBs> list) {
 		try {
-			logger.debug("listMath:{},listNoMath:{}", listMath, listNoMath);
-			// ",\"workerMark\":" + workerMark +
-			json = "{\"listMath\":" + objectMapper.writeValueAsString(listMath) + ",\"listNoMath\":" + objectMapper.writeValueAsString(listNoMath) + "}";
-		} catch (JsonProcessingException e) {
+			FileOutputStream fos = new FileOutputStream(zipFile);
+			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
+			byte[] bufs = new byte[1024 * 10];
+			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
+				// 创建ZIP实体,并添加进压缩包
+				ZipEntry zipEntry = new ZipEntry(fileName);
+				zos.putNextEntry(zipEntry);
+				byte[] data = taskWithBLOBs.getTaskWav();
+				InputStream is = new ByteArrayInputStream(data);
+				// 读取待压缩的文件并写进压缩包里
+				BufferedInputStream bis = new BufferedInputStream(is, 1024);
+				int read;
+				while ((read = bis.read(bufs)) > 0) {
+					zos.write(bufs, 0, read);//
+				}
+				// zos.closeEntry();
+				bis.close();
+				is.close();
+				// 更新task表
+			}
+			zos.close();// 必须关闭,否则最后一个文件写入为0kb
+			fos.flush();
+			fos.close();
+
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
 			e.printStackTrace();
 		}
-		return json;
+		return "";
 	}
 }

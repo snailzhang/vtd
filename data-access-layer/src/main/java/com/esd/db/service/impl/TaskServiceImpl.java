@@ -131,4 +131,10 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.selectTaskDirByTaskId(taskId);
 	}
 
+	@Override
+	public List<taskWithBLOBs> getDoingTaskByWorkerId(Integer workerId) {
+		
+		return taskMapper.selectDoingTaskByWorkerId(workerId);
+	}
+
 }

@@ -6,7 +6,7 @@ public class packTrans {
     
 	private String packName;
 
-    private Boolean packStatus;
+    private int packStatus;
 
     private Integer packLockTime;
 
@@ -26,11 +26,11 @@ public class packTrans {
         this.packName = packName == null ? null : packName.trim();
     }
 
-    public Boolean getPackStatus() {
+    public int getPackStatus() {
         return packStatus;
     }
 
-    public void setPackStatus(Boolean packStatus) {
+    public void setPackStatus(int packStatus) {
         this.packStatus = packStatus;
     }
 

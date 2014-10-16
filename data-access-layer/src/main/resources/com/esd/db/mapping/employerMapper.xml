@@ -35,7 +35,7 @@
     from employer
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
-  <select id="selCountEmployerIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+  <select id="selectCountEmployerIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
     select 
     count(employer_id) count
     from employer

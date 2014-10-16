@@ -23,4 +23,6 @@ public interface EmployerService {
     int updateByPrimaryKey(employer record);
     
     int getCountEmployerIdByEmployerName(String employerName);
+    
+    int getCountEmployerIdByUserId(Integer userId);
 }

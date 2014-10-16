@@ -18,8 +18,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -58,6 +60,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Controller
+@RequestMapping("/security")
 public class EmployerController {
 	private static final Logger logger = LoggerFactory.getLogger(EmployerController.class);
 	@Autowired
@@ -88,8 +91,9 @@ public class EmployerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
-	public @ResponseBody
-	List<packTrans> employerPost(HttpSession session) {// list列表直接转json
+	@ResponseBody
+	public Map<String,Object>  employerPost(HttpSession session) {// list列表直接转json
+		Map<String, Object> map = new HashMap<String,Object>(); 
 		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		session.setAttribute("employerId", employerId);
@@ -107,13 +111,18 @@ public class EmployerController {
 			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
 			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId()));
 			packTrans.setDownCount(pack.getDownCount());
-			packTrans.setPackStatus(pack.getPackStatus());
+			if(pack.getPackStatus()){
+				packTrans.setPackStatus(1);
+			}else{
+				packTrans.setPackStatus(0);
+			}
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
 
 			list.add(packTrans);
 		}
-		return list;
+		map.put("list", list);
+		return map;
 	}
 
 	/**
@@ -137,8 +146,9 @@ public class EmployerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
-	public @ResponseBody
-	List<taskTrans> detailpagePost(HttpSession session) {
+	@ResponseBody
+	public Map<String, Object> detailpagePost(HttpSession session) {
+		Map<String, Object> map = new HashMap<String,Object>();
 		int packId = Integer.parseInt(session.getAttribute("packId").toString());
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
@@ -156,7 +166,8 @@ public class EmployerController {
 
 			list.add(taskTrans);
 		}
-		return list;
+		map.put("list", list);
+		return map;
 	}
 
 	/**
@@ -177,7 +188,7 @@ public class EmployerController {
 			return new ModelAndView("employer/employer", "match", 1);
 		}
 		// 临时文件路径
-		String url = request.getServletContext().getRealPath("/") + "zipToWav";
+		String url = EmployerController.url(request);
 		try {
 			if (!pack.isEmpty()) {
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
@@ -214,7 +225,7 @@ public class EmployerController {
 					continue;
 				}
 				String zipEntryName = entry.getName();
-				if (zipEntryName.indexOf("/") > 0) {
+				if (zipEntryName.indexOf("/") < zipEntryName.lastIndexOf("/")) {
 					String str[] = zipEntryName.split("/");
 					// (zipEntryName.indexOf("/") + 1)
 					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
@@ -262,22 +273,22 @@ public class EmployerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/downPack", method = RequestMethod.POST)
-	public @ResponseBody
-	String downPackPOST(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
+	@ResponseBody
+	public Map<String, Object> downPackPOST(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<String,Object>();
 		logger.debug("downTaskCount:{}", packId);
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
 		if (list == null) {
 			return null;
 		}
 		String packName = packService.getPackNameByPackId(packId);
-		String url = request.getServletContext().getRealPath("/");
-		File f=new File(url + "fileToZip");
-		if(f.exists() == false){
+		String url = EmployerController.url(request);
+		File f = new File(url);
+		if (f.exists() == false) {
 			f.mkdir();
 		}
-		String zipName = "fileToZip/" + packName;
-		logger.debug("url:{}", url + zipName);
-		File zipFile = new File(url + zipName);
+		logger.debug("url:{}", packName);
+		File zipFile = new File(url +"/"+packName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
@@ -333,9 +344,16 @@ public class EmployerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/" + zipName;
+		String wrongPath = "http://" + serverAndProjectPath + "/employerTemp/" + packName;
 		logger.debug("wrongPath:{}", wrongPath);
-		return wrongPath;
+		map.put("wrongPath", wrongPath);
+		
+		return map;
 
+	}
+	//取得项目根目录
+	public static String url(HttpServletRequest request){
+		String url = request.getServletContext().getRealPath("/employerTemp");
+		return url;
 	}
 }

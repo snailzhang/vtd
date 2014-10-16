@@ -16,6 +16,8 @@ public interface WorkerService {
     worker getWorkerByUserId(Integer userid);
     
     int getWorkerIdByUserId(Integer userid);
+    
+    int getCountWorkerIdByUserId(Integer userId);
 
     int updateByPrimaryKeySelective(worker record);
 

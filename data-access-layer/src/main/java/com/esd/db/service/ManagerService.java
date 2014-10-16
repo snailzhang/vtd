@@ -24,4 +24,6 @@ public interface ManagerService {
     int updateByPrimaryKeySelective(manager record);
 
     int updateByPrimaryKey(manager record);
+    
+    int getCountManagerIdByUserId(Integer userId);
 }

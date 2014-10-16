@@ -39,4 +39,8 @@ public interface WorkerRecordService {
 	List<workerRecord> getAllByDownTaskName(String downPackName);
 	
 	int getFinishTaskCountByPackId(Integer packId);
+	
+	String getDownPackNameByTaskName(String taskName);
+	
+	String getDownUrlByDownPackName(String downPackName);
 }

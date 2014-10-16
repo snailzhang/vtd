@@ -5,6 +5,14 @@
  */
 package com.esd.ps;
 
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,10 +28,17 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.esd.common.util.UsernameAndPasswordMd5;
+import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.model.user;
 import com.esd.db.model.usertype;
+import com.esd.db.model.workerRecord;
+import com.esd.db.service.EmployerService;
+import com.esd.db.service.ManagerService;
+import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
+import com.esd.db.service.WorkerRecordService;
+import com.esd.db.service.WorkerService;
 
 /**
  * 登录
@@ -38,6 +53,17 @@ public class LoginController {
 	private UserService userService;
 	@Autowired
 	private UserTypeService userTypeService;
+	@Autowired
+	private ManagerService managerService;
+	@Autowired
+	private EmployerService employerService;
+	@Autowired
+	private WorkerService workerService;
+	@Autowired
+	private WorkerRecordService workerRecordService;
+	@Autowired
+	private TaskService taskService;
+
 	/**
 	 * 用户名不存在
 	 */
@@ -112,7 +138,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView loginPost(String username, String password, RedirectAttributes redirectAttributes, HttpSession session) {
+	public ModelAndView loginPost(String username, String password, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
 		}
@@ -125,15 +151,31 @@ public class LoginController {
 		} else {
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 			String md5Password = md5.getMd5(username, password);
-			logger.debug("md5Password:{}",md5Password);
+			logger.debug("md5Password:{}", md5Password);
 			if (md5Password.equals(user.getPassword())) {
+				this.checkOldTask(request);
 				session.setAttribute(Constants.USER_NAME, user.getUsername());
 				session.setAttribute(Constants.USER_ID, user.getUserId());
 				session.setAttribute(Constants.USER_TYPE, user.getUsertype());
 				usertype userType = userTypeService.getUserTypeById(user.getUsertype());
 				logger.debug("typeName:{}", userType.getUserTypeNameEnglish());
 				String typeName = userType.getUserTypeNameEnglish();
-				return new ModelAndView("redirect:" + typeName);
+				if (typeName.equals("manager")) {
+					if (managerService.getCountManagerIdByUserId(user.getUserId()) == 0) {
+						return new ModelAndView("manager/manager_add", "login", 0);
+					}
+				} else if (typeName.equals("employer")) {
+					if (employerService.getCountEmployerIdByUserId(user.getUserId()) == 0) {
+						return new ModelAndView("employer/employer_add", "login", 0);
+					}
+				} else if (typeName.equals("inspector")) {
+
+				} else if (typeName.equals("worker")) {
+					if (workerService.getCountWorkerIdByUserId(user.getUserId()) == 0) {
+						return new ModelAndView("worker/worker_add", "login", 0);
+					}
+				}
+				return new ModelAndView("redirect:" +"security/"+typeName);
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
 			}
@@ -141,5 +183,52 @@ public class LoginController {
 		redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
 		redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
 		return new ModelAndView("redirect:login");
+	}
+
+	/**
+	 * 登录检测是否有过时的任务
+	 * 
+	 * @param request
+	 */
+	public void checkOldTask(HttpServletRequest request) {
+		List<workerRecord> workerRecordList = workerRecordService.getOldTask();
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		if (workerRecordList.isEmpty() == false) {
+			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
+				workerRecord workerRecord = (workerRecord) iterator.next();
+				Date begin, end;
+				try {
+					begin = sdf.parse(sdf.format(workerRecord.getTaskDownTime()));
+					end = sdf.parse(sdf.format(new Date()));
+					long between = (end.getTime() - begin.getTime());// 毫秒
+					int packLockTime = workerRecord.getTaskLockTime();
+					logger.debug("时间差:{}", (packLockTime - between));
+					if ((packLockTime - between) == 0 || (packLockTime - between) < 0) {
+						// 更新worker_record表
+						workerRecord update = new workerRecord();
+						update.setTaskStatu(2);
+						update.setUpdateTime(new Date());
+						update.setRecordId(workerRecord.getRecordId());
+						workerRecordService.updateByPrimaryKeySelective(update);
+						// 更新task表
+						taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
+						taskWithBLOBs.setWorkerId(null);
+						taskWithBLOBs.setCreateTime(new Date());
+						taskWithBLOBs.setTaskDir(null);
+						taskWithBLOBs.setTaskId(workerRecord.getTaskId());
+						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+						// 删除任务的下载备份
+						String url = request.getServletContext().getRealPath("/workerTemp");
+						File file = new File(url + "/" + workerRecord.getDownPackName());
+						if (file.exists()) {
+							file.delete();
+						}
+					}
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}
 	}
 }

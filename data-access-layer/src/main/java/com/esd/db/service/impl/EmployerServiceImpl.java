@@ -68,4 +68,10 @@ public class EmployerServiceImpl implements EmployerService {
 		return employerMapper.selCountEmployerIdByEmployerName(employerName);
 	}
 
+	@Override
+	public int getCountEmployerIdByUserId(Integer userId) {
+		
+		return employerMapper.selectCountEmployerIdByUserId(userId);
+	}
+
 }

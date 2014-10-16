@@ -44,4 +44,6 @@ public interface TaskService {
     List<taskWithBLOBs> getFinishTaskByPackId(Integer packId);
     
     String getTaskDirByTaskId(Integer taskId);
+    
+    List<taskWithBLOBs> getDoingTaskByWorkerId(Integer workerId);
 }
