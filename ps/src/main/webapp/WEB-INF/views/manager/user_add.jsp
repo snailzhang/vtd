@@ -60,12 +60,8 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			checkUserName = function(){
-				var user = $("#username");
-				var userValue = user.val();
-				if(checkout.text.isempty(user,"用户名不能为空！")){
-					return false;	
-				}
+			var userAreadyUse = true;//用户名重复
+			checkUserUsed = function(){
 				$.ajax({
 					type:'get',
 					url:'${contextPath}/security/checkUserName',
@@ -74,13 +70,21 @@
 					success:function(data){
 						if(data == "true"){
 							user.next(".help-block").css("color","red").text("用户名重复");
-							return false;
+							userAreadyUse = true;
 						}else{
 							user.next(".help-block").css("color","green").text("用户名可用");
-							return true;
+							userAreadyUse = false;
 						}
 					}
 				});
+			};
+			checkUserName = function(){
+				var user = $("#username");
+				var userValue = user.val();
+				if(checkout.text.isempty(user,"用户名不能为空！")){
+					return false;	
+				}
+				return true;
 			};
 			checkUserPWD = function(){
 				var pwd1Obj = $("#password");
@@ -102,13 +106,16 @@
 			
 			$("#username").blur(function(){
 				checkUserName();
+				checkUserUsed();
 			});
 			$("#repassword").blur(function(){
 				checkUserPWD();
 			});
 			$("button[type=button]").click(function(){
 				var formName = $("#addUser");
-				if(checkUserName()&&checkUserPWD())formName.submit();
+				if(checkUserName()&&checkUserPWD()&&userAreadyUse){
+					formName.submit();
+				};
 			});
 		});
 	</script>
