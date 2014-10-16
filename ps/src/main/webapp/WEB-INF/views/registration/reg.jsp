@@ -22,7 +22,7 @@
 	<div class="container">
 
 
-		<form id="form" action="${contextPath}/registration" method="post" class="form-horizontal" role="form">
+		<form id="form" action="${contextPath}/security/registration" method="post" class="form-horizontal" role="form">
 			<h1 class="text-center">语音标注网上报名系统</h1>
 			<div id=message></div>
 			<div class="form-group">

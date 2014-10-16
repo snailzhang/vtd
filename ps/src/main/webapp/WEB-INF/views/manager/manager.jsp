@@ -33,7 +33,7 @@
 			</thead>
 			<tbody></tbody>
 		</table>
-		<form role="form" class="form-signin" action="${contextPath}/addUser" method="get">
+		<form role="form" class="form-signin" action="${contextPath}/security/addUser" method="get">
 			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
 		</form>
 	</div>
@@ -43,7 +43,7 @@
 		$(document).ready(function(){
 			$.ajax({
 				type:'POST',
-				url:'${contextPath}/manager',
+				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");

@@ -38,7 +38,7 @@
 		$(document).ready(function(){
 			$.ajax({
 				type:'POST',
-				url:'${contextPath}/packDetail',
+				url:'${contextPath}/security/packDetail',
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");

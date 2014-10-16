@@ -20,7 +20,7 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<div class="container">
-		<form action="${contextPath}/addUser" method="post" id="addUser" name="addUser" role="form" class="form-horizontal">
+		<form action="${contextPath}/security/addUser" method="post" id="addUser" name="addUser" role="form" class="form-horizontal">
 			<div class="form-group">
 		      <label for="username" class="col-sm-2 control-label">用户名：</label>
 		      <div class="col-sm-10">
@@ -78,7 +78,7 @@
 				}
 				$.ajax({
 					type:'get',
-					url:'${contextPath}/checkUserName',
+					url:'${contextPath}/security/checkUserName',
 					data:"username="+userValue,
 					dataType:'text',
 					success:function(data){

@@ -8,7 +8,7 @@
 		</div>
 		<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="${contextPath}/login">退出</a></li>
+				<li><a href="${contextPath}/security/quit">退出</a></li>
 			</ul>
 		</nav>
 	</div>

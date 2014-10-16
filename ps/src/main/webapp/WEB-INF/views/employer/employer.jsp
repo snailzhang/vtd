@@ -23,7 +23,7 @@
 	<!-------------------------------- 上传区域 -------------------------------------------------->
 	<div class="container">
 		<h2>上传任务包</h2>
-		<form action="${contextPath}/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
+		<form action="${contextPath}/security/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
 			<div class="form-group" id="packUploadDiv">
 		      <label for="pack" class="col-sm-2 control-label">选择任务包：</label>
 		      <div class="col-sm-10">
@@ -118,10 +118,13 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	<script type="text/javascript">
+	if('${match}' == '1'){
+		alert("文件已存在");
+	}
 		$(document).ready(function(){
 			$.ajax({
 				type:'POST',
-				url:'${contextPath}/employer',
+				url:'${contextPath}/security/employer',
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");
@@ -173,7 +176,7 @@
 				$("#packDetailTBody").append("");
 				$.ajax({
 					type:'POST',
-					url:'${contextPath}/packDetail',
+					url:'${contextPath}/security/packDetail',
 					data:{"packId":packId},
 					dataType:'json',
 					success:function(data){
@@ -195,7 +198,7 @@
 			var downloadPackFn = function(packId){
 				$.ajax({
 					type:'GET',
-					url:'${contextPath}/downPack',
+					url:'${contextPath}/security/downPack',
 					data:{"packId":packId},
 					dataType:'text',
 					success:function(data){

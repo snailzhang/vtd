@@ -20,7 +20,7 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<div class="container">
-		<form action="${contextPath}/addmanager" method="post" id="addmanager" name="addmanager" role="form" class="form-horizontal">
+		<form action="${contextPath}/security/addmanager" method="post" id="addmanager" name="addmanager" role="form" class="form-horizontal">
 			<div class="form-group">
 		      <label for="managerName" class="col-sm-2 control-label">管理员名称：</label>
 		      <div class="col-sm-10">

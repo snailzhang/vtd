@@ -20,7 +20,7 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<div class="container">
-		<form action="${contextPath}/addemployer" method="post" id="addemployer" name="addemployer" role="form" class="form-horizontal">
+		<form action="${contextPath}/security/addemployer" method="post" id="addemployer" name="addemployer" role="form" class="form-horizontal">
 			<div class="form-group">
 		      <label for="employerName" class="col-sm-2 control-label">发包商名称：</label>
 		      <div class="col-sm-10">

@@ -21,7 +21,7 @@
 <body>
 
 <div class="container">
-	<form action="${contextPath}/login" method="post" id="login" name="login" role="form" class="form-signin" >
+	<form action="${contextPath}/security/login" method="post" id="login" name="login" role="form" class="form-signin" >
 		<h2 class="form-signin-heading">请登录</h2>
 		<div class="form-group">
 			<input type="text" id="username" name="username" autofocus="" required="" placeholder="用户名" class="form-control">
@@ -49,7 +49,7 @@
 			}
 			$.ajax({
 				type:'get',
-				url:'${contextPath}/checkUserName',
+				url:'${contextPath}/security/checkUserName',
 				data:"username="+userValue,
 				dataType:'text',
 				success:function(data){

@@ -38,7 +38,7 @@
 			<div class="panel-heading">
 				<h3 class="panel-title"></h3>
 			</div>
-			<form action="${contextPath}/downTask" method="get" id="downTask" name="downTask" role="form" class="form-horizontal">
+			<form action="${contextPath}/security/downTask" method="get" id="downTask" name="downTask" role="form" class="form-horizontal">
 				<div class="form-group">
 			      <label for="downTaskCount" class="col-sm-2 control-label">选择下载任务个数:</label>
 			      <div class="col-sm-10">
@@ -60,7 +60,7 @@
 				<div class="panel-heading">
 					<h3 class="panel-title" id="taskLeftTimeInterval">距离任务完成时间还剩:<span class="text-danger"></span></h3>
 				</div>
-				<form action="${contextPath}/upTagAndTextGrid" method="post" name="upTagAndTextGrid" role="form" class="form-horizontal" enctype="multipart/form-data">
+				<form action="${contextPath}/security/upTagAndTextGrid" method="post" name="upTagAndTextGrid" role="form" class="form-horizontal" enctype="multipart/form-data">
 					<div class="form-group">
 				      <label for="TAG" class="col-sm-2 control-label">选择已完成任务</label>
 				      <div class="col-sm-10">
@@ -127,7 +127,7 @@
 			/*******************************加载页面**************************************************/
 			$.ajax({
 				type:'POST',
-				url:'${contextPath}/worker',
+				url:'${contextPath}/security/worker',
 				dataType:'json',
 				success:function(data){
 					$("tbody").append("");
@@ -225,7 +225,7 @@
 					singleFileUploads:false,
 					typ:"POST",
 					dataType:"json",
-					url:"${contextPath}/upTagAndTextGrid",
+					url:"${contextPath}/security/upTagAndTextGrid",
 					add:function(e,data){
 						var $this = $(this);
 						data.autoUpload = false;
@@ -284,7 +284,7 @@
 				}else{
 					$.ajax({
 						type:'GET',
-						url:'${contextPath}/downTask',
+						url:'${contextPath}/security/downTask',
 						data:{"downTaskCount":downTaskCount},
 						dataType:'text',
 						success:function(data){
