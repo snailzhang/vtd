@@ -260,17 +260,25 @@
 						var jsonData = result.result;
 						if(jsonData.listAll!=""){
 							taskListNoMath.html("");
-							$.each(jsonData.listAll,function(i,alllist){
+							for(var i=0;i<jsonData.listAll.length;i++){
+							//$.each(jsonData.listAll,function(i,alllist){
+								var alllist = jsonData.listAll[i];
 								var unhad = false;
-								$.each(jsonData.listMath,function(k,matchlist){
-									if(matchlist == alllist){
-										unhad = false;
-										break;
-									}else{
-										unhad = true;
-									}
-
-								});
+								if(jsonData.listMath !=""){
+									for(var k=0;k<jsonData.listMath.length;k++){
+									//$.each(jsonData.listMath,function(k,matchlist){
+										var matchlist = jsonData.listMath[k];
+										if(matchlist == alllist){
+											unhad = false;
+											break;
+										}else{
+											unhad = true;
+										}
+	
+									};
+								}else{
+									unhad = true;
+								}
 								if(unhad){
 									taskListNoMath.append(
 										"<li>"+
@@ -279,7 +287,7 @@
 										"</li>"
 									);
 								}
-							});
+							};
 						}else{
 							taskListNoMath.html("<li class='text-success'>全部通过</li>");
 						}
