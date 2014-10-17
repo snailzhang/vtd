@@ -260,13 +260,25 @@
 						var jsonData = result.result;
 						if(jsonData.listAll!=""){
 							taskListNoMath.html("");
-							$.each(jsonData.listAll,function(i,item){
-								taskListNoMath.append(
-									"<li>"+
-										
-										"<span>"+item+"</span>"+
-									"</li>"
-								);
+							$.each(jsonData.listAll,function(i,alllist){
+								var unhad = false;
+								$.each(jsonData.listMath,function(k,matchlist){
+									if(matchlist == alllist){
+										unhad = false;
+										break;
+									}else{
+										unhad = true;
+									}
+
+								});
+								if(unhad){
+									taskListNoMath.append(
+										"<li>"+
+											
+											"<span>"+alllist+"</span>"+
+										"</li>"
+									);
+								}
 							});
 						}else{
 							taskListNoMath.html("<li class='text-success'>全部通过</li>");
