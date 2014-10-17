@@ -40,7 +40,7 @@
 		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="button" class="btn btn-default" disabled="disabled">上传</button>
+		         <button id="uploadPackBtn" type="button" class="btn btn-default" disabled="disabled">上传</button>
 		      </div>
 		   </div>
 		</form>
@@ -90,7 +90,7 @@
 		</div>
 		
 	</div>
-	<!-------------------------------- 弹出窗口 -------------------------------------------------->
+	<!-------------------------------- 弹出窗口 任务包详细-------------------------------------------------->
 	<div class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -152,7 +152,7 @@
 										"<td>"+item.finishTaskCount+"</td>"+
 										"<td>"+finishTaskRatio+"%</td>"+
 										"<td>"+item.downCount+"</td>"+
-										"<td>"+item.packLockTime+"</td>"+
+										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
 										downloadPack+
 									"</tr>"
@@ -164,7 +164,7 @@
 										"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
 										"<td>"+item.taskCount+"</td>"+
 										"<td>"+item.DownCount+"</td>"+
-										"<td>"+item.packLockTime+"</td>"+
+										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
 										downloadPack+
 									"</tr>"
@@ -194,9 +194,9 @@
 			var fileReady = false;
 			checkSubBtnStaus = function(){
 				if(fileReady){
-					$("button").removeAttr("disabled");
+					$("#uploadPackBtn").removeAttr("disabled");
 				}else{
-					$("button").attr("disabled","disabled");
+					$("#uploadPackBtn").attr("disabled","disabled");
 				}
 			};
 			$("#pack").change(function(){
@@ -213,7 +213,7 @@
 				}
 				checkSubBtnStaus();
 			});
-			$("button[type=button]").click(function(){
+			$("#uploadPackBtn").click(function(){
 				var formName = $("#uploadPack");
 				formName.submit();
 			});
@@ -232,18 +232,20 @@
 							$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
 						}else{
 							$.each(data.list,function(i,item){
+								var upTime = "";
+								if(item.taskUploadTime != null)upTime = item.taskUploadTime;
 								$("#packDetailTBody").append(
 									"<tr>"+
 										"<td>"+(i+1)+"</td>"+
 										"<td>"+item.taskName+"</td>"+
-										"<td>"+item.taskCreateTime+"</td>"+
+										"<td>"+upTime+"</td>"+
 										"<td>"+item.taskEffective+"</td>"+
 									"</tr>"
 								);
 							});
 						}
 						
-						
+						$(".modal").modal('show');
 					}
 				});
 			};
