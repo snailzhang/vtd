@@ -185,7 +185,7 @@
 					dataType:'json',
 					success:function(data){
 						if(data.wrongPath != ""){
-							window.open(data);
+							window.open(data.wrongPath);
 						}
 					}
 				});
