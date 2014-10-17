@@ -38,6 +38,18 @@
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
+		   <div class="form-group" id="">
+		      <label for="taskLvl" class="col-sm-2 control-label">任务等级：</label>
+		      <div class="col-sm-10">
+		         <select class="form-control" name="taskLvl" id="taskLvl">
+		         	<option value="1">1</option>
+		         	<option value="2">2</option>
+		         	<option value="3">3</option>
+		         	<option value="4">4</option>
+		         	<option value="5">5</option>
+		         </select>
+		      </div>
+		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
 		         <button id="uploadPackBtn" type="button" class="btn btn-default" disabled="disabled">上传</button>

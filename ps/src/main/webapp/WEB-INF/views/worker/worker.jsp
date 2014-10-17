@@ -258,9 +258,9 @@
 						var taskListNoMath = $("#taskListNoMath ul");
 						var taskListMath = $("#taskListMath ul");
 						var jsonData = result.result;
-						if(jsonData.listNoMath!=""){
+						if(jsonData.listAll!=""){
 							taskListNoMath.html("");
-							$.each(jsonData.listNoMath,function(i,item){
+							$.each(jsonData.listAll,function(i,item){
 								taskListNoMath.append(
 									"<li>"+
 										

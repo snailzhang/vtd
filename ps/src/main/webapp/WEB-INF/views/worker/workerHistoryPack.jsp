@@ -61,11 +61,11 @@
 						$.each(data.list,function(i,item){
 							var ps = "";
 							var downloadTD = "<td></td>";
-							var downPackName = "<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
+							var packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
 							if(item.packStatu == 0){
 								ps = "未完成";
 								downloadTD = "<td><a class='downloadPack' onClick='downloadPack("+item.downPackName+")'>下载</a></td>";
-								downPackName = "<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
+								packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
 							}else if(item.packStatu == 1){
 								ps = "已完成";
 							}else if(item.packStatu == 2){
@@ -74,12 +74,12 @@
 							$("tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
-									downPackName+
+									"<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>"+
 									"<td>"+item.downTime+"</td>"+
 									"<td>"+item.taskCount+"</td>"+
 									"<td>"+ps+"</td>"+
 									downloadTD+
-								"</tr><tr class='packDetailTr collapse' id='collapse"+(i+1)+"'><td colspan='6'>ddddddddddd</td></tr>"
+								"</tr>"+packDetailTR
 							);
 						});
 					}
@@ -87,35 +87,86 @@
 				}
 			});
 			
-			/*******************************下载任务包**************************************************/
-			downloadPack = function(downPackName){
-				$.ajax({
-					type:'GET',
-					url:'${contextPath}/security/downOncePack',
-					data:{"downPackName":downPackName},
-					dataType:'json',
-					success:function(data){
-						if(data.url != ""){
-							window.open(data.url);
-						}
-					}
-				});
-			};
-			/*******************************显示任务包详细**************************************************/
-			showPackDetail = function(packType,packName){
-				//if(packType)
-			};
+			
+			
 			/*******************************刷新按钮**************************************************/
 			$("#refreshPage").click(function(){
 				window.location.reload();
 			});
+			/*******************************显示任务包详细**************************************************/
 			$("#packHistoryTable").on('shown.bs.collapse', function () {
 				var collapseTR = $(this).children(".in");
 				var id = collapseTR.attr("id");
 				var thisTD = collapseTR.children("td");
-				thisTD.append(id);
+				var dpn = collapseTR.attr("packName");
+				var isf = collapseTR.attr("isfinish");
+				$.ajax({
+					url:'${contextPath}/security/workerHistoryTask',
+					data:{"downPackName":dpn},
+					type:'POST',
+					dataType:'json',
+					success:function(data){
+						if(data.list != ""){
+							thisTD.empty();
+							thisTD.append(
+								"<table class='table table-striped table-bordered'>"+
+									"<thead><th>序号</th><th>任务名称</th><th>任务状态</th><th>回传时间</th><th>标注时间</th><th>下载时间</th><th>上传时间</th><th>标注状态</th><th>下载</th></thead><tbody>"
+								
+							);
+							$.each(data.list,function(i,item){
+								var downloadTD = "<td></td>";
+								if(isf == 0){
+									downloadTD = "<td><a onClick='downloadTask("+item.taskName+")'>下载</a></td>";
+								}
+								thisTD.append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td>"+item.taskName+"</td>"+
+										"<td>"+item.taskStatu+"</td>"+
+										"<td>"+item.taskLockTime+"</td>"+
+										"<td>"+item.taskMarkTime+"</td>"+
+										"<td>"+item.taskDownTime+"</td>"+
+										"<td>"+item.taskUploadTime+"</td>"+
+										"<td>"+item.taskEffective+"</td>"+
+										downloadTD+
+									"</tr>"
+								);
+							});
+							thisTD.append("</tbody></table>");
+						}
+					}
+				});
+				//thisTD.text(dpn+isf);
 			});
 		});
+		/*******************************下载任务包**************************************************/
+		downloadPack = function(downPackName){
+			$.ajax({
+				type:'GET',
+				url:'${contextPath}/security/downOncePack',
+				data:{"downPackName":downPackName},
+				dataType:'json',
+				success:function(data){
+					if(data.wrong != ""){
+						window.open(data.wrong);
+					}
+				}
+			});
+		};
+		/*******************************下载任务**************************************************/
+		downloadTask = function(taskName){
+			$.ajax({
+				type:'GET',
+				url:'${contextPath}/security/downOneTask',
+				data:{"taskName":taskName},
+				dataType:'json',
+				success:function(data){
+					if(data.wrong != ""){
+						window.open(data.wrong);
+					}
+				}
+			});
+		};
 	</script>
 </body>
 </html>
