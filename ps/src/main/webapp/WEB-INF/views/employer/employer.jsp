@@ -151,7 +151,7 @@
 										"<td>"+surplusTask+"</td>"+
 										"<td>"+item.finishTaskCount+"</td>"+
 										"<td>"+finishTaskRatio+"%</td>"+
-										"<td>"+item.DownCount+"</td>"+
+										"<td>"+item.downCount+"</td>"+
 										"<td>"+item.packLockTime+"</td>"+
 										"<td>"+item.createTime+"</td>"+
 										downloadPack+
@@ -175,35 +175,7 @@
 					}
 				}
 			});
-			/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
-			var showPackDetail = function(packId){
-				$("#packDetailTBody").append("");
-				$.ajax({
-					type:'POST',
-					url:'${contextPath}/security/packDetail',
-					data:{"packId":packId},
-					dataType:'json',
-					success:function(data){
-						if(data.list == ""){
-							$("#packDetailTBody").empty();
-							$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
-						}else{
-							$.each(data.list,function(i,item){
-								$("#packDetailTBody").append(
-									"<tr>"+
-										"<td>"+(i+1)+"</td>"+
-										"<td>"+item.taskName+"</td>"+
-										"<td>"+item.taskCreateTime+"</td>"+
-										"<td>"+item.taskEffective+"</td>"+
-									"</tr>"
-								);
-							});
-						}
-						
-						
-					}
-				});
-			};
+			
 			/*---------------------------------------下载任务包---------------------------------------------------------------*/
 			downloadPackFn = function(packId){
 				$.ajax({
@@ -246,6 +218,35 @@
 				formName.submit();
 			});
 		});
+		/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
+			showPackDetail = function(packId){
+				$("#packDetailTBody").append("");
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/security/packDetail',
+					data:{"packId":packId},
+					dataType:'json',
+					success:function(data){
+						if(data.list == ""){
+							$("#packDetailTBody").empty();
+							$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
+						}else{
+							$.each(data.list,function(i,item){
+								$("#packDetailTBody").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td>"+item.taskName+"</td>"+
+										"<td>"+item.taskCreateTime+"</td>"+
+										"<td>"+item.taskEffective+"</td>"+
+									"</tr>"
+								);
+							});
+						}
+						
+						
+					}
+				});
+			};
 	</script>
 </body>
 </html>
