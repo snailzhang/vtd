@@ -36,4 +36,6 @@ public interface PackService {
     int getDownCountByPackId(Integer packId);
     
     String getPackNameByPackId(Integer packId);
+    
+    int getCountPackByPackName(String packName);
 }

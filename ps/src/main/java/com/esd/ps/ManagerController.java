@@ -199,7 +199,7 @@ public class ManagerController {
 			String page = userTypeService.getUserTypeNameEnglish(usertype);
 			session.setAttribute(Constants.ADD_USER_ID, userService.selUserIdByUserName(username));
 			logger.debug("page:{}", page);
-			return new ModelAndView("manager/" + page + "_add", "login", 1);
+			return new ModelAndView("manager/" + page + "_add", "userRegisted", 1);
 		}
 		return new ModelAndView("redirect:security/addUser");
 	}
@@ -212,14 +212,14 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
-	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request,int login) {
+	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request,int userRegisted) {
 		manager manager = new manager();
 		manager.setManagerName(managerName);
 		manager.setUpdateTime(new Date());
 		//int login = Integer.parseInt(request.getAttribute("login").toString());
-		if (login == 0) {
+		if (userRegisted == 0) {
 			manager.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		} else if (login == 1) {
+		} else if (userRegisted == 1) {
 			manager.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
 		}
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -236,16 +236,16 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
-	public ModelAndView addemployer(String employerName, HttpSession session,HttpServletRequest request,int login) {
+	public ModelAndView addemployer(String employerName, HttpSession session,HttpServletRequest request,int userRegisted) {
 		employer employer = new employer();
 		employer.setEmployerName(employerName);
 		employer.setUpdateTime(new Date());
 		//int login = Integer.parseInt(request.getAttribute("login").toString());
 		String address=null;
-		if (login == 0) {
+		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 			address="redirect:security/employer";
-		} else if (login == 1) {
+		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
 			address="redirect:security/manager";
 		}	
@@ -334,9 +334,9 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
 	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerIdCard, String workerDisabilityCard,
-			String workerBankCard, String workerPaypal, String workerPhone, RedirectAttributes redirectAttributes, HttpSession session,HttpServletRequest request,int login) {
+			String workerBankCard, String workerPaypal, RedirectAttributes redirectAttributes, HttpSession session,HttpServletRequest request,int userRegisted) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerIdCard, workerDisabilityCard, workerBankCard,
-				workerPaypal, workerPhone);
+				workerPaypal);
 		boolean flag = true;
 		if (workerService.getWorkerByWorkerIdCard(workerIdCard) != null) {
 			redirectAttributes.addFlashAttribute(Constants.USER_WORKERIDCARD, MSG_WORKERIDCARD_EXIST);
@@ -347,19 +347,14 @@ public class ManagerController {
 			redirectAttributes.addFlashAttribute(Constants.USER_WORKERDISABILITYCARD, MSG_WORKERDISABILITYCARD_EXIST);
 			flag = false;
 		}
-
-		if (workerService.getWorkerByWorkerPhone(workerPhone) != null) {
-			redirectAttributes.addFlashAttribute(Constants.USER_WORKERPHONE, MSG_WORKERPHONE_EXIST);
-			flag = false;
-		}
 		worker worker = new worker();
 		if (flag) {
 			//int login = Integer.parseInt(request.getAttribute("login").toString());
 			String address=null;
-			if (login == 0) {
+			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 				address="redirect:security/worker";
-			} else if (login == 1) {
+			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
 				address="redirect:security/manager";
 			}
@@ -376,7 +371,7 @@ public class ManagerController {
 			worker.setWorkerDisabilityCard(workerDisabilityCard);
 			worker.setWorkerIdCard(workerIdCard);
 			worker.setWorkerPaypal(workerPaypal);
-			worker.setWorkerPhone(workerPhone);
+			worker.setWorkerPhone(workerDisabilityCard.substring(0,17));
 			worker.setWorkerRealName(workerRealName);
 
 			worker.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));

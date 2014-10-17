@@ -71,6 +71,12 @@
 		from pack
 		WHERE pack_id = #{packId,jdbcType=INTEGER}
 	</select>
+	<select id="selectCountPackByPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select
+		count(pack_id) count
+		from pack
+		WHERE pack_name = #{packName,jdbcType=VARCHAR}
+	</select>
 	<select id="selectDownCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		down_count

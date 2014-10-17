@@ -100,4 +100,10 @@ public class PackServiceImpl implements PackService {
 		return packMapper.selectPackNameByPackId(packId);
 	}
 
+	@Override
+	public int getCountPackByPackName(String packName) {
+
+		return packMapper.selectCountPackByPackName(packName);
+	}
+
 }

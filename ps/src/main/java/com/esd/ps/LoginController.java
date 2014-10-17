@@ -165,17 +165,17 @@ public class LoginController {
 				String typeName = userType.getUserTypeNameEnglish();
 				if (typeName.equals("manager")) {
 					if (managerService.getCountManagerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("manager/manager_add", "login", 0);
+						return new ModelAndView("manager/manager_add", "userRegisted", 0);
 					}
 				} else if (typeName.equals("employer")) {
 					if (employerService.getCountEmployerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("manager/employer_add", "login", 0);
+						return new ModelAndView("manager/employer_add", "userRegisted", 0);
 					}
 				} else if (typeName.equals("inspector")) {
 
 				} else if (typeName.equals("worker")) {
 					if (workerService.getCountWorkerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("manager/worker_add", "login", 0);
+						return new ModelAndView("manager/worker_add", "userRegisted", 0);
 					}
 				}
 				return new ModelAndView("redirect:" + "security/" + typeName);

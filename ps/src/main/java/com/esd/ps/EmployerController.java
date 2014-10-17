@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
@@ -180,46 +182,61 @@ public class EmployerController {
 	 * @param twbs
 	 */
 	@RequestMapping(value = "/uploadPack", method = RequestMethod.POST)
-	public ModelAndView uploadpack(@RequestParam(value = "pack", required = false) MultipartFile pack, packWithBLOBs packWithBLOBs, taskWithBLOBs taskWithBLOBs, int packLockTime,
-			HttpServletRequest request, HttpSession session) {
-		logger.debug("packLockTime:{}", packLockTime);
-		String fileName = pack.getOriginalFilename();
-		// 没改完,待续...
-		pack pack2 = packService.getPackByPackName(fileName);
-		if (pack2 != null) {
-			return new ModelAndView("employer/employer", "match", 1);
-		}
-		// 临时文件路径
-		String url = EmployerController.url(request);
+	public ModelAndView uploadpack(HttpServletRequest request, HttpServletResponse response, packWithBLOBs packWithBLOBs, taskWithBLOBs taskWithBLOBs, int packLockTime,int taskLvl, HttpSession session) {
+		logger.debug("packLockTime:{},taskLvl:{}", packLockTime,taskLvl);
+		// 创建一个通用的多部分解析器
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+		// 判断 request 是否有文件上传,即多部分请求
 		try {
-			if (!pack.isEmpty()) {
-				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
-				// packWithBLOBs.setPackFile(pack.getBytes());
-				packWithBLOBs.setPackName(fileName);
-				packWithBLOBs.setDownCount(0);
-				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
-				packWithBLOBs.setPackStatus(false);
-				packWithBLOBs.setVersion(1);
-				packService.insert(packWithBLOBs);
-				// 上传文件存入临时文件
-				File f = new File(url);
-				if (!f.exists()) {
-					f.mkdir();
+			String packName = null;
+			// 临时文件路径
+			String url = EmployerController.url(request);
+			if (multipartResolver.isMultipart(request)) {
+				// 转换成多部分request
+				MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+				// 取得request中的所有文件名
+				Iterator<String> iter = multiRequest.getFileNames();
+				while (iter.hasNext()) {
+					// 取得上传文件
+					MultipartFile pack = multiRequest.getFile(iter.next());
+					if (pack != null) {
+						// 取得当前上传文件的文件名称
+						packName = pack.getOriginalFilename();
+						if (packService.getCountPackByPackName(packName) > 0) {
+							return new ModelAndView("employer/employer", Constants.MESSAGE, "包名数据库中已存在!");
+						}
+						if (!pack.isEmpty()) {
+							packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
+							// packWithBLOBs.setPackFile(pack.getBytes());
+							packWithBLOBs.setPackName(packName);
+							packWithBLOBs.setDownCount(0);
+							packWithBLOBs.setPackLockTime((packLockTime * 3600000));
+							packWithBLOBs.setPackStatus(false);
+							packWithBLOBs.setVersion(1);
+							packService.insert(packWithBLOBs);
+							// 上传文件存入临时文件
+							File f = new File(url);
+							if (!f.exists()) {
+								f.mkdir();
+							}
+							BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(url + "/" + packName));
+							InputStream in = pack.getInputStream();
+							BufferedInputStream bis = new BufferedInputStream(in);
+							int n = -1;
+							byte[] b = new byte[1024];
+							while ((n = bis.read(b)) != -1) {
+								bos.write(b, 0, n);
+							}
+							bos.flush();
+							bos.close();
+							bis.close();
+						}
+					}
 				}
-				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(url + "/" + fileName));
-				InputStream in = pack.getInputStream();
-				BufferedInputStream bis = new BufferedInputStream(in);
-				int n = -1;
-				byte[] b = new byte[1024];
-				while ((n = bis.read(b)) != -1) {
-					bos.write(b, 0, n);
-				}
-				bos.flush();
-				bos.close();
-				bis.close();
+
 			}
 			// 从临时文件取出要解压的文件上传TaskService
-			ZipFile zip = new ZipFile(url + "/" + fileName);
+			ZipFile zip = new ZipFile(url + "/" + packName);
 			InputStream in = null;
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -251,7 +268,7 @@ public class EmployerController {
 				data = null;
 				byte[] wav = outStream.toByteArray();
 				taskWithBLOBs.setTaskWav(wav);
-				taskWithBLOBs.setTaskLvl(1);
+				taskWithBLOBs.setTaskLvl(taskLvl);
 				// 上传的包的号
 				taskWithBLOBs.setPackId(packService.selectByEmployerId(packWithBLOBs.getEmployerId()));
 				taskWithBLOBs.setTaskName(zipEntryName);
@@ -263,7 +280,7 @@ public class EmployerController {
 			}
 			zip.close();
 			in.close();
-			File fd = new File(url + "/" + fileName);
+			File fd = new File(url + "/" + packName);
 			fd.delete();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -301,11 +318,11 @@ public class EmployerController {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
-			
+
 			this.writeInZIP(list, zos, "wav");
 			this.writeInZIP(list, zos, "TAG");
 			this.writeInZIP(list, zos, "TextGrid");
-			
+
 			zos.close();// 不关闭,最后一个文件写入为0kb
 			fos.flush();
 			fos.close();
@@ -346,6 +363,7 @@ public class EmployerController {
 
 	/**
 	 * 读取数据库文件,压入zip文件中
+	 * 
 	 * @param list
 	 * @param zos
 	 * @param fileType
@@ -358,7 +376,7 @@ public class EmployerController {
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
 				fileName = fileName.substring(0, fileName.indexOf(".")) + "." + fileType;
 				// 创建ZIP实体,并添加进压缩包,按原目录结构
-				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() +"/"+ fileName);
+				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() + "/" + fileName);
 				zos.putNextEntry(zipEntry);
 				byte[] data = null;
 				if (fileType.equals("wav")) {
@@ -381,5 +399,12 @@ public class EmployerController {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@RequestMapping(value = "/uploadPack2", method = RequestMethod.POST)
+	// springmvc包装的解析器速度更快
+	public String upload2(HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException {
+
+		return "/success";
 	}
 }

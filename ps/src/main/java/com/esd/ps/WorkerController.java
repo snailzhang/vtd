@@ -44,10 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
@@ -59,8 +56,6 @@ import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 工作者
@@ -107,7 +102,7 @@ public class WorkerController {
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);
 		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
-		logger.debug("listTask:{}", listTask.isEmpty());
+		logger.debug("workerId:{},listTask:{}", workerId, listTask.isEmpty());
 		// 没有正在进行的任务
 		if (listTask == null || listTask.isEmpty()) {
 			workerMark = 0;
@@ -423,10 +418,11 @@ public class WorkerController {
 			return null;
 		}
 		List<String> listMath = new ArrayList<String>();
-		List<String> listNoMath = new ArrayList<String>();
+		List<String> listAll = new ArrayList<String>();
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			String taskName = task.getTaskName();
+			listAll.add(taskName);
 			for (int i = 0; i < files.length; i++) {
 				try {
 					files[i].getInputStream();
@@ -453,7 +449,7 @@ public class WorkerController {
 								BufferedReader reader = null;
 								double taskMarkTime = 0;
 								try {
-									reader = new BufferedReader(new InputStreamReader(files[i].getInputStream(), "utf-8"));
+									reader = new BufferedReader(new InputStreamReader(files[i].getInputStream(), "GBK"));
 									String tempString = null;
 									List<String> list = new ArrayList<String>();
 									int m = 0, n = 0;
@@ -487,7 +483,6 @@ public class WorkerController {
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
 								taskService.updateByName(taskWithBLOBs);
-
 								workerRecord workerRecord = new workerRecord();
 								workerRecord.setTaskUploadTime(new Date());
 								workerRecord.setTaskStatu(1);
@@ -495,19 +490,10 @@ public class WorkerController {
 								workerRecord.setRecordId(workerRecordService.getPkIDByTaskName(nameWav));
 								workerRecordService.updateByPrimaryKeySelective(workerRecord);
 								listMath.add(uploadTaskNameI);
-								// 文件不是Tag或TextGrid格式的
-							} else {
-								listNoMath.add(uploadTaskNameI);
 							}
-							// 上传的文件必须有同名但类型不同的俩文件
-						} else {
-							listNoMath.add(uploadTaskNameI);
+
 						}
 					}
-					// 上传文件名在数据库中没有找到
-				} else {
-					String fileName = files[i].getOriginalFilename();
-					listNoMath.add(fileName);
 				}
 			}
 		}
@@ -521,7 +507,7 @@ public class WorkerController {
 			}
 		}
 		map.put("listMath", listMath);
-		map.put("listNoMath", listNoMath);
+		map.put("listAll", listAll);
 		return map;
 	}
 
