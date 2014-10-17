@@ -122,6 +122,7 @@ public class EmployerController {
 			list.add(packTrans);
 		}
 		map.put("list", list);
+		logger.debug("list:{}",list);
 		return map;
 	}
 
@@ -147,9 +148,9 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> detailpagePost(HttpSession session) {
+	public Map<String, Object> detailpagePost(HttpSession session,int packId) {
 		Map<String, Object> map = new HashMap<String,Object>();
-		int packId = Integer.parseInt(session.getAttribute("packId").toString());
+		//int packId = Integer.parseInt(session.getAttribute("packId").toString());
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		List<task> listTask = taskService.getAllTaskByPackId(packId);
@@ -194,6 +195,7 @@ public class EmployerController {
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
 				// packWithBLOBs.setPackFile(pack.getBytes());
 				packWithBLOBs.setPackName(fileName);
+				packWithBLOBs.setDownCount(0);
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
 				packWithBLOBs.setPackStatus(false);
 				packWithBLOBs.setVersion(1);
@@ -231,6 +233,7 @@ public class EmployerController {
 					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
 					zipEntryName = str[(str.length - 1)];
 				}
+				zipEntryName=zipEntryName.substring(zipEntryName.indexOf("/")+1,zipEntryName.length());
 				// 收集没有匹配的文件
 				String noMatch = "";
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
@@ -247,6 +250,7 @@ public class EmployerController {
 				data = null;
 				byte[] wav = outStream.toByteArray();
 				taskWithBLOBs.setTaskWav(wav);
+				taskWithBLOBs.setTaskLvl(1);
 				// 上传的包的号
 				taskWithBLOBs.setPackId(packService.selectByEmployerId(packWithBLOBs.getEmployerId()));
 				taskWithBLOBs.setTaskName(zipEntryName);

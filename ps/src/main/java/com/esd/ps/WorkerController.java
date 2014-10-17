@@ -131,7 +131,7 @@ public class WorkerController {
 			taskTrans taskTrans = new taskTrans();
 			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
 			taskTrans.setTaskName(task.getTaskName());
-
+			logger.debug("TaskName:{}", task.getTaskName());
 			list.add(taskTrans);
 		}
 		logger.debug("packId:{}", packId);
@@ -142,6 +142,7 @@ public class WorkerController {
 			Date end = sdf.parse(sdf.format(new Date()));
 			long between = (end.getTime() - begin.getTime());// 毫秒
 			long mm = packLockTime - between;
+			logger.debug("packLockTime:{},between:{},mm:{}",packLockTime,between,mm);
 			map.put("workerMark", workerMark);
 			map.put("list", list);
 			map.put("mm", mm);

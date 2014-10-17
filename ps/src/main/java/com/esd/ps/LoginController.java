@@ -106,6 +106,9 @@ public class LoginController {
 	@RequestMapping(value = "/quit", method = RequestMethod.GET)
 	public ModelAndView quitGet(HttpSession session) {
 		session.removeAttribute(Constants.USER_ID);
+		session.removeAttribute(Constants.USER_NAME);
+		session.removeAttribute(Constants.USER_TYPE);
+		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView("redirect:login");
 	}
 
