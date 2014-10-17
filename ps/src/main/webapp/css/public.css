@@ -20,3 +20,7 @@ input[type=file] {
 	padding: 0;
 	box-shadow: none;
 }
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td{
+	text-align:center;
+	padding:4px 2px;;
+}

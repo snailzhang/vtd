@@ -164,7 +164,10 @@
 						}
 						
 						var tltInterval = 1000; 
-						window.setInterval(function(){ShowCountDown(mm);}, tltInterval);
+						var today = new Date();
+						var todayTime = today.valueOf();
+						var endTime = todayTime+mm ;
+						window.setInterval(function(){ShowCountDown(endTime);}, tltInterval);
 						$("#downloadPanel").hide();
 						$("#uploadPanel").show();
 					}
@@ -174,7 +177,7 @@
 			/*******************************倒计时**************************************************/
 			function ShowCountDown(endTime){
 				var now = new Date(); 
-				var leftTime=endTime-now.getTime(); 
+				var leftTime=endTime-now.valueOf(); 
 				var leftsecond = parseInt(leftTime/1000); 
 				var day1=Math.floor(leftsecond/(60*60*24)); 
 				var hour=Math.floor((leftsecond-day1*24*60*60)/3600); 

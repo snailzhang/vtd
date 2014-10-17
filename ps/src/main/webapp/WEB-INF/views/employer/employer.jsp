@@ -140,7 +140,7 @@
 							var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
 							var downloadPack = "<td></td>";
 							if(item.finishTaskCount != 0){
-								downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'></a>下载</td>";
+								downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
 							}
 							if(item.packStatus == 0){//判断任务包的状态为未完成
 								$("#packUncomplete tbody").append(
