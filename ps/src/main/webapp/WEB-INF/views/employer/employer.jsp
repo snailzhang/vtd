@@ -186,6 +186,7 @@
 					success:function(data){
 						if(data.wrongPath != ""){
 							window.open(data.wrongPath);
+							window.location.reload();
 						}
 					}
 				});

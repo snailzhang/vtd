@@ -40,7 +40,7 @@
 							<th>下载任务包</th>
 						</tr>
 					</thead>
-					<tbody id="packHistoryTable"></tbody>
+					<tbody id="packHistoryTable" role="tablist" aria-multiselectable="true"></tbody>
 				</table>
 			</div>
 			
@@ -61,11 +61,11 @@
 						$.each(data.list,function(i,item){
 							var ps = "";
 							var downloadTD = "<td></td>";
-							var downPackName = "<td><a class='showPackDetail' onClick='showPackDetail(1,"+item.downPackName+")'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
+							var downPackName = "<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
 							if(item.packStatu == 0){
 								ps = "未完成";
 								downloadTD = "<td><a class='downloadPack' onClick='downloadPack("+item.downPackName+")'>下载</a></td>";
-								downPackName = "<td><a class='showPackDetail' onClick='showPackDetail(0,"+item.downPackName+")'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
+								downPackName = "<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
 							}else if(item.packStatu == 1){
 								ps = "已完成";
 							}else if(item.packStatu == 2){
@@ -79,7 +79,7 @@
 									"<td>"+item.taskCount+"</td>"+
 									"<td>"+ps+"</td>"+
 									downloadTD+
-								"</tr>"
+								"</tr><tr class='packDetailTr collapse' id='collapse"+(i+1)+"'><td colspan='6'>ddddddddddd</td></tr>"
 							);
 						});
 					}

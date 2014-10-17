@@ -303,8 +303,8 @@
 						data:{"downTaskCount":downTaskCount},
 						dataType:'json',
 						success:function(data){
-							if(data.wronPath != ""){
-								window.open(data.wronPath);
+							if(data.wrongPath != ""){
+								window.open(data.wrongPath);
 								window.location.reload();
 							}
 						}
