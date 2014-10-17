@@ -18,7 +18,7 @@ public interface workerRecordMapper {
 
 	int updateByPrimaryKey(workerRecord record);
 	
-	List<workerRecord> selectOldTask();
+	List<workerRecord> selectDoingTask();
 	
 	List<workerRecord> selectAllByWorkerId(Integer workerId);
 	

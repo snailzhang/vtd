@@ -276,9 +276,9 @@ public class EmployerController {
 	 * @param req
 	 * @return
 	 */
-	@RequestMapping(value = "/downPack", method = RequestMethod.POST)
+	@RequestMapping(value = "/downPack", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downPackPOST(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
+	public Map<String, Object> downPackGET(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String,Object>();
 		logger.debug("downTaskCount:{}", packId);
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);

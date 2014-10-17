@@ -100,8 +100,6 @@ public class WorkerController {
 	@ResponseBody
 	public Map<String, Object> workerPost(HttpSession session, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		// 查找是否有过时的任务,如果有就释放
-
 		logger.debug("taskTotal:{}", taskService.getUndoTaskCount());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);

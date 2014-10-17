@@ -178,7 +178,7 @@ public class LoginController {
 						return new ModelAndView("worker/worker_add", "login", 0);
 					}
 				}
-				return new ModelAndView("redirect:" +"security/"+typeName);
+				return new ModelAndView("redirect:" + "security/" + typeName);
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
 			}
@@ -194,9 +194,9 @@ public class LoginController {
 	 * @param request
 	 */
 	public void checkOldTask(HttpServletRequest request) {
-		List<workerRecord> workerRecordList = workerRecordService.getOldTask();
+		List<workerRecord> workerRecordList = workerRecordService.getDoingTask();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		if (workerRecordList.isEmpty() == false) {
+		if (workerRecordList.isEmpty() == false || workerRecordList != null) {
 			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
 				workerRecord workerRecord = (workerRecord) iterator.next();
 				Date begin, end;
@@ -222,9 +222,12 @@ public class LoginController {
 						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 						// 删除任务的下载备份
 						String url = request.getServletContext().getRealPath("/workerTemp");
-						File file = new File(url + "/" + workerRecord.getDownPackName());
-						if (file.exists()) {
-							file.delete();
+						File fold = new File(url);
+						if (fold.exists()) {
+							File zipFile = new File(url + "/" + workerRecord.getDownPackName());
+							if (zipFile.exists()) {
+								zipFile.delete();
+							}
 						}
 					}
 				} catch (ParseException e) {

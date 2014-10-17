@@ -65,7 +65,7 @@
 		where task_name = #{taskName,jdbcType=VARCHAR}
 	</select>
 	
-	<select id="selectOldTask" resultMap="BaseResultMap">
+	<select id="selectDoingTask" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from worker_record

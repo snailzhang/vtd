@@ -52,9 +52,9 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getOldTask() {
+	public List<workerRecord> getDoingTask() {
 		
-		return workerRecordMapper.selectOldTask();
+		return workerRecordMapper.selectDoingTask();
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public interface WorkerRecordService {
 
 	int updateByPrimaryKey(workerRecord record);
 	
-	List<workerRecord> getOldTask();
+	List<workerRecord> getDoingTask();
 	
 	List<workerRecord> getAllByWorkerId(Integer workerId);
 	
