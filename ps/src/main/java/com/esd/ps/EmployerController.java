@@ -92,8 +92,8 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object>  employerPost(HttpSession session) {// list列表直接转json
-		Map<String, Object> map = new HashMap<String,Object>(); 
+	public Map<String, Object> employerPost(HttpSession session) {// list列表直接转json
+		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		session.setAttribute("employerId", employerId);
@@ -111,9 +111,9 @@ public class EmployerController {
 			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
 			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId()));
 			packTrans.setDownCount(pack.getDownCount());
-			if(pack.getPackStatus()){
+			if (pack.getPackStatus()) {
 				packTrans.setPackStatus(1);
-			}else{
+			} else {
 				packTrans.setPackStatus(0);
 			}
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
@@ -122,7 +122,7 @@ public class EmployerController {
 			list.add(packTrans);
 		}
 		map.put("list", list);
-		logger.debug("list:{}",list);
+		logger.debug("list:{}", list);
 		return map;
 	}
 
@@ -148,9 +148,10 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> detailpagePost(HttpSession session,int packId) {
-		Map<String, Object> map = new HashMap<String,Object>();
-		//int packId = Integer.parseInt(session.getAttribute("packId").toString());
+	public Map<String, Object> detailpagePost(HttpSession session, int packId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		// int packId =
+		// Integer.parseInt(session.getAttribute("packId").toString());
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		List<task> listTask = taskService.getAllTaskByPackId(packId);
@@ -233,7 +234,7 @@ public class EmployerController {
 					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
 					zipEntryName = str[(str.length - 1)];
 				}
-				zipEntryName=zipEntryName.substring(zipEntryName.indexOf("/")+1,zipEntryName.length());
+				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
 				// 收集没有匹配的文件
 				String noMatch = "";
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
@@ -279,7 +280,7 @@ public class EmployerController {
 	@RequestMapping(value = "/downPack", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> downPackGET(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
-		Map<String, Object> map = new HashMap<String,Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", packId);
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
 		if (list == null) {
@@ -292,7 +293,7 @@ public class EmployerController {
 			f.mkdir();
 		}
 		logger.debug("url:{}", packName);
-		File zipFile = new File(url +"/"+packName);
+		File zipFile = new File(url + "/" + packName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
@@ -300,45 +301,21 @@ public class EmployerController {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
-			byte[] bufs = new byte[1024 * 10];
-			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
-				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
-				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-				// 创建ZIP实体,并添加进压缩包,按原目录结构
-				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() + fileName);
-				zos.putNextEntry(zipEntry);
-				byte[] data1 = null;
-				for (int i = 1; i < 4; i++) {
-					if (i == 1) {
-						data1 = taskWithBLOBs.getTaskWav();
-					} else if (i == 2) {
-						data1 = taskWithBLOBs.getTaskTag();
-					} else if (i == 3) {
-						data1 = taskWithBLOBs.getTaskTextgrid();
-					}
-					InputStream is = new ByteArrayInputStream(data1);
-					// 读取待压缩的文件并写进压缩包里
-					BufferedInputStream bis = new BufferedInputStream(is, 1024);
-					int read;
-					while ((read = bis.read(bufs)) > 0) {// , 0, 2048
-						zos.write(bufs, 0, read);//
-					}
-					// zos.closeEntry();
-					bis.close();
-					is.close();
-				}
-			}
+			
+			this.writeInZIP(list, zos, "wav");
+			this.writeInZIP(list, zos, "TAG");
+			this.writeInZIP(list, zos, "TextGrid");
+			
 			zos.close();// 不关闭,最后一个文件写入为0kb
 			fos.flush();
 			fos.close();
 
 		} catch (FileNotFoundException e) {
-
 			e.printStackTrace();
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
+
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
 		pack.setUpdateTime(new Date());
@@ -351,13 +328,58 @@ public class EmployerController {
 		String wrongPath = "http://" + serverAndProjectPath + "/employerTemp/" + packName;
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put("wrongPath", wrongPath);
-		
+
 		return map;
 
 	}
-	//取得项目根目录
-	public static String url(HttpServletRequest request){
+
+	/**
+	 * 取得项目根目录
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public static String url(HttpServletRequest request) {
 		String url = request.getServletContext().getRealPath("/employerTemp");
 		return url;
+	}
+
+	/**
+	 * 读取数据库文件,压入zip文件中
+	 * @param list
+	 * @param zos
+	 * @param fileType
+	 */
+	public void writeInZIP(List<taskWithBLOBs> list, ZipOutputStream zos, String fileType) {
+		for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+			try {
+				byte[] bufs = new byte[1024 * 10];
+				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
+				fileName = fileName.substring(0, fileName.indexOf(".")) + "." + fileType;
+				// 创建ZIP实体,并添加进压缩包,按原目录结构
+				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() +"/"+ fileName);
+				zos.putNextEntry(zipEntry);
+				byte[] data = null;
+				if (fileType.equals("wav")) {
+					data = taskWithBLOBs.getTaskWav();
+				} else if (fileType.equals("TAG")) {
+					data = taskWithBLOBs.getTaskTag();
+				} else if (fileType.equals("TextGrid")) {
+					data = taskWithBLOBs.getTaskTextgrid();
+				}
+				InputStream is = new ByteArrayInputStream(data);
+				// 读取待压缩的文件并写进压缩包里
+				BufferedInputStream bis = new BufferedInputStream(is, 1024);
+				int read;
+				while ((read = bis.read(bufs)) > 0) {
+					zos.write(bufs, 0, read);//
+				}
+				bis.close();
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

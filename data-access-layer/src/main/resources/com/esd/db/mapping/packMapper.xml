@@ -71,6 +71,12 @@
 		from pack
 		WHERE pack_id = #{packId,jdbcType=INTEGER}
 	</select>
+	<select id="selectDownCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		down_count
+		from pack
+		WHERE pack_id = #{packId,jdbcType=INTEGER}
+	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from pack
 		where pack_id = #{packId,jdbcType=INTEGER}
