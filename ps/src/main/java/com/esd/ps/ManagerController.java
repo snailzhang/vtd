@@ -212,11 +212,11 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
-	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request) {
+	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request,int login) {
 		manager manager = new manager();
 		manager.setManagerName(managerName);
 		manager.setUpdateTime(new Date());
-		int login = Integer.parseInt(request.getAttribute("login").toString());
+		//int login = Integer.parseInt(request.getAttribute("login").toString());
 		if (login == 0) {
 			manager.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		} else if (login == 1) {
@@ -236,11 +236,11 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
-	public ModelAndView addemployer(String employerName, HttpSession session,HttpServletRequest request) {
+	public ModelAndView addemployer(String employerName, HttpSession session,HttpServletRequest request,int login) {
 		employer employer = new employer();
 		employer.setEmployerName(employerName);
 		employer.setUpdateTime(new Date());
-		int login = Integer.parseInt(request.getAttribute("login").toString());
+		//int login = Integer.parseInt(request.getAttribute("login").toString());
 		String address=null;
 		if (login == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -334,7 +334,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
 	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerIdCard, String workerDisabilityCard,
-			String workerBankCard, String workerPaypal, String workerPhone, RedirectAttributes redirectAttributes, HttpSession session,HttpServletRequest request) {
+			String workerBankCard, String workerPaypal, String workerPhone, RedirectAttributes redirectAttributes, HttpSession session,HttpServletRequest request,int login) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerIdCard, workerDisabilityCard, workerBankCard,
 				workerPaypal, workerPhone);
 		boolean flag = true;
@@ -354,7 +354,7 @@ public class ManagerController {
 		}
 		worker worker = new worker();
 		if (flag) {
-			int login = Integer.parseInt(request.getAttribute("login").toString());
+			//int login = Integer.parseInt(request.getAttribute("login").toString());
 			String address=null;
 			if (login == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));

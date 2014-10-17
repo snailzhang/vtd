@@ -169,13 +169,13 @@ public class LoginController {
 					}
 				} else if (typeName.equals("employer")) {
 					if (employerService.getCountEmployerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("employer/employer_add", "login", 0);
+						return new ModelAndView("manager/employer_add", "login", 0);
 					}
 				} else if (typeName.equals("inspector")) {
 
 				} else if (typeName.equals("worker")) {
 					if (workerService.getCountWorkerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("worker/worker_add", "login", 0);
+						return new ModelAndView("manager/worker_add", "login", 0);
 					}
 				}
 				return new ModelAndView("redirect:" + "security/" + typeName);

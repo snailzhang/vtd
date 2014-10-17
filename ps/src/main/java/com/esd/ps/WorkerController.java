@@ -44,7 +44,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
@@ -140,7 +143,7 @@ public class WorkerController {
 			Date end = sdf.parse(sdf.format(new Date()));
 			long between = (end.getTime() - begin.getTime());// 毫秒
 			long mm = packLockTime - between;
-			logger.debug("packLockTime:{},between:{},mm:{}",packLockTime,between,mm);
+			logger.debug("packLockTime:{},between:{},mm:{}", packLockTime, between, mm);
 			map.put("workerMark", workerMark);
 			map.put("list", list);
 			map.put("mm", mm);
@@ -425,6 +428,11 @@ public class WorkerController {
 			task task = (task) iterator.next();
 			String taskName = task.getTaskName();
 			for (int i = 0; i < files.length; i++) {
+				try {
+					files[i].getInputStream();
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				}
 				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + ".wav";
 				if (taskName.equals(nameWav)) {
 					String uploadTaskNameI = files[i].getOriginalFilename();
@@ -482,7 +490,7 @@ public class WorkerController {
 
 								workerRecord workerRecord = new workerRecord();
 								workerRecord.setTaskUploadTime(new Date());
-								workerRecord.setTaskStatu(2);
+								workerRecord.setTaskStatu(1);
 								workerRecord.setTaskMarkTime(taskMarkTime);
 								workerRecord.setRecordId(workerRecordService.getPkIDByTaskName(nameWav));
 								workerRecordService.updateByPrimaryKeySelective(workerRecord);
@@ -512,21 +520,17 @@ public class WorkerController {
 				file.delete();
 			}
 		}
-
-		// 查找次worker是否还有没上传的任务
-		// List<task> listTask1 =
-		// taskService.getAllDoingTaskByWorkerId(workerId);
-		// if (listTask1 == null || listTask1.isEmpty()) {
-		// workerMark = 0;
-		// } else {
-		// workerMark = 1;
-		// }
 		map.put("listMath", listMath);
 		map.put("listNoMath", listNoMath);
 		return map;
 	}
 
-	// 取得项目根目录
+	/**
+	 * 取得项目根目录
+	 * 
+	 * @param request
+	 * @return
+	 */
 	public static String url(HttpServletRequest request) {
 		String url = request.getServletContext().getRealPath("/workerTemp");
 		return url;
