@@ -109,6 +109,12 @@
 			$("#refreshPage").click(function(){
 				window.location.reload();
 			});
+			$("#packHistoryTable").on('shown.bs.collapse', function () {
+				var collapseTR = $(this).children(".in");
+				var id = collapseTR.attr("id");
+				var thisTD = collapseTR.children("td");
+				thisTD.append(id);
+			});
 		});
 	</script>
 </body>

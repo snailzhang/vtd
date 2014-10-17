@@ -25,42 +25,44 @@
 		      <label for="workerRealName" class="col-sm-2 control-label">真实姓名：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="workerRealName" id="workerRealName" placeholder="请输入真实姓名">
-		      </div>
-		   </div>
-		   <div class="form-group">
-		      <label for="workerIdCard" class="col-sm-2 control-label">身份证号：</label>
-		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerIdCard" id="workerIdCard" placeholder="请输入身份证号">
+		         <span class="help-block"></span>
+		         <input type="hidden" class="form-control" name="userRegisted" id="" value="${userRegisted}">
+		         
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerDisabilityCard" class="col-sm-2 control-label">残疾证卡号：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="workerDisabilityCard" id="workerDisabilityCard" placeholder="请输入残疾证卡号">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerBankCard" class="col-sm-2 control-label">银行卡号：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="workerBankCard" id="workerBankCard" placeholder="请输入银行卡号">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerPaypal" class="col-sm-2 control-label">支付宝账号：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="workerPaypal" id="workerPaypal" placeholder="请输入支付宝账号">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		    <div class="form-group">
 		      <label for="workerPhone" class="col-sm-2 control-label">电话号：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="workerPhone" id="workerPhone" placeholder="请输入电话号码">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerImage" class="col-sm-2 control-label">照片：</label>
 		      <div class="col-sm-10">
 		         <input type="file" class="form-control" name="workerImage" id="workerImage" placeholder="请选择照片">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
@@ -75,11 +77,11 @@
 			$("button[type=button]").click(function(){
 				var formName = $("#addworker");
 				var workRealName = $("#workerRealName");
-				var workerIdCard = $("#workerIdCard");
+				//var workerIdCard = $("#workerIdCard");
 				var workerDisabilityCard = $("#workerDisabilityCard");
 				var workerPhone = $("#workerPhone");
 				if(checkout.text.isempty(workRealName,"真实姓名不能为空！")) return;
-				if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
+				//if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
 				if(checkout.text.isempty(workerDisabilityCard,"残疾证卡号不能为空！")) return;
 				if(checkout.text.isempty(workerPhone,"电话号号不能为空！")) return;
 				formName.submit();
