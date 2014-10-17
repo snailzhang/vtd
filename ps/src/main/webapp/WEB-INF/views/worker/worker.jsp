@@ -22,6 +22,11 @@
 		box-shadow:none;
 		width:70px;
 	}
+	#downloadPanel h3{
+		display:inline-block;
+		margin-right:10px;
+	}
+	form{padding-top:10px;}
 </style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/jquery.ui.widget.js"></script>
@@ -232,6 +237,7 @@
 			/*******************************多文件上传**************************************************/
 				$("#fileupload").fileupload({
 					singleFileUploads:false,
+					formAcceptCharset:'gb2312',
 					typ:"POST",
 					dataType:"json",
 					url:"${contextPath}/security/upTagAndTextGrid",
@@ -297,8 +303,8 @@
 						data:{"downTaskCount":downTaskCount},
 						dataType:'json',
 						success:function(data){
-							if(data != ""){
-								window.open(data);
+							if(data.wronPath != ""){
+								window.open(data.wronPath);
 								window.location.reload();
 							}
 						}
