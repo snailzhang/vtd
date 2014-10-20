@@ -40,6 +40,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.esd.common.util.PaginationRecordsAndNumber;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.ps.model.packTrans;
@@ -170,6 +172,7 @@ public class EmployerController {
 
 			list.add(taskTrans);
 		}
+		
 		map.put("list", list);
 		return map;
 	}
@@ -235,8 +238,10 @@ public class EmployerController {
 				}
 
 			}
+			
 			// 从临时文件取出要解压的文件上传TaskService
 			ZipFile zip = new ZipFile(url + "/" + packName);
+
 			InputStream in = null;
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
