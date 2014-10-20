@@ -236,7 +236,6 @@ public class EmployerController {
 						}
 					}
 				}
-
 			}
 			
 			// 从临时文件取出要解压的文件上传TaskService
@@ -281,7 +280,9 @@ public class EmployerController {
 				taskWithBLOBs.setTaskDir(taskDir);
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
-				taskService.insert(taskWithBLOBs);
+				if(taskService.insert(taskWithBLOBs) !=1){
+					
+				}
 			}
 			zip.close();
 			in.close();
@@ -362,7 +363,13 @@ public class EmployerController {
 	 * @return
 	 */
 	public static String url(HttpServletRequest request) {
-		String url = request.getServletContext().getRealPath("/employerTemp");
+		String url = request.getServletContext().getRealPath("/");
+		url=url+"employerTemp";
+		File f=new File(url);
+		if(f.exists()){
+			return url;
+		}
+		f.mkdir();
 		return url;
 	}
 

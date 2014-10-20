@@ -518,7 +518,13 @@ public class WorkerController {
 	 * @return
 	 */
 	public static String url(HttpServletRequest request) {
-		String url = request.getServletContext().getRealPath("/workerTemp");
+		String url = request.getServletContext().getRealPath("/");
+		url=url+"workerTemp";
+		File f=new File(url);
+		if(f.exists()){
+			return url;
+		}
+		f.mkdir();
 		return url;
 	}
 

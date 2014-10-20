@@ -221,8 +221,8 @@ public class LoginController {
 						taskWithBLOBs.setTaskId(workerRecord.getTaskId());
 						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 						// 删除任务的下载备份
-						String url = request.getServletContext().getRealPath("/workerTemp");
-						File fold = new File(url);
+						String url = request.getServletContext().getRealPath("/");
+						File fold = new File(url+"workerTemp");
 						if (fold.exists()) {
 							File zipFile = new File(url + "/" + workerRecord.getDownPackName());
 							if (zipFile.exists()) {
