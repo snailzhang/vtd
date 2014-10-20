@@ -383,4 +383,40 @@ public class ManagerController {
 		redirectAttributes.addFlashAttribute("worker", worker);
 		return new ModelAndView("redirect:security/addworker");
 	}
+	/**
+	 * 修改管理员信息
+	 * @param userType
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/updateManager", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> update(String userType,int userId){
+		Map<String, Object> map = new HashMap<String, Object>();
+		return map;
+	}
+	/**
+	 * 修改发包商信息
+	 * @param userType
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/updateEmployer", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> updateEmployer(String userType,int userId){
+		Map<String, Object> map = new HashMap<String, Object>();
+		return map;
+	}
+	/**
+	 * 修改工作者信息
+	 * @param userType
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> updateWorker(String userType,int userId){
+		Map<String, Object> map = new HashMap<String, Object>();
+		return map;
+	}
 }

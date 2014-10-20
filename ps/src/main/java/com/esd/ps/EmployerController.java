@@ -194,6 +194,7 @@ public class EmployerController {
 			String packName = null;
 			// 临时文件路径
 			String url = EmployerController.url(request);
+			logger.debug("url:{}",url);
 			if (multipartResolver.isMultipart(request)) {
 				// 转换成多部分request
 				MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
@@ -242,10 +243,17 @@ public class EmployerController {
 			ZipFile zip = new ZipFile(url + "/" + packName);
 
 			InputStream in = null;
+			int finishCount=0;
+			session.setAttribute("fileCount",zip.size());
+			session.setAttribute("finishCount",finishCount);
+			logger.debug("zip:{}",zip.size());
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
+				
 				ZipEntry entry = (ZipEntry) entries.nextElement();
 				String taskDir = "";
 				if (entry.isDirectory()) {
+					finishCount++;
+					session.setAttribute("finishCount", finishCount);
 					continue;
 				}
 				String zipEntryName = entry.getName();
@@ -280,13 +288,18 @@ public class EmployerController {
 				taskWithBLOBs.setTaskDir(taskDir);
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
-				if(taskService.insert(taskWithBLOBs) !=1){
+				if(taskService.insert(taskWithBLOBs) ==1){
+					finishCount++;
+					session.setAttribute("finishCount",finishCount);
+				}else{
 					
 				}
 			}
 			zip.close();
 			in.close();
 			File fd = new File(url + "/" + packName);
+			session.removeAttribute("finishCount");
+			session.removeAttribute("fileCount");
 			fd.delete();
 		} catch (IOException e) {
 			e.printStackTrace();
