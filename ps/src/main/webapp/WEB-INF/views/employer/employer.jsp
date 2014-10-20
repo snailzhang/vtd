@@ -103,7 +103,7 @@
 		
 	</div>
 	<!-------------------------------- 弹出窗口 任务包详细-------------------------------------------------->
-	<div class="modal fade">
+	<div id="packDetailModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -116,7 +116,7 @@
 							<tr>
 								<th>序号</th>
 								<th>任务名称</th>
-								<th>上传时间</th>
+								<th>完成时间</th>
 								<th>检测结果</th>
 							</tr>
 						</thead>
@@ -126,6 +126,24 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<!-------------------------------- 上传任务包进度条-------------------------------------------------->
+	<div id="packUploadProgressModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">任务包上传中</h4>
+				</div>
+				<div class="modal-body">
+					<div class="progress">
+						<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+							0%
+						</div>
+					</div>
+				</div>
+				
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
@@ -228,40 +246,59 @@
 			});
 			$("#uploadPackBtn").click(function(){
 				var formName = $("#uploadPack");
+				showUploadProgress();
 				formName.submit();
 			});
 		});
 		/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
-			showPackDetail = function(packId){
-				$("#packDetailTBody").append("");
-				$.ajax({
-					type:'POST',
-					url:'${contextPath}/security/packDetail',
-					data:{"packId":packId},
-					dataType:'json',
-					success:function(data){
-						if(data.list == ""){
-							$("#packDetailTBody").empty();
-							$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
-						}else{
-							$.each(data.list,function(i,item){
-								var upTime = "";
-								if(item.taskUploadTime != null)upTime = item.taskUploadTime;
-								$("#packDetailTBody").append(
-									"<tr>"+
-										"<td>"+(i+1)+"</td>"+
-										"<td>"+item.taskName+"</td>"+
-										"<td>"+upTime+"</td>"+
-										"<td>"+item.taskEffective+"</td>"+
-									"</tr>"
-								);
-							});
-						}
-						
-						$(".modal").modal('show');
+		showPackDetail = function(packId){
+			$("#packDetailTBody").append("");
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/packDetail',
+				data:{"packId":packId},
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("#packDetailTBody").empty();
+						$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
+					}else{
+						$.each(data.list,function(i,item){
+							var upTime = "";
+							if(item.taskUploadTime != null)upTime = item.taskUploadTime;
+							$("#packDetailTBody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.taskName+"</td>"+
+									"<td>"+upTime+"</td>"+
+									"<td>"+item.taskEffective+"</td>"+
+								"</tr>"
+							);
+						});
 					}
-				});
-			};
+					
+					$("#packDetailModal").modal('show');
+				}
+			});
+		};
+		/*---------------------------------------上传任务进度条显示---------------------------------------------------------------*/
+		var oTimer = null;
+		showUploadProgress = function(){
+			$("#packUploadProgressModal").modal('show');
+			oTimer = setInterval("getProgress()", 100);
+		};
+		getProgress = function(){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/fileStatus/upfile/progress',
+				dataType:'json',
+				success:function(data){
+					//alert(data.percent);
+					var per = data.percent.split("%")[0];
+					$("#packUploadProgressModal .progress-bar").attr({"aria-valuenow":per,"style":"width:"+data.percent}).text(data.percent);
+				}
+			});
+		}
 	</script>
 </body>
 </html>
