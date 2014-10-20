@@ -244,8 +244,7 @@ public class EmployerController {
 
 			InputStream in = null;
 			int finishCount=0;
-			session.setAttribute("fileCount",zip.size());
-			session.setAttribute("finishCount",finishCount);
+			fileCount(zip.size(),finishCount);
 			logger.debug("zip:{}",zip.size());
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
 				
@@ -253,7 +252,7 @@ public class EmployerController {
 				String taskDir = "";
 				if (entry.isDirectory()) {
 					finishCount++;
-					session.setAttribute("finishCount", finishCount);
+					fileCount(zip.size(),finishCount);
 					continue;
 				}
 				String zipEntryName = entry.getName();
@@ -268,6 +267,8 @@ public class EmployerController {
 				String noMatch = "";
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
 					noMatch = zipEntryName;
+					finishCount++;
+					fileCount(zip.size(),finishCount);
 					continue;
 				}
 				in = zip.getInputStream(entry);
@@ -290,7 +291,7 @@ public class EmployerController {
 				taskWithBLOBs.setTaskUpload(false);
 				if(taskService.insert(taskWithBLOBs) ==1){
 					finishCount++;
-					session.setAttribute("finishCount",finishCount);
+					fileCount(zip.size(),finishCount);
 				}else{
 					
 				}
@@ -298,15 +299,26 @@ public class EmployerController {
 			zip.close();
 			in.close();
 			File fd = new File(url + "/" + packName);
-			session.removeAttribute("finishCount");
-			session.removeAttribute("fileCount");
 			fd.delete();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return new ModelAndView("employer/employer");
 	}
-
+	/**
+	 * 返回前台zip的解压进度
+	 * @param fileCount
+	 * @param finishCount
+	 * @return
+	 */
+	@RequestMapping(value = "/fileCount", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> fileCount(int fileCount,int finishCount){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("fileCount", fileCount);
+		map.put("finishCount", finishCount);
+		return map;
+	}
 	/**
 	 * 发包商下载已完成的任务包(zip格式,原包目录,wav,TAG,TextGrid文件)
 	 * 
