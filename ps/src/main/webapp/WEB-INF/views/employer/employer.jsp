@@ -23,18 +23,13 @@
 	<!-------------------------------- 上传区域 -------------------------------------------------->
 	<div class="container">
 		<h2>上传任务包</h2>
+		
 		<form action="${contextPath}/security/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
+			
 			<div class="form-group" id="packUploadDiv">
 		      <label for="pack" class="col-sm-2 control-label">选择任务包：</label>
 		      <div class="col-sm-10">
 		         <input type="file" class="form-control" name="pack" id="pack" placeholder="请选择上传文件">
-		         <span class="help-block"></span>
-		      </div>
-		   </div>
-		   <div class="form-group" id="lockTime">
-		      <label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
-		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
@@ -44,12 +39,20 @@
 		         <select class="form-control" name="taskLvl" id="taskLvl">
 		         	<option value="1">1</option>
 		         	<option value="2">2</option>
-		         	<option value="3">3</option>
+		         	<option selected="selected" value="3">3</option>
 		         	<option value="4">4</option>
 		         	<option value="5">5</option>
 		         </select>
 		      </div>
 		   </div>
+		   <div class="form-group" id="lockTime">
+		      <label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
+		         <span class="help-block"></span>
+		      </div>
+		   </div>
+		   
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
 		         <button id="uploadPackBtn" type="button" class="btn btn-default" disabled="disabled">上传</button>
@@ -140,6 +143,24 @@
 					<div class="progress">
 						<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 							0%
+						</div>
+					</div>
+				</div>
+				
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<!-------------------------------- 解压任务包进度条-------------------------------------------------->
+	<div id="packUnzipProgressModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">任务包解压中</h4>
+				</div>
+				<div class="modal-body">
+					<div class="progress">
+						<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+							0个/0个
 						</div>
 					</div>
 				</div>
@@ -283,6 +304,7 @@
 		};
 		/*---------------------------------------上传任务进度条显示---------------------------------------------------------------*/
 		var oTimer = null;
+		var zipTimer = null;
 		showUploadProgress = function(){
 			$("#packUploadProgressModal").modal('show');
 			oTimer = setInterval("getProgress()", 100);
@@ -296,9 +318,32 @@
 					//alert(data.percent);
 					var per = data.percent.split("%")[0];
 					$("#packUploadProgressModal .progress-bar").attr({"aria-valuenow":per,"style":"width:"+data.percent}).text(data.percent);
+					if(per == '100'){
+						window.clearInterval(oTimer);
+						showUnzipProgress();
+					}
 				}
 			});
-		}
+		};
+		showUnzipProgress = function(){
+			//$("#packUnzipProgressModal").modal('show');
+			zipTimer = setInterval("unzipProgress()", 100);
+		};
+		unzipProgress = function(){
+			$.ajax({
+				type:'get',
+				url:'${contextPath}/security/fileCount',
+				dataType:'json',
+				success:function(data){
+					var fileCount = data.fileCount;
+					var finishCount = data.finishCount;
+					var finishPer = finishCount/fileCount;
+					$("#packUploadProgressModal .modal-title").text("任务包解压中");
+					$("#packUploadProgressModal .progress-bar").attr({"aria-valuenow":finishCount,"aria-valuemax":fileCount,"style":"width:"+finishPer+"%"}).text(finishCount+"个/"+fileCount+"个");
+					
+				}
+			});
+		};
 	</script>
 </body>
 </html>
