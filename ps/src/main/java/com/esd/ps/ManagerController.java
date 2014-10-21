@@ -114,11 +114,24 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> managerPost() {
+	public Map<String, Object> managerPost(int userType,int page) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Integer> userTypeMap = new HashMap<String, Integer>();
+		userTypeMap.put("begin",((page - 1)*20));
+		userTypeMap.put("end",((page - 1)*20 + 19));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
-		for (Iterator<user> iterator = userService.selAllUsers().iterator(); iterator.hasNext();) {
+		List<user> userList = null;
+		int totle = 0;
+		if(userType == 0){
+			userList = userService.getAllUsersPages(userTypeMap);
+			totle = userService.getAllUserCount();
+		}else if(userType > 0){
+			userTypeMap.put("usertype", userType);
+			userList = userService.getAllUserPagesByUserType(userTypeMap);
+			totle = userService.getAllUserCountByUserType(userType);
+		}	
+		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
 
@@ -130,7 +143,10 @@ public class ManagerController {
 
 			list.add(trans);
 		}
+		userTypeMap.clear();
+		map.clear();
 		map.put("list", list);
+		map.put("totle", totle);
 		return map;
 	}
 

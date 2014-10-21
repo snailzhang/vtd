@@ -25,10 +25,16 @@
     from user
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
-  <select id="selAllUsers" resultMap="BaseResultMap">
+  <select id="selectAllUsers" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from user
+  </select>
+   <select id="selectAllUsersPages" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    limit #{begin},{end}
   </select>
     <select id="selectAllUsersByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
     select 
@@ -58,6 +64,23 @@
     count(user_id) count
     from user
     where username = #{username,jdbcType=VARCHAR} 
+  </select>
+  <select id="selectAllUserCount" resultType="java.lang.Integer" >
+    select 
+    count(user_id) count
+    from user
+  </select>
+   <select id="selectAllUserCountByUserType" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    select 
+    count(user_id) count
+    from user
+    where  usertype = #{usertype,jdbcType=INTEGER}
+  </select>
+  <select id="selectAllUserPagesByUserType" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where  usertype = #{usertype} limit #{begin},#{end}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from user

@@ -96,14 +96,19 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session,int page) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Integer> map1 = new HashMap<String, Integer>();
 		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		session.setAttribute("employerId", employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-		List<pack> listPack = packService.selAllByEmployerId(employerId);
+		
+		map1.put("begin",(page - 1)*20);
+		map1.put("end",((page - 1)*20 + 19));
+		map1.put("employerId",employerId);
+		List<pack> listPack = packService.getAllPackPagesByEmployerId(map1);
 		if (listPack == null) {
 			return null;
 		}
@@ -152,7 +157,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> detailpagePost(HttpSession session, int packId) {
+	public Map<String, Object> detailpagePost(int packId,int page) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		// int packId =
 		// Integer.parseInt(session.getAttribute("packId").toString());
@@ -280,7 +285,7 @@ public class EmployerController {
 				taskWithBLOBs.setTaskWav(wav);
 				taskWithBLOBs.setTaskLvl(taskLvl);
 				// 上传的包的号
-				taskWithBLOBs.setPackId(packService.selectByEmployerId(packWithBLOBs.getEmployerId()));
+				taskWithBLOBs.setPackId(packService.getNewPackIdByEmployerId(packWithBLOBs.getEmployerId()));
 				taskWithBLOBs.setTaskName(zipEntryName);
 				// 存入压缩包的层次结构
 				taskWithBLOBs.setTaskDir(taskDir);

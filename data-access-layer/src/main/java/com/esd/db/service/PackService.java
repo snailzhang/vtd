@@ -1,41 +1,54 @@
 package com.esd.db.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 
 public interface PackService {
 
-    int deleteByPrimaryKey(Integer packId);
-    
-    int deleteByName(String fileName);
+	int deleteByPrimaryKey(Integer packId);
 
-    int insert(packWithBLOBs record);
+	int deleteByName(String packName);
 
-    int insertSelective(packWithBLOBs record);
+	int insert(packWithBLOBs record);
 
-    packWithBLOBs selectByPrimaryKey(Integer packId);
-    
-    int selectByEmployerId(Integer employerId);
-    
-    List<pack>  selAllByEmployerId(Integer employerId);
+	int insertSelective(packWithBLOBs record);
 
-    int updateByPrimaryKeySelective(packWithBLOBs record);
+	packWithBLOBs selectByPrimaryKey(Integer packId);
 
-    int updateByPrimaryKeyWithBLOBs(packWithBLOBs record);
+	int getNewPackIdByEmployerId(Integer employerId);
 
-    int updateByPrimaryKey(pack record);
-    
-    int getCountPackDoing();
-    
-    int getPackLockTime(Integer packId);
-    
-    pack getPackByPackName(String packName);
-    
-    int getDownCountByPackId(Integer packId);
-    
-    String getPackNameByPackId(Integer packId);
-    
-    int getCountPackByPackName(String packName);
+	List<pack> getAllByEmployerId(Integer employerId);
+
+	int updateByPrimaryKeySelective(packWithBLOBs record);
+
+	int updateByPrimaryKeyWithBLOBs(packWithBLOBs record);
+
+	int updateByPrimaryKey(pack record);
+
+	int getCountPackDoing();
+
+	int getPackCOuntByEmployerId(Integer employerId);
+
+	int getDoingPackCountByEmployerId(Integer employerId);
+
+	int getFinishPackCountByEmployerId(Integer employerId);
+
+	int getPackLockTime(Integer packId);
+
+	pack getPackByPackName(String packName);
+
+	int getDownCountByPackId(Integer packId);
+
+	String getPackNameByPackId(Integer packId);
+
+	int getCountPackByPackName(String packName);
+
+	List<pack> getAllPackPagesByEmployerId(Map<String, Integer> map);
+
+	List<pack> getDoingPackPagesByEmployerId(Map<String, Integer> map);
+
+	List<pack> getFinishPackPagesByEmployerId(Map<String, Integer> map);
 }

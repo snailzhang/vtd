@@ -35,7 +35,7 @@
 		from pack
 		where pack_id = #{packId,jdbcType=INTEGER}
 	</select>
-	<select id="selectByEmployerId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	<select id="selectNewPackIdByEmployerId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		pack_id
 		from pack
@@ -59,11 +59,29 @@
 		from pack
 		where pack_status = 0
 	</select>
+	<select id="selectPackCOuntByEmployerId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		Count(pack_id) total
+		from pack
+		where employer_id = #{employerId,jdbcType=INTEGER}
+	</select>
+	<select id="selectDoingPackCountByEmployerId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		Count(pack_id) total
+		from pack
+		where employer_id = #{employerId,jdbcType=INTEGER} and pack_status = 0
+	</select>
+	<select id="selectFinishPackCountByEmployerId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		Count(pack_id) total
+		from pack
+		where employer_id = #{employerId,jdbcType=INTEGER} and pack_status = 1
+	</select>
 	<select id="selectPackLockTime" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		pack_lock_time
 		from pack
-		WHERE pack_id = #{packId,jdbcType=INTEGER}
+		WHERE pack_id = #{packId,jdbcType=INTEGER} 
 	</select>
 	<select id="selectPackNameByPackId" resultType="java.lang.String" parameterType="java.lang.Integer">
 		select
@@ -82,6 +100,24 @@
 		down_count
 		from pack
 		WHERE pack_id = #{packId,jdbcType=INTEGER}
+	</select>
+	<select id="selectAllPackPagesByEmployerId" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from pack
+		where employer_id = #{employerId} ORDER BY pack_id DESC limit #{begin},#{end}
+	</select>
+	<select id="selectDoingPackPagesByEmployerId" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from pack
+		where employer_id = #{employerId} and pack_status = false ORDER BY pack_id DESC limit #{begin},#{end}
+	</select>
+	<select id="selectFinishPackPagesByEmployerId" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from pack
+		where employer_id = #{employerId} and pack_status = true ORDER BY pack_id DESC limit #{begin},#{end}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from pack

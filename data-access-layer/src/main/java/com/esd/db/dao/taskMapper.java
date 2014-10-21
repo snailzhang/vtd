@@ -1,6 +1,7 @@
 package com.esd.db.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
@@ -43,9 +44,19 @@ public interface taskMapper {
     
     int selectTaskCountByPackId(Integer packId);
     
+    int selectDoingTaskCountByPackId(Integer packId);
+    
+    int selectFinishTaskCountByPackId(Integer packId);
+    
     List<taskWithBLOBs> selectFinishTaskByPackId(Integer packId);
     
     String selectTaskDirByTaskId(Integer taskId);
     
     List<taskWithBLOBs> selectDoingTaskByWorkerId(Integer workerId);
+    
+    List<task> selectAllTaskPagesByPackId(Map<String, Integer> map);
+    
+    List<task> selectDoingTaskPagesByPackId(Map<String, Integer> map);
+    
+    List<task> selectFinishTaskPagesByPackId(Map<String, Integer> map);
 }

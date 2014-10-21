@@ -1,6 +1,7 @@
 package com.esd.db.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -131,10 +132,52 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.selectTaskDirByTaskId(taskId);
 	}
 
+	/**
+	 * 工作者正在进行的任务 By WorkerId
+	 */
 	@Override
 	public List<taskWithBLOBs> getDoingTaskByWorkerId(Integer workerId) {
-		
+
 		return taskMapper.selectDoingTaskByWorkerId(workerId);
+	}
+
+	/**
+	 * 全部的任务分页 By PackId
+	 */
+	@Override
+	public List<task> getAllTaskPagesByPackId(Map<String, Integer> map) {
+
+		return taskMapper.selectAllTaskPagesByPackId(map);
+	}
+
+	/**
+	 * 未完成的任务分页 By PackId
+	 */
+	@Override
+	public List<task> getDoingTaskPagesByPackId(Map<String, Integer> map) {
+
+		return taskMapper.selectDoingTaskPagesByPackId(map);
+	}
+
+	/**
+	 * 已完成的任务分页 By PackId
+	 */
+	@Override
+	public List<task> getFinishTaskPagesByPackId(Map<String, Integer> map) {
+
+		return taskMapper.selectFinishTaskPagesByPackId(map);
+	}
+
+	@Override
+	public int getDoingTaskCountByPackId(Integer packId) {
+		
+		return taskMapper.selectDoingTaskCountByPackId(packId);
+	}
+
+	@Override
+	public int getFinishTaskCountByPackId(Integer packId) {
+
+		return taskMapper.selectFinishTaskCountByPackId(packId);
 	}
 
 }

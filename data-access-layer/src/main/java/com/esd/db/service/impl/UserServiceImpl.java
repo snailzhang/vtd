@@ -1,6 +1,7 @@
 package com.esd.db.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,9 +39,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<user> selAllUsers() {
+	public List<user> getAllUsers() {
 
-		return userMapper.selAllUsers();
+		return userMapper.selectAllUsers();
 	}
 
 	@Override
@@ -71,6 +72,30 @@ public class UserServiceImpl implements UserService {
 	public user getAllUsersByUserName(String username) {
 		
 		return userMapper.selectAllUsersByUserName(username);
+	}
+
+	@Override
+	public int getAllUserCount() {
+		
+		return userMapper.selectAllUserCount();
+	}
+
+	@Override
+	public int getAllUserCountByUserType(Integer userType) {
+		
+		return userMapper.selectAllUserCountByUserType(userType);
+	}
+
+	@Override
+	public List<user> getAllUserPagesByUserType(Map<String, Integer> map) {
+		
+		return userMapper.selectAllUserPagesByUserType(map);
+	}
+
+	@Override
+	public List<user> getAllUsersPages(Map<String, Integer> map) {
+		
+		return userMapper.selectAllUsersPages(map);
 	}
 
 }
