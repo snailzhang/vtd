@@ -96,7 +96,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session,int page) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session,int page,int packStuts) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> map1 = new HashMap<String, Integer>();
 		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
@@ -105,10 +105,19 @@ public class EmployerController {
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
 		
-		map1.put("begin",(page - 1)*20);
-		map1.put("end",((page - 1)*20 + 19));
+		map1.put("begin",(page - 1)*Constants.ROW);
+		map1.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
 		map1.put("employerId",employerId);
-		List<pack> listPack = packService.getAllPackPagesByEmployerId(map1);
+		List<pack> listPack=null;
+		int totle = 0;
+		if(packStuts == 0){
+			listPack = packService.getDoingPackPagesByEmployerId(map1);
+			totle = packService.getDoingPackCountByEmployerId(employerId);
+		}else{
+			listPack = packService.getFinishPackPagesByEmployerId(map1);
+			totle = packService.getFinishPackCountByEmployerId(employerId);
+		}
+		
 		if (listPack == null) {
 			return null;
 		}
@@ -130,8 +139,12 @@ public class EmployerController {
 
 			list.add(packTrans);
 		}
+		map1.clear();
+		map.clear();
+		map.put("totle", totle);
+		map.put("totlePage",Math.ceil((double)totle/(double)Constants.ROW));
 		map.put("list", list);
-		logger.debug("list:{}", list);
+		logger.debug("list:{},totle:{},totlePages",list,totle,Math.ceil((double)totle/(double)Constants.ROW));
 		return map;
 	}
 
@@ -157,13 +170,23 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> detailpagePost(int packId,int page) {
+	public Map<String, Object> detailpagePost(int packId,int page,int taskStuts) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		// int packId =
-		// Integer.parseInt(session.getAttribute("packId").toString());
+		Map<String, Integer> map1 = new HashMap<String, Integer>();
+		map1.put("begin",(page - 1)*Constants.ROW);
+		map1.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
+		map1.put("packId",packId);
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		List<task> listTask = taskService.getAllTaskByPackId(packId);
+		List<task> listTask = null;
+		if(taskStuts == 2){
+			listTask = taskService.getAllTaskPagesByPackId(map1);
+		}else if (taskStuts == 0){
+			listTask = taskService.getDoingTaskPagesByPackId(map1);
+		}else if(taskStuts == 1){
+			listTask = taskService.getFinishTaskPagesByPackId(map1);
+		}
 		if (listTask == null) {
 			return null;
 		}

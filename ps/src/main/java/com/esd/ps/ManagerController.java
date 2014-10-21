@@ -115,6 +115,7 @@ public class ManagerController {
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> managerPost(int userType,int page) {
+		logger.debug("userType:{}",userType);
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> userTypeMap = new HashMap<String, Integer>();
 		userTypeMap.put("begin",((page - 1)*Constants.ROW));
