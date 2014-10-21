@@ -21,12 +21,24 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<div class="container">
+		
 		<table class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<th>序号</th>
 					<th>姓名</th>
-					<th>用户组</th>
+					<th class="dropdown">
+						<a id="userType" data-target="#" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							用户组<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="userType">
+							<li><a href="#" onClick="chooseUserType(0,1)">全部</a></li>
+							<li><a href="#" onClick="chooseUserType(1,1)">管理员</a></li>
+							<li><a href="#" onClick="chooseUserType(2,1)">发包商</a></li>
+							<li><a href="#" onClick="chooseUserType(3,1)">质检员</a></li>
+							<li><a href="#" onClick="chooseUserType(4,1)">工作者</a></li>
+						</ul>
+					</th>
 					<th>创建时间</th>
 					<th>用户状态</th>
 				</tr>
@@ -36,13 +48,29 @@
 		<form role="form" class="form-signin" action="${contextPath}/security/addUser" method="get">
 			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
 		</form>
+		
 	</div>
 	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			chooseUserType(0,1);
+			var utDropdownOpen = false;
+			$("#userType").click(function(){
+				var utd = $(this);
+				if(utDropdownOpen){
+					utd.parent(".dropdown").removeClass("open");
+					utDropdownOpen = false;
+				}else{
+					utd.parent(".dropdown").addClass("open");
+					utDropdownOpen = true;
+				}
+			});
+		});
+		chooseUserType = function(userType,pageNum){
 			$.ajax({
 				type:'POST',
+				data:{"userType":userType,"page":pageNum},
 				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){
@@ -69,7 +97,7 @@
 					
 				}
 			});
-		});
+		}
 	</script>
 </body>
 </html>

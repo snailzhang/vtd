@@ -49,6 +49,7 @@
 		      <label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
+		         <span class="input-group-addon">小时</span>
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
@@ -132,7 +133,7 @@
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-	<!-------------------------------- 上传任务包进度条-------------------------------------------------->
+	<!-------------------------------- 进度条-------------------------------------------------->
 	<div id="packUploadProgressModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -141,26 +142,11 @@
 				</div>
 				<div class="modal-body">
 					<div class="progress">
-						<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+						<div  id="uploadProgress" class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 							0%
 						</div>
-					</div>
-				</div>
-				
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-	<!-------------------------------- 解压任务包进度条-------------------------------------------------->
-	<div id="packUnzipProgressModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">任务包解压中</h4>
-				</div>
-				<div class="modal-body">
-					<div class="progress">
-						<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-							0个/0个
+						<div id="unzipProgress" class="progress-bar progress-bar-success progress-bar-striped active"  role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="0" style="width: 0%">
+							0
 						</div>
 					</div>
 				</div>
@@ -168,6 +154,7 @@
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
+	
 	<script type="text/javascript">
 		if('${match}' == '1'){
 			alert("文件已存在");
@@ -306,6 +293,7 @@
 		var oTimer = null;
 		var zipTimer = null;
 		showUploadProgress = function(){
+			$("#unzipProgress").hide();
 			$("#packUploadProgressModal").modal('show');
 			oTimer = setInterval("getProgress()", 100);
 		};
@@ -317,9 +305,10 @@
 				success:function(data){
 					//alert(data.percent);
 					var per = data.percent.split("%")[0];
-					$("#packUploadProgressModal .progress-bar").attr({"aria-valuenow":per,"style":"width:"+data.percent}).text(data.percent);
+					$("#uploadProgress").attr({"aria-valuenow":per,"style":"width:"+data.percent}).text(data.percent);
 					if(per == '100'){
 						window.clearInterval(oTimer);
+						$("#uploadProgress").hide();
 						showUnzipProgress();
 					}
 				}
@@ -327,6 +316,8 @@
 		};
 		showUnzipProgress = function(){
 			//$("#packUnzipProgressModal").modal('show');
+			
+			$("#unzipProgress").show();
 			zipTimer = setInterval("unzipProgress()", 100);
 		};
 		unzipProgress = function(){
@@ -337,9 +328,10 @@
 				success:function(data){
 					var fileCount = data.fileCount;
 					var finishCount = data.finishCount;
-					var finishPer = finishCount/fileCount;
+					var finishPer = finishCount/fileCount*100;
+					
 					$("#packUploadProgressModal .modal-title").text("任务包解压中");
-					$("#packUploadProgressModal .progress-bar").attr({"aria-valuenow":finishCount,"aria-valuemax":fileCount,"style":"width:"+finishPer+"%"}).text(finishCount+"个/"+fileCount+"个");
+					$("#unzipProgress").attr({"aria-valuenow":finishCount,"aria-valuemax":fileCount,"style":"width:"+finishPer+"%"}).text(finishCount+"个/"+fileCount+"个");
 					
 				}
 			});
