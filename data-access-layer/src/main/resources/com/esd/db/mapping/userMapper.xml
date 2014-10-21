@@ -30,7 +30,7 @@
     <include refid="Base_Column_List" />
     from user
   </select>
-   <select id="selectAllUsersPages" resultMap="BaseResultMap" parameterType="java.util.Map">
+   <select id="selectAllUsersPages" resultMap="BaseResultMap" parameterMap="java.util.Map">
     select 
     <include refid="Base_Column_List" />
     from user
@@ -76,7 +76,7 @@
     from user
     where  usertype = #{usertype,jdbcType=INTEGER}
   </select>
-  <select id="selectAllUserPagesByUserType" resultMap="BaseResultMap" parameterType="java.util.Map">
+  <select id="selectAllUserPagesByUserType" resultMap="BaseResultMap" parameterMap="java.util.Map">
     select 
     <include refid="Base_Column_List" />
     from user
