@@ -238,7 +238,8 @@ public class EmployerController {
 					}
 				}
 			}
-			
+			fileCount=0;
+			finishCount=0;
 			// 从临时文件取出要解压的文件上传TaskService
 			ZipFile zip = new ZipFile(url + "/" + packName);
 			fileCount=zip.size();
