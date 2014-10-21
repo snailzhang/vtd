@@ -117,15 +117,15 @@ public class ManagerController {
 	public Map<String, Object> managerPost(int userType,int page) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> userTypeMap = new HashMap<String, Integer>();
-		userTypeMap.put("begin",((page - 1)*20));
-		userTypeMap.put("end",((page - 1)*20 + 19));
+		userTypeMap.put("begin",((page - 1)*Constants.ROW));
+		userTypeMap.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		List<user> userList = null;
-		int totle = 0;
+		int totle = 0,totlePage = 0;
 		if(userType == 0){
 			userList = userService.getAllUsersPages(userTypeMap);
-			totle = userService.getAllUserCount();
+			totle = userService.getAllUserCount();			
 		}else if(userType > 0){
 			userTypeMap.put("usertype", userType);
 			userList = userService.getAllUserPagesByUserType(userTypeMap);
@@ -145,8 +145,10 @@ public class ManagerController {
 		}
 		userTypeMap.clear();
 		map.clear();
+		totlePage = (int)Math.ceil((double)totle/(double)Constants.ROW);
 		map.put("list", list);
 		map.put("totle", totle);
+		map.put("totlePage", totlePage);
 		return map;
 	}
 

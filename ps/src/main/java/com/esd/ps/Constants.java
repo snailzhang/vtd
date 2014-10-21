@@ -26,4 +26,5 @@ public interface Constants {
 	public static final String USER_WORKERPHONE="workerPhone";//工作者电话号
 	public static final String USER_DIR_TEMP="user.dir.temp";//临时文件目录
 	public static final String USER_DIR_TEMP_NAME="temp";//临时文件目录名
+	public static final int ROW=20;//分页行数
 }
