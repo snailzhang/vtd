@@ -77,7 +77,7 @@ public class EmployerController {
 	private TaskService taskService;
 	@Autowired
 	private WorkerRecordService workerRecordService;
-
+	int finishCount=0,fileCount=0;
 	/**
 	 * 登录发包商页
 	 * 
@@ -241,10 +241,8 @@ public class EmployerController {
 			
 			// 从临时文件取出要解压的文件上传TaskService
 			ZipFile zip = new ZipFile(url + "/" + packName);
-
+			fileCount=zip.size();
 			InputStream in = null;
-			int finishCount=0;
-			fileCount(zip.size(),finishCount);
 			logger.debug("zip:{}",zip.size());
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
 				
@@ -252,7 +250,6 @@ public class EmployerController {
 				String taskDir = "";
 				if (entry.isDirectory()) {
 					finishCount++;
-					fileCount(zip.size(),finishCount);
 					continue;
 				}
 				String zipEntryName = entry.getName();
@@ -268,7 +265,6 @@ public class EmployerController {
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
 					noMatch = zipEntryName;
 					finishCount++;
-					fileCount(zip.size(),finishCount);
 					continue;
 				}
 				in = zip.getInputStream(entry);
@@ -291,7 +287,6 @@ public class EmployerController {
 				taskWithBLOBs.setTaskUpload(false);
 				if(taskService.insert(taskWithBLOBs) ==1){
 					finishCount++;
-					fileCount(zip.size(),finishCount);
 				}else{
 					
 				}
@@ -313,12 +308,13 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/fileCount", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> fileCount(int fileCount,int finishCount){
+	public Map<String, Object> fileCount(){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("fileCount", fileCount);
 		map.put("finishCount", finishCount);
 		return map;
 	}
+	
 	/**
 	 * 发包商下载已完成的任务包(zip格式,原包目录,wav,TAG,TextGrid文件)
 	 * 

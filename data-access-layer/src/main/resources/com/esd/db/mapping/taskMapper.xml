@@ -73,7 +73,13 @@
 		select
 		<include refid="Base_Column_List" />
 		from task
-		where pack_id = #{packId,jdbcType=INTEGER} order by task_id DESC
+		where pack_id = #{packId,jdbcType=INTEGER} order by task_id DESC 
+	</select>
+	<select id="selectTaskPagesByMap" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from task
+		where pack_id = #{packId} order by task_id DESC limit #{begin},#{end}
 	</select>
 	<select id="selectTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
