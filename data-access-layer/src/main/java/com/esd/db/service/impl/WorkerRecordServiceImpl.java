@@ -134,6 +134,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(map);
 	}
 
+	@Override
+	public int getDownPackNameCountByworkerIdGroupByDownPackName(Integer workerId) {
+		
+		return workerRecordMapper.selectDownPackNameCountByworkerIdGroupByDownPackName(workerId);
+	}
+
 	
 
 }

@@ -104,6 +104,13 @@
 		where worker_id =
 		#{workerId} group by down_pack_name limit #{begin},#{end}
 	</select>
+	<select id="selectDownPackNameCountByworkerIdGroupByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		count(down_pack_name) count
+		from worker_record
+		where worker_id =
+		#{workerId} group by down_pack_name
+	</select>
 	<select id="selectTaskCountByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select
 		count(record_id) count

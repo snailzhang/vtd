@@ -46,4 +46,6 @@ public interface WorkerRecordService {
 	String getDownUrlByDownPackName(String downPackName);
 	
 	List<workerRecord> getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
+	
+	int getDownPackNameCountByworkerIdGroupByDownPackName(Integer workerId);
 }

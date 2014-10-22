@@ -45,5 +45,7 @@ public interface workerRecordMapper {
 	
 	String  selectDownUrlByDownPackName(String downPackName);
 	
+	int selectDownPackNameCountByworkerIdGroupByDownPackName(Integer workerId);
+	
 	List<workerRecord> selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
 }

@@ -204,6 +204,12 @@ public class WorkerController {
 			}
 			list.add(workerDownPackHistoryTrans);
 		}
+		pageMap.clear();
+		map.clear();
+		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId);
+		int totlePage = (int)Math.ceil((double)totle/(double)Constants.ROW);
+		map.put("totle", totle);
+		map.put("totlePage", totlePage);
 		map.put("list", list);
 		return map;
 	}
