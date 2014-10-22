@@ -64,7 +64,10 @@
 							var packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
 							if(item.packStatu == 0){
 								ps = "未完成";
-								downloadTD = "<td><a class='downloadPack' onClick='downloadPack("+item.downPackName+")'>下载</a></td>";
+								var pName = "";
+								 pName= item.downPackName;
+								//pName = pName.substring(0,item.downPackName.indexOf(".zip"));
+								downloadTD = "<td><a class='downloadPack' onClick='downloadPack(\""+pName+"\")'>下载</a></td>";
 								packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
 							}else if(item.packStatu == 1){
 								ps = "已完成";
@@ -116,7 +119,7 @@
 							$.each(data.list,function(i,item){
 								var downloadTD = "<td></td>";
 								if(isf == 0){
-									downloadTD = "<td><a onClick='downloadTask("+item.taskName+")'>下载</a></td>";
+									downloadTD = "<td><a onClick='downloadTask(\""+item.taskName+"\")'>下载</a></td>";
 								}
 								thisTD.append(
 									"<tr>"+
@@ -147,8 +150,8 @@
 				data:{"downPackName":downPackName},
 				dataType:'json',
 				success:function(data){
-					if(data.wrong != ""){
-						window.open(data.wrong);
+					if(data.wrongPath != ""){
+						window.open(data.wrongPath);
 					}
 				}
 			});
@@ -161,8 +164,8 @@
 				data:{"taskName":taskName},
 				dataType:'json',
 				success:function(data){
-					if(data.wrong != ""){
-						window.open(data.wrong);
+					if(data.wrongPath != ""){
+						window.open(data.wrongPath);
 					}
 				}
 			});

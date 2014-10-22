@@ -25,6 +25,7 @@
 		      <label for="managerName" class="col-sm-2 control-label">管理员名称：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="managerName" id="managerName" placeholder="请输入管理员名称">
+		      	<input type="hidden" class="form-control" name="userRegisted" id="" value="${userRegisted}">
 		      </div>
 		   </div>
 		   <div class="form-group">

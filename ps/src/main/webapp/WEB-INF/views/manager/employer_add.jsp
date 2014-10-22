@@ -25,6 +25,7 @@
 		      <label for="employerName" class="col-sm-2 control-label">发包商名称：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="employerName" id="employerName" placeholder="请输入发包商名称">
+		         <input type="hidden" class="form-control" name="userRegisted" id="" value="${userRegisted}">
 		      </div>
 		   </div>
 		   <div class="form-group">

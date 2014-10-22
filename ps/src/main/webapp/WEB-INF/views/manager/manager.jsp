@@ -45,6 +45,7 @@
 			</thead>
 			<tbody></tbody>
 		</table>
+		<ul class="pagination"></ul>
 		<form role="form" class="form-signin" action="${contextPath}/security/addUser" method="get">
 			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
 		</form>
@@ -53,9 +54,12 @@
 	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
+		var utDropdownOpen = false;
+		var nowUserType = 0;
+		var nowPage = 0;
 		$(document).ready(function(){
 			chooseUserType(0,1);
-			var utDropdownOpen = false;
+			
 			$("#userType").click(function(){
 				var utd = $(this);
 				if(utDropdownOpen){
@@ -68,17 +72,21 @@
 			});
 		});
 		chooseUserType = function(userType,pageNum){
+			//nowPage = pageNum;
+			//nowUserType = userType;
 			$.ajax({
 				type:'POST',
 				data:{"userType":userType,"page":pageNum},
 				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){
-					$("tbody").append("");
+					$("tbody").empty();
+					utDropdownOpen = false;
 					if(data.list == ""){
 						$("tbody").empty();
 						$("tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
 					}else{
+						var pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";
 							if(item.userStatus)status = "可用";
@@ -91,6 +99,22 @@
 									"<td>"+status+"</td>"+
 								"</tr>"
 							);
+							$(".pagination").empty();
+							for(var i=1;i<pageTotal+1;i++){
+								if(i==pageNum){
+									$(".pagination").append(
+										"<li class='active'><a onClick='chooseUserType("+userType+","+pageNum+")'>"+
+										i+
+										"</a></li>"
+									);
+								}else{
+									$(".pagination").append(
+										"<li><a onClick='chooseUserType("+userType+","+pageNum+")'>"+
+										i+
+										"</a></li>"
+									);
+								}
+							}
 						});
 					}
 					
