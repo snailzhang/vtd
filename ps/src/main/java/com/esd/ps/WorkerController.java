@@ -229,7 +229,12 @@ public class WorkerController {
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskStatu(workerRecord.getTaskStatu());
-			workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
+			if(workerRecord.getTaskUploadTime() == null){
+				workerRecordTrans.setTaskUploadTime("");
+			}else{
+				workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
+			}
+			
 
 			list.add(workerRecordTrans);
 		}
@@ -263,6 +268,7 @@ public class WorkerController {
 			zipFile.createNewFile();
 			int workerId = Integer.parseInt(session.getAttribute("workerId").toString());
 			List<taskWithBLOBs> list = taskService.getDoingTaskByWorkerId(workerId);
+			logger.debug("workerId:{},list1:{}",workerId,list);
 			this.wrongPath(zipFile, list);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -428,13 +434,16 @@ public class WorkerController {
 		}
 		List<String> listMath = new ArrayList<String>();
 		List<String> listAll = new ArrayList<String>();
+		for (int i = 0; i < files.length; i++) {
+			listAll.add(files[i].getOriginalFilename());
+		}
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			String taskName = task.getTaskName();
-			listAll.add(taskName);
+			
 			for (int i = 0; i < files.length; i++) {
 				try {
-					files[i].getInputStream();
+					files[i].getInputStream();					
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
@@ -545,6 +554,7 @@ public class WorkerController {
 	 * @return
 	 */
 	public String wrongPath(File zipFile, List<taskWithBLOBs> list) {
+		logger.debug("list2:{}",list);
 		try {
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));

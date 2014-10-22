@@ -119,7 +119,7 @@ public class ManagerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> userTypeMap = new HashMap<String, Integer>();
 		userTypeMap.put("begin",((page - 1)*Constants.ROW));
-		userTypeMap.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
+		userTypeMap.put("end",((page - 1)*Constants.ROW + Constants.ROW));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		List<user> userList = null;
@@ -244,7 +244,7 @@ public class ManagerController {
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView("redirect:security/manager");
+		return new ModelAndView("redirect:manager");
 	}
 
 	/**
@@ -263,10 +263,10 @@ public class ManagerController {
 		String address=null;
 		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address="redirect:security/employer";
+			address="redirect:employer";
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address="redirect:security/manager";
+			address="redirect:manager";
 		}	
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
@@ -372,10 +372,10 @@ public class ManagerController {
 			String address=null;
 			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-				address="redirect:security/worker";
+				address="redirect:worker";
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address="redirect:security/manager";
+				address="redirect:manager";
 			}
 			
 			if (!workerImage.isEmpty()) {

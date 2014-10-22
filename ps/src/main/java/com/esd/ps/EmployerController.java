@@ -101,10 +101,11 @@ public class EmployerController {
 		Map<String, Integer> map1 = new HashMap<String, Integer>();
 		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
+		logger.debug("employerId:{}",employerId);
 		session.setAttribute("employerId", employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-		
+
 		map1.put("begin",(page - 1)*Constants.ROW);
 		map1.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
 		map1.put("employerId",employerId);
@@ -173,19 +174,23 @@ public class EmployerController {
 	public Map<String, Object> detailpagePost(int packId,int page,int taskStuts) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> map1 = new HashMap<String, Integer>();
+
 		map1.put("begin",(page - 1)*Constants.ROW);
 		map1.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
 		map1.put("packId",packId);
-		
+		int totle = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		List<task> listTask = null;
 		if(taskStuts == 2){
 			listTask = taskService.getAllTaskPagesByPackId(map1);
+			totle =  taskService.getTaskCountByPackId(packId);
 		}else if (taskStuts == 0){
 			listTask = taskService.getDoingTaskPagesByPackId(map1);
+			totle = taskService.getDoingTaskCountByPackId(packId);
 		}else if(taskStuts == 1){
 			listTask = taskService.getFinishTaskPagesByPackId(map1);
+			totle = taskService.getFinishTaskCountByPackId(packId);
 		}
 		if (listTask == null) {
 			return null;
@@ -200,7 +205,11 @@ public class EmployerController {
 
 			list.add(taskTrans);
 		}
-		
+		map1.clear();
+		map.clear();
+		int totlePage = (int)Math.ceil((double)totle/(double)Constants.ROW);
+		map.put("totlePage", totlePage);
+		map.put("totle", totle);
 		map.put("list", list);
 		return map;
 	}
