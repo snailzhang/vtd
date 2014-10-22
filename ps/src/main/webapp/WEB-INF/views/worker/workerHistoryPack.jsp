@@ -42,56 +42,15 @@
 					</thead>
 					<tbody id="packHistoryTable" role="tablist" aria-multiselectable="true"></tbody>
 				</table>
+				<ul class="pagination"></ul>
 			</div>
 			
 		</div>
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			/*******************************加载页面**************************************************/
-			$.ajax({
-				type:'POST',
-				url:'${contextPath}/security/workerHistoryPack',
-				dataType:'json',
-				success:function(data){
-					if(data.list == ""){
-						$("tbody").empty();
-						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
-					}else{
-						$.each(data.list,function(i,item){
-							var ps = "";
-							var downloadTD = "<td></td>";
-							var packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
-							if(item.packStatu == 0){
-								ps = "未完成";
-								var pName = "";
-								 pName= item.downPackName;
-								//pName = pName.substring(0,item.downPackName.indexOf(".zip"));
-								downloadTD = "<td><a class='downloadPack' onClick='downloadPack(\""+pName+"\")'>下载</a></td>";
-								packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
-							}else if(item.packStatu == 1){
-								ps = "已完成";
-							}else if(item.packStatu == 2){
-								ps = "已超时";
-							}
-							$("tbody").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>"+
-									"<td>"+item.downTime+"</td>"+
-									"<td>"+item.taskCount+"</td>"+
-									"<td>"+ps+"</td>"+
-									downloadTD+
-								"</tr>"+packDetailTR
-							);
-						});
-					}
-					
-				}
-			});
 			
-			
-			
+			loadPackListHistory(1);
 			/*******************************刷新按钮**************************************************/
 			$("#refreshPage").click(function(){
 				window.location.reload();
@@ -142,6 +101,66 @@
 				//thisTD.text(dpn+isf);
 			});
 		});
+		/*******************************加载任务包**************************************************/
+		loadPackListHistory = function(pagNum){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/workerHistoryPack',
+				data:{"page":pagNum},
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("tbody").empty();
+						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
+					}else{
+						$.each(data.list,function(i,item){
+							var ps = "";
+							var downloadTD = "<td></td>";
+							var packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
+							if(item.packStatu == 0){
+								ps = "未完成";
+								var pName = "";
+								 pName= item.downPackName;
+								//pName = pName.substring(0,item.downPackName.indexOf(".zip"));
+								downloadTD = "<td><a class='downloadPack' onClick='downloadPack(\""+pName+"\")'>下载</a></td>";
+								packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
+							}else if(item.packStatu == 1){
+								ps = "已完成";
+							}else if(item.packStatu == 2){
+								ps = "已超时";
+							}
+							$("tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>"+
+									"<td>"+item.downTime+"</td>"+
+									"<td>"+item.taskCount+"</td>"+
+									"<td>"+ps+"</td>"+
+									downloadTD+
+								"</tr>"+packDetailTR
+							);
+						});
+						var pageTotal = data.totlePage;
+						for(var i=1;i<pageTotal+1;i++){
+							if(i==pageNum){
+								$(".pagination").append(
+									"<li class='active'><a onClick='loadPackListHistory("+i+")'>"+
+									i+
+									"</a></li>"
+								);
+							}else{
+								$(".pagination").append(
+									"<li><a onClick='loadPackListHistory("+i+")'>"+
+									i+
+									"</a></li>"
+								);
+							}
+						}
+					}
+					
+				}
+			});
+		};
 		/*******************************下载任务包**************************************************/
 		downloadPack = function(downPackName){
 			$.ajax({

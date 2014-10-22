@@ -48,9 +48,12 @@
 		   <div class="form-group" id="lockTime">
 		      <label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
-		         <span class="input-group-addon">小时</span>
-		         <span class="help-block"></span>
+		      	<div class="input-group">
+			         <input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
+			         <span class="input-group-addon">小时</span>
+			         <span class="help-block"></span>
+		        </div>
+		        
 		      </div>
 		   </div>
 		   
@@ -86,6 +89,7 @@
 					</thead>
 					<tbody></tbody>
 				</table>
+				<ul class="pagination"></ul>
 			</div>
 			<div class="tab-pane" id="packComplete">
 				<table class="table table-striped table-bordered">
@@ -102,6 +106,7 @@
 					</thead>
 					<tbody></tbody>
 				</table>
+				<ul class="pagination"></ul>
 			</div>
 		</div>
 		
@@ -126,6 +131,7 @@
 						</thead>
 						<tbody id="packDetailTBody"></tbody>
 					</table>
+					<ul class="pagination"></ul>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -160,75 +166,9 @@
 			alert("文件已存在");
 		}
 		$(document).ready(function(){
-			$.ajax({
-				type:'POST',
-				url:'${contextPath}/security/employer',
-				dataType:'json',
-				success:function(data){
-					$("tbody").append("");
-					if(data.list == ""){
-						$("#packUncomplete tbody,#packComplete tbody").empty();
-						$("#packUncomplete tbody,#packComplete tbody").append("<tr class='text-danger'><td>无内容</td></tr>");
-					}else{
-						$.each(data.list,function(i,item){
-							if(item.packLockTime == null){
-								item.packLockTime = "";
-							}
-							var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
-							var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
-							var downloadPack = "<td></td>";
-							if(item.finishTaskCount != 0){
-								downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
-							}
-							if(item.packStatus == 0){//判断任务包的状态为未完成
-								$("#packUncomplete tbody").append(
-									"<tr>"+
-										"<td>"+(i+1)+"</td>"+
-										"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
-										"<td>"+item.taskCount+"</td>"+
-										"<td>"+surplusTask+"</td>"+
-										"<td>"+item.finishTaskCount+"</td>"+
-										"<td>"+finishTaskRatio+"%</td>"+
-										"<td>"+item.downCount+"</td>"+
-										"<td>"+item.packLockTime+"小时</td>"+
-										"<td>"+item.createTime+"</td>"+
-										downloadPack+
-									"</tr>"
-								);
-							}else{
-								$("#packComplete tbody").append(
-									"<tr>"+
-										"<td>"+(i+1)+"</td>"+
-										"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
-										"<td>"+item.taskCount+"</td>"+
-										"<td>"+item.DownCount+"</td>"+
-										"<td>"+item.packLockTime+"小时</td>"+
-										"<td>"+item.createTime+"</td>"+
-										downloadPack+
-									"</tr>"
-								);
-							}
-							
-						});
-					}
-				}
-			});
+			loadUnCompletePackList(1);
+			loadCompletePackList(1);
 			
-			/*---------------------------------------下载任务包---------------------------------------------------------------*/
-			downloadPackFn = function(packId){
-				$.ajax({
-					type:'GET',
-					url:'${contextPath}/security/downPack',
-					data:{"packId":packId},
-					dataType:'json',
-					success:function(data){
-						if(data.wrongPath != ""){
-							window.open(data.wrongPath);
-							window.location.reload();
-						}
-					}
-				});
-			};
 			/*---------------------------------------上传文件check-------------------------------------------------------------------*/
 			var fileReady = false;
 			checkSubBtnStaus = function(){
@@ -258,13 +198,138 @@
 				formName.submit();
 			});
 		});
+		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
+		loadUnCompletePackList = function(pageNum){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/employer',
+				data:{"packStuts":0,"page":pageNum},
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("#packUncomplete tbody").empty();
+						$("#packUncomplete tbody").append("<tr class='text-danger'><td colspan='10'>无内容</td></tr>");
+					}else{
+						$.each(data.list,function(i,item){
+							if(item.packLockTime == null){
+								item.packLockTime = "";
+							}
+							var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
+							var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
+							var downloadPack = "<td></td>";
+							if(item.finishTaskCount != 0){
+								downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+							}
+							$("#packUncomplete tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+									"<td>"+item.taskCount+"</td>"+
+									"<td>"+surplusTask+"</td>"+
+									"<td>"+item.finishTaskCount+"</td>"+
+									"<td>"+finishTaskRatio+"%</td>"+
+									"<td>"+item.downCount+"</td>"+
+									"<td>"+item.packLockTime+"小时</td>"+
+									"<td>"+item.createTime+"</td>"+
+									downloadPack+
+								"</tr>"
+							);
+						});
+						var pageTotal = data.totlePage;
+						for(var i=1;i<pageTotal+1;i++){
+							if(i==pageNum){
+								$("#packUncomplete .pagination").append(
+									"<li class='active'><a onClick='loadUnCompletePackList("+i+")'>"+
+									i+
+									"</a></li>"
+								);
+							}else{
+								$("#packUncomplete .pagination").append(
+									"<li><a onClick='loadUnCompletePackList("+i+")'>"+
+									i+
+									"</a></li>"
+								);
+							}
+						}
+					}
+				}
+			});
+		};
+		/*---------------------------------------请求已完成任务包列表-------------------------------------------------------------------*/
+		loadCompletePackList = function(pageNum){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/employer',
+				data:{"packStuts":1,"page":pageNum},
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("#packComplete tbody").empty();
+						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='7'>无内容</td></tr>");
+					}else{
+						$.each(data.list,function(i,item){
+							if(item.packLockTime == null){
+								item.packLockTime = "";
+							}
+							var downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+							$("#packComplete tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+									"<td>"+item.taskCount+"</td>"+
+									"<td>"+item.DownCount+"</td>"+
+									"<td>"+item.packLockTime+"小时</td>"+
+									"<td>"+item.createTime+"</td>"+
+									downloadPack+
+								"</tr>"
+							);
+						});
+						var pageTotal = data.totlePage;
+						for(var i=1;i<pageTotal+1;i++){
+							if(i==pageNum){
+								$("#packComplete .pagination").append(
+									"<li class='active'><a onClick='loadUnCompletePackList("+i+")'>"+
+									i+
+									"</a></li>"
+								);
+							}else{
+								$("#packComplete .pagination").append(
+									"<li><a onClick='loadUnCompletePackList("+i+")'>"+
+									i+
+									"</a></li>"
+								);
+							}
+						}
+					}
+				}
+			});
+		};
+		/*---------------------------------------下载任务包---------------------------------------------------------------*/
+		downloadPackFn = function(packId){
+			$.ajax({
+				type:'GET',
+				url:'${contextPath}/security/downPack',
+				data:{"packId":packId},
+				dataType:'json',
+				success:function(data){
+					if(data.wrongPath != ""){
+						window.open(data.wrongPath);
+						window.location.reload();
+					}
+				}
+			});
+		};
 		/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
 		showPackDetail = function(packId){
-			$("#packDetailTBody").append("");
+			$("#packDetailTBody").empty();
+			loadPackDetailList(packId,1,2);
+			$("#packDetailModal").modal('show');
+		};
+		loadPackDetailList = function(packId,pageNum,taskStuts){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/packDetail',
-				data:{"packId":packId},
+				data:{"packId":packId,"page":pageNum,"taskStuts":taskStuts},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -283,9 +348,25 @@
 								"</tr>"
 							);
 						});
+						var pageTotal = data.totlePage;
+						for(var i=1;i<pageTotal+1;i++){
+							if(i==pageNum){
+								$("#packDetailModal .pagination").append(
+									"<li class='active'><a onClick='loadUnCompletePackList("+packId+","+i+","+taskStuts+")'>"+
+									i+
+									"</a></li>"
+								);
+							}else{
+								$("#packDetailModal .pagination").append(
+									"<li><a onClick='loadUnCompletePackList("+packId+","+i+","+taskStuts+")'>"+
+									i+
+									"</a></li>"
+								);
+							}
+						}
 					}
 					
-					$("#packDetailModal").modal('show');
+					
 				}
 			});
 		};

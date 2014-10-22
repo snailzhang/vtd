@@ -24,3 +24,5 @@ input[type=file] {
 	text-align:center;
 	padding:4px 2px;;
 }
+ul.pagination{display:block;text-align:center;}
+ul.pagination > li > a{float:none;}
