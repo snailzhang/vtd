@@ -168,11 +168,18 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/workerHistoryPack", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerHistoryPackPOST(HttpSession session) {
+	public Map<String, Object> workerHistoryPackPOST(HttpSession session,int page) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Integer> pageMap = new HashMap<String, Integer>();
+		
+		
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		pageMap.put("begin",((page - 1)*Constants.ROW));
+		pageMap.put("end",((page - 1)*Constants.ROW + Constants.ROW));
+		pageMap.put("workerId",workerId);
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		List<workerRecord> workerRecordList = workerRecordService.getDownNameAndTimeByWorkerIdGroupByDownPackName(workerId);
+		List<workerRecord> workerRecordList = workerRecordService.getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(pageMap);
 		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
 		logger.debug("workerRecordList:{}", workerRecordList);
 		if (workerRecordList.isEmpty() || workerRecordList == null) {

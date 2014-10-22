@@ -1,6 +1,7 @@
 package com.esd.db.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.workerRecord;
 
@@ -43,4 +44,6 @@ public interface workerRecordMapper {
 	String selectDownPackNameByTaskName(String taskName);
 	
 	String  selectDownUrlByDownPackName(String downPackName);
+	
+	List<workerRecord> selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
 }

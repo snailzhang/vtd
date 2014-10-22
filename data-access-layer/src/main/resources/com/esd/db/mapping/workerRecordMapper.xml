@@ -97,6 +97,13 @@
 		where worker_id =
 		#{workerId,jdbcType=INTEGER} group by down_pack_name
 	</select>
+	<select id="selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		down_pack_name,task_down_time
+		from worker_record
+		where worker_id =
+		#{workerId} group by down_pack_name limit #{begin},#{end}
+	</select>
 	<select id="selectTaskCountByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select
 		count(record_id) count

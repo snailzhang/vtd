@@ -1,6 +1,7 @@
 package com.esd.db.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.workerRecord;
 
@@ -43,4 +44,6 @@ public interface WorkerRecordService {
 	String getDownPackNameByTaskName(String taskName);
 	
 	String getDownUrlByDownPackName(String downPackName);
+	
+	List<workerRecord> getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
 }

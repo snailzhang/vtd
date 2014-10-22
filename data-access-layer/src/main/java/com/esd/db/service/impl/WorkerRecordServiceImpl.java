@@ -1,6 +1,7 @@
 package com.esd.db.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,6 +126,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	@Override
 	public String getDownUrlByDownPackName(String downPackName) {
 		return workerRecordMapper.selectDownUrlByDownPackName(downPackName);
+	}
+
+	@Override
+	public List<workerRecord> getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map) {
+		
+		return workerRecordMapper.selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(map);
 	}
 
 	
