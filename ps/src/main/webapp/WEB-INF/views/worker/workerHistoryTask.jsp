@@ -4,7 +4,7 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>工作者历史页面</title>
+<title>gg历史页面</title>
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -61,10 +61,10 @@
 						$.each(data.list,function(i,item){
 							var ps = "";
 							var downloadTD = "<td></td>";
-							var downPackName = "<td><a class='showPackDetail' onClick='showPackDetail(1,"+item.downPackName+")'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
+							var downPackName = "<td><a class='showPackDetail' onClick='showPackDetail(1,"+item.downPackName.toString()+")'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
 							if(item.packStatu == 0){
 								ps = "未完成";
-								downloadTD = "<td><a class='downloadPack' onClick='downloadPack("+item.downPackName+")'>下载</a></td>";
+								downloadTD = "<td><a class='downloadPack' onClick='downloadPack("+item.downPackName.subString(0,item.downPackName.indexOf(".zip"))+")'>载</a></td>";
 								downPackName = "<td><a class='showPackDetail' onClick='showPackDetail(0,"+item.downPackName+")'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>";
 							}else if(item.packStatu == 1){
 								ps = "已完成";

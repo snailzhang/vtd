@@ -103,13 +103,13 @@
 							for(var i=1;i<pageTotal+1;i++){
 								if(i==pageNum){
 									$(".pagination").append(
-										"<li class='active'><a onClick='chooseUserType("+userType+","+pageNum+")'>"+
+										"<li class='active'><a onClick='chooseUserType("+userType+","+i+")'>"+
 										i+
 										"</a></li>"
 									);
 								}else{
 									$(".pagination").append(
-										"<li><a onClick='chooseUserType("+userType+","+pageNum+")'>"+
+										"<li><a onClick='chooseUserType("+userType+","+i+")'>"+
 										i+
 										"</a></li>"
 									);
