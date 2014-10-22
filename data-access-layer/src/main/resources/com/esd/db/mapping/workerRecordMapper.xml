@@ -22,7 +22,7 @@
 		<result column="task_effective" property="taskEffective" jdbcType="BIT" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		record_id, worker_id, pack_id, task_id, task_name, pack_name,down_pack_name,down_url, 
+		record_id, worker_id, pack_id, task_id, task_name, pack_name,down_pack_name,down_url,
 		task_down_time, task_upload_time,
 		task_statu, task_lock_time, task_mark_time, create_time,
 		create_method, update_time,
@@ -64,7 +64,7 @@
 		from worker_record
 		where task_name = #{taskName,jdbcType=VARCHAR}
 	</select>
-	
+
 	<select id="selectDoingTask" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -94,25 +94,28 @@
 		select
 		down_pack_name,task_down_time
 		from worker_record
-		where worker_id = #{workerId,jdbcType=INTEGER} group by down_pack_name
+		where worker_id =
+		#{workerId,jdbcType=INTEGER} group by down_pack_name
 	</select>
 	<select id="selectTaskCountByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select
 		count(record_id) count
 		from worker_record
-		where  down_pack_name = #{downPackName, jdbcType=VARCHAR}
+		where down_pack_name = #{downPackName, jdbcType=VARCHAR}
 	</select>
 	<select id="selectPackStatuByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select
 		count(record_id) count
 		from worker_record
-		where  down_pack_name = #{downPackName, jdbcType=VARCHAR} and task_statu = 0
+		where down_pack_name = #{downPackName, jdbcType=VARCHAR}
+		and task_statu = 0
 	</select>
 	<select id="selectFinishTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		count(record_id) count1
 		from worker_record
-		where  pack_id = #{packId, jdbcType=INTEGER} and task_statu = 1
+		where pack_id = #{packId, jdbcType=INTEGER} and
+		task_statu = 1
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from worker_record

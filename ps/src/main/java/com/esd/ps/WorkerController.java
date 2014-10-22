@@ -183,9 +183,18 @@ public class WorkerController {
 			WorkerDownPackHistoryTrans workerDownPackHistoryTrans = new WorkerDownPackHistoryTrans();
 			workerDownPackHistoryTrans.setTaskCount(workerRecordService.getTaskCountByDownPackName(workerRecord.getDownPackName()));
 			workerDownPackHistoryTrans.setDownPackName(workerRecord.getDownPackName());
-			workerDownPackHistoryTrans.setPackStatu(workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()));
-			workerDownPackHistoryTrans.setDownTime(sdf.format(workerRecord.getTaskDownTime()));
+			logger.debug("status:{}", workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()));
+			if (workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()) > 0) {
+				workerDownPackHistoryTrans.setPackStatu(0);
+			} else {
+				workerDownPackHistoryTrans.setPackStatu(1);
+			}
 
+			if (workerRecord.getTaskDownTime() == null) {
+				workerDownPackHistoryTrans.setDownTime("");
+			} else {
+				workerDownPackHistoryTrans.setDownTime(sdf.format(workerRecord.getTaskDownTime()));
+			}
 			list.add(workerDownPackHistoryTrans);
 		}
 		map.put("list", list);
@@ -519,9 +528,9 @@ public class WorkerController {
 	 */
 	public static String url(HttpServletRequest request) {
 		String url = request.getServletContext().getRealPath("/");
-		url=url+"workerTemp";
-		File f=new File(url);
-		if(f.exists()){
+		url = url + "workerTemp";
+		File f = new File(url);
+		if (f.exists()) {
 			return url;
 		}
 		f.mkdir();
