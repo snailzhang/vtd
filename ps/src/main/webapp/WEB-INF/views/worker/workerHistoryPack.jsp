@@ -85,12 +85,20 @@
 								if(isf == 0){
 									downloadTD = "<td><a onClick='downloadTask(\""+item.taskName+"\")'>下载</a></td>";
 								}
+								var tS = "";
+								if(item.taskStatu == 0){
+									tS = "未完成";
+								}else if(item.taskStatu == 1){
+									tS = "已完成";
+								}else if(item.taskStatu == 2){
+									tS = "超时";
+								}
 								addBodyTr +=
 									"<tr class='success'>"+
 										"<td>"+(i+1)+"</td>"+
 										"<td>"+item.taskName+"</td>"+
-										"<td>"+item.taskStatu+"</td>"+
-										"<td>"+item.taskLockTime+"</td>"+
+										"<td>"+tS+"</td>"+
+										"<td>"+item.taskLockTime+"小时</td>"+
 										"<td>"+item.taskMarkTime+"</td>"+
 										"<td>"+item.taskDownTime+"</td>"+
 										"<td>"+item.taskUploadTime+"</td>"+
