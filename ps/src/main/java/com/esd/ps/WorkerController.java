@@ -168,16 +168,15 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/workerHistoryPack", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerHistoryPackPOST(HttpSession session,int page) {
+	public Map<String, Object> workerHistoryPackPOST(HttpSession session, int page) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> pageMap = new HashMap<String, Integer>();
-		
-		
+
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		pageMap.put("begin",((page - 1)*Constants.ROW));
-		pageMap.put("end",((page - 1)*Constants.ROW + Constants.ROW));
-		pageMap.put("workerId",workerId);
-		
+		pageMap.put("begin", ((page - 1) * Constants.ROW));
+		pageMap.put("end", ((page - 1) * Constants.ROW + Constants.ROW));
+		pageMap.put("workerId", workerId);
+
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<workerRecord> workerRecordList = workerRecordService.getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(pageMap);
 		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
@@ -207,7 +206,7 @@ public class WorkerController {
 		pageMap.clear();
 		map.clear();
 		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId);
-		int totlePage = (int)Math.ceil((double)totle/(double)Constants.ROW);
+		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put("totle", totle);
 		map.put("totlePage", totlePage);
 		map.put("list", list);
@@ -242,12 +241,11 @@ public class WorkerController {
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskStatu(workerRecord.getTaskStatu());
-			if(workerRecord.getTaskUploadTime() == null){
+			if (workerRecord.getTaskUploadTime() == null) {
 				workerRecordTrans.setTaskUploadTime("");
-			}else{
+			} else {
 				workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
 			}
-			
 
 			list.add(workerRecordTrans);
 		}
@@ -281,7 +279,7 @@ public class WorkerController {
 			zipFile.createNewFile();
 			int workerId = Integer.parseInt(session.getAttribute("workerId").toString());
 			List<taskWithBLOBs> list = taskService.getDoingTaskByWorkerId(workerId);
-			logger.debug("workerId:{},list1:{}",workerId,list);
+			logger.debug("workerId:{},list1:{}", workerId, list);
 			this.wrongPath(zipFile, list);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -301,29 +299,37 @@ public class WorkerController {
 	 * @param taskName
 	 */
 	@RequestMapping(value = "/downOneTask", method = RequestMethod.GET)
-	public void downOneTask(final HttpServletResponse response, String taskName) {
-		logger.debug("taskName:{}", taskName);
-		byte[] data = taskService.getTaskWav(taskName);
+	@ResponseBody
+	public Map<String, Object> downOneTask(HttpServletRequest request, String taskName) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String url = WorkerController.url(request);
+		File f = new File(url);
+		File zipFile = null;
+		String zipName = taskName.substring(0,taskName.indexOf(".")) + ".zip";
+		// 项目在服务器上的远程绝对地址
+		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		// 文件所谓的远程绝对路径
+		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + zipName;
+		
+		if (f.exists()) {
+			zipFile = new File(url + "/" + zipName);
+			if (zipFile.exists()) {
+				map.put("wrongPath",wrongPath);
+				return map;
+			}
+		} else {
+			f.mkdir();
+		}
 		try {
-			taskName = URLEncoder.encode(taskName, "UTF-8");
-			response.reset();
-			PageContext page = null;
-			JspWriter out = page.getOut();
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + taskName + "\"");
-			response.addHeader("Content-Length", "" + data.length);
-			response.setContentType("application/octet-stream;charset=UTF-8");
-			OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-			outputStream.write(data);
+			zipFile.createNewFile();
+			List<taskWithBLOBs> list= taskService.getTaskByTaskName(taskName);
 
-			out.clear();
-			out = page.pushBody();
-			outputStream.flush();
-			outputStream.close();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			this.wrongPath(zipFile, list);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		map.put("wrongPath", wrongPath);
+		return map;
 	}
 
 	/**
@@ -453,10 +459,10 @@ public class WorkerController {
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			String taskName = task.getTaskName();
-			
+
 			for (int i = 0; i < files.length; i++) {
 				try {
-					files[i].getInputStream();					
+					files[i].getInputStream();
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
@@ -567,7 +573,7 @@ public class WorkerController {
 	 * @return
 	 */
 	public String wrongPath(File zipFile, List<taskWithBLOBs> list) {
-		logger.debug("list2:{}",list);
+		logger.debug("list2:{}", list);
 		try {
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));

@@ -62,7 +62,7 @@
 		select
 		down_pack_name
 		from worker_record
-		where task_name = #{taskName,jdbcType=VARCHAR}
+		where task_name = #{taskName,jdbcType=VARCHAR} and task_statu = 0
 	</select>
 
 	<select id="selectDoingTask" resultMap="BaseResultMap">
@@ -105,11 +105,11 @@
 		#{workerId} group by down_pack_name limit #{begin},#{end}
 	</select>
 	<select id="selectDownPackNameCountByworkerIdGroupByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-		select
-		count(down_pack_name) count
+		select count(rowCount) count from (select
+		count(down_pack_name) rowCount
 		from worker_record
 		where worker_id =
-		#{workerId} group by down_pack_name
+		#{workerId} group by down_pack_name) a
 	</select>
 	<select id="selectTaskCountByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select

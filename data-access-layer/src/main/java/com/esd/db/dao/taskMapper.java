@@ -40,7 +40,7 @@ public interface taskMapper {
     
     int selectUndoTaskCountByPackId(Integer packId);
     
-    byte[] selectTaskWav(String taskName);
+    List<taskWithBLOBs> selectTaskByTaskName(String taskName);
     
     int selectTaskCountByPackId(Integer packId);
     

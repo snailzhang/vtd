@@ -217,9 +217,9 @@ public class LoginController {
 						taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
 						taskWithBLOBs.setWorkerId(null);
 						taskWithBLOBs.setCreateTime(new Date());
-						taskWithBLOBs.setTaskDir(null);
 						taskWithBLOBs.setTaskId(workerRecord.getTaskId());
-						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+						int a=taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+						System.out.println(workerRecord.getTaskId()+"***"+a);
 						// 删除任务的下载备份
 						String url = request.getServletContext().getRealPath("/");
 						File fold = new File(url+"workerTemp");

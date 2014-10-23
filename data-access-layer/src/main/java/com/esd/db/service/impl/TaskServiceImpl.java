@@ -108,13 +108,6 @@ public class TaskServiceImpl implements TaskService {
 		}
 		return taskMapper.selectUndoTaskCountByPackId(0);
 	}
-
-	@Override
-	public byte[] getTaskWav(String taskName) {
-
-		return taskMapper.selectTaskWav(taskName);
-	}
-
 	@Override
 	public int getTaskCountByPackId(Integer packId) {
 
@@ -178,6 +171,11 @@ public class TaskServiceImpl implements TaskService {
 	public int getFinishTaskCountByPackId(Integer packId) {
 
 		return taskMapper.selectFinishTaskCountByPackId(packId);
+	}
+
+	@Override
+	public List<taskWithBLOBs> getTaskByTaskName(String taskName) {
+		return taskMapper.selectTaskByTaskName(taskName);
 	}
 
 }

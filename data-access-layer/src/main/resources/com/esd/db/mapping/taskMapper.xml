@@ -146,9 +146,11 @@
 		from task
 		WHERE worker_id IS NULL OR worker_id = 0
 	</select>
-	<select id="selectTaskWav" resultType="java.lang.Byte" parameterType="java.lang.String">
+	<select id="selectTaskByTaskName" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
 		select
-		task_wav
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
 		from task
 		WHERE task_name = #{taskName,jdbcType=VARCHAR}
 	</select>
@@ -350,6 +352,9 @@
 			</if>
 			<if test="workerId != null">
 				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId == null">
+				worker_id = null,
 			</if>
 			<if test="taskDir != null">
 				task_dir = #{taskDir,jdbcType=VARCHAR},

@@ -38,7 +38,7 @@ public interface TaskService {
 
 	int getCountTaskDoing();
 
-	byte[] getTaskWav(String taskName);
+	List<taskWithBLOBs> getTaskByTaskName(String taskName);
 
 	int getTaskCountByPackId(Integer packId);
 
