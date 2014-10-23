@@ -114,24 +114,24 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> managerPost(int userType,int page) {
-		logger.debug("userType:{}",userType);
+	public Map<String, Object> managerPost(int userType, int page) {
+		logger.debug("userType:{}", userType);
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> userTypeMap = new HashMap<String, Integer>();
-		userTypeMap.put("begin",((page - 1)*Constants.ROW));
-		userTypeMap.put("end",((page - 1)*Constants.ROW + Constants.ROW));
+		userTypeMap.put("begin", ((page - 1) * Constants.ROW));
+		userTypeMap.put("end", ((page - 1) * Constants.ROW + Constants.ROW));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		List<user> userList = null;
-		int totle = 0,totlePage = 0;
-		if(userType == 0){
+		int totle = 0, totlePage = 0;
+		if (userType == 0) {
 			userList = userService.getAllUsersPages(userTypeMap);
-			totle = userService.getAllUserCount();			
-		}else if(userType > 0){
+			totle = userService.getAllUserCount();
+		} else if (userType > 0) {
 			userTypeMap.put("usertype", userType);
 			userList = userService.getAllUserPagesByUserType(userTypeMap);
 			totle = userService.getAllUserCountByUserType(userType);
-		}	
+		}
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
@@ -146,7 +146,7 @@ public class ManagerController {
 		}
 		userTypeMap.clear();
 		map.clear();
-		totlePage = (int)Math.ceil((double)totle/(double)Constants.ROW);
+		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put("list", list);
 		map.put("totle", totle);
 		map.put("totlePage", totlePage);
@@ -212,11 +212,11 @@ public class ManagerController {
 			if (replay == 0) {
 				userService.insertSelective(user1);
 			} else if (replay == 1) {
-				user1.setUserId(userService.selUserIdByUserName(username));
+				user1.setUserId(userService.getUserIdByUserName(username));
 				userService.updateByPrimaryKeySelective(user1);
 			}
 			String page = userTypeService.getUserTypeNameEnglish(usertype);
-			session.setAttribute(Constants.ADD_USER_ID, userService.selUserIdByUserName(username));
+			session.setAttribute(Constants.ADD_USER_ID, userService.getUserIdByUserName(username));
 			logger.debug("page:{}", page);
 			return new ModelAndView("manager/" + page + "_add", "userRegisted", 1);
 		}
@@ -231,11 +231,12 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
-	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request,int userRegisted) {
+	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request, int userRegisted) {
 		manager manager = new manager();
 		manager.setManagerName(managerName);
 		manager.setUpdateTime(new Date());
-		//int login = Integer.parseInt(request.getAttribute("login").toString());
+		// int login =
+		// Integer.parseInt(request.getAttribute("login").toString());
 		if (userRegisted == 0) {
 			manager.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		} else if (userRegisted == 1) {
@@ -255,24 +256,65 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
-	public ModelAndView addemployer(String employerName, HttpSession session,HttpServletRequest request,int userRegisted) {
+	public ModelAndView addemployer(String employerName, HttpSession session, HttpServletRequest request, int userRegisted) {
 		employer employer = new employer();
 		employer.setEmployerName(employerName);
 		employer.setUpdateTime(new Date());
-		//int login = Integer.parseInt(request.getAttribute("login").toString());
-		String address=null;
+		// int login =
+		// Integer.parseInt(request.getAttribute("login").toString());
+		String address = null;
 		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address="redirect:employer";
+			address = "redirect:employer";
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address="redirect:manager";
-		}	
+			address = "redirect:manager";
+		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
 		employerService.insertSelective(employer);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(address);
+	}
+
+	/**
+	 * 检查用户名是否重复
+	 * 
+	 * @param userName
+	 * @return
+	 */
+	@RequestMapping(value = "/checkUserName", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> checkUserName(String userName) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (userName(userName) == 1) {
+			map.clear();
+			map.put(Constants.MESSAGE, "用户名已存在!");
+		} else {
+			map.clear();
+			map.put(Constants.MESSAGE, "用户名可用!");
+		}
+		return map;
+	}
+
+	/**
+	 * 检查此用户的原密码是否正确
+	 * 
+	 * @param userName
+	 * @return
+	 */
+	@RequestMapping(value = "/checkPassWord", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> checkPassWord(String oldPassWord, HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (passWord(oldPassWord, session) == 1) {
+			map.clear();
+			map.put(Constants.MESSAGE, "密码正确!");
+			return map;
+		}
+		map.clear();
+		map.put(Constants.MESSAGE, "密码不对!");
+		return map;
 	}
 
 	/**
@@ -285,9 +327,7 @@ public class ManagerController {
 	@ResponseBody
 	public Map<String, Object> checkWorkerIdCard(String workerIdCard) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		worker worker = null;
-		worker = workerService.getWorkerByWorkerIdCard(workerIdCard);
-		if (worker == null) {
+		if (workerIdCard(workerIdCard) == 0) {
 			map.put("result", true);
 		} else {
 			map.put("result", false);
@@ -305,9 +345,7 @@ public class ManagerController {
 	@ResponseBody
 	public Map<String, Object> checkWorkerDisabilityCard(String WorkerDisabilityCard) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		worker worker = null;
-		worker = workerService.getWorkerByWorkerDisabilityCard(WorkerDisabilityCard);
-		if (worker == null) {
+		if (workerDisabilityCard(WorkerDisabilityCard) == 0) {
 			map.put("result", true);
 		} else {
 			map.put("result", false);
@@ -325,9 +363,7 @@ public class ManagerController {
 	@ResponseBody
 	public Map<String, Object> checkWorkerPhone(String workerPhone) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		worker worker = null;
-		worker = workerService.getWorkerByWorkerPhone(workerPhone);
-		if (worker == null) {
+		if (workerPhone(workerPhone) == 0) {
 			map.put("result", true);
 		} else {
 			map.put("result", false);
@@ -353,7 +389,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
 	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerIdCard, String workerDisabilityCard,
-			String workerBankCard, String workerPaypal, RedirectAttributes redirectAttributes, HttpSession session,HttpServletRequest request,int userRegisted) {
+			String workerBankCard, String workerPaypal, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request, int userRegisted) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerIdCard, workerDisabilityCard, workerBankCard,
 				workerPaypal);
 		boolean flag = true;
@@ -368,16 +404,17 @@ public class ManagerController {
 		}
 		worker worker = new worker();
 		if (flag) {
-			//int login = Integer.parseInt(request.getAttribute("login").toString());
-			String address=null;
+			// int login =
+			// Integer.parseInt(request.getAttribute("login").toString());
+			String address = null;
 			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-				address="redirect:worker";
+				address = "redirect:worker";
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address="redirect:manager";
+				address = "redirect:manager";
 			}
-			
+
 			if (!workerImage.isEmpty()) {
 				try {
 					worker.setWorkerImage(workerImage.getBytes());
@@ -390,7 +427,7 @@ public class ManagerController {
 			worker.setWorkerDisabilityCard(workerDisabilityCard);
 			worker.setWorkerIdCard(workerIdCard);
 			worker.setWorkerPaypal(workerPaypal);
-			worker.setWorkerPhone(workerDisabilityCard.substring(0,17));
+			worker.setWorkerPhone(workerDisabilityCard.substring(0, 17));
 			worker.setWorkerRealName(workerRealName);
 
 			worker.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -402,40 +439,142 @@ public class ManagerController {
 		redirectAttributes.addFlashAttribute("worker", worker);
 		return new ModelAndView("redirect:security/addworker");
 	}
+
 	/**
 	 * 修改管理员信息
+	 * 
 	 * @param userType
 	 * @param userId
 	 * @return
 	 */
 	@RequestMapping(value = "/updateManager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> update(String userType,int userId){
+	public Map<String, Object> update(String userName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		return map;
 	}
+
+	@RequestMapping(value = "/updatePassWord", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord, HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (passWord(oldPassWord, session) == 1) {
+			int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+			user user = new user();
+			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
+			String md5Password = md5.getMd5(user.getUsername(),newPassWord);
+			user.setPassword(md5Password);
+			user.setUserId(userId);
+			userService.updateByPrimaryKeySelective(user);
+			map.put(Constants.MESSAGE, "密码修改成功!");
+			return map;
+		}
+		map.put(Constants.MESSAGE, "原密码不对!");
+		return map;
+	}
+
 	/**
 	 * 修改发包商信息
+	 * 
 	 * @param userType
 	 * @param userId
 	 * @return
 	 */
 	@RequestMapping(value = "/updateEmployer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> updateEmployer(String userType,int userId){
+	public Map<String, Object> updateEmployer(String userName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		return map;
 	}
+
 	/**
 	 * 修改工作者信息
+	 * 
 	 * @param userType
 	 * @param userId
 	 * @return
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> updateWorker(String userType,int userId){
+	public Map<String, Object> updateWorker(String userName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		return map;
 	}
+
+	/**
+	 * 检查用户名是否重复
+	 * 
+	 * @param userName
+	 * @return
+	 */
+
+	public int userName(String userName) {
+		if (userService.getUserIdCountByUserName(userName) > 0) {
+			return 1;
+		}
+		return 0;
+	}
+
+	/**
+	 * 检查此用户的原密码是否正确
+	 * 
+	 * @param userName
+	 * @return
+	 */
+
+	public int passWord(String oldPassWord, HttpSession session) {
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		user user = userService.getByPrimaryKey(userId);
+		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
+		String md5Password = md5.getMd5(user.getUsername(), oldPassWord);
+		if (md5Password.equals(user.getPassword())) {
+			return 1;
+		}
+		return 0;
+	}
+
+	/**
+	 * 检查身份证号
+	 * 
+	 * @param workerIdCard
+	 * @return
+	 */
+
+	public int workerIdCard(String workerIdCard) {
+		worker worker = workerService.getWorkerByWorkerIdCard(workerIdCard);
+		if (worker == null) {
+			return 0;
+		}
+		return 1;
+	}
+
+	/**
+	 * 检查残疾人证号
+	 * 
+	 * @param WorkerDisabilityCard
+	 * @return
+	 */
+	public int workerDisabilityCard(String WorkerDisabilityCard) {
+		worker worker = workerService.getWorkerByWorkerDisabilityCard(WorkerDisabilityCard);
+		if (worker == null) {
+			return 0;
+		}
+		return 1;
+	}
+
+	/**
+	 * 检查手机号
+	 * 
+	 * @param workerPhone
+	 * @return
+	 */
+
+	public int workerPhone(String workerPhone) {
+		worker worker = workerService.getWorkerByWorkerPhone(workerPhone);
+		if (worker == null) {
+			return 0;
+		}
+		return 1;
+	}
+
 }

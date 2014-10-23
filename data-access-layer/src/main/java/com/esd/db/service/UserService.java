@@ -12,13 +12,13 @@ public interface UserService {
 
 	int insertSelective(user record);
 
-	user selectByPrimaryKey(Integer userId);
+	user getByPrimaryKey(Integer userId);
 
 	List<user> getAllUsers();
 
 	int getMaxUserId();
 
-	int selUserIdByUserName(String username);
+	int getUserIdByUserName(String username);
 
 	user getAllUsersByUserName(String username);
 
@@ -33,4 +33,6 @@ public interface UserService {
 	List<user> getAllUserPagesByUserType(Map<String, Integer> map);
 	
 	List<user> getAllUsersPages(Map<String, Integer> map);
+	
+	int getUserIdCountByUserName(String userName);
 }

@@ -17,15 +17,13 @@ public interface userMapper {
     
     List<user> selectAllUsers();
     
-    int selUserIdByUserName(String username);
+    int selectUserIdByUserName(String username);
     
     int selUserTypeByUserName(String username);
     
     user selectAllUsersByUserName(String username);
     
     int getMaxUserId();
-    
-    int selCountByUserName(String username);
 
     int updateByPrimaryKeySelective(user record);
 
@@ -38,4 +36,6 @@ public interface userMapper {
     List<user> selectAllUserPagesByUserType(Map<String,Integer> map);
     
     List<user> selectAllUsersPages(Map<String,Integer> map);
+    
+    int selectUserIdCountByUserName(String userName);
 }

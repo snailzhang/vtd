@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public user selectByPrimaryKey(Integer userId) {
+	public user getByPrimaryKey(Integer userId) {
 
 		return userMapper.selectByPrimaryKey(userId);
 	}
@@ -63,9 +63,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int selUserIdByUserName(String username) {
+	public int getUserIdByUserName(String username) {
 
-		return userMapper.selUserIdByUserName(username);
+		return userMapper.selectUserIdByUserName(username);
 	}
 	
 	@Override
@@ -98,4 +98,9 @@ public class UserServiceImpl implements UserService {
 		return userMapper.selectAllUsersPages(map);
 	}
 
+	@Override
+	public int getUserIdCountByUserName(String userName) {
+		
+		return userMapper.selectUserIdCountByUserName(userName);
+	}
 }

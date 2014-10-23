@@ -237,7 +237,7 @@ public class WorkerController {
 			workerRecordTrans.setDownPackName(downPackName);
 			workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
 			workerRecordTrans.setTaskEffective(workerRecord.getTaskEffective());
-			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime());
+			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime()/3600000);
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskStatu(workerRecord.getTaskStatu());

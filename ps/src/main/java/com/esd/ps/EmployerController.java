@@ -99,7 +99,7 @@ public class EmployerController {
 	public Map<String, Object> employerPost(HttpSession session,int page,int packStuts) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> map1 = new HashMap<String, Integer>();
-		int userId = userService.selUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
+		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		logger.debug("employerId:{}",employerId);
 		session.setAttribute("employerId", employerId);

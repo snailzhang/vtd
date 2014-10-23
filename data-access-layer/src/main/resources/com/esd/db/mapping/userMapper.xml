@@ -47,21 +47,21 @@
     max(user_id) user_id
     from user 
   </select>
-   <select id="selUserIdByUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
+   <select id="selectUserIdByUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
     select 
     user_id
+    from user
+    where username = #{username,jdbcType=VARCHAR} 
+  </select>
+  <select id="selectUserIdCountByUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select 
+    count(user_id) count
     from user
     where username = #{username,jdbcType=VARCHAR} 
   </select>
   <select id="selUserTypeByUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
     select 
     usertype
-    from user
-    where username = #{username,jdbcType=VARCHAR} 
-  </select>
-    <select id="selCountByUserName" resultType="java.lang.Integer" parameterType="java.lang.String">
-    select 
-    count(user_id) count
     from user
     where username = #{username,jdbcType=VARCHAR} 
   </select>
