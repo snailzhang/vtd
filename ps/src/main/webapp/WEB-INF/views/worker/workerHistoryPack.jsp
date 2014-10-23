@@ -23,30 +23,33 @@
 </head>
 <body>
 	<jsp:include page="../head.jsp" />
+
 	
 		<div class="container">
 			<div id="uploadFalTable" class="panel panel-default">
 				<div class="panel-heading">
 					<h3 class="panel-title">任务包历史列表</h3>
 				</div>
-				<table class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>序号</th>
-							<th>下载包名称</th>
-							<th>下载时间</th>
-							<th>包含任务数</th>
-							<th>任务包状态</th>
-							<th>下载任务包</th>
-						</tr>
-					</thead>
-					<tbody id="packHistoryTable" role="tablist" aria-multiselectable="true"></tbody>
-				</table>
-				<ul class="pagination"></ul>
+				<div class="panel-body">
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>下载包名称</th>
+								<th>下载时间</th>
+								<th>包含任务数</th>
+								<th>任务包状态</th>
+								<th>下载任务包</th>
+							</tr>
+						</thead>
+						<tbody id="packHistoryTable" role="tablist" aria-multiselectable="true"></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
 			</div>
 			
 		</div>
-	</div>
+
 	<script type="text/javascript">
 		$(document).ready(function(){
 			
@@ -58,6 +61,9 @@
 				window.location.reload();
 			});
 			/*******************************显示任务包详细**************************************************/
+			$("#packHistoryTable").on('show.bs.collapse', function () {
+				$(this).children(".in").removeClass("in");
+			});
 			$("#packHistoryTable").on('shown.bs.collapse', function () {
 				var collapseTR = $(this).children(".in");
 				var id = collapseTR.attr("id");
@@ -71,19 +77,16 @@
 					dataType:'json',
 					success:function(data){
 						if(data.list != ""){
-							thisTD.empty();
-							thisTD.append(
-								"<table class='table table-striped table-bordered'>"+
-									"<thead><th>序号</th><th>任务名称</th><th>任务状态</th><th>回传时间</th><th>标注时间</th><th>下载时间</th><th>上传时间</th><th>标注状态</th><th>下载</th></thead><tbody>"
-								
-							);
+							
+							
+							var addBodyTr = "";
 							$.each(data.list,function(i,item){
 								var downloadTD = "<td></td>";
 								if(isf == 0){
 									downloadTD = "<td><a onClick='downloadTask(\""+item.taskName+"\")'>下载</a></td>";
 								}
-								thisTD.append(
-									"<tr>"+
+								addBodyTr +=
+									"<tr class='success'>"+
 										"<td>"+(i+1)+"</td>"+
 										"<td>"+item.taskName+"</td>"+
 										"<td>"+item.taskStatu+"</td>"+
@@ -93,10 +96,21 @@
 										"<td>"+item.taskUploadTime+"</td>"+
 										"<td>"+item.taskEffective+"</td>"+
 										downloadTD+
-									"</tr>"
-								);
+									"</tr>";
+								
 							});
-							thisTD.append("</tbody></table>");
+							thisTD.empty();
+							thisTD.append(
+								"<table class='table table-condensed table-hover' style='width:90%;margin:0 auto'>"+
+									"<thead>"+
+										"<tr class='success'>"+
+											"<th>序号</th><th>任务名称</th><th>任务状态</th><th>回传时间</th><th>标注时间</th><th>下载时间</th><th>上传时间</th><th>标注状态</th><th>下载</th>"+
+										"</tr>"+
+									"</thead>"+
+									"<tbody>"+addBodyTr+"</tbody>"+
+								"</table>"
+								
+							);
 						}
 					}
 				});
@@ -118,14 +132,14 @@
 						$.each(data.list,function(i,item){
 							var ps = "";
 							var downloadTD = "<td></td>";
-							var packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
+							var packDetailTR = "<tr role='tabpanel' class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
 							if(item.packStatu == 0){
 								ps = "未完成";
 								var pName = "";
 								 pName= item.downPackName;
 								//pName = pName.substring(0,item.downPackName.indexOf(".zip"));
 								downloadTD = "<td><a class='downloadPack' onClick='downloadPack(\""+pName+"\")'>下载</a></td>";
-								packDetailTR = "<tr class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
+								packDetailTR = "<tr role='tabpanel' class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
 							}else if(item.packStatu == 1){
 								ps = "已完成";
 							}else if(item.packStatu == 2){
