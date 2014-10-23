@@ -50,6 +50,8 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			
+			$("#headJSPWorkerHistoryPack").hide();
+			$("#headJSPWorker").show();
 			loadPackListHistory(1);
 			/*******************************刷新按钮**************************************************/
 			$("#refreshPage").click(function(){
@@ -102,11 +104,11 @@
 			});
 		});
 		/*******************************加载任务包**************************************************/
-		loadPackListHistory = function(pagNum){
+		loadPackListHistory = function(pageNum){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/workerHistoryPack',
-				data:{"page":pagNum},
+				data:{"page":pageNum},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){

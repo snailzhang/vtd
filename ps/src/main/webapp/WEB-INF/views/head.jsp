@@ -12,9 +12,11 @@ int userType = (Integer)session.getAttribute("usertype");
 		<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 			<% 
 				if(userType == 4){
+					
 					%>
 						<ul class="nav navbar-nav">
-							<li><a href="${contextPath}/security/workerHistoryPack">工作历史</a></li>
+							<li id="headJSPWorkerHistoryPack"><a href="${contextPath}/security/workerHistoryPack">工作历史</a></li>
+							<li id="headJSPWorker"><a href="${contextPath}/security/worker">工作页面</a></li>
 						</ul>
 					<%
 				}

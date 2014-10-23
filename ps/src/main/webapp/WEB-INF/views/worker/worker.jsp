@@ -129,6 +129,8 @@
 	</div><!-- /.modal -->
 	<script type="text/javascript">
 		$(document).ready(function(){
+			$("#headJSPWorker").hide();
+			$("#headJSPWorkerHistoryPack").show();
 			/*******************************加载页面**************************************************/
 			$.ajax({
 				type:'POST',
