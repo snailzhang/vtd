@@ -146,13 +146,14 @@
 					'name' : name,
 					'card' : card
 				},
-				dataType : 'text',
+				dataType : 'json',
 				success : function(data) {
-					if (data == "false") {
+					if (data.result == 0) {
 						$("#message").html(msg);
 
 					} else {
 						$("#message").empty();
+						$("#form").submit();
 					}
 				}
 			});
