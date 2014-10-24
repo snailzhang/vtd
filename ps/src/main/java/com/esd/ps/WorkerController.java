@@ -107,7 +107,7 @@ public class WorkerController {
 		if (listTask == null || listTask.isEmpty()) {
 			workerMark = 0;
 			// 可做任务的包数
-			int countPackDoing = packService.getCountPackDoing();
+			int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
 			map.put("countPackDoing", countPackDoing);
@@ -125,7 +125,12 @@ public class WorkerController {
 			downloadTime = task.getTaskDownloadTime();
 			packId = task.getPackId();
 			taskTrans taskTrans = new taskTrans();
-			taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
+			if (task.getTaskDownloadTime() == null) {
+				taskTrans.setTaskDownloadTime("");
+			} else {
+				taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
+			}
+
 			taskTrans.setTaskName(task.getTaskName());
 			logger.debug("TaskName:{}", task.getTaskName());
 			list.add(taskTrans);
@@ -237,7 +242,7 @@ public class WorkerController {
 			workerRecordTrans.setDownPackName(downPackName);
 			workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
 			workerRecordTrans.setTaskEffective(workerRecord.getTaskEffective());
-			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime()/3600000);
+			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime() / 3600000);
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskStatu(workerRecord.getTaskStatu());
@@ -305,16 +310,16 @@ public class WorkerController {
 		String url = WorkerController.url(request);
 		File f = new File(url);
 		File zipFile = null;
-		String zipName = taskName.substring(0,taskName.indexOf(".")) + ".zip";
+		String zipName = taskName.substring(0, taskName.indexOf(".")) + ".zip";
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
 		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + zipName;
-		
+
 		if (f.exists()) {
 			zipFile = new File(url + "/" + zipName);
 			if (zipFile.exists()) {
-				map.put("wrongPath",wrongPath);
+				map.put("wrongPath", wrongPath);
 				return map;
 			}
 		} else {
@@ -322,7 +327,7 @@ public class WorkerController {
 		}
 		try {
 			zipFile.createNewFile();
-			List<taskWithBLOBs> list= taskService.getTaskByTaskName(taskName);
+			List<taskWithBLOBs> list = taskService.getTaskByTaskName(taskName);
 
 			this.wrongPath(zipFile, list);
 		} catch (IOException e) {

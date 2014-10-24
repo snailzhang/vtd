@@ -178,4 +178,10 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.selectTaskByTaskName(taskName);
 	}
 
+	@Override
+	public int getFreePackCount() {
+		
+		return taskMapper.selectFreePackCount();
+	}
+
 }

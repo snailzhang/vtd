@@ -59,4 +59,6 @@ public interface taskMapper {
     List<task> selectDoingTaskPagesByPackId(Map<String, Integer> map);
     
     List<task> selectFinishTaskPagesByPackId(Map<String, Integer> map);
+    
+    int selectFreePackCount();
 }

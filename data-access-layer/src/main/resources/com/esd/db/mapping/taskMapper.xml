@@ -100,7 +100,7 @@
 		<include refid="Blob_Column_List" />
 		from task
 		where worker_id IS NULL
-		order by task_lvl DESC limit #{downTaskCount,jdbcType=INTEGER}
+		order by task_lvl,pack_id  limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
@@ -132,7 +132,8 @@
 		select
 		count(task_id) total
 		from task
-		where pack_id = #{packId,jdbcType=INTEGER} and (task_mark_time IS NUll or task_mark_time = 0)
+		where pack_id = #{packId,jdbcType=INTEGER} and (task_mark_time IS NUll
+		or task_mark_time = 0)
 	</select>
 	<select id="selectFinishTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
@@ -165,6 +166,11 @@
 		task_dir
 		from task
 		WHERE task_id = #{taskId,jdbcType=Integer}
+	</select>
+	<select id="selectFreePackCount" resultType="java.lang.Integer">
+		SELECT COUNT(pack_id) count1 FROM (SELECT COUNT(pack_id) pack_id FROM
+		(SELECT pack_id FROM task
+		WHERE (worker_id IS NULL OR worker_id = 0)) b GROUP BY pack_id) a
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from task

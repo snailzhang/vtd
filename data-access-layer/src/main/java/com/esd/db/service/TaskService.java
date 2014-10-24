@@ -57,4 +57,6 @@ public interface TaskService {
 	List<task> getDoingTaskPagesByPackId(Map<String, Integer> map);
 
 	List<task> getFinishTaskPagesByPackId(Map<String, Integer> map);
+	
+	int getFreePackCount();
 }
