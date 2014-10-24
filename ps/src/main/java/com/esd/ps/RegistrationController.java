@@ -7,6 +7,8 @@
 package com.esd.ps;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,20 +60,24 @@ public class RegistrationController {
 	 * @return
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
-	public Boolean registrationPost(String name, String card, int district) {
-		logger.debug("name{},card{},district{}", name, card, district);
+	@ResponseBody
+	public Map<String, Object> registrationPost(String name, String card, int district ,String phone,String qq,String address,String des) {
+		logger.debug("name{},card{},district{},phone:{},qq:{},adress:{},des:{}", name, card, district,phone,qq,address,des);
+		Map<String, Object> map = new HashMap<String, Object>();
 		Registration registration = new Registration();
-		registration.setName("张建宗");
-		registration.setCard("23011919841024001022");
-		registration.setDistrictId(1);
-		registration.setPhone("15846538450");
-		registration.setQq("9465818");
-		registration.setAddress("jfoejw fojewo fjeoiw jfoie jw");
-		registration.setDes("fff");
+		registration.setName(name);
+		registration.setCard(card);
+		registration.setDistrictId(district);
+		registration.setPhone(phone);
+		registration.setQq(qq);
+		registration.setAddress(address);
+		registration.setDes(des);
 		registration.setCreateMethod("registrationGet");
 		registration.setCreateTime(new Date());
-		registrationService.insert(registration);
-		return Boolean.TRUE;
+		registrationService.insertSelective(registration);
+		//0是失败,1是成功
+		map.put("result",1);
+		return map;
 	}
 
 	/**
@@ -83,12 +89,18 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/rc", method = RequestMethod.POST)
 	@ResponseBody
-	public Boolean remoteCheck(HttpServletRequest request) {
-		String name = request.getParameter("name");
-		String card = request.getParameter("card");
+	public Map<String,Object> remoteCheck(String name, String card) {
+		Map<String, Object> map = new HashMap<>();
+//		String name = request.getParameter("name");
+//		String card = request.getParameter("card");
 		// name = "王云虓";
 		// card = "23010719740308061044";
-		return checkDisabilityCard(name, card);
+		if(checkDisabilityCard(name, card)){
+			map.put("result",1);
+			return map;
+		}
+		map.put("result",0);
+		return map;
 	}
 
 	/**
@@ -102,9 +114,9 @@ public class RegistrationController {
 		CheckDisabilityCard cdc = new CheckDisabilityCard();
 		String session = cdc.init();
 		String rand = cdc.rand();
-		Boolean c = cdc.check(session, name, card, rand);
-		logger.debug("name:{},card:{},check:{}", name, card, c);
+		Boolean flag = cdc.check(session, name, card, rand);
+		logger.debug("name:{},card:{},check:{}", name, card, flag);
 		cdc.destroy();
-		return c;
+		return flag;
 	}
 }
