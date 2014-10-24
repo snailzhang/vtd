@@ -388,18 +388,16 @@ public class ManagerController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerIdCard, String workerDisabilityCard,
+	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerDisabilityCard, String workerPhone,
 			String workerBankCard, String workerPaypal, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request, int userRegisted) {
-		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerIdCard, workerDisabilityCard, workerBankCard,
-				workerPaypal);
+		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerDisabilityCard, workerBankCard, workerPaypal);
 		boolean flag = true;
-		if (workerService.getWorkerByWorkerIdCard(workerIdCard) != null) {
-			redirectAttributes.addFlashAttribute(Constants.USER_WORKERIDCARD, MSG_WORKERIDCARD_EXIST);
+		if (workerDisabilityCard(workerDisabilityCard) == 1) {
+			redirectAttributes.addFlashAttribute(Constants.USER_WORKERDISABILITYCARD, MSG_WORKERDISABILITYCARD_EXIST);
 			flag = false;
 		}
-
-		if (workerService.getWorkerByWorkerDisabilityCard(workerDisabilityCard) != null) {
-			redirectAttributes.addFlashAttribute(Constants.USER_WORKERDISABILITYCARD, MSG_WORKERDISABILITYCARD_EXIST);
+		if (workerPhone(workerPhone) == 1) {
+			redirectAttributes.addFlashAttribute(Constants.USER_WORKERDISABILITYCARD, MSG_WORKERPHONE_EXIST);
 			flag = false;
 		}
 		worker worker = new worker();
@@ -425,9 +423,9 @@ public class ManagerController {
 			}
 			worker.setWorkerBankCard(workerBankCard);
 			worker.setWorkerDisabilityCard(workerDisabilityCard);
-			worker.setWorkerIdCard(workerIdCard);
+			worker.setWorkerIdCard(workerDisabilityCard.substring(0, 17));
 			worker.setWorkerPaypal(workerPaypal);
-			worker.setWorkerPhone(workerDisabilityCard.substring(0, 17));
+			worker.setWorkerPhone(workerPhone);
 			worker.setWorkerRealName(workerRealName);
 
 			worker.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -462,7 +460,7 @@ public class ManagerController {
 			int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 			user user = new user();
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
-			String md5Password = md5.getMd5(user.getUsername(),newPassWord);
+			String md5Password = md5.getMd5(user.getUsername(), newPassWord);
 			user.setPassword(md5Password);
 			user.setUserId(userId);
 			userService.updateByPrimaryKeySelective(user);
@@ -496,8 +494,42 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorker(String userName) {
+	public Map<String, Object> updateWorker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerPhone, String workerDisabilityCard,
+			String workerBankCard, String workerPaypal, HttpSession session) {
+		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerDisabilityCard, workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
+		if (workerDisabilityCard(workerDisabilityCard) == 1) {
+			map.clear();
+			map.put(Constants.MESSAGE, "残疾人证号已存在");
+			return map;
+		}
+		if (workerPhone(workerPhone) == 1) {
+			map.clear();
+			map.put(Constants.MESSAGE, "电话号已存在");
+			return map;
+		}
+		worker worker = new worker();
+		if (!workerImage.isEmpty()) {
+			try {
+				worker.setWorkerImage(workerImage.getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		int userId=Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int workerId=workerService.getWorkerIdByUserId(userId);
+		worker.setWorkerId(workerId);
+		worker.setWorkerBankCard(workerBankCard);
+		worker.setWorkerDisabilityCard(workerDisabilityCard);
+		worker.setWorkerIdCard(workerDisabilityCard.substring(0, 17));
+		worker.setWorkerPaypal(workerPaypal);
+		worker.setWorkerPhone(workerPhone);
+		worker.setWorkerRealName(workerRealName);
+
+		worker.setUpdateTime(new Date());
+		workerService.updateByPrimaryKeySelective(worker);
+		map.clear();
+		map.put(Constants.MESSAGE,"修改成功!");
 		return map;
 	}
 
