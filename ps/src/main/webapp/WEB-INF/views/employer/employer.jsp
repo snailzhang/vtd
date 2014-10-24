@@ -406,7 +406,7 @@
 			//$("#packUnzipProgressModal").modal('show');
 			
 			$("#unzipProgress").show();
-			zipTimer = setInterval("unzipProgress()", 100);
+			zipTimer = setInterval("unzipProgress()", 2000);
 		};
 		unzipProgress = function(){
 			$.ajax({
