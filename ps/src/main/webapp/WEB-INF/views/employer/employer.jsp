@@ -210,6 +210,7 @@
 						$("#packUncomplete tbody").empty();
 						$("#packUncomplete tbody").append("<tr class='text-danger'><td colspan='10'>无内容</td></tr>");
 					}else{
+						$("#packUncomplete tbody").empty();
 						$.each(data.list,function(i,item){
 							if(item.packLockTime == null){
 								item.packLockTime = "";
@@ -235,6 +236,7 @@
 								"</tr>"
 							);
 						});
+						$("#packUncomplete .pagination").empty();
 						var pageTotal = data.totlePage;
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
@@ -244,6 +246,7 @@
 									"</a></li>"
 								);
 							}else{
+								
 								$("#packUncomplete .pagination").append(
 									"<li><a onClick='loadUnCompletePackList("+i+")'>"+
 									i+
@@ -267,6 +270,7 @@
 						$("#packComplete tbody").empty();
 						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='7'>无内容</td></tr>");
 					}else{
+						$("#packComplete tbody").empty();
 						$.each(data.list,function(i,item){
 							if(item.packLockTime == null){
 								item.packLockTime = "";
@@ -284,9 +288,11 @@
 								"</tr>"
 							);
 						});
+						$("#packComplete .pagination").empty();
 						var pageTotal = data.totlePage;
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
+								
 								$("#packComplete .pagination").append(
 									"<li class='active'><a onClick='loadUnCompletePackList("+i+")'>"+
 									i+
@@ -336,6 +342,7 @@
 						$("#packDetailTBody").empty();
 						$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
 					}else{
+						$("#packDetailTBody,#packDetailModal .pagination").empty();
 						$.each(data.list,function(i,item){
 							var upTime = "";
 							if(item.taskUploadTime != null)upTime = item.taskUploadTime;

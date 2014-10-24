@@ -137,6 +137,7 @@
 						$("tbody").empty();
 						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
+						$("tbody,.pagination").empty();
 						$.each(data.list,function(i,item){
 							var ps = "";
 							var downloadTD = "<td></td>";
