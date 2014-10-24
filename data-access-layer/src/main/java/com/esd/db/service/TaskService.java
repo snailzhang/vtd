@@ -9,6 +9,8 @@ import com.esd.db.model.taskWithBLOBs;
 public interface TaskService {
 
 	int deleteByPrimaryKey(Integer taskId);
+	
+	int deleteByPackId(Integer packId);
 
 	int insert(taskWithBLOBs record);
 

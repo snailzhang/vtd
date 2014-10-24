@@ -113,6 +113,12 @@
 		from pack
 		where employer_id = #{employerId} and pack_status = false ORDER BY pack_id DESC limit #{begin},#{end}
 	</select>
+	<select id="selectPackIdByPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select
+		pack_id
+		from pack
+		where pack_name = #{packName,jdbcType=VARCHAR}
+	</select>
 	<select id="selectFinishPackPagesByEmployerId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />

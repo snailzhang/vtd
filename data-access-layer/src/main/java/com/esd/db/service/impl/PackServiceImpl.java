@@ -175,4 +175,10 @@ public class PackServiceImpl implements PackService {
 		return packMapper.selectFinishPackCountByEmployerId(employerId);
 	}
 
+	@Override
+	public int getPackIdByPackName(String packName) {
+		
+		return packMapper.selectPackIdByPackName(packName);
+	}
+
 }

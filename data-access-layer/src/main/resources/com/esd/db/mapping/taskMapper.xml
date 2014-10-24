@@ -176,6 +176,10 @@
 		delete from task
 		where task_id = #{taskId,jdbcType=INTEGER}
 	</delete>
+	<delete id="deleteByPackId" parameterType="java.lang.Integer">
+		delete from task
+		where pack_id = #{packId,jdbcType=INTEGER}
+	</delete>
 	<insert id="insert" parameterType="com.esd.db.model.taskWithBLOBs">
 		insert into task (task_id, pack_id, inspector_id,
 		fault_id, worker_id, task_dir,

@@ -184,4 +184,10 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.selectFreePackCount();
 	}
 
+	@Override
+	public int deleteByPackId(Integer packId) {
+		
+		return taskMapper.deleteByPackId(packId);
+	}
+
 }

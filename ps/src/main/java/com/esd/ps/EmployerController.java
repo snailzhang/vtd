@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -227,8 +228,8 @@ public class EmployerController {
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
 		// 判断 request 是否有文件上传,即多部分请求
+		String packName = null,zipEntryName=null;
 		try {
-			String packName = null;
 			// 临时文件路径
 			String url = EmployerController.url(request);
 			logger.debug("url:{}",url);
@@ -290,7 +291,7 @@ public class EmployerController {
 					finishCount++;
 					continue;
 				}
-				String zipEntryName = entry.getName();
+				zipEntryName = entry.getName();
 				if (zipEntryName.indexOf("/") < zipEntryName.lastIndexOf("/")) {
 					String str[] = zipEntryName.split("/");
 					// (zipEntryName.indexOf("/") + 1)
@@ -325,17 +326,21 @@ public class EmployerController {
 				taskWithBLOBs.setTaskUpload(false);
 				if(taskService.insert(taskWithBLOBs) ==1){
 					finishCount++;
-				}else{
-					
 				}
 			}
 			zip.close();
 			in.close();
 			File fd = new File(url + "/" + packName);
 			fd.delete();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch(DuplicateKeyException d){
+			int packId=packService.getPackIdByPackName(packName);
+			packService.deleteByPrimaryKey(packId);
+			taskService.deleteByPackId(packId);
+			return new ModelAndView("employer/employer","replay",zipEntryName);
 		}
+			catch (IOException e) {
+		}
+		
 		return new ModelAndView("employer/employer");
 	}
 	/**
