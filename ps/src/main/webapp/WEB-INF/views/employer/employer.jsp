@@ -376,7 +376,7 @@
 		showUploadProgress = function(){
 			$("#unzipProgress").hide();
 			$("#packUploadProgressModal").modal('show');
-			oTimer = setInterval("getProgress()", 100);
+			oTimer = setInterval("getProgress()", 1000);
 		};
 		getProgress = function(){
 			$.ajax({
