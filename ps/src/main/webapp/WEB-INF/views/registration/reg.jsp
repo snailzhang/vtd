@@ -42,8 +42,8 @@
 				<div class="col-sm-10">
 					<select class="form-control" name="district" placeholder="发证机构">
 						<option value="0">请选择发证机构</option>
-						<c:forEach items="districts" var="item">
-							<option value="${item.val}">${item.des}</option>
+						<c:forEach items="${districts}" var="item">
+							<option value="${item.id}">${item.name}</option>
 						</c:forEach>
 					</select>
 				</div>
