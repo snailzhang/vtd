@@ -133,6 +133,18 @@
 				keyboard : true
 			});
 		}
+		function checkAgreement(){
+			var checkbox = $("input[type='checkbox']");
+			var isChecked = checkbox.is("input:checked");
+			var msg = '<div class="alert alert-danger alert-dismissable">'
+					+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+					+ '错误：请签署保密协议!' + '</div>';
+			if(isChecked){
+				$("#message").empty();
+			}else{
+				$("#message").html(msg);
+			}
+		};
 		function checkNameAndCard() {
 			var name = $("#name").val();
 			var card = $("#card").val();
@@ -161,6 +173,7 @@
 
 		$(document).ready(function() {
 			$("#form").submit(function() {
+				checkAgreement();
 				checkNameAndCard();
 				return false;
 			});

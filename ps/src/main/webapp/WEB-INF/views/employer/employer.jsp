@@ -421,6 +421,10 @@
 					$("#packUploadProgressModal .modal-title").text("任务包解压中");
 					$("#unzipProgress").attr({"aria-valuenow":finishCount,"aria-valuemax":fileCount,"style":"width:"+finishPer+"%"}).text(finishCount+"个/"+fileCount+"个");
 					
+					if(finishCount == fileCount){
+						window.clearInterval(zipTimer);
+						window.location.reload();
+					}
 				}
 			});
 		};
