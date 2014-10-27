@@ -336,7 +336,7 @@ public class EmployerController {
 			int packId=packService.getPackIdByPackName(packName);
 			packService.deleteByPrimaryKey(packId);
 			taskService.deleteByPackId(packId);
-			return new ModelAndView("employer/employer","replay",zipEntryName);
+			return new ModelAndView("employer/employer",Constants.MESSAGE,zipEntryName+"已存在");
 		}
 			catch (IOException e) {
 		}

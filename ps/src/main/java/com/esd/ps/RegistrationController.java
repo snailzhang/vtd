@@ -8,6 +8,7 @@ package com.esd.ps;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.esd.common.disability.CheckDisabilityCard;
 import com.esd.db.model.Registration;
+import com.esd.db.model.District;
+import com.esd.db.service.DistrictService;
 import com.esd.db.service.RegistrationService;
 
 /**
@@ -36,7 +39,8 @@ import com.esd.db.service.RegistrationService;
 @Controller
 public class RegistrationController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-
+	@Autowired
+	private DistrictService districtService;
 	@Autowired
 	private RegistrationService registrationService;
 
@@ -47,8 +51,11 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public ModelAndView registrationGet() {
-
-		return new ModelAndView("registration/reg");
+		List<District> list=districtService.getAll();
+		if(list != null){
+			return new ModelAndView("registration/reg","districts",list);
+		}
+		return new ModelAndView("registration/reg","districts",null);
 	}
 
 	/**

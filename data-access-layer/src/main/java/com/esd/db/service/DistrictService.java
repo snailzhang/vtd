@@ -18,4 +18,6 @@ public interface DistrictService {
 	public District selectByPrimaryKey(int id);
 
 	public List<District> selectByPid(int pid);
+	
+	List<District> getAll();
 }
