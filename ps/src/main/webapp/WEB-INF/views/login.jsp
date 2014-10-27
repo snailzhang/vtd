@@ -24,12 +24,7 @@
 	<form action="${contextPath}/login" method="post" id="login" name="login" role="form" class="form-signin" >
 		<h2 class="form-signin-heading">请登录</h2>
 		<div class="form-group">
-			<div class="input-group">
-				<input type="text" id="username" name="username" autofocus="" required="" placeholder="用户名" class="form-control">
-				<span class="input-group-btn">
-			    	<button id="regBtn" class="btn btn-default" type="button" style="width:45px;height:45px;margin-left:-1px;border-radius:0 4px 4px 0">注册</button>
-			    </span>
-			</div>
+			<input type="text" id="username" name="username" autofocus="" required="" placeholder="用户名" class="form-control">
 			<span class="help-block"></span>
 		</div>
 		<div class="form-group">
@@ -47,15 +42,8 @@
 	$(document).ready(function(){
 		checkUserName = function(){
 			var user = $("#username");
-			var userValue = user.val();
-			var result = false;
-			var text = user.val();
-			text = text.replace(/[ ]/g,"");
-			if(text == ""){
-				user.parent(".input-group").next(".help-block").css("color","red").text("请填写用户名！");
-				return false;
-			}else{
-				user.parent(".input-group").next(".help-block").text("");
+			if(checkout.text.isempty(user,"请填写用户名！")){
+				return false;	
 			}
 			return true;
 		};
@@ -87,9 +75,7 @@
 			if(checkUserName()&&checkUserPWD())formName.submit();
 			
 		});
-		$("#regBtn").click(function(){
-			window.location.href="${contextPath}/registration";
-		});
+		
 	});
 </script>
 </body>
