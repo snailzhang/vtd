@@ -1,7 +1,9 @@
 package com.esd.ps.model;
 
 public class WorkerRecordTrans {
-
+	
+	private int taskId;
+	
 	private String taskName;
 
 	private String packName;
@@ -19,6 +21,16 @@ public class WorkerRecordTrans {
 	private Double taskMarkTime;
 
 	private Boolean taskEffective;
+	
+	
+
+	public int getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(int taskId) {
+		this.taskId = taskId;
+	}
 
 	public String getTaskName() {
 		return taskName;

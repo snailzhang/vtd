@@ -244,6 +244,7 @@ public class WorkerController {
 			workerRecordTrans.setTaskEffective(workerRecord.getTaskEffective());
 			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime() / 3600000);
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
+			workerRecordTrans.setTaskId(workerRecord.getTaskId());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskStatu(workerRecord.getTaskStatu());
 			if (workerRecord.getTaskUploadTime() == null) {
@@ -305,7 +306,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/downOneTask", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downOneTask(HttpServletRequest request, String taskName) {
+	public Map<String, Object> downOneTask(HttpServletRequest request, String taskName, int taskId) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String url = WorkerController.url(request);
 		File f = new File(url);
@@ -315,20 +316,14 @@ public class WorkerController {
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
 		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + zipName;
-
-		if (f.exists()) {
-			zipFile = new File(url + "/" + zipName);
-			if (zipFile.exists()) {
-				map.put("wrongPath", wrongPath);
-				return map;
-			}
-		} else {
+		if (!f.exists()) {
 			f.mkdir();
 		}
 		try {
 			zipFile.createNewFile();
-			List<taskWithBLOBs> list = taskService.getTaskByTaskName(taskName);
-
+			taskWithBLOBs task = taskService.selectByPrimaryKey(taskId);
+			List<taskWithBLOBs> list =new ArrayList<taskWithBLOBs>();
+			list.add(task);
 			this.wrongPath(zipFile, list);
 		} catch (IOException e) {
 			e.printStackTrace();

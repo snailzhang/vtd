@@ -263,7 +263,7 @@ public class EmployerController {
 		try {
 			if (packService.getCountPackByPackName(packName) > 0) {
 				map.clear();
-				map.put(Constants.MESSAGE, "包名数据库中已存在!");
+				map.put(Constants.MESSAGE, "任务包名已存在!");
 				return map;
 			}
 			ZipFile zip = new ZipFile(url + "/" + packName);
