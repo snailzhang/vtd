@@ -79,8 +79,11 @@ public class EmployerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.GET)
-	public ModelAndView employerGet() {// 登录页
-		return new ModelAndView("employer/employer");
+	public ModelAndView employerGet(HttpSession session) {// 登录页
+		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
+		int employerId = employerService.getEmployerIdByUserId(userId);
+		String url=employerService.getUploadUrlByEmployerId(employerId);
+		return new ModelAndView("employer/employer","url",url);
 	}
 
 	/**
@@ -136,10 +139,8 @@ public class EmployerController {
 
 			list.add(packTrans);
 		}
-		String url=employerService.getUploadUrlByEmployerId(employerId);
 		map1.clear();
 		map.clear();
-		map.put("url",url);
 		map.put("totle", totle);
 		map.put("totlePage", Math.ceil((double) totle / (double) Constants.ROW));
 		map.put("list", list);
