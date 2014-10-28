@@ -136,8 +136,10 @@ public class EmployerController {
 
 			list.add(packTrans);
 		}
+		String url=employerService.getUploadUrlByEmployerId(employerId);
 		map1.clear();
 		map.clear();
+		map.put("url",url);
 		map.put("totle", totle);
 		map.put("totlePage", Math.ceil((double) totle / (double) Constants.ROW));
 		map.put("list", list);
