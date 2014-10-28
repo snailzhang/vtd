@@ -81,11 +81,6 @@ public class ManagerController {
 	@Value("${MSG_USER_EXIST}")
 	private String MSG_USER_EXIST;
 	/**
-	 * 身份证号已存在
-	 */
-	@Value("${MSG_WORKERIDCARD_EXIST}")
-	private String MSG_WORKERIDCARD_EXIST;
-	/**
 	 * 残疾人证号已存在
 	 */
 	@Value("${MSG_WORKERDISABILITYCARD_EXIST}")
@@ -442,21 +437,37 @@ public class ManagerController {
 		redirectAttributes.addFlashAttribute("worker", worker);
 		return new ModelAndView("redirect:security/addworker");
 	}
-
 	/**
-	 * 修改管理员信息
-	 * 
-	 * @param userType
-	 * @param userId
+	 * 管理员中心
 	 * @return
 	 */
-	@RequestMapping(value = "/updateManager", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> update(String userName) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		return map;
+	@RequestMapping(value = "/managerCenter", method = RequestMethod.GET)
+	public ModelAndView managerCenter(){
+		return new ModelAndView("manager/managerCenter");
 	}
-
+	/**
+	 * 发包商中心
+	 * @return
+	 */
+	@RequestMapping(value = "/employerCenter", method = RequestMethod.GET)
+	public ModelAndView employerCenter(){
+		return new ModelAndView("employer/employerCenter");
+	}
+	/**
+	 * 工作者中心
+	 * @return
+	 */
+	@RequestMapping(value = "/workerCenter", method = RequestMethod.GET)
+	public ModelAndView workerCenter(){
+		return new ModelAndView("worker/workerCenter");
+	}
+	/**
+	 * 修改密码
+	 * @param oldPassWord
+	 * @param newPassWord
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord, HttpSession session) {
@@ -475,26 +486,15 @@ public class ManagerController {
 		map.put(Constants.MESSAGE, "原密码不对!");
 		return map;
 	}
-
-	/**
-	 * 修改发包商信息
-	 * 
-	 * @param userType
-	 * @param userId
-	 * @return
-	 */
-	@RequestMapping(value = "/updateEmployer", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> updateEmployer(String userName) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		return map;
-	}
-
 	/**
 	 * 修改工作者信息
-	 * 
-	 * @param userType
-	 * @param userId
+	 * @param workerImage
+	 * @param workerRealName
+	 * @param workerPhone
+	 * @param workerDisabilityCard
+	 * @param workerBankCard
+	 * @param workerPaypal
+	 * @param session
 	 * @return
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
