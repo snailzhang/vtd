@@ -83,7 +83,7 @@
 							$.each(data.list,function(i,item){
 								var downloadTD = "<td></td>";
 								if(isf == 0){
-									downloadTD = "<td><a onClick='downloadTask(\""+item.taskName+"\")'>下载</a></td>";
+									downloadTD = "<td><a onClick='downloadTask("+item.taskId+",\""+item.taskId+"\")'>下载</a></td>";
 								}
 								var tS = "";
 								if(item.taskStatu == 0){
@@ -201,11 +201,11 @@
 			});
 		};
 		/*******************************下载任务**************************************************/
-		downloadTask = function(taskName){
+		downloadTask = function(taskId,taskName){
 			$.ajax({
 				type:'GET',
 				url:'${contextPath}/security/downOneTask',
-				data:{"taskName":taskName},
+				data:{"taskId":taskId,"taskName":taskName},
 				dataType:'json',
 				success:function(data){
 					if(data.wrongPath != ""){
