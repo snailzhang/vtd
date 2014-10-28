@@ -25,4 +25,6 @@ public interface employerMapper {
     int updateByPrimaryKeySelective(employer record);
 
     int updateByPrimaryKey(employer record);
+    
+    String selectUploadUrlByEmployerId(Integer employerId);
 }

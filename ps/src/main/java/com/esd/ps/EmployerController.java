@@ -78,7 +78,8 @@ public class EmployerController {
 	private TaskService taskService;
 	@Autowired
 	private WorkerRecordService workerRecordService;
-	int finishCount=0,fileCount=0;
+	int finishCount = 0, fileCount = 0;
+
 	/**
 	 * 登录发包商页
 	 * 
@@ -97,29 +98,29 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session,int page,int packStuts) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> map1 = new HashMap<String, Integer>();
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
-		logger.debug("employerId:{}",employerId);
+		logger.debug("employerId:{}", employerId);
 		session.setAttribute("employerId", employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
 
-		map1.put("begin",(page - 1)*Constants.ROW);
-		map1.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
-		map1.put("employerId",employerId);
-		List<pack> listPack=null;
+		map1.put("begin", (page - 1) * Constants.ROW);
+		map1.put("end", ((page - 1) * Constants.ROW + (Constants.ROW - 1)));
+		map1.put("employerId", employerId);
+		List<pack> listPack = null;
 		int totle = 0;
-		if(packStuts == 0){
+		if (packStuts == 0) {
 			listPack = packService.getDoingPackPagesByEmployerId(map1);
 			totle = packService.getDoingPackCountByEmployerId(employerId);
-		}else{
+		} else {
 			listPack = packService.getFinishPackPagesByEmployerId(map1);
 			totle = packService.getFinishPackCountByEmployerId(employerId);
 		}
-		
+
 		if (listPack == null) {
 			return null;
 		}
@@ -137,6 +138,7 @@ public class EmployerController {
 				packTrans.setPackStatus(0);
 			}
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
+			packTrans.setUnzip(pack.getUnzip());
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
 
 			list.add(packTrans);
@@ -144,9 +146,36 @@ public class EmployerController {
 		map1.clear();
 		map.clear();
 		map.put("totle", totle);
-		map.put("totlePage",Math.ceil((double)totle/(double)Constants.ROW));
+		map.put("totlePage", Math.ceil((double) totle / (double) Constants.ROW));
 		map.put("list", list);
-		logger.debug("list:{},totle:{},totlePages",list,totle,Math.ceil((double)totle/(double)Constants.ROW));
+		logger.debug("list:{},totle:{},totlePages", list, totle, Math.ceil((double) totle / (double) Constants.ROW));
+		return map;
+	}
+	/**
+	 * 上传未解压的任务包
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/unzipList", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> unzipList(HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
+		String url = employerService.getUploadUrlByEmployerId(employerId);
+		List<String> list = new ArrayList<>();
+		File fold = new File(url);
+		if (fold.exists()) {
+			File[] file = fold.listFiles();
+			for (int i = 0; i < file.length; i++) {
+				String zipName = new String();
+				zipName = file[i].getName();
+				if (packService.getCountPackByPackName(zipName) == 0) {
+					list.add(zipName);
+				}
+			}
+		}
+		map.clear();
+		map.put("list", list);
 		return map;
 	}
 
@@ -172,24 +201,24 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> detailpagePost(int packId,int page,int taskStuts) {
+	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> map1 = new HashMap<String, Integer>();
 
-		map1.put("begin",(page - 1)*Constants.ROW);
-		map1.put("end",((page - 1)*Constants.ROW + (Constants.ROW - 1)));
-		map1.put("packId",packId);
+		map1.put("begin", (page - 1) * Constants.ROW);
+		map1.put("end", ((page - 1) * Constants.ROW + (Constants.ROW - 1)));
+		map1.put("packId", packId);
 		int totle = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		List<task> listTask = null;
-		if(taskStuts == 2){
+		if (taskStuts == 2) {
 			listTask = taskService.getAllTaskPagesByPackId(map1);
-			totle =  taskService.getTaskCountByPackId(packId);
-		}else if (taskStuts == 0){
+			totle = taskService.getTaskCountByPackId(packId);
+		} else if (taskStuts == 0) {
 			listTask = taskService.getDoingTaskPagesByPackId(map1);
 			totle = taskService.getDoingTaskCountByPackId(packId);
-		}else if(taskStuts == 1){
+		} else if (taskStuts == 1) {
 			listTask = taskService.getFinishTaskPagesByPackId(map1);
 			totle = taskService.getFinishTaskCountByPackId(packId);
 		}
@@ -208,7 +237,7 @@ public class EmployerController {
 		}
 		map1.clear();
 		map.clear();
-		int totlePage = (int)Math.ceil((double)totle/(double)Constants.ROW);
+		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put("totlePage", totlePage);
 		map.put("totle", totle);
 		map.put("list", list);
@@ -223,16 +252,19 @@ public class EmployerController {
 	 * @param twbs
 	 */
 	@RequestMapping(value = "/uploadPack", method = RequestMethod.POST)
-	public ModelAndView uploadpack(HttpServletRequest request, HttpServletResponse response, packWithBLOBs packWithBLOBs, taskWithBLOBs taskWithBLOBs, int packLockTime,int taskLvl, HttpSession session) {
-		logger.debug("packLockTime:{},taskLvl:{}", packLockTime,taskLvl);
+	public ModelAndView uploadpack(HttpServletRequest request, HttpServletResponse response, packWithBLOBs packWithBLOBs, taskWithBLOBs taskWithBLOBs, int packLockTime, int taskLvl,
+			HttpSession session) {
+		logger.debug("packLockTime:{},taskLvl:{}", packLockTime, taskLvl);
+		fileCount = 0;
+		finishCount = 0;
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
 		// 判断 request 是否有文件上传,即多部分请求
-		String packName = null,zipEntryName=null;
+		String packName = null, zipEntryName = null;
 		try {
 			// 临时文件路径
 			String url = EmployerController.url(request);
-			logger.debug("url:{}",url);
+			logger.debug("url:{}", url);
 			if (multipartResolver.isMultipart(request)) {
 				// 转换成多部分request
 				MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
@@ -276,15 +308,13 @@ public class EmployerController {
 					}
 				}
 			}
-			fileCount=0;
-			finishCount=0;
-			// 从临时文件取出要解压的文件上传TaskService
 			ZipFile zip = new ZipFile(url + "/" + packName);
-			fileCount=zip.size();
+			fileCount = zip.size();
+			// 从临时文件取出要解压的文件上传TaskService
 			InputStream in = null;
-			logger.debug("zip:{}",zip.size());
+			logger.debug("zip:{}", zip.size());
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
-				
+
 				ZipEntry entry = (ZipEntry) entries.nextElement();
 				String taskDir = "";
 				if (entry.isDirectory()) {
@@ -324,7 +354,7 @@ public class EmployerController {
 				taskWithBLOBs.setTaskDir(taskDir);
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
-				if(taskService.insert(taskWithBLOBs) ==1){
+				if (taskService.insert(taskWithBLOBs) == 1) {
 					finishCount++;
 				}
 			}
@@ -332,32 +362,119 @@ public class EmployerController {
 			in.close();
 			File fd = new File(url + "/" + packName);
 			fd.delete();
-		} catch(DuplicateKeyException d){
-			int packId=packService.getPackIdByPackName(packName);
+		} catch (DuplicateKeyException d) {
+			int packId = packService.getPackIdByPackName(packName);
 			packService.deleteByPrimaryKey(packId);
 			taskService.deleteByPackId(packId);
-			return new ModelAndView("employer/employer",Constants.MESSAGE,zipEntryName+"已存在");
+			return new ModelAndView("employer/employer", Constants.MESSAGE, zipEntryName + "已存在");
+		} catch (IOException e) {
 		}
-			catch (IOException e) {
-		}
-		
-		return new ModelAndView("employer/employer");
+
+		return null;
 	}
+
+	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
+	public ModelAndView unzip(String packName, int taskLvl, int packLockTime, HttpSession session, packWithBLOBs packWithBLOBs) {
+		String zipEntryName = null;
+		try {
+			if (packService.getCountPackByPackName(packName) > 0) {
+				return new ModelAndView("employer/employer", Constants.MESSAGE, "包名数据库中已存在!");
+			}
+			ZipFile zip = new ZipFile(packName);
+			if (zip.size() > 1) {
+				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
+				// packWithBLOBs.setPackFile(pack.getBytes());
+				packWithBLOBs.setPackName(packName);
+				packWithBLOBs.setDownCount(0);
+				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
+				packWithBLOBs.setPackStatus(false);
+				packWithBLOBs.setVersion(1);
+				packService.insert(packWithBLOBs);
+
+			}
+			fileCount = zip.size();
+			// 从临时文件取出要解压的文件上传TaskService
+			InputStream in = null;
+			logger.debug("zip:{}", zip.size());
+
+			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
+
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				String taskDir = "";
+				if (entry.isDirectory()) {
+					finishCount++;
+					continue;
+				}
+				zipEntryName = entry.getName();
+				if (zipEntryName.indexOf("/") < zipEntryName.lastIndexOf("/")) {
+					String str[] = zipEntryName.split("/");
+					// (zipEntryName.indexOf("/") + 1)
+					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
+					zipEntryName = str[(str.length - 1)];
+				}
+				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
+				// 收集没有匹配的文件
+				String noMatch = "";
+				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
+					noMatch = zipEntryName;
+					finishCount++;
+					continue;
+				}
+				in = zip.getInputStream(entry);
+				// inputstrem转成byte[]
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				byte[] data = new byte[4096];
+				int count = -1;
+				while ((count = in.read(data, 0, 4096)) != -1)
+					outStream.write(data, 0, count);
+				data = null;
+				byte[] wav = outStream.toByteArray();
+				taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
+				taskWithBLOBs.setTaskWav(wav);
+				taskWithBLOBs.setTaskLvl(taskLvl);
+				// 上传的包的号
+				taskWithBLOBs.setPackId(packService.getNewPackIdByEmployerId(packWithBLOBs.getEmployerId()));
+				taskWithBLOBs.setTaskName(zipEntryName);
+				// 存入压缩包的层次结构
+				taskWithBLOBs.setTaskDir(taskDir);
+				// 包内任务的上传状态
+				taskWithBLOBs.setTaskUpload(false);
+				if (taskService.insert(taskWithBLOBs) == 1) {
+					finishCount++;
+				}
+			}
+			zip.close();
+			in.close();
+			File fd = new File(packName);
+			fd.delete();
+		} catch (DuplicateKeyException d) {
+			int packId = packService.getPackIdByPackName(packName);
+			packService.deleteByPrimaryKey(packId);
+			taskService.deleteByPackId(packId);
+			return new ModelAndView("employer/employer", Constants.MESSAGE, zipEntryName + "已存在");
+		} catch (IOException e) {
+		}
+
+		return null;
+	}
+
 	/**
 	 * 返回前台zip的解压进度
+	 * 
 	 * @param fileCount
 	 * @param finishCount
 	 * @return
 	 */
 	@RequestMapping(value = "/fileCount", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> fileCount(){
+	public Map<String, Object> fileCount() {
 		Map<String, Object> map = new HashMap<String, Object>();
+		logger.debug("fileCount:{},finishCount:{}", fileCount, finishCount);
 		map.put("fileCount", fileCount);
 		map.put("finishCount", finishCount);
 		return map;
 	}
-	
+
 	/**
 	 * 发包商下载已完成的任务包(zip格式,原包目录,wav,TAG,TextGrid文件)
 	 * 
@@ -428,9 +545,9 @@ public class EmployerController {
 	 */
 	public static String url(HttpServletRequest request) {
 		String url = request.getServletContext().getRealPath("/");
-		url=url+"employerTemp";
-		File f=new File(url);
-		if(f.exists()){
+		url = url + "employerTemp";
+		File f = new File(url);
+		if (f.exists()) {
 			return url;
 		}
 		f.mkdir();

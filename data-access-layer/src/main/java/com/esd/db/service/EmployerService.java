@@ -25,4 +25,6 @@ public interface EmployerService {
     int getCountEmployerIdByEmployerName(String employerName);
     
     int getCountEmployerIdByUserId(Integer userId);
+    
+    String getUploadUrlByEmployerId(Integer employerId);
 }

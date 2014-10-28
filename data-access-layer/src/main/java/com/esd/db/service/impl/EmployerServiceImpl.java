@@ -74,4 +74,9 @@ public class EmployerServiceImpl implements EmployerService {
 		return employerMapper.selectCountEmployerIdByUserId(userId);
 	}
 
+	@Override
+	public String getUploadUrlByEmployerId(Integer employerId) {
+		return employerMapper.selectUploadUrlByEmployerId(employerId);
+	}
+
 }

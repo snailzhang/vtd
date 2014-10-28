@@ -2,54 +2,65 @@ package com.esd.ps.model;
 
 public class packTrans {
 
-    private int packId;
-    
+	private int packId;
+
 	private String packName;
 
-    private int packStatus;
+	private int packStatus;
 
-    private Integer packLockTime;
+	private Integer packLockTime;
 
-    private String createTime;
-    
-    private Integer taskCount;
-    
-    private Integer finishTaskCount;
-    
-    private Integer downCount;
+	private Integer unzip;
 
-    public String getPackName() {
-        return packName;
-    }
+	private String createTime;
 
-    public void setPackName(String packName) {
-        this.packName = packName == null ? null : packName.trim();
-    }
+	private Integer taskCount;
 
-    public int getPackStatus() {
-        return packStatus;
-    }
+	private Integer finishTaskCount;
 
-    public void setPackStatus(int packStatus) {
-        this.packStatus = packStatus;
-    }
+	private Integer downCount;
 
-    public Integer getPackLockTime() {
-        return packLockTime;
-    }
+	public String getPackName() {
+		return packName;
+	}
 
-    public void setPackLockTime(Integer packLockTime) {
-        this.packLockTime = packLockTime;
-    }
+	public void setPackName(String packName) {
+		this.packName = packName == null ? null : packName.trim();
+	}
 
-    public String getCreateTime() {
-        return createTime;
-    }
+	public int getPackStatus() {
+		return packStatus;
+	}
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-    public int getPackId() {
+	public void setPackStatus(int packStatus) {
+		this.packStatus = packStatus;
+	}
+
+	public Integer getPackLockTime() {
+		return packLockTime;
+	}
+
+	public Integer getUnzip() {
+		return unzip;
+	}
+
+	public void setUnzip(Integer unzip) {
+		this.unzip = unzip;
+	}
+
+	public void setPackLockTime(Integer packLockTime) {
+		this.packLockTime = packLockTime;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
+	public int getPackId() {
 		return packId;
 	}
 
@@ -80,5 +91,5 @@ public class packTrans {
 	public void setDownCount(Integer downCount) {
 		this.downCount = downCount;
 	}
-	
+
 }

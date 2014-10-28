@@ -4,103 +4,113 @@ import java.util.Date;
 
 public class employer {
 
-    private Integer employerId;
+	private Integer employerId;
 
-    private Integer userId;
+	private Integer userId;
 
-    private String employerName;
+	private String employerName;
 
-    private Integer createId;
+	private String uploadUrl;
 
-    private Date createTime;
+	private Integer createId;
 
-    private String createMethod;
+	private Date createTime;
 
-    private Integer updateId;
+	private String createMethod;
 
-    private Date updateTime;
+	private Integer updateId;
 
-    private String updateMethod;
+	private Date updateTime;
 
-    private Integer version;
+	private String updateMethod;
 
-    public Integer getEmployerId() {
-        return employerId;
-    }
+	private Integer version;
 
-    public void setEmployerId(Integer employerId) {
-        this.employerId = employerId;
-    }
+	public Integer getEmployerId() {
+		return employerId;
+	}
 
-    public Integer getUserId() {
-        return userId;
-    }
+	public void setEmployerId(Integer employerId) {
+		this.employerId = employerId;
+	}
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+	public Integer getUserId() {
+		return userId;
+	}
 
-    public String getEmployerName() {
-        return employerName;
-    }
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
-    public void setEmployerName(String employerName) {
-        this.employerName = employerName == null ? null : employerName.trim();
-    }
+	public String getEmployerName() {
+		return employerName;
+	}
 
-    public Integer getCreateId() {
-        return createId;
-    }
+	public String getUploadUrl() {
+		return uploadUrl;
+	}
 
-    public void setCreateId(Integer createId) {
-        this.createId = createId;
-    }
+	public void setUploadUrl(String uploadUrl) {
+		this.uploadUrl = uploadUrl;
+	}
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName == null ? null : employerName.trim();
+	}
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	public Integer getCreateId() {
+		return createId;
+	}
 
-    public String getCreateMethod() {
-        return createMethod;
-    }
+	public void setCreateId(Integer createId) {
+		this.createId = createId;
+	}
 
-    public void setCreateMethod(String createMethod) {
-        this.createMethod = createMethod == null ? null : createMethod.trim();
-    }
+	public Date getCreateTime() {
+		return createTime;
+	}
 
-    public Integer getUpdateId() {
-        return updateId;
-    }
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 
-    public void setUpdateId(Integer updateId) {
-        this.updateId = updateId;
-    }
+	public String getCreateMethod() {
+		return createMethod;
+	}
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+	public void setCreateMethod(String createMethod) {
+		this.createMethod = createMethod == null ? null : createMethod.trim();
+	}
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+	public Integer getUpdateId() {
+		return updateId;
+	}
 
-    public String getUpdateMethod() {
-        return updateMethod;
-    }
+	public void setUpdateId(Integer updateId) {
+		this.updateId = updateId;
+	}
 
-    public void setUpdateMethod(String updateMethod) {
-        this.updateMethod = updateMethod == null ? null : updateMethod.trim();
-    }
+	public Date getUpdateTime() {
+		return updateTime;
+	}
 
-    public Integer getVersion() {
-        return version;
-    }
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+	public String getUpdateMethod() {
+		return updateMethod;
+	}
+
+	public void setUpdateMethod(String updateMethod) {
+		this.updateMethod = updateMethod == null ? null : updateMethod.trim();
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 }

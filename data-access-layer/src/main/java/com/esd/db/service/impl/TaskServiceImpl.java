@@ -3,6 +3,7 @@ package com.esd.db.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import com.esd.db.dao.taskMapper;
 import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.TaskService;
+import com.sun.istack.internal.logging.Logger;
 
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
@@ -102,12 +104,14 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public int getCountTaskDoing() {
-		int packId = taskMapper.selectFirstPackIdOrderByTaskLvl();
-		if (packId > 0) {
+		try {
+			int packId = taskMapper.selectFirstPackIdOrderByTaskLvl();
 			return taskMapper.selectUndoTaskCountByPackId(packId);
+		} catch (BindingException b) {
+			return taskMapper.selectUndoTaskCountByPackId(0);
 		}
-		return taskMapper.selectUndoTaskCountByPackId(0);
 	}
+
 	@Override
 	public int getTaskCountByPackId(Integer packId) {
 
@@ -163,7 +167,7 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public int getDoingTaskCountByPackId(Integer packId) {
-		
+
 		return taskMapper.selectDoingTaskCountByPackId(packId);
 	}
 
@@ -180,13 +184,13 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public int getFreePackCount() {
-		
+
 		return taskMapper.selectFreePackCount();
 	}
 
 	@Override
 	public int deleteByPackId(Integer packId) {
-		
+
 		return taskMapper.deleteByPackId(packId);
 	}
 
