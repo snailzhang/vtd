@@ -20,57 +20,29 @@
 </head>
 <body>
 	<jsp:include page="../head.jsp" />
-	<!-------------------------------- 上传区域 -------------------------------------------------->
 	<div class="container">
-		<h2>上传任务包</h2>
+		<div class="well well-sm">
+			<span>FTP地址：</span>
+			<span>${ftpUrl}</span>
+		</div>
+	</div>
+	<div class="container">
+	   <div class="form-group">
+	      <div class="col-sm-offset-2 col-sm-10">
+	         <button id="uploadPackBtn" type="button" class="btn btn-default" disabled="disabled">上传</button>
+	      </div>
+	   </div>
 		
-		<form action="${contextPath}/security/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
-			
-			<div class="form-group" id="packUploadDiv">
-		      <label for="pack" class="col-sm-2 control-label">选择任务包：</label>
-		      <div class="col-sm-10">
-		         <input type="file" class="form-control" name="pack" id="pack" placeholder="请选择上传文件">
-		         <span class="help-block"></span>
-		      </div>
-		   </div>
-		   <div class="form-group" id="">
-		      <label for="taskLvl" class="col-sm-2 control-label">任务等级：</label>
-		      <div class="col-sm-10">
-		         <select class="form-control" name="taskLvl" id="taskLvl">
-		         	<option value="1">1</option>
-		         	<option value="2">2</option>
-		         	<option selected="selected" value="3">3</option>
-		         	<option value="4">4</option>
-		         	<option value="5">5</option>
-		         </select>
-		      </div>
-		   </div>
-		   <div class="form-group" id="lockTime">
-		      <label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
-		      <div class="col-sm-10">
-		      	<div class="input-group">
-			         <input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
-			         <span class="input-group-addon">小时</span>
-			         <span class="help-block"></span>
-		        </div>
-		        
-		      </div>
-		   </div>
-		   
-		   <div class="form-group">
-		      <div class="col-sm-offset-2 col-sm-10">
-		         <button id="uploadPackBtn" type="button" class="btn btn-default" disabled="disabled">上传</button>
-		      </div>
-		   </div>
-		</form>
 	</div>
 	<!-------------------------------- 选项卡区域 -------------------------------------------------->
 	<div class="container">
 		<ul class="nav nav-tabs" role="tablist">
 			<li class="active"><a href="#packUncomplete" role="tab" data-toggle="tab">未完成任务包列表</a></li>
 			<li><a href="#packComplete" role="tab" data-toggle="tab">已完成任务包列表</a></li>
+			<li><a href="#packUnzip" role="tab" data-toggle="tab">未解压任务包列表</a></li>
 		</ul>
 		<div class="tab-content">
+		<!-- ****************************************未完成任务包列表******************************************************* -->
 			<div class="tab-pane active" id="packUncomplete">
 				<table class="table table-striped table-bordered">
 					<thead>
@@ -91,6 +63,7 @@
 				</table>
 				<ul class="pagination"></ul>
 			</div>
+			<!-- ****************************************已完成任务包列表******************************************************* -->
 			<div class="tab-pane" id="packComplete">
 				<table class="table table-striped table-bordered">
 					<thead>
@@ -107,6 +80,50 @@
 					<tbody></tbody>
 				</table>
 				<ul class="pagination"></ul>
+			</div>
+			<!-- ****************************************未解压任务包列表******************************************************* -->
+			<div class="tab-pane" id="packUnzip">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<form action="${contextPath}/security/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
+							<div class="form-group" id="">
+								<label for="taskLvl" class="col-sm-2 control-label">任务等级：</label>
+								<div class="col-sm-10">
+									<select class="form-control" name="taskLvl" id="taskLvl">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option selected="selected" value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group" id="lockTime">
+								<label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
+										<span class="input-group-addon">小时</span>
+										<span class="help-block"></span>
+									</div> 
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="panel-body">
+						<table class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th>序号</th>
+									<th>任务包名称</th>
+									<th>任务包状态</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 		
@@ -168,7 +185,7 @@
 		$(document).ready(function(){
 			loadUnCompletePackList(1);
 			loadCompletePackList(1);
-			
+			loadUnzipPackList();
 			/*---------------------------------------上传文件check-------------------------------------------------------------------*/
 			var fileReady = false;
 			checkSubBtnStaus = function(){
@@ -212,29 +229,39 @@
 					}else{
 						$("#packUncomplete tbody").empty();
 						$.each(data.list,function(i,item){
-							if(item.packLockTime == null){
-								item.packLockTime = "";
+							if(item.unzip == 0){
+								$("#packUncomplete tbody").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td>"+item.packName+"</td>"+
+										"<td colspan='8'>任务包解压中.......</td>"+
+									"</tr>"
+								);
+							}else{
+								if(item.packLockTime == null){
+									item.packLockTime = "";
+								}
+								var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
+								var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
+								var downloadPack = "<td></td>";
+								if(item.finishTaskCount != 0){
+									downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+								}
+								$("#packUncomplete tbody").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+										"<td>"+item.taskCount+"</td>"+
+										"<td>"+surplusTask+"</td>"+
+										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>"+finishTaskRatio+"%</td>"+
+										"<td>"+item.downCount+"</td>"+
+										"<td>"+item.packLockTime+"小时</td>"+
+										"<td>"+item.createTime+"</td>"+
+										downloadPack+
+									"</tr>"
+								);
 							}
-							var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
-							var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
-							var downloadPack = "<td></td>";
-							if(item.finishTaskCount != 0){
-								downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
-							}
-							$("#packUncomplete tbody").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
-									"<td>"+item.taskCount+"</td>"+
-									"<td>"+surplusTask+"</td>"+
-									"<td>"+item.finishTaskCount+"</td>"+
-									"<td>"+finishTaskRatio+"%</td>"+
-									"<td>"+item.downCount+"</td>"+
-									"<td>"+item.packLockTime+"小时</td>"+
-									"<td>"+item.createTime+"</td>"+
-									downloadPack+
-								"</tr>"
-							);
 						});
 						$("#packUncomplete .pagination").empty();
 						var pageTotal = data.totlePage;
@@ -307,6 +334,47 @@
 							}
 						}
 					}
+				}
+			});
+		};
+		/*---------------------------------------请求未解压任务包列表-------------------------------------------------------------------*/
+		loadUnzipPackList = function(){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/unzipList',
+				dataType:'json',
+				success:function(data){
+					if(data.list != ""){
+						$("#packUnzip tbody").empty();
+						$.each(data.list,function(i,item){
+							$("#packUnzip tbody").append(
+								"<tr class='unziptr"+i+"'>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td class='packName'>"+item+"</td>"+
+									"<td class='packZipStatus'><a href='javascript:zipOnePack(\""+item+"\",\"unziptr"+i+"\");'>解压</a></td>"+
+								"</tr>"
+							);
+						})
+					}else{
+						$("#packUnzip tbody").append("<tr><td colspan='3'>无未解压任务包</td></tr>");
+					}
+				}
+			});
+		};
+		zipOnePack = function(pName,trClass){
+			
+			var taskLvl = $("#taskLvl").val();
+			var packLockTimeObj = $("#packLockTime");
+			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) return;
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/unzip',
+				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val()},
+				beforSend:function(){
+					$("."+trClass+" .packZipStatus").text("任务包解压中");
+				},
+				complete:function(data){
+					$("."+trClass+" .packZipStatus").text(data.message);
 				}
 			});
 		};
