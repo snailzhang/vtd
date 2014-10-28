@@ -232,7 +232,7 @@ public class WorkerController {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<WorkerRecordTrans> list = new ArrayList<WorkerRecordTrans>();
-		List<workerRecord> workerRecordList = workerRecordService.getAllByDownTaskName(downPackName);
+		List<workerRecord> workerRecordList = workerRecordService.getAllByDownPackName(downPackName);
 		if (workerRecordList == null) {
 			return null;
 		}
@@ -322,7 +322,7 @@ public class WorkerController {
 		try {
 			zipFile.createNewFile();
 			taskWithBLOBs task = taskService.selectByPrimaryKey(taskId);
-			List<taskWithBLOBs> list =new ArrayList<taskWithBLOBs>();
+			List<taskWithBLOBs> list = new ArrayList<taskWithBLOBs>();
 			list.add(task);
 			this.wrongPath(zipFile, list);
 		} catch (IOException e) {
@@ -468,6 +468,7 @@ public class WorkerController {
 				}
 				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + ".wav";
 				if (taskName.equals(nameWav)) {
+					int taskId = task.getTaskId();
 					String uploadTaskNameI = files[i].getOriginalFilename();
 					for (int l = 0; l < files.length; l++) {
 						String uploadTaskNameJ = files[l].getOriginalFilename();
@@ -516,15 +517,16 @@ public class WorkerController {
 								}
 								taskWithBLOBs.setTaskMarkTime(taskMarkTime);
 								taskWithBLOBs.setTaskTextgrid(bytes);
-								taskWithBLOBs.setTaskName(nameWav);
+								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
-								taskService.updateByName(taskWithBLOBs);
+								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+
 								workerRecord workerRecord = new workerRecord();
 								workerRecord.setTaskUploadTime(new Date());
 								workerRecord.setTaskStatu(1);
 								workerRecord.setTaskMarkTime(taskMarkTime);
-								workerRecord.setRecordId(workerRecordService.getPkIDByTaskName(nameWav));
+								workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
 								workerRecordService.updateByPrimaryKeySelective(workerRecord);
 								listMath.add(uploadTaskNameI);
 							}

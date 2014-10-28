@@ -23,9 +23,9 @@ public interface WorkerRecordService {
 	
 	List<workerRecord> getAllByWorkerId(Integer workerId);
 	
-	String getDownUrlByTaskName(String taskName);
+	String get1DownUrlByTaskName(String taskName);
 	
-	int getPkIDByTaskName(String taskName);
+	int get1PkIDByTaskName(String taskName);
 	
 	workerRecord getWorkerRecordByWorkerId(Integer workerId);
 	
@@ -37,15 +37,17 @@ public interface WorkerRecordService {
 	
 	int getPackStatuByDownPackName(String downPackName);
 	
-	List<workerRecord> getAllByDownTaskName(String downPackName);
+	List<workerRecord> getAllByDownPackName(String downPackName);
 	
 	int getFinishTaskCountByPackId(Integer packId);
 	
-	String getDownPackNameByTaskName(String taskName);
+	String get1DownPackNameByTaskName(String taskName);
 	
 	String getDownUrlByDownPackName(String downPackName);
 	
 	List<workerRecord> getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
 	
 	int getDownPackNameCountByworkerIdGroupByDownPackName(Integer workerId);
+	
+	int getPkIDByTaskId(Integer taskId);
 }

@@ -178,7 +178,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<taskWithBLOBs> getTaskByTaskName(String taskName) {
+	public List<taskWithBLOBs> get1TaskByTaskName(String taskName) {
 		return taskMapper.selectTaskByTaskName(taskName);
 	}
 

@@ -40,7 +40,7 @@ public interface TaskService {
 
 	int getCountTaskDoing();
 
-	List<taskWithBLOBs> getTaskByTaskName(String taskName);
+	List<taskWithBLOBs> get1TaskByTaskName(String taskName);
 
 	int getTaskCountByPackId(Integer packId);
 

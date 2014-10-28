@@ -15,7 +15,7 @@ import javax.imageio.stream.ImageOutputStream;
 /*
  * 用于把一个图片转化为12x18的01矩阵
  * 
- * @author snailzhang@126.com
+ * @author snailzhang@126.com 
  * @version 1.0, 02/04/2010
  */
 public class BiImage {

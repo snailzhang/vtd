@@ -40,7 +40,7 @@
 		from worker_record
 		where worker_id = #{workerId,jdbcType=INTEGER}
 	</select>
-	<select id="selectAllByDownTaskName" resultMap="BaseResultMap" parameterType="java.lang.String">
+	<select id="selectAllByDownPackName" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
 		from worker_record
@@ -76,6 +76,12 @@
 		record_id
 		from worker_record
 		where task_name = #{taskName,jdbcType=VARCHAR}
+	</select>
+	<select id="selectPkIDByTaskId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		record_id
+		from worker_record
+		where task_id = #{TaskId,jdbcType=INTEGER}
 	</select>
 	<select id="selectWorkerRecordByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select

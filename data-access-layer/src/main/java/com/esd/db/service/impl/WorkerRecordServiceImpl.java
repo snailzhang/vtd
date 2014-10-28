@@ -65,13 +65,13 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public String getDownUrlByTaskName(String taskName) {
+	public String get1DownUrlByTaskName(String taskName) {
 		
 		return workerRecordMapper.selectDownUrlByTaskName(taskName);
 	}
 
 	@Override
-	public int getPkIDByTaskName(String taskName) {
+	public int get1PkIDByTaskName(String taskName) {
 		
 		return workerRecordMapper.selectPkIDByTaskName(taskName);
 	}
@@ -106,9 +106,9 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getAllByDownTaskName(String downPackName) {
+	public List<workerRecord> getAllByDownPackName(String downPackName) {
 
-		return workerRecordMapper.selectAllByDownTaskName(downPackName);
+		return workerRecordMapper.selectAllByDownPackName(downPackName);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public String getDownPackNameByTaskName(String taskName) {
+	public String get1DownPackNameByTaskName(String taskName) {
 	
 		return workerRecordMapper.selectDownPackNameByTaskName(taskName);
 	}
@@ -138,6 +138,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	public int getDownPackNameCountByworkerIdGroupByDownPackName(Integer workerId) {
 		
 		return workerRecordMapper.selectDownPackNameCountByworkerIdGroupByDownPackName(workerId);
+	}
+
+	@Override
+	public int getPkIDByTaskId(Integer taskId) {
+		
+		return workerRecordMapper.selectPkIDByTaskId(taskId);
 	}
 
 	
