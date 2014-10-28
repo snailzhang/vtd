@@ -82,8 +82,8 @@ public class EmployerController {
 	public ModelAndView employerGet(HttpSession session) {// 登录页
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
-		String url=employerService.getUploadUrlByEmployerId(employerId);
-		return new ModelAndView("employer/employer","url",url);
+		String ftpUrl=employerService.getUploadUrlByEmployerId(employerId);
+		return new ModelAndView("employer/employer","ftpUrl",ftpUrl);
 	}
 
 	/**
