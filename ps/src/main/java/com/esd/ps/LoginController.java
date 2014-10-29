@@ -9,8 +9,10 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -29,7 +31,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.esd.common.util.UsernameAndPasswordMd5;
 import com.esd.db.model.task;
-import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.model.user;
 import com.esd.db.model.usertype;
 import com.esd.db.model.workerRecord;
@@ -120,16 +121,10 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "/checkUserName", method = RequestMethod.GET)
-	public @ResponseBody
-	boolean checkUserName(String username) {
-		if (!StringUtils.isEmpty(username)) {
-			user user = userService.getAllUsersByUserName(username);
-			if (user == null) {
-				return false;
-			}
-		}
-		// String json = "{\"addUserReplay\":" + addUserReplay + "}";
-		return true;
+	@ResponseBody
+	public Map<String, Object> checkUserName(String username) {
+
+		return checkLoginName(username);
 	}
 
 	/**
@@ -153,6 +148,11 @@ public class LoginController {
 		if (user == null) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EXIST);
 		} else {
+			if(user.getUserStatus() == false){
+				redirectAttributes.addFlashAttribute(Constants.MESSAGE, "用户已停用!");
+				redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
+				return new ModelAndView("redirect:login");
+			}
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 			String md5Password = md5.getMd5(username, password);
 			logger.debug("md5Password:{}", md5Password);
@@ -223,7 +223,7 @@ public class LoginController {
 
 						// 删除任务的下载备份
 						String url = request.getServletContext().getRealPath("/");
-						File fold = new File(url+"workerTemp");
+						File fold = new File(url + "workerTemp");
 						if (fold.exists()) {
 							File zipFile = new File(url + "/" + workerRecord.getDownPackName());
 							if (zipFile.exists()) {
@@ -237,5 +237,31 @@ public class LoginController {
 
 			}
 		}
+	}
+	/**
+	 * 检测用户名
+	 * @param username
+	 * @return
+	 */
+	public Map<String, Object> checkLoginName(String username) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (!StringUtils.isEmpty(username)) {
+			user user = userService.getAllUsersByUserName(username);
+			if (user == null) {
+				map.clear();
+				map.put(Constants.MESSAGE,"用户不存在!");
+				map.put(Constants.REPLAY,0);
+				return map;
+			}
+			if(user.getUserStatus()==false){
+				map.clear();
+				map.put(Constants.MESSAGE,"用户已停用!");
+				map.put(Constants.REPLAY,0);
+				return map;
+			}
+			map.clear();
+			map.put(Constants.REPLAY,1);
+		}
+		return map;
 	}
 }
