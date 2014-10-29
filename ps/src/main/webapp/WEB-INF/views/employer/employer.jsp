@@ -370,6 +370,7 @@
 				type:'POST',
 				url:'${contextPath}/security/unzip',
 				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val()},
+				dataType:'json',
 				beforSend:function(){
 					$("."+trClass+" .packZipStatus").text("任务包解压中");
 				},

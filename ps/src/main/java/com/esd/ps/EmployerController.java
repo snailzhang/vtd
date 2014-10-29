@@ -158,7 +158,9 @@ public class EmployerController {
 	@ResponseBody
 	public Map<String, Object> unzipList(HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
+		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
+		int employerId = employerService.getEmployerIdByUserId(userId);
+		session.setAttribute("employerId", employerId);
 		String url = employerService.getUploadUrlByEmployerId(employerId);
 		List<String> list = new ArrayList<>();
 		File fold = new File(url);
@@ -243,7 +245,8 @@ public class EmployerController {
 	}
 
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
-	public Map<String, Object> unzip(String packName, int taskLvl, int packLockTime, HttpSession session, packWithBLOBs packWithBLOBs) {
+	@ResponseBody
+	public Map<String, Object> unzip(String packName, int taskLvl, int packLockTime, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
 		String url = employerService.getUploadUrlByEmployerId(employerId);
@@ -260,6 +263,7 @@ public class EmployerController {
 			return map;
 		}
 		String zipEntryName = null;
+		packWithBLOBs packWithBLOBs = new packWithBLOBs();
 		try {
 			if (packService.getCountPackByPackName(packName) > 0) {
 				map.clear();
@@ -268,6 +272,7 @@ public class EmployerController {
 			}
 			ZipFile zip = new ZipFile(url + "/" + packName);
 			if (zip.size() > 1) {
+				
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
 				// packWithBLOBs.setPackFile(pack.getBytes());
 				packWithBLOBs.setPackName(packName);
@@ -336,8 +341,9 @@ public class EmployerController {
 			map.put(Constants.MESSAGE, "连接异常!");
 			return map;
 		}
-
-		return null;
+		map.clear();
+		map.put(Constants.MESSAGE, "解压完成!");
+		return map;
 	}
 
 	/**
