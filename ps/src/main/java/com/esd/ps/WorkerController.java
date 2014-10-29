@@ -15,9 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,8 +29,6 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -310,8 +305,8 @@ public class WorkerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String url = WorkerController.url(request);
 		File f = new File(url);
-		File zipFile = null;
 		String zipName = taskName.substring(0, taskName.indexOf(".")) + ".zip";
+		File zipFile = new File(url+"/"+zipName);
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
@@ -320,6 +315,7 @@ public class WorkerController {
 			f.mkdir();
 		}
 		try {
+			
 			zipFile.createNewFile();
 			taskWithBLOBs task = taskService.selectByPrimaryKey(taskId);
 			List<taskWithBLOBs> list = new ArrayList<taskWithBLOBs>();
@@ -459,7 +455,6 @@ public class WorkerController {
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			String taskName = task.getTaskName();
-
 			for (int i = 0; i < files.length; i++) {
 				try {
 					files[i].getInputStream();
@@ -478,10 +473,10 @@ public class WorkerController {
 							String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(".") + 1), files[i].getOriginalFilename().length());
 							if (nameLast.equals("TAG")) {
 								taskWithBLOBs.setTaskTag(bytes);
-								taskWithBLOBs.setTaskName(nameWav);
+								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
-								taskService.updateByName(taskWithBLOBs);
+								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 								listMath.add(uploadTaskNameI);
 							} else if (nameLast.equals("TextGrid")) {
 								BufferedReader reader = null;
@@ -604,7 +599,6 @@ public class WorkerController {
 			fos.close();
 
 		} catch (FileNotFoundException e) {
-
 			e.printStackTrace();
 		} catch (IOException e) {
 

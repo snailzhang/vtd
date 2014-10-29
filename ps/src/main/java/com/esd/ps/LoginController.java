@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.esd.common.util.UsernameAndPasswordMd5;
+import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.model.user;
 import com.esd.db.model.usertype;
@@ -214,12 +215,12 @@ public class LoginController {
 						update.setRecordId(workerRecord.getRecordId());
 						workerRecordService.updateByPrimaryKeySelective(update);
 						// 更新task表
-						taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
-						taskWithBLOBs.setWorkerId(null);
-						taskWithBLOBs.setCreateTime(new Date());
-						taskWithBLOBs.setTaskId(workerRecord.getTaskId());
-						int a=taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-						System.out.println(workerRecord.getTaskId()+"***"+a);
+						task task = new task();
+						task.setWorkerId(null);
+						task.setUpdateTime(new Date());
+						task.setTaskId(workerRecord.getTaskId());
+						taskService.updateByTaskId(task);
+
 						// 删除任务的下载备份
 						String url = request.getServletContext().getRealPath("/");
 						File fold = new File(url+"workerTemp");

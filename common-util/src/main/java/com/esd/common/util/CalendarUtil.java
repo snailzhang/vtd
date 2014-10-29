@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CalendarUtil {
+public class CalendarUtil { 
 
 	/**
 	 * 获取前一年
@@ -14,7 +14,7 @@ public class CalendarUtil {
 	public static String getBeforeYear() {
 		Calendar cal = Calendar.getInstance();// 使用日历类
 		int year = cal.get(Calendar.YEAR);// 得到年
-		return String.valueOf(year - 1);
+		return String.valueOf(year - 1); 
 	}
 
 	/**

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * 
  * 
- * 
+ *  
  * 功能描述：验证类 ，提供常用的转型 <br>
  */
 public class Validation {

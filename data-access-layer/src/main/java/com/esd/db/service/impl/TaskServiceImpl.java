@@ -11,7 +11,6 @@ import com.esd.db.dao.taskMapper;
 import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.TaskService;
-import com.sun.istack.internal.logging.Logger;
 
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
@@ -59,13 +58,6 @@ public class TaskServiceImpl implements TaskService {
 
 		return taskMapper.updateByPrimaryKey(record);
 	}
-
-	@Override
-	public int updateByName(taskWithBLOBs record) {
-
-		return taskMapper.updateByName(record);
-	}
-
 	@Override
 	public List<task> selectAllTaskId() {
 
@@ -192,6 +184,12 @@ public class TaskServiceImpl implements TaskService {
 	public int deleteByPackId(Integer packId) {
 
 		return taskMapper.deleteByPackId(packId);
+	}
+
+	@Override
+	public int updateByTaskId(task task) {
+		
+		return taskMapper.updateByTaskId(task);
 	}
 
 }

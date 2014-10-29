@@ -30,8 +30,6 @@ public interface TaskService {
 
 	int updateByPrimaryKeySelective(taskWithBLOBs record);
 
-	int updateByName(taskWithBLOBs record);
-
 	int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record);
 
 	int updateByPrimaryKey(task record);
@@ -61,4 +59,6 @@ public interface TaskService {
 	List<task> getFinishTaskPagesByPackId(Map<String, Integer> map);
 	
 	int getFreePackCount();
+	
+	int updateByTaskId(task task);
 }

@@ -82,8 +82,8 @@ public class EmployerController {
 	public ModelAndView employerGet(HttpSession session) {// 登录页
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
-		String ftpUrl=employerService.getUploadUrlByEmployerId(employerId);
-		return new ModelAndView("employer/employer","ftpUrl",ftpUrl);
+		String ftpUrl = employerService.getUploadUrlByEmployerId(employerId);
+		return new ModelAndView("employer/employer", "ftpUrl", ftpUrl);
 	}
 
 	/**
@@ -297,10 +297,9 @@ public class EmployerController {
 					zipEntryName = str[(str.length - 1)];
 				}
 				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
-				// 收集没有匹配的文件
-				String noMatch = "";
+				// 收集没有匹配的文件			
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
-					noMatch = zipEntryName;
+					//String	noMatch = zipEntryName;
 					continue;
 				}
 				in = zip.getInputStream(entry);
@@ -329,13 +328,13 @@ public class EmployerController {
 			File fd = new File(packName);
 			fd.delete();
 		} catch (DuplicateKeyException d) {
-			int packId = packService.getPackIdByPackName(packName);
-			packService.deleteByPrimaryKey(packId);
-			taskService.deleteByPackId(packId);
-			map.clear();
-			map.put(Constants.MESSAGE, zipEntryName + "已存在");
-			return map;
+			// int packId = packService.getPackIdByPackName(packName);
+			// packService.deleteByPrimaryKey(packId);
+			// taskService.deleteByPackId(packId);
 		} catch (IOException e) {
+			map.clear();
+			map.put(Constants.MESSAGE, "连接异常!");
+			return map;
 		}
 
 		return null;

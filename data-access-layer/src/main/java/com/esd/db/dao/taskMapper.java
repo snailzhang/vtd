@@ -31,8 +31,6 @@ public interface taskMapper {
     int updateByPrimaryKeySelective(taskWithBLOBs record);
 
     int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record);
-    
-    int updateByName(taskWithBLOBs record);
 
     int updateByPrimaryKey(task record);
     
@@ -63,4 +61,6 @@ public interface taskMapper {
     List<task> selectFinishTaskPagesByPackId(Map<String, Integer> map);
     
     int selectFreePackCount();
+    
+    int updateByTaskId(task task);
 }
