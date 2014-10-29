@@ -38,4 +38,6 @@ public interface userMapper {
     List<user> selectAllUsersPages(Map<String,Integer> map);
     
     int selectUserIdCountByUserName(String userName);
+    
+    user selectByUserName(String userName);
 }

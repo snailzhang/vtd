@@ -1,7 +1,10 @@
 package com.esd.db.model;
 
 public class userTrans {
+	
 	private Boolean userStatus;
+	
+	private int userId;
 	
 	private String username;
 
@@ -10,6 +13,14 @@ public class userTrans {
 	private String createTime;
 
 	private String updateTime;
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 
 	public String getUsername() {
 		return username;

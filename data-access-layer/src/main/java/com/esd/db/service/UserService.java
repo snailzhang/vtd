@@ -35,4 +35,6 @@ public interface UserService {
 	List<user> getAllUsersPages(Map<String, Integer> map);
 	
 	int getUserIdCountByUserName(String userName);
+	
+	user getByUserName(String userName);
 }

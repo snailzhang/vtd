@@ -103,4 +103,10 @@ public class UserServiceImpl implements UserService {
 		
 		return userMapper.selectUserIdCountByUserName(userName);
 	}
+
+	@Override
+	public user getByUserName(String userName) {
+		
+		return userMapper.selectByUserName(userName);
+	}
 }

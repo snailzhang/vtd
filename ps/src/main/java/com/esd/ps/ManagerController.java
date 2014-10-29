@@ -122,7 +122,7 @@ public class ManagerController {
 		if (userType == 0) {
 			userList = userService.getAllUsersPages(userTypeMap);
 			totle = userService.getAllUserCount();
-		} else if (userType > 0) {
+		} else if (userType > 1) {//没有管理员的
 			userTypeMap.put("usertype", userType);
 			userList = userService.getAllUserPagesByUserType(userTypeMap);
 			totle = userService.getAllUserCountByUserType(userType);
@@ -130,7 +130,8 @@ public class ManagerController {
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
-
+			
+			trans.setUserId(user.getUserId());
 			trans.setUserStatus(user.getUserStatus());
 			trans.setUsername(user.getUsername());
 			trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
@@ -152,7 +153,34 @@ public class ManagerController {
 		map.put("totlePage", totlePage);
 		return map;
 	}
-
+	@RequestMapping(value = "/userDetail", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userDetail(int userId,int userType){
+		Map<String, Object> map =new HashMap<>();		
+		if(userType == 2){
+			employer employer = employerService.getEmployerByUserId(userId);
+			map.clear();
+			map.put("userDetail", employer);
+		}
+		if(userType == 4){
+			worker worker = workerService.getWorkerByUserId(userId);
+			map.clear();
+			map.put("userDetail", worker);
+		}	
+		return map;
+	}
+	@RequestMapping(value = "/userStatus", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> userStatus(int userId,Boolean userStatus){
+		Map<String, Object> map =new HashMap<>();		
+		user user=new user();
+		user.setUserId(userId);
+		user.setUserStatus(userStatus);
+		userService.updateByPrimaryKeySelective(user);
+		map.clear();
+		map.put(Constants.REPLAY,"已更改!");
+		return map;
+	}
 	/**
 	 * 跳转新增用户页
 	 * 
