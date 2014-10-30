@@ -114,7 +114,7 @@
 		select
 		pack_id
 		from task
-		where worker_id is null order by task_lvl DESC limit 1
+		where worker_id is null order by task_lvl,pack_id DESC limit 1
 	</select>
 	<select id="selectUndoTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select

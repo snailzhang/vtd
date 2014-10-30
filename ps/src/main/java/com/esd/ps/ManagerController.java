@@ -495,8 +495,10 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerCenter", method = RequestMethod.GET)
-	public ModelAndView workerCenter(){
-		return new ModelAndView("worker/workerCenter");
+	public ModelAndView workerCenter(HttpSession session){
+		int userId=Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		worker worker=workerService.getWorkerByUserId(userId);
+		return new ModelAndView("worker/workerCenter","worker",worker);
 	}
 	/**
 	 * 修改密码
@@ -549,7 +551,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerPhone, 
+	public Map<String, Object> updateWorkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerPhone, 
 			String workerBankCard, String workerPaypal, HttpSession session) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
