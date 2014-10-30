@@ -373,9 +373,16 @@ public class ManagerController {
 	@ResponseBody
 	public Map<String, Object> checkWorkerDisabilityCard(String WorkerDisabilityCard) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		if(WorkerDisabilityCard.length() < 20){
+			map.clear();
+			map.put("result", false);
+			return map;
+		}
 		if (workerDisabilityCard(WorkerDisabilityCard) == 0) {
+			map.clear();
 			map.put("result", true);
 		} else {
+			map.clear();
 			map.put("result", false);
 		}
 		return map;

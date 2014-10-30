@@ -108,7 +108,7 @@
 		,
 		<include refid="Blob_Column_List" />
 		from task
-		where pack_id = #{packId,jdbcType=INTEGER}
+		where pack_id = #{packId,jdbcType=INTEGER} and task_mark_time>0
 	</select>
 	<select id="selectFirstPackIdOrderByTaskLvl" resultType="java.lang.Integer">
 		select

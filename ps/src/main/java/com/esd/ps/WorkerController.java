@@ -471,14 +471,14 @@ public class WorkerController {
 								&& uploadTaskNameI.equals(uploadTaskNameJ) == false) {
 							byte[] bytes = files[i].getBytes();
 							String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(".") + 1), files[i].getOriginalFilename().length());
-							if (nameLast.equals("TAG")) {
+							if (nameLast.equalsIgnoreCase("TAG")) {
 								taskWithBLOBs.setTaskTag(bytes);
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 								listMath.add(uploadTaskNameI);
-							} else if (nameLast.equals("TextGrid")) {
+							} else if (nameLast.equalsIgnoreCase("TextGrid") || nameLast.equalsIgnoreCase("textgrid")) {
 								BufferedReader reader = null;
 								double taskMarkTime = 0;
 								try {

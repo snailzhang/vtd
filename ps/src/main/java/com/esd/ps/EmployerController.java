@@ -263,6 +263,7 @@ public class EmployerController {
 			return map;
 		}
 		String zipEntryName = null;
+		int packId = 0;
 		packWithBLOBs packWithBLOBs = new packWithBLOBs();
 		try {
 			if (packService.getCountPackByPackName(packName) > 0) {
@@ -270,18 +271,19 @@ public class EmployerController {
 				map.put(Constants.MESSAGE, "任务包名已存在!");
 				return map;
 			}
+
 			ZipFile zip = new ZipFile(url + "/" + packName);
 			if (zip.size() > 1) {
-				
+
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
 				// packWithBLOBs.setPackFile(pack.getBytes());
 				packWithBLOBs.setPackName(packName);
 				packWithBLOBs.setDownCount(0);
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
 				packWithBLOBs.setPackStatus(false);
+				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setVersion(1);
 				packService.insert(packWithBLOBs);
-
 			}
 			// 从临时文件取出要解压的文件上传TaskService
 			InputStream in = null;
@@ -302,9 +304,9 @@ public class EmployerController {
 					zipEntryName = str[(str.length - 1)];
 				}
 				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
-				// 收集没有匹配的文件			
+				// 收集没有匹配的文件
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
-					//String	noMatch = zipEntryName;
+					// String noMatch = zipEntryName;
 					continue;
 				}
 				in = zip.getInputStream(entry);
@@ -317,10 +319,11 @@ public class EmployerController {
 				data = null;
 				byte[] wav = outStream.toByteArray();
 				taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
+				packId = packService.getPackIdByPackName(packName);
 				taskWithBLOBs.setTaskWav(wav);
 				taskWithBLOBs.setTaskLvl(taskLvl);
 				// 上传的包的号
-				taskWithBLOBs.setPackId(packService.getNewPackIdByEmployerId(packWithBLOBs.getEmployerId()));
+				taskWithBLOBs.setPackId(packId);
 				taskWithBLOBs.setTaskName(zipEntryName);
 				// 存入压缩包的层次结构
 				taskWithBLOBs.setTaskDir(taskDir);
@@ -332,13 +335,15 @@ public class EmployerController {
 			in.close();
 			File fd = new File(packName);
 			fd.delete();
-		} catch (DuplicateKeyException d) {
-			// int packId = packService.getPackIdByPackName(packName);
-			// packService.deleteByPrimaryKey(packId);
-			// taskService.deleteByPackId(packId);
+			
+			packWithBLOBs pack = new packWithBLOBs();
+			pack.setPackId(packId);
+			pack.setUnzip(1);
+			packService.updateByPrimaryKeySelective(pack);
 		} catch (IOException e) {
 			map.clear();
-			map.put(Constants.MESSAGE, "连接异常!");
+			map.put(Constants.MESSAGE, "包不符或已损坏!");
+			System.out.println("怎么来的额");
 			return map;
 		}
 		map.clear();
@@ -443,12 +448,15 @@ public class EmployerController {
 				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() + "/" + fileName);
 				zos.putNextEntry(zipEntry);
 				byte[] data = null;
-				if (fileType.equals("wav")) {
+				if (fileType.equalsIgnoreCase("wav")) {
 					data = taskWithBLOBs.getTaskWav();
-				} else if (fileType.equals("TAG")) {
+					System.out.println("1");
+				} else if (fileType.equalsIgnoreCase("TAG")) {
 					data = taskWithBLOBs.getTaskTag();
-				} else if (fileType.equals("TextGrid")) {
+					System.out.println("2");
+				} else if (fileType.equalsIgnoreCase("TextGrid")) {
 					data = taskWithBLOBs.getTaskTextgrid();
+					System.out.println("3");
 				}
 				InputStream is = new ByteArrayInputStream(data);
 				// 读取待压缩的文件并写进压缩包里
