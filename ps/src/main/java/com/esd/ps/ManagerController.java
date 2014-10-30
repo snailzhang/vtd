@@ -551,9 +551,9 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerPhone, 
+	public Map<String, Object> updateWorkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage,String workerPhone, 
 			String workerBankCard, String workerPaypal, HttpSession session) {
-		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerBankCard, workerPaypal);
+		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (workerPhone(workerPhone) == 1) {
 			map.clear();
@@ -574,7 +574,6 @@ public class ManagerController {
 		worker.setWorkerBankCard(workerBankCard);
 		worker.setWorkerPaypal(workerPaypal);
 		worker.setWorkerPhone(workerPhone);
-		worker.setWorkerRealName(workerRealName);
 
 		worker.setUpdateTime(new Date());
 		workerService.updateByPrimaryKeySelective(worker);
