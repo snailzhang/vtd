@@ -549,15 +549,10 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerPhone, String workerDisabilityCard,
+	public Map<String, Object> updateWorker(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerPhone, 
 			String workerBankCard, String workerPaypal, HttpSession session) {
-		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerDisabilityCard, workerBankCard, workerPaypal);
+		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
-		if (workerDisabilityCard(workerDisabilityCard) == 1) {
-			map.clear();
-			map.put(Constants.MESSAGE, "残疾人证号已存在");
-			return map;
-		}
 		if (workerPhone(workerPhone) == 1) {
 			map.clear();
 			map.put(Constants.MESSAGE, "电话号已存在");
@@ -575,8 +570,6 @@ public class ManagerController {
 		int workerId=workerService.getWorkerIdByUserId(userId);
 		worker.setWorkerId(workerId);
 		worker.setWorkerBankCard(workerBankCard);
-		worker.setWorkerDisabilityCard(workerDisabilityCard);
-		worker.setWorkerIdCard(workerDisabilityCard.substring(0, 17));
 		worker.setWorkerPaypal(workerPaypal);
 		worker.setWorkerPhone(workerPhone);
 		worker.setWorkerRealName(workerRealName);
@@ -585,6 +578,7 @@ public class ManagerController {
 		workerService.updateByPrimaryKeySelective(worker);
 		map.clear();
 		map.put(Constants.MESSAGE,"修改成功!");
+		map.put(Constants.REPLAY, 1);
 		return map;
 	}
 
