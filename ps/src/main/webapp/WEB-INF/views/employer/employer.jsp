@@ -26,14 +26,7 @@
 			<span>${ftpUrl}</span>
 		</div>
 	</div>
-	<div class="container">
-	   <div class="form-group">
-	      <div class="col-sm-offset-2 col-sm-10">
-	         <button id="uploadPackBtn" type="button" class="btn btn-default" disabled="disabled">上传</button>
-	      </div>
-	   </div>
-		
-	</div>
+	
 	<!-------------------------------- 选项卡区域 -------------------------------------------------->
 	<div class="container">
 		<ul class="nav nav-tabs" role="tablist">

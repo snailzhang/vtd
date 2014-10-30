@@ -507,7 +507,7 @@ public class ManagerController {
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.GET)
 	public ModelAndView updatePassWordGET() {
 		
-		return new ModelAndView("manger/updatePassword");
+		return new ModelAndView("manager/updatePassword");
 	}
 	/**
 	 * 修改密码

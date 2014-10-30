@@ -3,25 +3,34 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}" />
 <%
 int userType = (Integer)session.getAttribute("usertype");
+String ut = "";
+if(userType == 1){
+	ut = "manager";
+}else if(userType == 2){
+	ut = "employer";
+}else if(userType == 3){
+	ut = "inspector";
+}else if(userType == 4){
+	ut = "worker";
+}
 %>
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header">
-			<a href="#" class="navbar-brand"> 你好:${username}</a>
+			<a href="${contextPath}/security/<%=ut%>" class="navbar-brand"> 你好:${username}</a>
 		</div>
 		<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="${contextPath}/security/updatePassWord">修改密码</a></li>
 			<% 
 				if(userType == 4){
-					
 					%>
-						<ul class="nav navbar-nav">
-							<li id="headJSPWorkerHistoryPack"><a href="${contextPath}/security/workerHistoryPack">工作历史</a></li>
-							<li id="headJSPWorker"><a href="${contextPath}/security/worker">工作页面</a></li>
-						</ul>
+						<li id="headJSPWorkerCenter"><a href="${contextPath}/security/workerCenter">个人中心</a></li>
+						<li id="headJSPWorkerHistoryPack"><a href="${contextPath}/security/workerHistoryPack">工作历史</a></li>
 					<%
 				}
 			%>
-			
+			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li><a href="${contextPath}/quit">退出</a></li>
 			</ul>
