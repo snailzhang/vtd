@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -244,6 +243,15 @@ public class EmployerController {
 		return map;
 	}
 
+	/**
+	 * 1.解压任务包 2.任务存入数据库
+	 * 
+	 * @param packName
+	 * @param taskLvl
+	 * @param packLockTime
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> unzip(String packName, int taskLvl, int packLockTime, HttpSession session) {
@@ -262,8 +270,6 @@ public class EmployerController {
 			map.put(Constants.MESSAGE, "任务包不存在!");
 			return map;
 		}
-		String zipEntryName = null;
-		int packId = 0;
 		packWithBLOBs packWithBLOBs = new packWithBLOBs();
 		try {
 			if (packService.getCountPackByPackName(packName) > 0) {
@@ -286,64 +292,10 @@ public class EmployerController {
 				packService.insert(packWithBLOBs);
 			}
 			// 从临时文件取出要解压的文件上传TaskService
-			InputStream in = null;
-			logger.debug("zip:{}", zip.size());
-
-			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
-
-				ZipEntry entry = (ZipEntry) entries.nextElement();
-				String taskDir = "";
-				if (entry.isDirectory()) {
-					continue;
-				}
-				zipEntryName = entry.getName();
-				if (zipEntryName.indexOf("/") < zipEntryName.lastIndexOf("/")) {
-					String str[] = zipEntryName.split("/");
-					// (zipEntryName.indexOf("/") + 1)
-					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
-					zipEntryName = str[(str.length - 1)];
-				}
-				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
-				// 收集没有匹配的文件
-				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
-					// String noMatch = zipEntryName;
-					continue;
-				}
-				in = zip.getInputStream(entry);
-				// inputstrem转成byte[]
-				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-				byte[] data = new byte[4096];
-				int count = -1;
-				while ((count = in.read(data, 0, 4096)) != -1)
-					outStream.write(data, 0, count);
-				data = null;
-				byte[] wav = outStream.toByteArray();
-				taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
-				packId = packService.getPackIdByPackName(packName);
-				taskWithBLOBs.setTaskWav(wav);
-				taskWithBLOBs.setTaskLvl(taskLvl);
-				// 上传的包的号
-				taskWithBLOBs.setPackId(packId);
-				taskWithBLOBs.setTaskName(zipEntryName);
-				// 存入压缩包的层次结构
-				taskWithBLOBs.setTaskDir(taskDir);
-				// 包内任务的上传状态
-				taskWithBLOBs.setTaskUpload(false);
-				taskService.insert(taskWithBLOBs);
-			}
-			zip.close();
-			in.close();
-			File fd = new File(packName);
-			fd.delete();
-			
-			packWithBLOBs pack = new packWithBLOBs();
-			pack.setPackId(packId);
-			pack.setUnzip(1);
-			packService.updateByPrimaryKeySelective(pack);
+			storeData(packName,taskLvl,session);
 		} catch (IOException e) {
 			map.clear();
 			map.put(Constants.MESSAGE, "包不符或已损坏!");
-			System.out.println("怎么来的额");
 			return map;
 		}
 		map.clear();
@@ -473,10 +425,72 @@ public class EmployerController {
 		}
 	}
 
-	@RequestMapping(value = "/uploadPack2", method = RequestMethod.POST)
-	// springmvc包装的解析器速度更快
-	public String upload2(HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException {
-
-		return "/success";
+	/**
+	 * 任务存入数据库
+	 * 
+	 * @param packName
+	 * @param session
+	 * @param taskLvl
+	 */
+	public void storeData(String packName, int taskLvl, HttpSession session) {
+		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
+		String url = employerService.getUploadUrlByEmployerId(employerId);
+		InputStream in = null;
+		String zipEntryName = null;
+		int packId = 0;
+		try {
+			ZipFile	zip = new ZipFile(url + "/" + packName);
+			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				String taskDir = "";
+				if (entry.isDirectory()) {// 判断是否是文件夹
+					continue;
+				}
+				zipEntryName = entry.getName();
+				if (zipEntryName.indexOf("/") < zipEntryName.lastIndexOf("/")) {
+					String str[] = zipEntryName.split("/");
+					// (zipEntryName.indexOf("/") + 1)
+					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
+					zipEntryName = str[(str.length - 1)];
+				}
+				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
+				// 收集没有匹配的文件
+				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
+					// String noMatch = zipEntryName;
+					continue;
+				}
+				in = zip.getInputStream(entry);
+				// inputstrem转成byte[]
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				byte[] data = new byte[4096];
+				int count = -1;
+				while ((count = in.read(data, 0, 4096)) != -1)
+					outStream.write(data, 0, count);
+				data = null;
+				byte[] wav = outStream.toByteArray();
+				taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
+				packId = packService.getPackIdByPackName(packName);
+				taskWithBLOBs.setTaskWav(wav);
+				taskWithBLOBs.setTaskLvl(taskLvl);
+				// 上传的包的号
+				taskWithBLOBs.setPackId(packId);
+				taskWithBLOBs.setTaskName(zipEntryName);
+				// 存入压缩包的层次结构
+				taskWithBLOBs.setTaskDir(taskDir);
+				// 包内任务的上传状态
+				taskWithBLOBs.setTaskUpload(false);
+				taskService.insert(taskWithBLOBs);		
+			}
+			zip.close();
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		File fd = new File(packName);
+		fd.delete();
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setUnzip(1);
+		packService.updateByPrimaryKeySelective(pack);
 	}
 }
