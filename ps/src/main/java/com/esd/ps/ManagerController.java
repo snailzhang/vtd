@@ -338,10 +338,12 @@ public class ManagerController {
 		if (passWord(oldPassWord, session) == 1) {
 			map.clear();
 			map.put(Constants.MESSAGE, "密码正确!");
+			map.put(Constants.REPLAY, 1);
 			return map;
 		}
 		map.clear();
 		map.put(Constants.MESSAGE, "密码不对!");
+		map.put(Constants.REPLAY, 0);
 		return map;
 	}
 
@@ -498,6 +500,15 @@ public class ManagerController {
 	}
 	/**
 	 * 修改密码
+	 * @return
+	 */
+	@RequestMapping(value = "/updatePassWord", method = RequestMethod.GET)
+	public ModelAndView updatePassWordGET() {
+		
+		return new ModelAndView("manger/updatePassword");
+	}
+	/**
+	 * 修改密码
 	 * @param oldPassWord
 	 * @param newPassWord
 	 * @param session
@@ -515,10 +526,14 @@ public class ManagerController {
 			user.setPassword(md5Password);
 			user.setUserId(userId);
 			userService.updateByPrimaryKeySelective(user);
+			map.clear();
 			map.put(Constants.MESSAGE, "密码修改成功!");
+			map.put(Constants.REPLAY, 1);
 			return map;
 		}
+		map.clear();
 		map.put(Constants.MESSAGE, "原密码不对!");
+		map.put(Constants.REPLAY, 0);
 		return map;
 	}
 	/**
