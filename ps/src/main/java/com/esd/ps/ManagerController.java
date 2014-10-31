@@ -567,7 +567,33 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage,String workerPhone, 
+	public Map<String, Object> updateWorkerPOST(String workerPhone, 
+			String workerBankCard, String workerPaypal, HttpSession session) {
+		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (workerPhone(workerPhone) == 1) {
+			map.clear();
+			map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
+			return map;
+		}
+		worker worker = new worker();
+		int userId=Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int workerId=workerService.getWorkerIdByUserId(userId);
+		worker.setWorkerId(workerId);
+		worker.setWorkerBankCard(workerBankCard);
+		worker.setWorkerPaypal(workerPaypal);
+		worker.setWorkerPhone(workerPhone);
+
+		worker.setUpdateTime(new Date());
+		workerService.updateByPrimaryKeySelective(worker);
+		map.clear();
+		map.put(Constants.MESSAGE,MSG_UPDATE_SUCCESS);
+		map.put(Constants.REPLAY, 1);
+		return map;
+	}
+	@RequestMapping(value = "/updateWorker2", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateWorkerPOST2(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage,String workerPhone, 
 			String workerBankCard, String workerPaypal, HttpSession session) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();

@@ -15,6 +15,7 @@ public interface Constants {
 	public static final String USER_ID = "userId";//用户id
 	public static final String ADD_USER_ID = "addUserId";//新增用户id
 	public static final String EMPLOYER_ID = "employerId";//发包商id
+	public static final String WORKER_ID = "workerId";//发包商id
 	public static final String PACK_ID = "packId";//发包商id
 	public static final String USER_NAME = "username";//用户名
 	public static final String USER_PASSWORD = "password";//用户密码
@@ -24,6 +25,7 @@ public interface Constants {
 	public static final String REPLAY = "replay";//查询结果回传
 	public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";//日期时间格式
 	public static final String DATE_FORMAT = "yyyyMMdd";//日期时间格式
+	public static final String MM = "mm";//毫秒
 	public static final String USER_WORKERIDCARD="workerIdCard";//工作者身份证号
 	public static final String USER_WORKERDISABILITYCARD="workerDisabilityCard";//工作者残疾人证号
 	public static final String USER_WORKERPHONE="workerPhone";//工作者电话号
@@ -32,7 +34,10 @@ public interface Constants {
 	public static final String WAV="wav";
 	public static final String TAG="TAG";
 	public static final String TEXTGRID="textgrid";
-	public static final String WRONGPATH="wrongPath";//绝对路径
+	public static final String WRONGPATH="wrongPath";//绝对路径countPackDoing
+	public static final String COUNTPACKDOING="countPackDoing";//可做的任务包数
+	public static final String COUNTTASKDOING="countTaskDoing";//可做的任务数
+	public static final String WORKERMARK="workerMark";//worker标示
 	public static final String WORKERTEMP="workerTemp";//worker下载所有临时文件夹
 	public static final String EMPLOYERTEMP="employerTemp";//employer上传下载临时文件夹
 	

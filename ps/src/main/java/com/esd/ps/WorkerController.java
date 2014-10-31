@@ -70,8 +70,12 @@ public class WorkerController {
 	private WorkerRecordService workerRecordService;
 	@Autowired
 	private PackService packService;
-	@Value("${workerMark}")
-	private int workerMark;
+	/**
+	 * 任务数不足
+	 */
+	@Value("${MSG_TASK_NOT_ENOUGH}")
+	private String MSG_TASK_NOT_ENOUGH;
+	int workerMark = 0;
 
 	/**
 	 * 登录工作者页面
@@ -105,9 +109,9 @@ public class WorkerController {
 			int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
-			map.put("countPackDoing", countPackDoing);
-			map.put("countTaskDoing", countTaskDoing);
-			map.put("workerMark", workerMark);
+			map.put(Constants.COUNTPACKDOING, countPackDoing);
+			map.put(Constants.COUNTTASKDOING, countTaskDoing);
+			map.put(Constants.WORKERMARK, workerMark);
 			return map;
 		}
 		List<taskTrans> list = new ArrayList<taskTrans>();
@@ -139,14 +143,14 @@ public class WorkerController {
 			long between = (end.getTime() - begin.getTime());// 毫秒
 			long mm = packLockTime - between;
 			logger.debug("packLockTime:{},between:{},mm:{}", packLockTime, between, mm);
-			map.put("workerMark", workerMark);
-			map.put("list", list);
-			map.put("mm", mm);
+			map.put(Constants.WORKERMARK, workerMark);
+			map.put(Constants.LIST, list);
+			map.put(Constants.MM, mm);
 		} catch (ParseException e) {
 
 			e.printStackTrace();
 		}
-		session.setAttribute("workerId", workerId);
+		session.setAttribute(Constants.WORKER_ID, workerId);
 		return map;
 	}
 
@@ -173,9 +177,9 @@ public class WorkerController {
 		Map<String, Integer> pageMap = new HashMap<String, Integer>();
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		pageMap.put("begin", ((page - 1) * Constants.ROW));
-		pageMap.put("end", ((page - 1) * Constants.ROW + Constants.ROW));
-		pageMap.put("workerId", workerId);
+		pageMap.put(Constants.BEGIN, ((page - Constants.ONE) * Constants.ROW));
+		pageMap.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + Constants.ROW));
+		pageMap.put(Constants.WORKER_ID, workerId);
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<workerRecord> workerRecordList = workerRecordService.getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(pageMap);
@@ -191,9 +195,9 @@ public class WorkerController {
 			workerDownPackHistoryTrans.setDownPackName(workerRecord.getDownPackName());
 			logger.debug("status:{}", workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()));
 			if (workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()) > 0) {
-				workerDownPackHistoryTrans.setPackStatu(0);
+				workerDownPackHistoryTrans.setPackStatu(Constants.ZERO);
 			} else {
-				workerDownPackHistoryTrans.setPackStatu(1);
+				workerDownPackHistoryTrans.setPackStatu(Constants.ONE);
 			}
 
 			if (workerRecord.getTaskDownTime() == null) {
@@ -207,9 +211,9 @@ public class WorkerController {
 		map.clear();
 		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId);
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
-		map.put("totle", totle);
-		map.put("totlePage", totlePage);
-		map.put("list", list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
+		map.put(Constants.LIST, list);
 		return map;
 	}
 
@@ -250,7 +254,7 @@ public class WorkerController {
 
 			list.add(workerRecordTrans);
 		}
-		map.put("list", list);
+		map.put(Constants.LIST, list);
 		return map;
 	}
 
@@ -270,7 +274,7 @@ public class WorkerController {
 		if (f.exists()) {
 			zipFile = new File(url + "/" + downPackName);
 			if (zipFile.exists()) {
-				map.put("wrongPath", workerRecordService.getDownUrlByDownPackName(downPackName));
+				map.put(Constants.WRONGPATH, workerRecordService.getDownUrlByDownPackName(downPackName));
 				return map;
 			}
 		} else {
@@ -278,7 +282,7 @@ public class WorkerController {
 		}
 		try {
 			zipFile.createNewFile();
-			int workerId = Integer.parseInt(session.getAttribute("workerId").toString());
+			int workerId = Integer.parseInt(session.getAttribute(Constants.WORKER_ID).toString());
 			List<taskWithBLOBs> list = taskService.getDoingTaskByWorkerId(workerId);
 			logger.debug("workerId:{},list1:{}", workerId, list);
 			this.wrongPath(zipFile, list);
@@ -288,8 +292,8 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + downPackName;
-		map.put("wrongPath", wrongPath);
+		String wrongPath = "http://" + serverAndProjectPath + "/"+Constants.WORKERTEMP+"/" + downPackName;
+		map.put(Constants.WRONGPATH, wrongPath);
 		return map;
 	}
 
@@ -306,16 +310,16 @@ public class WorkerController {
 		String url = WorkerController.url(request);
 		File f = new File(url);
 		String zipName = taskName.substring(0, taskName.indexOf(".")) + ".zip";
-		File zipFile = new File(url+"/"+zipName);
+		File zipFile = new File(url + "/" + zipName);
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + zipName;
+		String wrongPath = "http://" + serverAndProjectPath + "/"+Constants.WORKERTEMP+"/" + zipName;
 		if (!f.exists()) {
 			f.mkdir();
 		}
 		try {
-			
+
 			zipFile.createNewFile();
 			taskWithBLOBs task = taskService.selectByPrimaryKey(taskId);
 			List<taskWithBLOBs> list = new ArrayList<taskWithBLOBs>();
@@ -324,7 +328,7 @@ public class WorkerController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		map.put("wrongPath", wrongPath);
+		map.put(Constants.WRONGPATH, wrongPath);
 		return map;
 	}
 
@@ -343,7 +347,7 @@ public class WorkerController {
 		// 查看先可做任务数是否小于需求
 		if (countTaskDoing < downTaskCount) {
 			// String nowCountTaskDoing=countTaskDoing + "";
-			map.put(Constants.MESSAGE, "任务数不够");
+			map.put(Constants.MESSAGE, MSG_TASK_NOT_ENOUGH);
 			return map;
 		}
 		String userId = session.getAttribute(Constants.USER_ID).toString();
@@ -367,7 +371,7 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/workerTemp/" + downPackName;
+		String wrongPath = "http://" + serverAndProjectPath + "/"+Constants.WORKERTEMP+"/" + downPackName;
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
@@ -412,7 +416,7 @@ public class WorkerController {
 				workerRecord.setWorkerId(workerId);
 				workerRecordService.insertSelective(workerRecord);
 			}
-			session.setAttribute("workerMark", 1);
+			session.setAttribute(Constants.WORKERMARK, 1);
 			zos.close();// 必须关闭,否则最后一个文件写入为0kb
 			fos.flush();
 			fos.close();
@@ -425,7 +429,7 @@ public class WorkerController {
 			e.printStackTrace();
 		}
 		logger.debug("wrongPath:{}", wrongPath);
-		map.put("wrongPath", wrongPath);
+		map.put(Constants.WRONGPATH, wrongPath);
 		return map;
 
 	}
@@ -461,7 +465,7 @@ public class WorkerController {
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
-				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + ".wav";
+				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + "."+Constants.WAV;
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();
 					String uploadTaskNameI = files[i].getOriginalFilename();
@@ -471,14 +475,14 @@ public class WorkerController {
 								&& uploadTaskNameI.equals(uploadTaskNameJ) == false) {
 							byte[] bytes = files[i].getBytes();
 							String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(".") + 1), files[i].getOriginalFilename().length());
-							if (nameLast.equalsIgnoreCase("TAG")) {
+							if (nameLast.equalsIgnoreCase(Constants.TAG)) {
 								taskWithBLOBs.setTaskTag(bytes);
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 								listMath.add(uploadTaskNameI);
-							} else if (nameLast.equalsIgnoreCase("TextGrid") || nameLast.equalsIgnoreCase("textgrid")) {
+							} else if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
 								BufferedReader reader = null;
 								double taskMarkTime = 0;
 								try {
@@ -553,7 +557,7 @@ public class WorkerController {
 	 */
 	public static String url(HttpServletRequest request) {
 		String url = request.getServletContext().getRealPath("/");
-		url = url + "workerTemp";
+		url = url + Constants.WORKERTEMP;
 		File f = new File(url);
 		if (f.exists()) {
 			return url;
