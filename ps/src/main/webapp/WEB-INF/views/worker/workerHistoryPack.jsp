@@ -109,7 +109,7 @@
 							});
 							thisTD.empty();
 							thisTD.append(
-								"<table class='table table-condensed table-hover' style='width:90%;margin:0 auto'>"+
+								"<table class='table table-condensed table-hover'>"+
 									"<thead>"+
 										"<tr class='success'>"+
 											"<th>序号</th><th>任务名称</th><th>任务状态</th><th>回传时间</th><th>标注时间</th><th>下载时间</th><th>上传时间</th><th>标注状态</th><th>下载</th>"+

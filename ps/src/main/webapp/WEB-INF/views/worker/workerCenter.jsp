@@ -83,49 +83,12 @@
 	</div>
 	
 	<script type="text/javascript">
-		function checkPwd(){
-			var pwd = $("#oldPassWord");
-			if(checkout.text.isempty(pwd,"原密码不能为空！")){
-				return false;	
-			}
-			return true;
-		}
-		function checkNewPwd(){
-			var npwd = $("#newPassWord");
-			var rnpwd = $("#reNewPassword");
-			var np = npwd.val();
-			var rnp = rnpwd.val();
-			if(checkout.text.isempty(npwd,"新密码不能为空！")){
-				return false;	
-			}
-			if(np != rnp){
-				rnpwd.next(".help-block").css("color","red").text("与新密码不一致！");
-				return false;
-			}
-			return true;
-		}
-		
 		$(document).ready(function(){
-			$("#oldPassWord").blur(function(){
-				checkPwd();
-			});
-			$("#newPassWord,#reNewPassword").blur(function(){
-				checkNewPwd();
-			});
-			$("#updBtn").click(function(){
-				if(checkPwd())return;
-				if(checkNewPwd())return;
-				var npwd = $("#newPassWord").val();
-				var pwd = $("#oldPassWord").val();
-				$.ajax({
-					type:'post',
-					url:'${contextPath}/security/updatePassWord',
-					data:{"oldPassWord":pwd,"newPassWord":npwd},
-					dataType:'json',
-					success:function(data){
-						
-					}
-				});
+			
+			$("#changeDataBtn").click(function(){
+				$("#changeDataBtn").hide();
+				$("#workerBankCard,#workerPaypal,#workerPhone,#workerImage").removeAttr("readonly");
+				$("#updDataBtn").show();
 			});
 		});
 			

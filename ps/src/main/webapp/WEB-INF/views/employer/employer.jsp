@@ -97,8 +97,9 @@
 									<div class="input-group">
 										<input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
 										<span class="input-group-addon">小时</span>
-										<span class="help-block"></span>
-									</div> 
+										
+									</div>
+									<span class="help-block"></span>
 								</div>
 							</div>
 						</form>
@@ -359,15 +360,13 @@
 			var taskLvl = $("#taskLvl").val();
 			var packLockTimeObj = $("#packLockTime");
 			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) return;
+			$("."+trClass+" .packZipStatus").text("任务包解压中");
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/unzip',
 				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val()},
 				dataType:'json',
-				beforSend:function(){
-					$("."+trClass+" .packZipStatus").text("任务包解压中");
-				},
-				complete:function(data){
+				success:function(data){
 					$("."+trClass+" .packZipStatus").text(data.message);
 				}
 			});

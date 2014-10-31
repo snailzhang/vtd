@@ -21,17 +21,8 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<form role="form" class="form-horizontal" id="updatePWDForm">
-		<div class="container">
-			
-			<div class="form-group">
-		      <label for="username" class="col-sm-2 control-label">用户名：</label>
-		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="username" id="username" value="${username}" readonly="readonly">
-		      </div>
-		   </div>
-		</div>
 		<div id="updPWD" class="container">
-			<h1 id="" class="page-header">个人中心</h1>
+			<h1 id="" class="page-header">密码修改</h1>
 			<div id=message></div>
 			<div class="form-group">
 		      <label for="username" class="col-sm-2 control-label">现在的密码：</label>
@@ -64,7 +55,7 @@
 	
 	<script type="text/javascript">
 		var pwdCorrect = false;
-		function checkPwdCorrect(){
+		checkPwdCorrect = function(){
 			var pwd = $("#oldPassWord").val();
 			$.ajax({
 				type:'post',
@@ -72,25 +63,25 @@
 				data:{"oldPassWord":pwd},
 				dataType:'json',
 				success:function(data){
-					if(data.replay == "0"){
-						$("#oldPassWord").next(".help-block").css("color","red").text(data.msg);
+					if(!data.replay){
+						$("#oldPassWord").next(".help-block").css("color","red").text(data.message);
 						pwdCorrect = false;
 					}else{
-						$("#oldPassWord").next(".help-block").css("color","green").text(data.msg);
+						$("#oldPassWord").next(".help-block").css("color","green").text(data.message);
 						pwdCorrect = true;
 					}
 				}
 			});
-		}
-		function checkPwd(){
+		};
+		checkPwd = function(){
 			var pwd = $("#oldPassWord");
 			if(checkout.text.isempty(pwd,"原密码不能为空！")){
 				return false;	
 			}
 			checkPwdCorrect();
 			return true;
-		}
-		function checkNewPwd(){
+		};
+		checkNewPwd = function(){
 			var npwd = $("#newPassWord");
 			var rnpwd = $("#reNewPassword");
 			var np = npwd.val();
@@ -101,9 +92,11 @@
 			if(np != rnp){
 				rnpwd.next(".help-block").css("color","red").text("与新密码不一致！");
 				return false;
+			}else{
+				rnpwd.next(".help-block").empty();
 			}
 			return true;
-		}
+		};
 		
 		$(document).ready(function(){
 			$("#oldPassWord").blur(function(){
@@ -114,8 +107,8 @@
 			});
 			$("#updBtn").click(function(){
 				
-				if(checkPwd())return;
-				if(checkNewPwd())return;
+				if(!checkPwd())return;
+				if(!checkNewPwd())return;
 				if(!pwdCorrect)return;
 				var npwd = $("#newPassWord").val();
 				var pwd = $("#oldPassWord").val();

@@ -79,10 +79,15 @@
 				var workRealName = $("#workerRealName");
 				//var workerIdCard = $("#workerIdCard");
 				var workerDisabilityCard = $("#workerDisabilityCard");
+				var wc = workerDisabilityCard.val();
 				var workerPhone = $("#workerPhone");
 				if(checkout.text.isempty(workRealName,"真实姓名不能为空！")) return;
 				//if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
 				if(checkout.text.isempty(workerDisabilityCard,"残疾证卡号不能为空！")) return;
+				if(wc.length<19){
+					workerDisabilityCard.next(".help-block").css("color","red").text("残疾证卡号最少20位");
+					return;
+				}
 				if(checkout.text.isempty(workerPhone,"电话号号不能为空！")) return;
 				formName.submit();
 				
