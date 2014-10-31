@@ -120,8 +120,7 @@ public class ManagerController {
 	 */
 	@Value("${MSG_OLD_PASSWORD_ERROR}")
 	private String MSG_OLD_PASSWORD_ERROR;
-	
-	
+
 	/**
 	 * 登录管理员页
 	 * 
@@ -140,38 +139,44 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> managerPost(int userType, int page) {
-		logger.debug("userType:{}", userType);
+	public Map<String, Object> managerPost(String userNameCondition, int userType, int page) {
+		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
 		Map<String, Object> map = new HashMap<String, Object>();
-		Map<String, Integer> userTypeMap = new HashMap<String, Integer>();
+		Map<String, Object> userTypeMap = new HashMap<String, Object>();
+
 		userTypeMap.put(Constants.BEGIN, ((page - Constants.ONE) * Constants.ROW));
 		userTypeMap.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + Constants.ROW));
+		if (userNameCondition.isEmpty() || userNameCondition.trim().length() == 0) {
+			userNameCondition = "3 > 2";
+		} else {
+			userNameCondition = "username like %" + userNameCondition + "%";
+		}
+		userTypeMap.put(Constants.USER_NAME_CONDITION, userNameCondition);
+		String usertype = null;
+		if (userType == 0) {
+			usertype = "3 > 2";
+		} else {
+			usertype = "userType =" + userType;
+		}
+		userTypeMap.put("userType", usertype);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
-		List<user> userList = null;
 		int totle = Constants.ZERO, totlePage = Constants.ZERO;
-		if (userType == Constants.ZERO) {
-			userList = userService.getAllUsersPages(userTypeMap);
-			totle = userService.getAllUserCount();
-		} else if (userType > 1) {//没有管理员的
-			userTypeMap.put("usertype", userType);
-			userList = userService.getAllUserPagesByUserType(userTypeMap);
-			totle = userService.getAllUserCountByUserType(userType);
-		}
+		List<user> userList = userService.getLikeUsername(userTypeMap);
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
-			
+
 			trans.setUserId(user.getUserId());
 			trans.setUserStatus(user.getUserStatus());
 			trans.setUsername(user.getUsername());
 			trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
-			if(user.getUpdateTime() == null){
+			if (user.getUpdateTime() == null) {
 				trans.setUpdateTime("");
-			}else{
+			} else {
 				trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 			}
-			
+
 			trans.setCreateTime(sdf.format(user.getCreateTime()));
 
 			list.add(trans);
@@ -184,34 +189,51 @@ public class ManagerController {
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
+
+	/**
+	 * 用户详细信息
+	 * 
+	 * @param userId
+	 * @param userType
+	 * @return
+	 */
 	@RequestMapping(value = "/userDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> userDetail(int userId,int userType){
-		Map<String, Object> map =new HashMap<>();		
-		if(userType == 2){
+	public Map<String, Object> userDetail(int userId, int userType) {
+		Map<String, Object> map = new HashMap<>();
+		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
 			map.clear();
 			map.put(Constants.USER_DETAIL, employer);
 		}
-		if(userType == 4){
+		if (userType == 4) {
 			worker worker = workerService.getWorkerByUserId(userId);
 			map.clear();
 			map.put(Constants.USER_DETAIL, worker);
-		}	
+		}
 		return map;
 	}
+
+	/**
+	 * 用户的状态
+	 * 
+	 * @param userId
+	 * @param userStatus
+	 * @return
+	 */
 	@RequestMapping(value = "/userStatus", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> userStatus(int userId,Boolean userStatus){
-		Map<String, Object> map =new HashMap<>();		
-		user user=new user();
+	public Map<String, Object> userStatus(int userId, Boolean userStatus) {
+		Map<String, Object> map = new HashMap<>();
+		user user = new user();
 		user.setUserId(userId);
 		user.setUserStatus(userStatus);
 		userService.updateByPrimaryKeySelective(user);
 		map.clear();
-		map.put(Constants.REPLAY,MSG_UPDATE_SUCCESS);
+		map.put(Constants.REPLAY, MSG_UPDATE_SUCCESS);
 		return map;
 	}
+
 	/**
 	 * 跳转新增用户页
 	 * 
@@ -237,11 +259,11 @@ public class ManagerController {
 		int replay = 0;
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
-			return new ModelAndView(Constants.REDIRECT+":"+"security/addUser");
+			return new ModelAndView(Constants.REDIRECT + ":" + "security/addUser");
 		}
 		if (StringUtils.isBlank(password)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
-			return new ModelAndView(Constants.REDIRECT+":"+"security/addUser");
+			return new ModelAndView(Constants.REDIRECT + ":" + "security/addUser");
 		}
 		user user = userService.getAllUsersByUserName(username);
 		if (user != null) {
@@ -279,7 +301,7 @@ public class ManagerController {
 			logger.debug("page:{}", page);
 			return new ModelAndView("manager/" + page + "_add", "userRegisted", 1);
 		}
-		return new ModelAndView(Constants.REDIRECT+":"+"security/addUser");
+		return new ModelAndView(Constants.REDIRECT + ":" + "security/addUser");
 	}
 
 	/**
@@ -304,7 +326,7 @@ public class ManagerController {
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView(Constants.REDIRECT+":"+"manager");
+		return new ModelAndView(Constants.REDIRECT + ":" + "manager");
 	}
 
 	/**
@@ -324,10 +346,10 @@ public class ManagerController {
 		String address = null;
 		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address = Constants.REDIRECT+":"+"employer";
+			address = Constants.REDIRECT + ":" + "employer";
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address = Constants.REDIRECT+":"+"manager";
+			address = Constants.REDIRECT + ":" + "manager";
 		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
@@ -388,10 +410,10 @@ public class ManagerController {
 	@ResponseBody
 	public Map<String, Object> checkWorkerDisabilityCard(String WorkerDisabilityCard) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		if(WorkerDisabilityCard.length() < 20){
+		if (WorkerDisabilityCard.length() < 20) {
 			map.clear();
 			map.put(Constants.REPLAY, Constants.ZERO);
-			map.put(Constants.MESSAGE,MSG_WORKERDISABILITYCARD_20 );
+			map.put(Constants.MESSAGE, MSG_WORKERDISABILITYCARD_20);
 			return map;
 		}
 		if (workerDisabilityCard(WorkerDisabilityCard) == 0) {
@@ -400,7 +422,7 @@ public class ManagerController {
 		} else {
 			map.clear();
 			map.put(Constants.REPLAY, Constants.ZERO);
-			map.put(Constants.MESSAGE,MSG_WORKERDISABILITYCARD_EXIST);
+			map.put(Constants.MESSAGE, MSG_WORKERDISABILITYCARD_EXIST);
 		}
 		return map;
 	}
@@ -421,7 +443,7 @@ public class ManagerController {
 		} else {
 			map.clear();
 			map.put(Constants.REPLAY, Constants.ZERO);
-			map.put(Constants.MESSAGE,MSG_WORKERPHONE_EXIST);
+			map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
 		}
 		return map;
 	}
@@ -462,10 +484,10 @@ public class ManagerController {
 			String address = null;
 			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-				address = Constants.REDIRECT+":"+"worker";
+				address = Constants.REDIRECT + ":" + "worker";
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address = Constants.REDIRECT+":"+"manager";
+				address = Constants.REDIRECT + ":" + "manager";
 			}
 
 			if (!workerImage.isEmpty()) {
@@ -490,45 +512,55 @@ public class ManagerController {
 			return new ModelAndView(address);
 		}
 		redirectAttributes.addFlashAttribute("worker", worker);
-		return new ModelAndView(Constants.REDIRECT+":"+"security/addworker");
+		return new ModelAndView(Constants.REDIRECT + ":" + "security/addworker");
 	}
+
 	/**
 	 * 管理员中心
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/managerCenter", method = RequestMethod.GET)
-	public ModelAndView managerCenter(){
+	public ModelAndView managerCenter() {
 		return new ModelAndView("manager/managerCenter");
 	}
+
 	/**
 	 * 发包商中心
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/employerCenter", method = RequestMethod.GET)
-	public ModelAndView employerCenter(){
+	public ModelAndView employerCenter() {
 		return new ModelAndView("employer/employerCenter");
 	}
+
 	/**
 	 * 工作者中心
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/workerCenter", method = RequestMethod.GET)
-	public ModelAndView workerCenter(HttpSession session){
-		int userId=Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		worker worker=workerService.getWorkerByUserId(userId);
-		return new ModelAndView("worker/workerCenter","worker",worker);
+	public ModelAndView workerCenter(HttpSession session) {
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		worker worker = workerService.getWorkerByUserId(userId);
+		return new ModelAndView("worker/workerCenter", "worker", worker);
 	}
+
 	/**
 	 * 修改密码
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.GET)
 	public ModelAndView updatePassWordGET() {
-		
+
 		return new ModelAndView("manager/updatePassword");
 	}
+
 	/**
 	 * 修改密码
+	 * 
 	 * @param oldPassWord
 	 * @param newPassWord
 	 * @param session
@@ -536,7 +568,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord,String username, HttpSession session) {
+	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord, String username, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (passWord(oldPassWord, session) == 1) {
 			int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
@@ -556,8 +588,10 @@ public class ManagerController {
 		map.put(Constants.REPLAY, 0);
 		return map;
 	}
+
 	/**
 	 * 修改工作者信息
+	 * 
 	 * @param workerImage
 	 * @param workerPhone
 	 * @param workerBankCard
@@ -567,8 +601,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorkerPOST(String workerPhone, 
-			String workerBankCard, String workerPaypal, HttpSession session) {
+	public Map<String, Object> updateWorkerPOST(String workerPhone, String workerBankCard, String workerPaypal, HttpSession session) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (workerPhone(workerPhone) == 1) {
@@ -577,8 +610,8 @@ public class ManagerController {
 			return map;
 		}
 		worker worker = new worker();
-		int userId=Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		int workerId=workerService.getWorkerIdByUserId(userId);
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int workerId = workerService.getWorkerIdByUserId(userId);
 		worker.setWorkerId(workerId);
 		worker.setWorkerBankCard(workerBankCard);
 		worker.setWorkerPaypal(workerPaypal);
@@ -587,14 +620,15 @@ public class ManagerController {
 		worker.setUpdateTime(new Date());
 		workerService.updateByPrimaryKeySelective(worker);
 		map.clear();
-		map.put(Constants.MESSAGE,MSG_UPDATE_SUCCESS);
+		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
 		map.put(Constants.REPLAY, 1);
 		return map;
 	}
+
 	@RequestMapping(value = "/updateWorker2", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorkerPOST2(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage,String workerPhone, 
-			String workerBankCard, String workerPaypal, HttpSession session) {
+	public Map<String, Object> updateWorkerPOST2(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerPhone, String workerBankCard, String workerPaypal,
+			HttpSession session) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (workerPhone(workerPhone) == 1) {
@@ -610,8 +644,8 @@ public class ManagerController {
 				e.printStackTrace();
 			}
 		}
-		int userId=Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		int workerId=workerService.getWorkerIdByUserId(userId);
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int workerId = workerService.getWorkerIdByUserId(userId);
 		worker.setWorkerId(workerId);
 		worker.setWorkerBankCard(workerBankCard);
 		worker.setWorkerPaypal(workerPaypal);
@@ -620,7 +654,7 @@ public class ManagerController {
 		worker.setUpdateTime(new Date());
 		workerService.updateByPrimaryKeySelective(worker);
 		map.clear();
-		map.put(Constants.MESSAGE,MSG_UPDATE_SUCCESS);
+		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
 		map.put(Constants.REPLAY, 1);
 		return map;
 	}

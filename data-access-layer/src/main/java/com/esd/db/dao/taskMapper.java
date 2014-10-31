@@ -7,6 +7,10 @@ import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 
 public interface taskMapper {
+	
+	int selectTaskCountByPackIdAndTaskStatus(Map<String, Object> map);
+	
+	List<task> selectLikeTaskName(Map<String, Object> map);
 
     int deleteByPrimaryKey(Integer taskId);
     

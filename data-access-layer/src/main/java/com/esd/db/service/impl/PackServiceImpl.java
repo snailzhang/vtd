@@ -181,4 +181,10 @@ public class PackServiceImpl implements PackService {
 		return packMapper.selectPackIdByPackName(packName);
 	}
 
+	@Override
+	public List<pack> getLikePackName(Map<String, Object> map) {
+		
+		return packMapper.selectLikePackName(map);
+	}
+
 }

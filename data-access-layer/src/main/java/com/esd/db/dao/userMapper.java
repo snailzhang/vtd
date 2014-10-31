@@ -33,11 +33,9 @@ public interface userMapper {
     
     int selectAllUserCountByUserType(Integer userType);
     
-    List<user> selectAllUserPagesByUserType(Map<String,Integer> map);
-    
-    List<user> selectAllUsersPages(Map<String,Integer> map);
-    
     int selectUserIdCountByUserName(String userName);
     
     user selectByUserName(String userName);
+    
+    List<user> selectLikeUsername(Map<String,Object> map);
 }

@@ -87,18 +87,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<user> getAllUserPagesByUserType(Map<String, Integer> map) {
-		
-		return userMapper.selectAllUserPagesByUserType(map);
-	}
-
-	@Override
-	public List<user> getAllUsersPages(Map<String, Integer> map) {
-		
-		return userMapper.selectAllUsersPages(map);
-	}
-
-	@Override
 	public int getUserIdCountByUserName(String userName) {
 		
 		return userMapper.selectUserIdCountByUserName(userName);
@@ -108,5 +96,11 @@ public class UserServiceImpl implements UserService {
 	public user getByUserName(String userName) {
 		
 		return userMapper.selectByUserName(userName);
+	}
+
+	@Override
+	public List<user> getLikeUsername(Map<String, Object> map) {
+		
+		return userMapper.selectLikeUsername(map);
 	}
 }

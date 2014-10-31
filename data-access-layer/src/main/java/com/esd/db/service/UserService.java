@@ -30,11 +30,9 @@ public interface UserService {
 
 	int getAllUserCountByUserType(Integer userType);
 
-	List<user> getAllUserPagesByUserType(Map<String, Integer> map);
-	
-	List<user> getAllUsersPages(Map<String, Integer> map);
-	
 	int getUserIdCountByUserName(String userName);
-	
+
 	user getByUserName(String userName);
+
+	List<user> getLikeUsername(Map<String, Object> map);
 }

@@ -135,17 +135,22 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getDownPackNameCountByworkerIdGroupByDownPackName(Integer workerId) {
-		
-		return workerRecordMapper.selectDownPackNameCountByworkerIdGroupByDownPackName(workerId);
-	}
-
-	@Override
 	public int getPkIDByTaskId(Integer taskId) {
 		
 		return workerRecordMapper.selectPkIDByTaskId(taskId);
 	}
 
+	@Override
+	public List<workerRecord> getWorkerRecordLikeDownPackName(Map<String, Object> map) {
+	
+		return workerRecordMapper.selectWorkerRecordLikeDownPackName(map);
+	}
+
+	@Override
+	public int getDownPackNameCountByworkerIdGroupByDownPackName(Map<String, Object> map) {
+		
+		return workerRecordMapper.selectDownPackNameCountByworkerIdGroupByDownPackName(map);
+	}
 	
 
 }

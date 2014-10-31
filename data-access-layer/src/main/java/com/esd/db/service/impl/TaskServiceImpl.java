@@ -192,4 +192,16 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.updateByTaskId(task);
 	}
 
+	@Override
+	public List<task> getLikeTaskName(Map<String, Object> map) {
+		
+		return taskMapper.selectLikeTaskName(map);
+	}
+
+	@Override
+	public int getTaskCountByPackIdAndTaskStatus(Map<String, Object> map) {
+		
+		return taskMapper.selectTaskCountByPackIdAndTaskStatus(map);
+	}
+
 }

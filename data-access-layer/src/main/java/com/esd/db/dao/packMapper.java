@@ -7,6 +7,8 @@ import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 
 public interface packMapper {
+	
+	List<pack> selectLikePackName(Map<String , Object> map);
 
     int deleteByPrimaryKey(Integer packId);
     

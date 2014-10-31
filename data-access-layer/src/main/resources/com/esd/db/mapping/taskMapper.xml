@@ -36,6 +36,12 @@
 	<sql id="Blob_Column_List">
 		task_wav, task_tag, task_textgrid
 	</sql>
+	<select id="selectLikeTaskName" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from task
+		where #{taskId} and #{taskStatus} and #{taskNameCondition} limit #{begin},#{end}
+	</select>
 	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />
@@ -121,6 +127,12 @@
 		count(task_id) total
 		from task
 		where pack_id = #{packId,jdbcType=INTEGER} and worker_id is null
+	</select>
+	<select id="selectTaskCountByPackIdAndTaskStatus" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(task_id) total
+		from task
+		where #{packId} and #{taskStatus}
 	</select>
 	<select id="selectTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select

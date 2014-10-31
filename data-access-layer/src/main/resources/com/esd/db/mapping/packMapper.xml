@@ -28,6 +28,12 @@
 	<sql id="Blob_Column_List">
 		pack_file, pack_format
 	</sql>
+	<select id="selectLikePackName" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from pack
+		where #{employerId} and #{packStatus} and #{packNameCondition} limit #{begin},#{end}
+	</select>
 	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />

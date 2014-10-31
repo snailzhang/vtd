@@ -28,6 +28,12 @@
 		create_method, update_time,
 		update_method, task_effective
 	</sql>
+	<select id="selectWorkerRecordLikeDownPackName" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		where #{workerId} and #{downPackName} limit #{begin},#{end}
+	</select>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />
@@ -110,12 +116,12 @@
 		where worker_id =
 		#{workerId} group by down_pack_name limit #{begin},#{end}
 	</select>
-	<select id="selectDownPackNameCountByworkerIdGroupByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	<select id="selectDownPackNameCountByworkerIdGroupByDownPackName" resultType="java.lang.Integer" parameterType="java.util.Map">
 		select count(rowCount) count from (select
-		count(down_pack_name) rowCount
+		count(down_pack_name) rowCount,down_pack_name
 		from worker_record
-		where worker_id =
-		#{workerId} group by down_pack_name) a
+		where 
+		#{workerId} group by down_pack_name) a where #{downPackName}
 	</select>
 	<select id="selectTaskCountByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select

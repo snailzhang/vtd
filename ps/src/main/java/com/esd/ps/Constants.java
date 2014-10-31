@@ -21,6 +21,11 @@ public interface Constants {
 	public static final String USER_PASSWORD = "password";//用户密码
 	public static final String USER_TYPE = "usertype";//用户类型
 	public static final String USER_DETAIL = "userDetail";//用户详细信息
+	public static final String USER_NAME_CONDITION = "userNameCondition";//用户名查询条件
+	public static final String PACK_NAME_CONDITION = "packNameCondition";//包名查询条件
+	public static final String TASK_NAME_CONDITION = "taskNameCondition";//任务名查询条件
+	public static final String PACK_STATUS = "packStatus";//包的状态
+	public static final String TASK_STATUS = "taskStatus";//包的状态
 	public static final String MESSAGE = "message";//信息
 	public static final String REPLAY = "replay";//查询结果回传
 	public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";//日期时间格式
@@ -34,7 +39,7 @@ public interface Constants {
 	public static final String WAV="wav";
 	public static final String TAG="TAG";
 	public static final String TEXTGRID="textgrid";
-	public static final String WRONGPATH="wrongPath";//绝对路径countPackDoing
+	public static final String WRONGPATH="wrongPath";//绝对路径
 	public static final String COUNTPACKDOING="countPackDoing";//可做的任务包数
 	public static final String COUNTTASKDOING="countTaskDoing";//可做的任务数
 	public static final String WORKERMARK="workerMark";//worker标示
@@ -44,6 +49,7 @@ public interface Constants {
 	public static final int ROW=20;//分页行数
 	public static final int ONE=1;//常量1
 	public static final int ZERO=0;//常量0
+	public static final String  REPLACE="3 > 2";//数据库查询替代常量
 	public static final String BEGIN="begin";//分页的开始
 	public static final String END="end";//分页的结束
 	public static final String TOTLE="totle";//总条数

@@ -6,6 +6,8 @@ import java.util.Map;
 import com.esd.db.model.workerRecord;
 
 public interface workerRecordMapper {
+	
+	List<workerRecord> selectWorkerRecordLikeDownPackName(Map<String, Object> map);
 
 	int deleteByPrimaryKey(Integer recordId);
 
@@ -47,7 +49,7 @@ public interface workerRecordMapper {
 	
 	String  selectDownUrlByDownPackName(String downPackName);
 	
-	int selectDownPackNameCountByworkerIdGroupByDownPackName(Integer workerId);
+	int selectDownPackNameCountByworkerIdGroupByDownPackName(Map<String, Object> map);
 	
 	List<workerRecord> selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
 }
