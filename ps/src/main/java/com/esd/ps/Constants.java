@@ -19,6 +19,7 @@ public interface Constants {
 	public static final String USER_NAME = "username";//用户名
 	public static final String USER_PASSWORD = "password";//用户密码
 	public static final String USER_TYPE = "usertype";//用户类型
+	public static final String USER_DETAIL = "userDetail";//用户详细信息
 	public static final String MESSAGE = "message";//信息
 	public static final String REPLAY = "replay";//查询结果回传
 	public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";//日期时间格式

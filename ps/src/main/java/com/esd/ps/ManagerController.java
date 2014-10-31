@@ -90,7 +90,38 @@ public class ManagerController {
 	 */
 	@Value("${MSG_WORKERPHONE_EXIST}")
 	private String MSG_WORKERPHONE_EXIST;
-
+	/**
+	 * 更新成功
+	 */
+	@Value("${MSG_UPDATE_SUCCESS}")
+	private String MSG_UPDATE_SUCCESS;
+	/**
+	 * 用户名可用
+	 */
+	@Value("${MSG_USERNAME_DO}")
+	private String MSG_USERNAME_DO;
+	/**
+	 * 密码正确
+	 */
+	@Value("${MSG_PASSWORD_TRUE}")
+	private String MSG_PASSWORD_TRUE;
+	/**
+	 * 密码错误
+	 */
+	@Value("${MSG_PASSWORD_NOT_ERROR}")
+	private String MSG_PASSWORD_NOT_ERROR;
+	/**
+	 * 残疾人证号位数不能小于20
+	 */
+	@Value("${MSG_WORKERDISABILITYCARD_20}")
+	private String MSG_WORKERDISABILITYCARD_20;
+	/**
+	 * 原密码错误
+	 */
+	@Value("${MSG_OLD_PASSWORD_ERROR}")
+	private String MSG_OLD_PASSWORD_ERROR;
+	
+	
 	/**
 	 * 登录管理员页
 	 * 
@@ -148,9 +179,9 @@ public class ManagerController {
 		userTypeMap.clear();
 		map.clear();
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
-		map.put("list", list);
-		map.put("totle", totle);
-		map.put("totlePage", totlePage);
+		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
 	@RequestMapping(value = "/userDetail", method = RequestMethod.POST)
@@ -160,12 +191,12 @@ public class ManagerController {
 		if(userType == 2){
 			employer employer = employerService.getEmployerByUserId(userId);
 			map.clear();
-			map.put("userDetail", employer);
+			map.put(Constants.USER_DETAIL, employer);
 		}
 		if(userType == 4){
 			worker worker = workerService.getWorkerByUserId(userId);
 			map.clear();
-			map.put("userDetail", worker);
+			map.put(Constants.USER_DETAIL, worker);
 		}	
 		return map;
 	}
@@ -178,7 +209,7 @@ public class ManagerController {
 		user.setUserStatus(userStatus);
 		userService.updateByPrimaryKeySelective(user);
 		map.clear();
-		map.put(Constants.REPLAY,"已更改!");
+		map.put(Constants.REPLAY,MSG_UPDATE_SUCCESS);
 		return map;
 	}
 	/**
@@ -206,11 +237,11 @@ public class ManagerController {
 		int replay = 0;
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
-			return new ModelAndView("redirect:security/addUser");
+			return new ModelAndView(Constants.REDIRECT+":"+"security/addUser");
 		}
 		if (StringUtils.isBlank(password)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
-			return new ModelAndView("redirect:security/addUser");
+			return new ModelAndView(Constants.REDIRECT+":"+"security/addUser");
 		}
 		user user = userService.getAllUsersByUserName(username);
 		if (user != null) {
@@ -248,7 +279,7 @@ public class ManagerController {
 			logger.debug("page:{}", page);
 			return new ModelAndView("manager/" + page + "_add", "userRegisted", 1);
 		}
-		return new ModelAndView("redirect:security/addUser");
+		return new ModelAndView(Constants.REDIRECT+":"+"security/addUser");
 	}
 
 	/**
@@ -273,7 +304,7 @@ public class ManagerController {
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView("redirect:manager");
+		return new ModelAndView(Constants.REDIRECT+":"+"manager");
 	}
 
 	/**
@@ -293,10 +324,10 @@ public class ManagerController {
 		String address = null;
 		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address = "redirect:employer";
+			address = Constants.REDIRECT+":"+"employer";
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address = "redirect:manager";
+			address = Constants.REDIRECT+":"+"manager";
 		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
@@ -317,10 +348,10 @@ public class ManagerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (userName(userName) == 1) {
 			map.clear();
-			map.put(Constants.MESSAGE, "用户名已存在!");
+			map.put(Constants.MESSAGE, MSG_USER_EXIST);
 		} else {
 			map.clear();
-			map.put(Constants.MESSAGE, "用户名可用!");
+			map.put(Constants.MESSAGE, MSG_USERNAME_DO);
 		}
 		return map;
 	}
@@ -337,31 +368,13 @@ public class ManagerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (passWord(oldPassWord, session) == 1) {
 			map.clear();
-			map.put(Constants.MESSAGE, "密码正确!");
+			map.put(Constants.MESSAGE, MSG_PASSWORD_TRUE);
 			map.put(Constants.REPLAY, 1);
 			return map;
 		}
 		map.clear();
-		map.put(Constants.MESSAGE, "密码不对!");
+		map.put(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
 		map.put(Constants.REPLAY, 0);
-		return map;
-	}
-
-	/**
-	 * 检查身份证号
-	 * 
-	 * @param workerIdCard
-	 * @return
-	 */
-	@RequestMapping(value = "/checkWorkerIdCard", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> checkWorkerIdCard(String workerIdCard) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		if (workerIdCard(workerIdCard) == 0) {
-			map.put("result", true);
-		} else {
-			map.put("result", false);
-		}
 		return map;
 	}
 
@@ -377,15 +390,17 @@ public class ManagerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if(WorkerDisabilityCard.length() < 20){
 			map.clear();
-			map.put("result", false);
+			map.put(Constants.REPLAY, Constants.ZERO);
+			map.put(Constants.MESSAGE,MSG_WORKERDISABILITYCARD_20 );
 			return map;
 		}
 		if (workerDisabilityCard(WorkerDisabilityCard) == 0) {
 			map.clear();
-			map.put("result", true);
+			map.put(Constants.REPLAY, Constants.ONE);
 		} else {
 			map.clear();
-			map.put("result", false);
+			map.put(Constants.REPLAY, Constants.ZERO);
+			map.put(Constants.MESSAGE,MSG_WORKERDISABILITYCARD_EXIST);
 		}
 		return map;
 	}
@@ -401,9 +416,12 @@ public class ManagerController {
 	public Map<String, Object> checkWorkerPhone(String workerPhone) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (workerPhone(workerPhone) == 0) {
-			map.put("result", true);
+			map.clear();
+			map.put(Constants.REPLAY, Constants.ONE);
 		} else {
-			map.put("result", false);
+			map.clear();
+			map.put(Constants.REPLAY, Constants.ZERO);
+			map.put(Constants.MESSAGE,MSG_WORKERPHONE_EXIST);
 		}
 		return map;
 	}
@@ -444,10 +462,10 @@ public class ManagerController {
 			String address = null;
 			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-				address = "redirect:worker";
+				address = Constants.REDIRECT+":"+"worker";
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address = "redirect:manager";
+				address = Constants.REDIRECT+":"+"manager";
 			}
 
 			if (!workerImage.isEmpty()) {
@@ -472,7 +490,7 @@ public class ManagerController {
 			return new ModelAndView(address);
 		}
 		redirectAttributes.addFlashAttribute("worker", worker);
-		return new ModelAndView("redirect:security/addworker");
+		return new ModelAndView(Constants.REDIRECT+":"+"security/addworker");
 	}
 	/**
 	 * 管理员中心
@@ -529,21 +547,19 @@ public class ManagerController {
 			user.setUserId(userId);
 			userService.updateByPrimaryKeySelective(user);
 			map.clear();
-			map.put(Constants.MESSAGE, "密码修改成功!");
+			map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
 			map.put(Constants.REPLAY, 1);
 			return map;
 		}
 		map.clear();
-		map.put(Constants.MESSAGE, "原密码不对!");
+		map.put(Constants.MESSAGE, MSG_OLD_PASSWORD_ERROR);
 		map.put(Constants.REPLAY, 0);
 		return map;
 	}
 	/**
 	 * 修改工作者信息
 	 * @param workerImage
-	 * @param workerRealName
 	 * @param workerPhone
-	 * @param workerDisabilityCard
 	 * @param workerBankCard
 	 * @param workerPaypal
 	 * @param session
@@ -557,7 +573,7 @@ public class ManagerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (workerPhone(workerPhone) == 1) {
 			map.clear();
-			map.put(Constants.MESSAGE, "电话号已存在");
+			map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
 			return map;
 		}
 		worker worker = new worker();
@@ -578,7 +594,7 @@ public class ManagerController {
 		worker.setUpdateTime(new Date());
 		workerService.updateByPrimaryKeySelective(worker);
 		map.clear();
-		map.put(Constants.MESSAGE,"修改成功!");
+		map.put(Constants.MESSAGE,MSG_UPDATE_SUCCESS);
 		map.put(Constants.REPLAY, 1);
 		return map;
 	}
