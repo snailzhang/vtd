@@ -15,6 +15,7 @@ public interface Constants {
 	public static final String USER_ID = "userId";//用户id
 	public static final String ADD_USER_ID = "addUserId";//新增用户id
 	public static final String EMPLOYER_ID = "employerId";//发包商id
+	public static final String PACK_ID = "packId";//发包商id
 	public static final String USER_NAME = "username";//用户名
 	public static final String USER_PASSWORD = "password";//用户密码
 	public static final String USER_TYPE = "usertype";//用户类型
@@ -25,11 +26,20 @@ public interface Constants {
 	public static final String USER_WORKERIDCARD="workerIdCard";//工作者身份证号
 	public static final String USER_WORKERDISABILITYCARD="workerDisabilityCard";//工作者残疾人证号
 	public static final String USER_WORKERPHONE="workerPhone";//工作者电话号
+	public static final String REDIRECT="redirect";
+	public static final String LIST="list";
+	public static final String WAV="wav";
+	public static final String TAG="TAG";
+	public static final String TEXTGRID="textgrid";
+	public static final String WRONGPATH="wrongPath";//绝对路径
+	public static final String WORKERTEMP="workerTemp";//worker下载所有临时文件夹
+	public static final String EMPLOYERTEMP="employerTemp";//employer上传下载临时文件夹
+	
 	public static final int ROW=20;//分页行数
 	public static final int ONE=1;//常量1
 	public static final int ZERO=0;//常量0
-	public static final String WORKERTEMP="workerTemp";//分页行数
-	public static final String REDIRECT="redirect";
 	public static final String BEGIN="begin";//分页的开始
 	public static final String END="end";//分页的结束
+	public static final String TOTLE="totle";//总条数
+	public static final String TOTLE_PAGE="totlePage";//总页数
 }

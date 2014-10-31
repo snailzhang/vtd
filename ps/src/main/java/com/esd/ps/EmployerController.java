@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +72,31 @@ public class EmployerController {
 	private TaskService taskService;
 	@Autowired
 	private WorkerRecordService workerRecordService;
+	/**
+	 * 文件夹不存在
+	 */
+	@Value("${MSG_FOLD_NOT_EXIST}")
+	private String MSG_FOLD_NOT_EXIST;
+	/**
+	 * 包不存在
+	 */
+	@Value("${MSG_PACK_NOT_EXIST}")
+	private String MSG_PACK_NOT_EXIST;
+	/**
+	 * 包不存在
+	 */
+	@Value("${MSG_PACK_EXIST}")
+	private String MSG_PACK_EXIST;
+	/**
+	 * 解压完成
+	 */
+	@Value("${MSG_UNZIP_FINISH}")
+	private String MSG_UNZIP_FINISH;
+	/**
+	 * 包不符规范或已损坏
+	 */
+	@Value("${MSG_PACK_ERROR}")
+	private String MSG_PACK_ERROR;
 
 	/**
 	 * 登录发包商页
@@ -99,16 +125,16 @@ public class EmployerController {
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		logger.debug("employerId:{}", employerId);
-		session.setAttribute("employerId", employerId);
+		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
 
 		map1.put(Constants.BEGIN, (page - Constants.ONE) * Constants.ROW);
 		map1.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + (Constants.ROW - Constants.ONE)));
-		map1.put("employerId", employerId);
+		map1.put(Constants.EMPLOYER_ID, employerId);
 		List<pack> listPack = null;
-		int totle = 0;
-		if (packStuts == 0) {
+		int totle = Constants.ZERO;
+		if (packStuts == Constants.ZERO) {
 			listPack = packService.getDoingPackPagesByEmployerId(map1);
 			totle = packService.getDoingPackCountByEmployerId(employerId);
 		} else {
@@ -140,9 +166,9 @@ public class EmployerController {
 		}
 		map1.clear();
 		map.clear();
-		map.put("totle", totle);
-		map.put("totlePage", Math.ceil((double) totle / (double) Constants.ROW));
-		map.put("list", list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
+		map.put(Constants.LIST, list);
 		logger.debug("list:{},totle:{},totlePages", list, totle, Math.ceil((double) totle / (double) Constants.ROW));
 		return map;
 	}
@@ -159,7 +185,7 @@ public class EmployerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
-		session.setAttribute("employerId", employerId);
+		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		String url = employerService.getUploadUrlByEmployerId(employerId);
 		List<String> list = new ArrayList<>();
 		File fold = new File(url);
@@ -168,13 +194,13 @@ public class EmployerController {
 			for (int i = 0; i < file.length; i++) {
 				String zipName = new String();
 				zipName = file[i].getName();
-				if (packService.getCountPackByPackName(zipName) == 0) {
+				if (packService.getCountPackByPackName(zipName) == Constants.ZERO) {
 					list.add(zipName);
 				}
 			}
 		}
 		map.clear();
-		map.put("list", list);
+		map.put(Constants.LIST, list);
 		return map;
 	}
 
@@ -188,7 +214,7 @@ public class EmployerController {
 	@RequestMapping(value = "/packDetail", method = RequestMethod.GET)
 	public ModelAndView detailpageGet(int packId, HttpSession session) {
 		logger.debug("packId:{}", packId);
-		session.setAttribute("packId", packId);
+		session.setAttribute(Constants.PACK_ID, packId);
 		return new ModelAndView("employer/packDetail");// 返回值没写
 	}
 
@@ -204,9 +230,9 @@ public class EmployerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> map1 = new HashMap<String, Integer>();
 
-		map1.put("begin", (page - 1) * Constants.ROW);
-		map1.put("end", ((page - 1) * Constants.ROW + (Constants.ROW - 1)));
-		map1.put("packId", packId);
+		map1.put(Constants.BEGIN, (page - 1) * Constants.ROW);
+		map1.put(Constants.END, ((page - 1) * Constants.ROW + (Constants.ROW - 1)));
+		map1.put(Constants.PACK_ID, packId);
 		int totle = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
@@ -237,9 +263,9 @@ public class EmployerController {
 		map1.clear();
 		map.clear();
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
-		map.put("totlePage", totlePage);
-		map.put("totle", totle);
-		map.put("list", list);
+		map.put(Constants.TOTLE_PAGE, totlePage);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.LIST, list);
 		return map;
 	}
 
@@ -261,20 +287,20 @@ public class EmployerController {
 		File fold = new File(url);
 		if (!fold.exists()) {
 			map.clear();
-			map.put(Constants.MESSAGE, "文件夹不存在!");
+			map.put(Constants.MESSAGE, MSG_FOLD_NOT_EXIST);
 			return map;
 		}
 		File zipfile = new File(url + "/" + packName);
 		if (!zipfile.exists()) {
 			map.clear();
-			map.put(Constants.MESSAGE, "任务包不存在!");
+			map.put(Constants.MESSAGE, MSG_PACK_NOT_EXIST);
 			return map;
 		}
 		packWithBLOBs packWithBLOBs = new packWithBLOBs();
 		try {
 			if (packService.getCountPackByPackName(packName) > 0) {
 				map.clear();
-				map.put(Constants.MESSAGE, "任务包名已存在!");
+				map.put(Constants.MESSAGE, MSG_PACK_EXIST);
 				return map;
 			}
 
@@ -292,14 +318,14 @@ public class EmployerController {
 				packService.insert(packWithBLOBs);
 			}
 			// 从临时文件取出要解压的文件上传TaskService
-			storeData(packName,taskLvl,session);
+			storeData(packName, taskLvl, session);
 		} catch (IOException e) {
 			map.clear();
-			map.put(Constants.MESSAGE, "包不符或已损坏!");
+			map.put(Constants.MESSAGE, MSG_PACK_ERROR);
 			return map;
 		}
 		map.clear();
-		map.put(Constants.MESSAGE, "解压完成!");
+		map.put(Constants.MESSAGE, MSG_UNZIP_FINISH);
 		return map;
 	}
 
@@ -334,9 +360,9 @@ public class EmployerController {
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
 
-			this.writeInZIP(list, zos, "wav");
-			this.writeInZIP(list, zos, "TAG");
-			this.writeInZIP(list, zos, "TextGrid");
+			this.writeInZIP(list, zos, Constants.WAV);
+			this.writeInZIP(list, zos, Constants.TAG);
+			this.writeInZIP(list, zos, Constants.TEXTGRID);
 
 			zos.close();// 不关闭,最后一个文件写入为0kb
 			fos.flush();
@@ -357,9 +383,9 @@ public class EmployerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/employerTemp/" + packName;
+		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.EMPLOYERTEMP + "/" + packName;
 		logger.debug("wrongPath:{}", wrongPath);
-		map.put("wrongPath", wrongPath);
+		map.put(Constants.WRONGPATH, wrongPath);
 
 		return map;
 
@@ -373,7 +399,7 @@ public class EmployerController {
 	 */
 	public static String url(HttpServletRequest request) {
 		String url = request.getServletContext().getRealPath("/");
-		url = url + "employerTemp";
+		url = url + Constants.EMPLOYERTEMP;
 		File f = new File(url);
 		if (f.exists()) {
 			return url;
@@ -400,15 +426,12 @@ public class EmployerController {
 				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() + "/" + fileName);
 				zos.putNextEntry(zipEntry);
 				byte[] data = null;
-				if (fileType.equalsIgnoreCase("wav")) {
+				if (fileType.equalsIgnoreCase(Constants.WAV)) {
 					data = taskWithBLOBs.getTaskWav();
-					System.out.println("1");
-				} else if (fileType.equalsIgnoreCase("TAG")) {
+				} else if (fileType.equalsIgnoreCase(Constants.TAG)) {
 					data = taskWithBLOBs.getTaskTag();
-					System.out.println("2");
-				} else if (fileType.equalsIgnoreCase("TextGrid")) {
+				} else if (fileType.equalsIgnoreCase(Constants.TEXTGRID)) {
 					data = taskWithBLOBs.getTaskTextgrid();
-					System.out.println("3");
 				}
 				InputStream is = new ByteArrayInputStream(data);
 				// 读取待压缩的文件并写进压缩包里
@@ -439,7 +462,7 @@ public class EmployerController {
 		String zipEntryName = null;
 		int packId = 0;
 		try {
-			ZipFile	zip = new ZipFile(url + "/" + packName);
+			ZipFile zip = new ZipFile(url + "/" + packName);
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
 				String taskDir = "";
@@ -455,7 +478,7 @@ public class EmployerController {
 				}
 				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
 				// 收集没有匹配的文件
-				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals("wav") == false) {
+				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals(Constants.WAV) == false) {
 					// String noMatch = zipEntryName;
 					continue;
 				}
@@ -479,7 +502,7 @@ public class EmployerController {
 				taskWithBLOBs.setTaskDir(taskDir);
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
-				taskService.insert(taskWithBLOBs);		
+				taskService.insert(taskWithBLOBs);
 			}
 			zip.close();
 			in.close();

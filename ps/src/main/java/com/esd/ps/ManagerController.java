@@ -113,13 +113,13 @@ public class ManagerController {
 		logger.debug("userType:{}", userType);
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Integer> userTypeMap = new HashMap<String, Integer>();
-		userTypeMap.put("begin", ((page - 1) * Constants.ROW));
-		userTypeMap.put("end", ((page - 1) * Constants.ROW + Constants.ROW));
+		userTypeMap.put(Constants.BEGIN, ((page - Constants.ONE) * Constants.ROW));
+		userTypeMap.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + Constants.ROW));
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		List<user> userList = null;
-		int totle = 0, totlePage = 0;
-		if (userType == 0) {
+		int totle = Constants.ZERO, totlePage = Constants.ZERO;
+		if (userType == Constants.ZERO) {
 			userList = userService.getAllUsersPages(userTypeMap);
 			totle = userService.getAllUserCount();
 		} else if (userType > 1) {//没有管理员的
@@ -518,13 +518,13 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord, HttpSession session) {
+	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord,String userName, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (passWord(oldPassWord, session) == 1) {
 			int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 			user user = new user();
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
-			String md5Password = md5.getMd5(user.getUsername(), newPassWord);
+			String md5Password = md5.getMd5(userName, newPassWord);
 			user.setPassword(md5Password);
 			user.setUserId(userId);
 			userService.updateByPrimaryKeySelective(user);
