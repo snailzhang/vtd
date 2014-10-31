@@ -115,11 +115,14 @@ public class EmployerController {
 	 * 返回发包商发过的任务包(pack)的json list
 	 * 
 	 * @param session
+	 * @param page
+	 * @param packStuts
+	 * @param packNameCondition
 	 * @return
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts,String packNameCondition) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> map1 = new HashMap<String, Object>();
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
@@ -133,10 +136,10 @@ public class EmployerController {
 		map1.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + (Constants.ROW - Constants.ONE)));
 		String employerid = "employer_id = " + employerId;
 		map1.put(Constants.EMPLOYER_ID, employerid);
-		if(packNameCondition.isEmpty() || packNameCondition.trim().length() == 0){
+		if (packNameCondition.isEmpty() || packNameCondition.trim().length() == 0) {
 			packNameCondition = "3 > 2";
-		}else{
-			packNameCondition = "pack_name like %"+packNameCondition+"%";
+		} else {
+			packNameCondition = "pack_name like %" + packNameCondition + "%";
 		}
 		map.put(Constants.PACK_NAME_CONDITION, packNameCondition);
 		String packStatus = "pack_status = " + packStuts;
@@ -223,12 +226,15 @@ public class EmployerController {
 	/**
 	 * 任务包的详细list
 	 * 
-	 * @param session
+	 * @param packId
+	 * @param page
+	 * @param taskStuts
+	 * @param taskNameCondition
 	 * @return
 	 */
 	@RequestMapping(value = "/packDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts ,String taskNameCondition) {
+	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> map1 = new HashMap<String, Object>();
 
@@ -245,16 +251,16 @@ public class EmployerController {
 		} else if (taskStuts == 0) {
 			taskstuts = "(task_mark_time Is NULL or task_mark_time =0)";
 		} else if (taskStuts == 1) {
-			taskstuts = "task_mark_time > 0";	
+			taskstuts = "task_mark_time > 0";
 		}
 		map1.put(Constants.TASK_STATUS, taskstuts);
-		if(taskNameCondition.isEmpty() || taskNameCondition.trim().length() == 0){
-			taskNameCondition = Constants.REPLACE; 
-		}else{
-			taskNameCondition = "task_name like %"+taskNameCondition+"%";
+		if (taskNameCondition.isEmpty() || taskNameCondition.trim().length() == 0) {
+			taskNameCondition = Constants.REPLACE;
+		} else {
+			taskNameCondition = "task_name like %" + taskNameCondition + "%";
 		}
 		map1.put(Constants.TASK_NAME_CONDITION, taskNameCondition);
-		
+
 		List<task> listTask = taskService.getLikeTaskName(map1);
 		totle = taskService.getTaskCountByPackIdAndTaskStatus(map1);
 		if (listTask == null) {

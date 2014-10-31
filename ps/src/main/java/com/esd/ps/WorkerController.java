@@ -168,23 +168,25 @@ public class WorkerController {
 	 * worker的down pack完成历史页列表
 	 * 
 	 * @param session
+	 * @param page
+	 * @param downPackName
 	 * @return
 	 */
 	@RequestMapping(value = "/workerHistoryPack", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerHistoryPackPOST(HttpSession session, int page,String downPackName) {
+	public Map<String, Object> workerHistoryPackPOST(HttpSession session, int page, String downPackName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> pageMap = new HashMap<String, Object>();
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		pageMap.put(Constants.BEGIN, ((page - Constants.ONE) * Constants.ROW));
 		pageMap.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + Constants.ROW));
-		String workerid="worker_id = " + workerId;
+		String workerid = "worker_id = " + workerId;
 		pageMap.put(Constants.WORKER_ID, workerid);
-		if(downPackName.isEmpty() || downPackName.trim().length() == 0){
+		if (downPackName.isEmpty() || downPackName.trim().length() == 0) {
 			downPackName = Constants.REPLACE;
-		}else{
-			downPackName = "down_pack_name like %"+downPackName+"%";
+		} else {
+			downPackName = "down_pack_name like %" + downPackName + "%";
 		}
 		pageMap.put("downPackName", downPackName);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -216,7 +218,7 @@ public class WorkerController {
 		}
 		pageMap.clear();
 		map.clear();
-		
+
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
@@ -299,7 +301,7 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/"+Constants.WORKERTEMP+"/" + downPackName;
+		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.WORKERTEMP + "/" + downPackName;
 		map.put(Constants.WRONGPATH, wrongPath);
 		return map;
 	}
@@ -321,7 +323,7 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/"+Constants.WORKERTEMP+"/" + zipName;
+		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.WORKERTEMP + "/" + zipName;
 		if (!f.exists()) {
 			f.mkdir();
 		}
@@ -378,7 +380,7 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/"+Constants.WORKERTEMP+"/" + downPackName;
+		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.WORKERTEMP + "/" + downPackName;
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
@@ -472,7 +474,7 @@ public class WorkerController {
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
-				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + "."+Constants.WAV;
+				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + "." + Constants.WAV;
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();
 					String uploadTaskNameI = files[i].getOriginalFilename();

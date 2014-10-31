@@ -134,7 +134,9 @@ public class ManagerController {
 
 	/**
 	 * 返回user list
-	 * 
+	 * @param userNameCondition
+	 * @param userType
+	 * @param page
 	 * @return
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
