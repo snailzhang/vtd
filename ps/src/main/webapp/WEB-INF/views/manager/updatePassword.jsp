@@ -27,21 +27,21 @@
 			<div class="form-group">
 		      <label for="username" class="col-sm-2 control-label">现在的密码：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="oldPassWord" id="oldPassWord" placeholder="请输入原密码" autocomplete="off">
+		         <input type="password" class="form-control" name="oldPassWord" id="oldPassWord" placeholder="请输入原密码" autocomplete="off">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="username" class="col-sm-2 control-label">设置新密码：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="newPassWord" id="newPassWord" placeholder="请输入新密码" autocomplete="off">
+		         <input type="password" class="form-control" name="newPassWord" id="newPassWord" placeholder="请输入新密码" autocomplete="off">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="username" class="col-sm-2 control-label">重复新密码：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" id="reNewPassword" placeholder="请重复输入新密码" autocomplete="off">
+		         <input type="password" class="form-control" id="reNewPassword" placeholder="请重复输入新密码" autocomplete="off">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
@@ -106,7 +106,7 @@
 				checkNewPwd();
 			});
 			$("#updBtn").click(function(){
-				
+				var un = "${username}";
 				if(!checkPwd())return;
 				if(!checkNewPwd())return;
 				if(!pwdCorrect)return;
@@ -115,20 +115,22 @@
 				$.ajax({
 					type:'post',
 					url:'${contextPath}/security/updatePassWord',
-					data:{"oldPassWord":pwd,"newPassWord":npwd},
+					data:{"oldPassWord":pwd,"newPassWord":npwd,"username":un},
 					dataType:'json',
 					success:function(data){
 						if(data.replay == "0"){
 							var msgS = '<div class="alert alert-danger alert-dismissable">'
 										+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
 										+ data.message + '</div>';
-							$("#message").html(msg);
+							$("#message").html(msgS);
 						}else{
 							var msgS = '<div class="alert alert-success alert-dismissable">'
 										+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
 										+ data.message + '</div>';
-							$("#message").html(msg);
+							$("#message").html(msgS);
 						}
+						$("input[type=password]").val("");
+						$(".help-block").empty();
 					}
 				});
 			});

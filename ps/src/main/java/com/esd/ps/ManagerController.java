@@ -518,13 +518,13 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord,String userName, HttpSession session) {
+	public Map<String, Object> updatePassWord(String oldPassWord, String newPassWord,String username, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (passWord(oldPassWord, session) == 1) {
 			int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 			user user = new user();
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
-			String md5Password = md5.getMd5(userName, newPassWord);
+			String md5Password = md5.getMd5(username, newPassWord);
 			user.setPassword(md5Password);
 			user.setUserId(userId);
 			userService.updateByPrimaryKeySelective(user);
