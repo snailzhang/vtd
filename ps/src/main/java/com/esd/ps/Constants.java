@@ -26,4 +26,10 @@ public interface Constants {
 	public static final String USER_WORKERDISABILITYCARD="workerDisabilityCard";//工作者残疾人证号
 	public static final String USER_WORKERPHONE="workerPhone";//工作者电话号
 	public static final int ROW=20;//分页行数
+	public static final int ONE=1;//常量1
+	public static final int ZERO=0;//常量0
+	public static final String WORKERTEMP="workerTemp";//分页行数
+	public static final String REDIRECT="redirect";
+	public static final String BEGIN="begin";//分页的开始
+	public static final String END="end";//分页的结束
 }

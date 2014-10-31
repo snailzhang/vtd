@@ -103,8 +103,8 @@ public class EmployerController {
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
 
-		map1.put("begin", (page - 1) * Constants.ROW);
-		map1.put("end", ((page - 1) * Constants.ROW + (Constants.ROW - 1)));
+		map1.put(Constants.BEGIN, (page - Constants.ONE) * Constants.ROW);
+		map1.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + (Constants.ROW - Constants.ONE)));
 		map1.put("employerId", employerId);
 		List<pack> listPack = null;
 		int totle = 0;

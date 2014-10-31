@@ -89,6 +89,11 @@ public class LoginController {
 	 */
 	@Value("${MSG_PASSWORD_NOT_ERROR}")
 	private String MSG_PASSWORD_NOT_ERROR;
+	/**
+	 * 用户已停用
+	 */
+	@Value("${MSG_USER_STOP}")
+	private String MSG_USER_STOP;
 
 	/**
 	 * 登录页
@@ -111,7 +116,7 @@ public class LoginController {
 		session.removeAttribute(Constants.USER_NAME);
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView("redirect:login");
+		return new ModelAndView(Constants.REDIRECT+":"+"login");
 	}
 
 	/**
@@ -148,10 +153,10 @@ public class LoginController {
 		if (user == null) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EXIST);
 		} else {
-			if(user.getUserStatus() == false){
-				redirectAttributes.addFlashAttribute(Constants.MESSAGE, "用户已停用!");
+			if (user.getUserStatus() == false) {
+				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_STOP);
 				redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
-				return new ModelAndView("redirect:login");
+				return new ModelAndView(Constants.REDIRECT+":"+"login");
 			}
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 			String md5Password = md5.getMd5(username, password);
@@ -179,14 +184,14 @@ public class LoginController {
 						return new ModelAndView("manager/worker_add", "userRegisted", 0);
 					}
 				}
-				return new ModelAndView("redirect:" + "security/" + typeName);
+				return new ModelAndView(Constants.REDIRECT+":" + "security/" + typeName);
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
 			}
 		}
 		redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
 		redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
-		return new ModelAndView("redirect:login");
+		return new ModelAndView(Constants.REDIRECT+":"+"login");
 	}
 
 	/**
@@ -210,7 +215,7 @@ public class LoginController {
 					if ((packLockTime - between) == 0 || (packLockTime - between) < 0) {
 						// 更新worker_record表
 						workerRecord update = new workerRecord();
-						update.setTaskStatu(2);
+						update.setTaskStatu(2);//2表示任务已过时
 						update.setUpdateTime(new Date());
 						update.setRecordId(workerRecord.getRecordId());
 						workerRecordService.updateByPrimaryKeySelective(update);
@@ -223,7 +228,7 @@ public class LoginController {
 
 						// 删除任务的下载备份
 						String url = request.getServletContext().getRealPath("/");
-						File fold = new File(url + "workerTemp");
+						File fold = new File(url + Constants.WORKERTEMP);
 						if (fold.exists()) {
 							File zipFile = new File(url + "/" + workerRecord.getDownPackName());
 							if (zipFile.exists()) {
@@ -238,8 +243,10 @@ public class LoginController {
 			}
 		}
 	}
+
 	/**
 	 * 检测用户名
+	 * 
 	 * @param username
 	 * @return
 	 */
@@ -249,18 +256,18 @@ public class LoginController {
 			user user = userService.getAllUsersByUserName(username);
 			if (user == null) {
 				map.clear();
-				map.put(Constants.MESSAGE,"用户不存在!");
-				map.put(Constants.REPLAY,0);
+				map.put(Constants.MESSAGE, MSG_USER_NOT_EXIST);
+				map.put(Constants.REPLAY, Constants.ZERO);
 				return map;
 			}
-			if(user.getUserStatus()==false){
+			if (user.getUserStatus() == false) {
 				map.clear();
-				map.put(Constants.MESSAGE,"用户已停用!");
-				map.put(Constants.REPLAY,0);
+				map.put(Constants.MESSAGE, MSG_USER_STOP);
+				map.put(Constants.REPLAY, Constants.ZERO);
 				return map;
 			}
 			map.clear();
-			map.put(Constants.REPLAY,1);
+			map.put(Constants.REPLAY, Constants.ONE);
 		}
 		return map;
 	}
