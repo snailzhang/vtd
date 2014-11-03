@@ -51,7 +51,7 @@
 			<div class="form-group">
 				<label for="phone" class="col-sm-2 control-label">手机</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="phone" name="phone" placeholder="手机">
+					<input type="text" class="form-control" maxlength="12" id="phone" name="phone" placeholder="手机">
 				</div>
 			</div>
 			<div class="form-group">
@@ -176,16 +176,13 @@
 		}
 
 		$(document).ready(function() {
-			$("#name,#card").blur(function(){
-				checkNameAndCard();
-			});
 			$("#form").submit(function() {
-				checkAgreement();
 				checkNameAndCard();
-				if(!nameandCardCorrect || !checkAgreementCorrect){
-					return false;
+				checkAgreement();
+				if(nameandCardCorrect&&checkAgreementCorrect){
+					return true;
 				}
-				return true;
+				return false;
 			});
 
 		});

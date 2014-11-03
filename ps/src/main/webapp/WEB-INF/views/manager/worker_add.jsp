@@ -54,7 +54,7 @@
 		    <div class="form-group">
 		      <label for="workerPhone" class="col-sm-2 control-label">电话号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerPhone" id="workerPhone" required="required" placeholder="请输入电话号码">
+		         <input type="text" class="form-control" name="workerPhone" id="workerPhone" required="required" maxlength="12" placeholder="请输入电话号码">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
@@ -112,22 +112,23 @@
 			});
 		};
 		checkDiscard = function(){
-			var wc = $("#workerDisabilityCard").val();
-			if(wc.length<19){
-				workerDisabilityCard.next(".help-block").css("color","red").text("残疾证卡号最少20位");
-				return f;
+			var wc = $("#workerDisabilityCard");
+			if(wc.val().length<19){
+				wc.next(".help-block").css("color","red").text("残疾证卡号最少20位");
+				return false;
 			}
-			checkDisCardOnly();
+			
 		};
 		$(document).ready(function(){
 			$("#workerDisabilityCard").blur(function(){
+				checkDiscard();
 				checkDisCardOnly();
 			});
 			$("#workerPhone").blur(function(){
 				checkTelOnly();
 			});
 			$("#addworker").submit(function(){
-				checkDiscard();
+				if(!checkDiscard())return false;
 				checkTelOnly();
 				if(disCardOnlyStatus && telOnlyStatus){
 					return true;
