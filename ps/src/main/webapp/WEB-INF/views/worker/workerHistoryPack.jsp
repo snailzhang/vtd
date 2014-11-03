@@ -31,21 +31,30 @@
 					<h3 class="panel-title">任务包历史列表</h3>
 				</div>
 				<div class="panel-body">
-					<table class="table table-striped table-bordered">
-						<thead>
-							<tr>
-								<th>序号</th>
-								<th>下载包名称</th>
-								<th>下载时间</th>
-								<th>包含任务数</th>
-								<th>任务包状态</th>
-								<th>下载任务包</th>
-							</tr>
-						</thead>
-						<tbody id="packHistoryTable" role="tablist" aria-multiselectable="true"></tbody>
-					</table>
-					<ul class="pagination"></ul>
+					<form class="form-inline" role="form">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">任务包名称：</div>
+								<input class="form-control" id="downPackName" type="text" placeholder="查询任务包">
+							</div>
+						</div>
+						<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+					</form>
 				</div>
+				<table class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>下载包名称</th>
+							<th>下载时间</th>
+							<th>包含任务数</th>
+							<th>任务包状态</th>
+							<th>下载任务包</th>
+						</tr>
+					</thead>
+					<tbody id="packHistoryTable" role="tablist" aria-multiselectable="true"></tbody>
+				</table>
+				<ul class="pagination"></ul>
 			</div>
 			
 		</div>
@@ -55,10 +64,14 @@
 			
 			$("#headJSPWorkerHistoryPack").hide();
 			$("#headJSPWorker").show();
-			loadPackListHistory(1);
+			loadPackListHistory(1,"");
 			/*******************************刷新按钮**************************************************/
 			$("#refreshPage").click(function(){
 				window.location.reload();
+			});
+			$("#searchBtn").click(function(){
+				var downPackName = $("#downPackName").val();
+				loadPackListHistory(1,downPackName);
 			});
 			/*******************************显示任务包详细**************************************************/
 			$("#packHistoryTable").on('show.bs.collapse', function () {
@@ -125,12 +138,12 @@
 				//thisTD.text(dpn+isf);
 			});
 		});
-		/*******************************加载任务包**************************************************/
-		loadPackListHistory = function(pageNum){
+		/*******************************加载任务包历史列表**************************************************/
+		loadPackListHistory = function(pageNum,downPackName){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/workerHistoryPack',
-				data:{"page":pageNum},
+				data:{"page":pageNum,"downPackName":downPackName},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -169,13 +182,13 @@
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
 								$(".pagination").append(
-									"<li class='active'><a onClick='loadPackListHistory("+i+")'>"+
+									"<li class='active'><a onClick='loadPackListHistory("+i+",\""+downPackName+"\")'>"+
 									i+
 									"</a></li>"
 								);
 							}else{
 								$(".pagination").append(
-									"<li><a onClick='loadPackListHistory("+i+")'>"+
+									"<li><a onClick='loadPackListHistory("+i+",\""+downPackName+"\")'>"+
 									i+
 									"</a></li>"
 								);

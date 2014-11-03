@@ -37,42 +37,68 @@
 		<div class="tab-content">
 		<!-- ****************************************未完成任务包列表******************************************************* -->
 			<div class="tab-pane active" id="packUncomplete">
-				<table class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>序号</th>
-							<th>任务包名称</th>
-							<th>任务总数</th>
-							<th>未完成任务数</th>
-							<th>已完成任务数</th>
-							<th>完成任务比例</th>
-							<th>下载次数</th>
-							<th>回传时间</th>
-							<th>创建时间</th>
-							<th>下载任务包</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-				<ul class="pagination"></ul>
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<form class="form-inline" role="form">
+							<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon">任务包名称：</div>
+									<input class="form-control" id="unpackNameCondition" type="text" placeholder="查询未完成任务包">
+								</div>
+							</div>
+							<button type="button" id="un_searchBtn" class="btn btn-default">查询</button>
+						</form>
+					</div>
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>任务包名称</th>
+								<th>任务总数</th>
+								<th>未完成任务数</th>
+								<th>已完成任务数</th>
+								<th>完成任务比例</th>
+								<th>下载次数</th>
+								<th>回传时间</th>
+								<th>创建时间</th>
+								<th>下载任务包</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
 			</div>
 			<!-- ****************************************已完成任务包列表******************************************************* -->
 			<div class="tab-pane" id="packComplete">
-				<table class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>序号</th>
-							<th>任务包名称</th>
-							<th>任务总数</th>
-							<th>下载次数</th>
-							<th>回传时间</th>
-							<th>创建时间</th>
-							<th>下载任务包</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-				<ul class="pagination"></ul>
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<form class="form-inline" role="form">
+							<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon">任务包名称：</div>
+									<input class="form-control" id="packNameCondition" type="text" placeholder="查询已完成任务包">
+								</div>
+							</div>
+							<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+						</form>
+					</div>
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>任务包名称</th>
+								<th>任务总数</th>
+								<th>下载次数</th>
+								<th>回传时间</th>
+								<th>创建时间</th>
+								<th>下载任务包</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
 			</div>
 			<!-- ****************************************未解压任务包列表******************************************************* -->
 			<div class="tab-pane" id="packUnzip">
@@ -177,44 +203,26 @@
 			alert("文件已存在");
 		}
 		$(document).ready(function(){
-			loadUnCompletePackList(1);
-			loadCompletePackList(1);
+			loadUnCompletePackList(1,"");
+			loadCompletePackList(1,"");
 			loadUnzipPackList();
 			/*---------------------------------------上传文件check-------------------------------------------------------------------*/
-			var fileReady = false;
-			checkSubBtnStaus = function(){
-				if(fileReady){
-					$("#uploadPackBtn").removeAttr("disabled");
-				}else{
-					$("#uploadPackBtn").attr("disabled","disabled");
-				}
-			};
-			$("#pack").change(function(){
-				var pack = $("#pack");
-				if(checkout.text.isempty(pack,"文件不能为空！")){
-					fileReady = false;
-				}else if(checkout.file.fileType(pack,"zip","请上传zip格式文件！")){
-					//var fileData = pack.val().split("/");
-					//var lastIndex = fileData.length()-1;
-					//var fileName = fileData[lastIndex];
-					fileReady = true;
-				}else{
-					fileReady = false;
-				}
-				checkSubBtnStaus();
+			$("#un_searchBtn").click(function(){
+				var upc = $("#unpackNameCondition").val();
+				loadUnCompletePackList(1,upc);
 			});
-			$("#uploadPackBtn").click(function(){
-				var formName = $("#uploadPack");
-				showUploadProgress();
-				formName.submit();
+			$("#searchBtn").click(function(){
+				var pc = $("#packNameCondition").val();
+				loadCompletePackList(1,pc);
 			});
+			
 		});
 		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
-		loadUnCompletePackList = function(pageNum){
+		loadUnCompletePackList = function(pageNum,packNameCondition){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
-				data:{"packStuts":0,"page":pageNum},
+				data:{"packStuts":0,"page":pageNum,"packNameCondition":packNameCondition},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -262,14 +270,14 @@
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
 								$("#packUncomplete .pagination").append(
-									"<li class='active'><a onClick='loadUnCompletePackList("+i+")'>"+
+									"<li class='active'><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
 									i+
 									"</a></li>"
 								);
 							}else{
 								
 								$("#packUncomplete .pagination").append(
-									"<li><a onClick='loadUnCompletePackList("+i+")'>"+
+									"<li><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
 									i+
 									"</a></li>"
 								);
@@ -280,11 +288,11 @@
 			});
 		};
 		/*---------------------------------------请求已完成任务包列表-------------------------------------------------------------------*/
-		loadCompletePackList = function(pageNum){
+		loadCompletePackList = function(pageNum,packNameCondition){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
-				data:{"packStuts":1,"page":pageNum},
+				data:{"packStuts":1,"page":pageNum,"packNameCondition":packNameCondition},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -315,13 +323,13 @@
 							if(i==pageNum){
 								
 								$("#packComplete .pagination").append(
-									"<li class='active'><a onClick='loadUnCompletePackList("+i+")'>"+
+									"<li class='active'><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
 									i+
 									"</a></li>"
 								);
 							}else{
 								$("#packComplete .pagination").append(
-									"<li><a onClick='loadUnCompletePackList("+i+")'>"+
+									"<li><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
 									i+
 									"</a></li>"
 								);
