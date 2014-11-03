@@ -115,7 +115,7 @@
 			var wc = $("#workerDisabilityCard").val();
 			if(wc.length<19){
 				workerDisabilityCard.next(".help-block").css("color","red").text("残疾证卡号最少20位");
-				return;
+				return f;
 			}
 			checkDisCardOnly();
 		};
@@ -127,11 +127,12 @@
 				checkTelOnly();
 			});
 			$("#addworker").submit(function(){
+				checkDiscard();
+				checkTelOnly();
 				if(disCardOnlyStatus && telOnlyStatus){
 					return true;
 				}
-				checkDiscard();
-				checkTelOnly();
+				
 				return false;
 			});
 		});

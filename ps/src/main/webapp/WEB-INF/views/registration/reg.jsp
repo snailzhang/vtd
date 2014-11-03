@@ -129,6 +129,7 @@
 
 	<script type="text/javascript">
 		var nameandCardCorrect = false;
+		checkAgreementCorrect = false;
 		function bmxy() {
 			$('#myModal').modal({
 				keyboard : true
@@ -142,8 +143,10 @@
 					+ '错误：请签署保密协议!' + '</div>';
 			if(isChecked){
 				$("#message").empty();
+				checkAgreementCorrect = true;
 			}else{
 				$("#message").html(msg);
+				checkAgreementCorrect = false;
 			}
 		};
 		function checkNameAndCard() {
@@ -179,7 +182,7 @@
 			$("#form").submit(function() {
 				checkAgreement();
 				checkNameAndCard();
-				if(!nameandCardCorrect){
+				if(!nameandCardCorrect || !checkAgreementCorrect){
 					return false;
 				}
 				return true;
