@@ -176,13 +176,12 @@ public class WorkerController {
 	@ResponseBody
 	public Map<String, Object> workerHistoryPackPOST(HttpSession session, int page, String downPackName) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(workerId,page,downPackName,Constants.ROW);
-		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId,downPackName);
+		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(workerId, page, downPackName, Constants.ROW);
+		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId, downPackName);
 		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
 		logger.debug("workerRecordList:{}", workerRecordList);
 		if (workerRecordList.isEmpty() || workerRecordList == null) {
@@ -475,31 +474,18 @@ public class WorkerController {
 							byte[] bytes = files[i].getBytes();
 							String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(".") + 1), files[i].getOriginalFilename().length());
 							if (nameLast.equalsIgnoreCase(Constants.TAG)) {
-								taskWithBLOBs.setTaskTag(bytes);
-								taskWithBLOBs.setTaskId(taskId);
-								taskWithBLOBs.setTaskUploadTime(new Date());
-								taskWithBLOBs.setUpdateTime(new Date());
-								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-								listMath.add(uploadTaskNameI);
-							} else if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
 								BufferedReader reader = null;
 								double taskMarkTime = 0;
+								String str[] = null;
 								try {
 									reader = new BufferedReader(new InputStreamReader(files[i].getInputStream(), "GBK"));
 									String tempString = null;
-									List<String> list = new ArrayList<String>();
-									int m = 0, n = 0;
 									// 按行读取文件的内容
 									while ((tempString = reader.readLine()) != null) {
-										list.add(tempString);
-										m++;
-										if (tempString.equals("\"CONTENT\""))
-											n = m + 2;
-									}
-									for (int j = n; j < list.size(); j++) {
-										// 要改成正则表达式
-										if (list.get(j).getBytes().length != list.get(j).length())
-											taskMarkTime = taskMarkTime + (Double.parseDouble(list.get(j - 1)) - Double.parseDouble(list.get(j - 2))) + 0.08;
+										str = tempString.split(" ");
+										if (str.length > 2 && str[2].equals("<Chinese-talk>")) {
+											taskMarkTime = taskMarkTime + (Double.parseDouble(str[4]) - Double.parseDouble(str[3])) + 0.08;
+										}
 									}
 									reader.close();
 								} catch (IOException e) {
@@ -514,7 +500,7 @@ public class WorkerController {
 									}
 								}
 								taskWithBLOBs.setTaskMarkTime(taskMarkTime);
-								taskWithBLOBs.setTaskTextgrid(bytes);
+								taskWithBLOBs.setTaskTag(bytes);
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
@@ -526,6 +512,13 @@ public class WorkerController {
 								workerRecord.setTaskMarkTime(taskMarkTime);
 								workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
 								workerRecordService.updateByPrimaryKeySelective(workerRecord);
+								listMath.add(uploadTaskNameI);
+							} else if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
+								taskWithBLOBs.setTaskTextgrid(bytes);
+								taskWithBLOBs.setTaskId(taskId);
+								taskWithBLOBs.setTaskUploadTime(new Date());
+								taskWithBLOBs.setUpdateTime(new Date());
+								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 								listMath.add(uploadTaskNameI);
 							}
 

@@ -358,7 +358,7 @@ public class EmployerController {
 		pack.setUpdateTime(new Date());
 		pack.setDownCount((packService.getDownCountByPackId(packId) + 1));
 		packService.updateByPrimaryKeySelective(pack);
-		// session.setAttribute("workerMark", 1);
+
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
