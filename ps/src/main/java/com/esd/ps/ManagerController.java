@@ -143,28 +143,11 @@ public class ManagerController {
 	@ResponseBody
 	public Map<String, Object> managerPost(String userNameCondition, int userType, int page) {
 		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
-		Map<String, Object> map = new HashMap<String, Object>();
-		Map<String, Object> userTypeMap = new HashMap<String, Object>();
-
-		userTypeMap.put(Constants.BEGIN, ((page - Constants.ONE) * Constants.ROW));
-		userTypeMap.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + Constants.ROW));
-		if (userNameCondition.isEmpty() || userNameCondition.trim().length() == 0) {
-			userNameCondition = "3 > 2";
-		} else {
-			userNameCondition = "username like %" + userNameCondition + "%";
-		}
-		userTypeMap.put(Constants.USER_NAME_CONDITION, userNameCondition);
-		String usertype = null;
-		if (userType == 0) {
-			usertype = "3 > 2";
-		} else {
-			usertype = "userType =" + userType;
-		}
-		userTypeMap.put("userType", usertype);
+		Map<String, Object> map = new HashMap<String, Object>();	
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		int totle = Constants.ZERO, totlePage = Constants.ZERO;
-		List<user> userList = userService.getLikeUsername(userTypeMap);
+		List<user> userList = userService.getLikeUsername(userNameCondition,userType,page,Constants.ROW);
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
@@ -183,7 +166,6 @@ public class ManagerController {
 
 			list.add(trans);
 		}
-		userTypeMap.clear();
 		map.clear();
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);

@@ -132,7 +132,7 @@
 		select
 		count(task_id) total
 		from task
-		where #{packId} and #{taskStatus}
+		where #{packId} and #{taskStatus} and #{taskNameCondition}
 	</select>
 	<select id="selectTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select

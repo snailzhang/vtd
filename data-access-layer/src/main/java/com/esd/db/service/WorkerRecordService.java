@@ -7,7 +7,7 @@ import com.esd.db.model.workerRecord;
 
 public interface WorkerRecordService {
 	
-	List<workerRecord> getWorkerRecordLikeDownPackName(Map<String, Object> map);
+	List<workerRecord> getWorkerRecordLikeDownPackName(int workerId,int page, String downPackName,int row);
 
 	int deleteByPrimaryKey(Integer recordId); 
 
@@ -49,7 +49,7 @@ public interface WorkerRecordService {
 	
 	List<workerRecord> getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
 	
-	int getDownPackNameCountByworkerIdGroupByDownPackName(Map<String, Object> map);
+	int getDownPackNameCountByworkerIdGroupByDownPackName(int workerId,String downPackName);
 	
 	int getPkIDByTaskId(Integer taskId);
 }

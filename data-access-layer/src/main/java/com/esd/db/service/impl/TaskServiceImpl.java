@@ -1,5 +1,6 @@
 package com.esd.db.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -193,15 +194,55 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<task> getLikeTaskName(Map<String, Object> map) {
+	public List<task> getLikeTaskName(int packId, int page, int taskStuts, String taskNameCondition, int row) {
+		Map<String, Object> map1 = new HashMap<String, Object>();
+
+		map1.put("begin", (page - 1) * row);
+		map1.put("end", ((page - 1) * row + (row - 1)));
+		String packid = "pack_id =" + packId;
+		map1.put("packId", packid);
 		
-		return taskMapper.selectLikeTaskName(map);
+		String taskstuts = null;
+		if (taskStuts == 2) {
+			taskstuts = "3 > 2";
+		} else if (taskStuts == 0) {
+			taskstuts = "(task_mark_time Is NULL or task_mark_time =0)";
+		} else if (taskStuts == 1) {
+			taskstuts = "task_mark_time > 0";
+		}
+		map1.put("taskStatus", taskstuts);
+		if (taskNameCondition.isEmpty() || taskNameCondition.trim().length() == 0) {
+			taskNameCondition = "3 > 2";
+		} else {
+			taskNameCondition = "task_name like %" + taskNameCondition + "%";
+		}
+		map1.put(taskNameCondition, taskNameCondition);
+
+		return taskMapper.selectLikeTaskName(map1);
 	}
 
 	@Override
-	public int getTaskCountByPackIdAndTaskStatus(Map<String, Object> map) {
+	public int getTaskCountByPackIdAndTaskStatus(int packId, int taskStuts, String taskNameCondition) {
+		Map<String, Object> map1 = new HashMap<String, Object>();
+		String packid = "pack_id =" + packId;
+		map1.put("packId", packid);
 		
-		return taskMapper.selectTaskCountByPackIdAndTaskStatus(map);
+		String taskstuts = null;
+		if (taskStuts == 2) {
+			taskstuts = "3 > 2";
+		} else if (taskStuts == 0) {
+			taskstuts = "(task_mark_time Is NULL or task_mark_time =0)";
+		} else if (taskStuts == 1) {
+			taskstuts = "task_mark_time > 0";
+		}
+		map1.put("taskStatus", taskstuts);
+		if (taskNameCondition.isEmpty() || taskNameCondition.trim().length() == 0) {
+			taskNameCondition = "3 > 2";
+		} else {
+			taskNameCondition = "task_name like %" + taskNameCondition + "%";
+		}
+		map1.put(taskNameCondition, taskNameCondition);
+		return taskMapper.selectTaskCountByPackIdAndTaskStatus(map1);
 	}
 
 }

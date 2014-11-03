@@ -176,22 +176,13 @@ public class WorkerController {
 	@ResponseBody
 	public Map<String, Object> workerHistoryPackPOST(HttpSession session, int page, String downPackName) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		Map<String, Object> pageMap = new HashMap<String, Object>();
+		
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		pageMap.put(Constants.BEGIN, ((page - Constants.ONE) * Constants.ROW));
-		pageMap.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + Constants.ROW));
-		String workerid = "worker_id = " + workerId;
-		pageMap.put(Constants.WORKER_ID, workerid);
-		if (downPackName.isEmpty() || downPackName.trim().length() == 0) {
-			downPackName = Constants.REPLACE;
-		} else {
-			downPackName = "down_pack_name like %" + downPackName + "%";
-		}
-		pageMap.put("downPackName", downPackName);
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(pageMap);
-		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(pageMap);
+		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(workerId,page,downPackName,Constants.ROW);
+		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId,downPackName);
 		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
 		logger.debug("workerRecordList:{}", workerRecordList);
 		if (workerRecordList.isEmpty() || workerRecordList == null) {
@@ -216,7 +207,6 @@ public class WorkerController {
 			}
 			list.add(workerDownPackHistoryTrans);
 		}
-		pageMap.clear();
 		map.clear();
 
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);

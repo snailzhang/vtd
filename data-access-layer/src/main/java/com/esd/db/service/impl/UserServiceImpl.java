@@ -1,5 +1,6 @@
 package com.esd.db.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,8 +100,25 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<user> getLikeUsername(Map<String, Object> map) {
+	public List<user> getLikeUsername(String userNameCondition, int userType, int page,int row) {
+		Map<String, Object> userTypeMap = new HashMap<String, Object>();
+		userTypeMap.put("begin", ((page - 1) * row));
+		userTypeMap.put("end", ((page - 1) * row + row));
+		if (userNameCondition.isEmpty() || userNameCondition.trim().length() == 0) {
+			userNameCondition = "3 > 2";
+		} else {
+			userNameCondition = "username like %" + userNameCondition + "%";
+		}
+		userTypeMap.put("userNameCondition", userNameCondition);
+		String usertype = null;
+		if (userType == 0) {
+			usertype = "3 > 2";
+		} else {
+			usertype = "userType =" + userType;
+		}
+		userTypeMap.put("userType", usertype);
 		
-		return userMapper.selectLikeUsername(map);
+		return userMapper.selectLikeUsername(userTypeMap);
 	}
+
 }

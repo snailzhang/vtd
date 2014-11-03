@@ -124,29 +124,15 @@ public class EmployerController {
 	@ResponseBody
 	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
-		Map<String, Object> map1 = new HashMap<String, Object>();
+		
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		logger.debug("employerId:{}", employerId);
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-
-		map1.put(Constants.BEGIN, (page - Constants.ONE) * Constants.ROW);
-		map1.put(Constants.END, ((page - Constants.ONE) * Constants.ROW + (Constants.ROW - Constants.ONE)));
-		String employerid = "employer_id = " + employerId;
-		map1.put(Constants.EMPLOYER_ID, employerid);
-		if (packNameCondition.isEmpty() || packNameCondition.trim().length() == 0) {
-			packNameCondition = "3 > 2";
-		} else {
-			packNameCondition = "pack_name like %" + packNameCondition + "%";
-		}
-		map.put(Constants.PACK_NAME_CONDITION, packNameCondition);
-		String packStatus = "pack_status = " + packStuts;
-		map.put(Constants.PACK_STATUS, packStatus);
 		int totle = Constants.ZERO;
-		List<pack> listPack = packService.getLikePackName(map1);
-
+		List<pack> listPack = packService.getLikePackName(page,packStuts,packNameCondition,employerId,Constants.ROW);
 		if (listPack == null) {
 			return null;
 		}
@@ -169,7 +155,6 @@ public class EmployerController {
 
 			list.add(packTrans);
 		}
-		map1.clear();
 		map.clear();
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
@@ -236,33 +221,12 @@ public class EmployerController {
 	@ResponseBody
 	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		Map<String, Object> map1 = new HashMap<String, Object>();
-
-		map1.put(Constants.BEGIN, (page - 1) * Constants.ROW);
-		map1.put(Constants.END, ((page - 1) * Constants.ROW + (Constants.ROW - 1)));
-		String packid = "pack_id =" + packId;
-		map1.put(Constants.PACK_ID, packid);
+		
+		List<task> listTask = taskService.getLikeTaskName(packId,page,taskStuts,taskNameCondition,Constants.ROW);
 		int totle = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		String taskstuts = null;
-		if (taskStuts == 2) {
-			taskstuts = Constants.REPLACE;
-		} else if (taskStuts == 0) {
-			taskstuts = "(task_mark_time Is NULL or task_mark_time =0)";
-		} else if (taskStuts == 1) {
-			taskstuts = "task_mark_time > 0";
-		}
-		map1.put(Constants.TASK_STATUS, taskstuts);
-		if (taskNameCondition.isEmpty() || taskNameCondition.trim().length() == 0) {
-			taskNameCondition = Constants.REPLACE;
-		} else {
-			taskNameCondition = "task_name like %" + taskNameCondition + "%";
-		}
-		map1.put(Constants.TASK_NAME_CONDITION, taskNameCondition);
-
-		List<task> listTask = taskService.getLikeTaskName(map1);
-		totle = taskService.getTaskCountByPackIdAndTaskStatus(map1);
+		totle = taskService.getTaskCountByPackIdAndTaskStatus(packId,taskStuts,taskNameCondition);
 		if (listTask == null) {
 			return null;
 		}
@@ -276,7 +240,6 @@ public class EmployerController {
 
 			list.add(taskTrans);
 		}
-		map1.clear();
 		map.clear();
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.TOTLE_PAGE, totlePage);

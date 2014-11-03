@@ -8,7 +8,7 @@ import com.esd.db.model.packWithBLOBs;
 
 public interface PackService {
 	
-	List<pack> getLikePackName(Map<String , Object> map);
+	List<pack> getLikePackName(int page, int packStuts, String packNameCondition,int employerId,int row);
 
 	int deleteByPrimaryKey(Integer packId);
 

@@ -1,5 +1,6 @@
 package com.esd.db.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -182,9 +183,20 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public List<pack> getLikePackName(Map<String, Object> map) {
-		
-		return packMapper.selectLikePackName(map);
+	public List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId,int row) {
+		Map<String, Object> map1 = new HashMap<String, Object>();
+		map1.put("begin", (page - 1) * row);
+		map1.put("end", ((page - 1) * row + (row - 1)));
+		String employerid = "employer_id = " + employerId;
+		map1.put("employerId", employerid);
+		if (packNameCondition.isEmpty() || packNameCondition.trim().length() == 0) {
+			packNameCondition = "3 > 2";
+		} else {
+			packNameCondition = "pack_name like %" + packNameCondition + "%";
+		}
+		map1.put(packNameCondition, packNameCondition);
+		String packStatus = "pack_status = " + packStuts;
+		map1.put(packStatus, packStatus);
+		return packMapper.selectLikePackName(map1);
 	}
-
 }

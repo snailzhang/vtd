@@ -7,9 +7,9 @@ import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 
 public interface TaskService {
-	int getTaskCountByPackIdAndTaskStatus(Map<String, Object> map);
+	int getTaskCountByPackIdAndTaskStatus(int packId, int taskStuts, String taskNameCondition);
 	
-	List<task> getLikeTaskName(Map<String, Object> map);
+	List<task> getLikeTaskName(int packId, int page, int taskStuts, String taskNameCondition,int row);
 
 	int deleteByPrimaryKey(Integer taskId);
 	

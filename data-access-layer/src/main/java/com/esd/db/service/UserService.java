@@ -1,8 +1,6 @@
 package com.esd.db.service;
 
 import java.util.List;
-import java.util.Map;
-
 import com.esd.db.model.user;
 
 public interface UserService {
@@ -34,5 +32,5 @@ public interface UserService {
 
 	user getByUserName(String userName);
 
-	List<user> getLikeUsername(Map<String, Object> map);
+	List<user> getLikeUsername(String userNameCondition, int userType, int page,int row);
 }

@@ -1,5 +1,6 @@
 package com.esd.db.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,16 +141,38 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectPkIDByTaskId(taskId);
 	}
 
-	@Override
-	public List<workerRecord> getWorkerRecordLikeDownPackName(Map<String, Object> map) {
-	
-		return workerRecordMapper.selectWorkerRecordLikeDownPackName(map);
+	/**
+	 * 模糊查询下载包名符合的数量
+	 */
+	public int getDownPackNameCountByworkerIdGroupByDownPackName(int workerId ,String downPackName) {
+		Map<String, Object> pageMap = new HashMap<String, Object>();
+		String workerid = "worker_id = " + workerId;
+		pageMap.put("workerId", workerid);
+		if (downPackName.isEmpty() || downPackName.trim().length() == 0) {
+			downPackName = "3 > 2";
+		} else {
+			downPackName = "down_pack_name like %" + downPackName + "%";
+		}
+		pageMap.put("downPackName", downPackName);
+		return workerRecordMapper.selectDownPackNameCountByworkerIdGroupByDownPackName(pageMap);
 	}
 
-	@Override
-	public int getDownPackNameCountByworkerIdGroupByDownPackName(Map<String, Object> map) {
-		
-		return workerRecordMapper.selectDownPackNameCountByworkerIdGroupByDownPackName(map);
+	/**
+	 * 模糊查询  by downPackName 分页
+	 */
+	public List<workerRecord> getWorkerRecordLikeDownPackName(int workerId,int page, String downPackName, int row) {
+		Map<String, Object> pageMap = new HashMap<String, Object>();
+		pageMap.put("begin", ((page - 1) * row));
+		pageMap.put("end", ((page - 1) * row + row));
+		String workerid = "worker_id = " + workerId;
+		pageMap.put("workerId", workerid);
+		if (downPackName.isEmpty() || downPackName.trim().length() == 0) {
+			downPackName = "3 > 2";
+		} else {
+			downPackName = "down_pack_name like %" + downPackName + "%";
+		}
+		pageMap.put("downPackName", downPackName);
+		return workerRecordMapper.selectWorkerRecordLikeDownPackName(pageMap);
 	}
 	
 
