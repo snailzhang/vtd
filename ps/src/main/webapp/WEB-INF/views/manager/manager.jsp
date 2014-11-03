@@ -21,31 +21,45 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">用户列表</div>
+			<div class="panel-body">
+				<form class="form-inline" role="form">
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon">用户名：</div>
+							<input class="form-control" id="userNameCondition" type="text" placeholder="查询用户">
+						</div>
+					</div>
+					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+				</form>
+			</div>
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>姓名</th>
+						<th class="dropdown">
+							<a id="userType" data-target="#" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								用户组<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu" aria-labelledby="userType">
+								<li><a href="#" onClick="chooseUserType(0,1)">全部</a></li>
+								<li><a href="#" onClick="chooseUserType(1,1)">管理员</a></li>
+								<li><a href="#" onClick="chooseUserType(2,1)">发包商</a></li>
+								<li><a href="#" onClick="chooseUserType(3,1)">质检员</a></li>
+								<li><a href="#" onClick="chooseUserType(4,1)">工作者</a></li>
+							</ul>
+						</th>
+						<th>创建时间</th>
+						<th>用户状态</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+			<ul class="pagination"></ul>
+		</div>
 		
-		<table class="table table-striped table-bordered">
-			<thead>
-				<tr>
-					<th>序号</th>
-					<th>姓名</th>
-					<th class="dropdown">
-						<a id="userType" data-target="#" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							用户组<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu" role="menu" aria-labelledby="userType">
-							<li><a href="#" onClick="chooseUserType(0,1)">全部</a></li>
-							<li><a href="#" onClick="chooseUserType(1,1)">管理员</a></li>
-							<li><a href="#" onClick="chooseUserType(2,1)">发包商</a></li>
-							<li><a href="#" onClick="chooseUserType(3,1)">质检员</a></li>
-							<li><a href="#" onClick="chooseUserType(4,1)">工作者</a></li>
-						</ul>
-					</th>
-					<th>创建时间</th>
-					<th>用户状态</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-		<ul class="pagination"></ul>
 		<form role="form" class="form-signin" action="${contextPath}/security/addUser" method="get">
 			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
 		</form>
@@ -58,7 +72,7 @@
 		var nowUserType = 0;
 		var nowPage = 0;
 		$(document).ready(function(){
-			chooseUserType(0,1);
+			chooseUserType(0,1,"");
 			
 			$("#userType").click(function(){
 				var utd = $(this);
@@ -70,13 +84,17 @@
 					utDropdownOpen = true;
 				}
 			});
+			$("#searchBtn").click(function(){
+				var un = $("#userNameCondition").val();
+				chooseUserType(0,1,un);
+			});
 		});
-		chooseUserType = function(userType,pageNum){
+		chooseUserType = function(userType,pageNum,userNameCondition){
 			//nowPage = pageNum;
 			//nowUserType = userType;
 			$.ajax({
 				type:'POST',
-				data:{"userType":userType,"page":pageNum},
+				data:{"userType":userType,"page":pageNum,"userNameCondition":userNameCondition},
 				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){

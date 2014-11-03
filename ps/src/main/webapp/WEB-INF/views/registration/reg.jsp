@@ -128,6 +128,7 @@
 
 
 	<script type="text/javascript">
+		var nameandCardCorrect = false;
 		function bmxy() {
 			$('#myModal').modal({
 				keyboard : true
@@ -162,20 +163,26 @@
 				success : function(data) {
 					if (data.result == 0) {
 						$("#message").html(msg);
-
+						nameandCardCorrect = false;
 					} else {
 						$("#message").empty();
-						$("#form").submit();
+						nameandCardCorrect = true;
 					}
 				}
 			});
 		}
 
 		$(document).ready(function() {
+			$("#name,#card").blur(function(){
+				checkNameAndCard();
+			});
 			$("#form").submit(function() {
 				checkAgreement();
 				checkNameAndCard();
-				return false;
+				if(!nameandCardCorrect){
+					return false;
+				}
+				return true;
 			});
 
 		});

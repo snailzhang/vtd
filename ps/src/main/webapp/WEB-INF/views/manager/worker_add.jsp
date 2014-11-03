@@ -24,7 +24,7 @@
 			<div class="form-group">
 		      <label for="workerRealName" class="col-sm-2 control-label">真实姓名：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerRealName" id="workerRealName" placeholder="请输入真实姓名">
+		         <input type="text" class="form-control" name="workerRealName" id="workerRealName" required="required" placeholder="请输入真实姓名">
 		         <span class="help-block"></span>
 		         <input type="hidden" class="form-control" name="userRegisted" id="" value="${userRegisted}">
 		         
@@ -33,28 +33,28 @@
 		   <div class="form-group">
 		      <label for="workerDisabilityCard" class="col-sm-2 control-label">残疾证卡号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerDisabilityCard" id="workerDisabilityCard" placeholder="请输入残疾证卡号">
+		         <input type="text" class="form-control" name="workerDisabilityCard" id="workerDisabilityCard" required="required" placeholder="请输入残疾证卡号">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerBankCard" class="col-sm-2 control-label">银行卡号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerBankCard" id="workerBankCard" placeholder="请输入银行卡号">
+		         <input type="text" class="form-control" name="workerBankCard" id="workerBankCard" required="required" placeholder="请输入银行卡号">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerPaypal" class="col-sm-2 control-label">支付宝账号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerPaypal" id="workerPaypal" placeholder="请输入支付宝账号">
+		         <input type="text" class="form-control" name="workerPaypal" id="workerPaypal" required="required" placeholder="请输入支付宝账号">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		    <div class="form-group">
 		      <label for="workerPhone" class="col-sm-2 control-label">电话号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerPhone" id="workerPhone" placeholder="请输入电话号码">
+		         <input type="text" class="form-control" name="workerPhone" id="workerPhone" required="required" placeholder="请输入电话号码">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
@@ -67,30 +67,72 @@
 		   </div>
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button type="button" class="btn btn-default">添加</button>
+		         <button type="submit" class="btn btn-default">添加</button>
 		      </div>
 		   </div>
 		</form>
 	</div>
 	<script type="text/javascript">
-		$(document).ready(function(){
-			$("button[type=button]").click(function(){
-				var formName = $("#addworker");
-				var workRealName = $("#workerRealName");
-				//var workerIdCard = $("#workerIdCard");
-				var workerDisabilityCard = $("#workerDisabilityCard");
-				var wc = workerDisabilityCard.val();
-				var workerPhone = $("#workerPhone");
-				if(checkout.text.isempty(workRealName,"真实姓名不能为空！")) return;
-				//if(checkout.text.isempty(workerIdCard,"身份证号不能为空！")) return;
-				if(checkout.text.isempty(workerDisabilityCard,"残疾证卡号不能为空！")) return;
-				if(wc.length<19){
-					workerDisabilityCard.next(".help-block").css("color","red").text("残疾证卡号最少20位");
-					return;
+		var disCardOnlyStatus = false;//残疾证号唯一
+		var telOnlyStatus = false;
+		checkDisCardOnly = function(){
+			var disCard = $("#workerDisabilityCard").val();
+			$.ajax({
+				type:'post',
+				url:'${contextPath}/security/checkWorkerDisabilityCard',
+				data:{"WorkerDisabilityCard":disCard},
+				dataType:'json',
+				success:function(data){
+					if(data.replay){
+						disCardOnlyStatus = true;
+						$("#workerDisabilityCard").next(".help-block").empty();
+					}else{
+						$("#workerDisabilityCard").next(".help-block").addClass("text-danger").text(data.message);
+						disCardOnlyStatus = false;
+					}
 				}
-				if(checkout.text.isempty(workerPhone,"电话号号不能为空！")) return;
-				formName.submit();
-				
+			});
+		};
+		checkTelOnly = function(){
+			var tel = $("#workerPhone").val();
+			$.ajax({
+				type:'post',
+				url:'${contextPath}/security/checkWorkerPhone',
+				data:{"workerPhone":tel},
+				dataType:'json',
+				success:function(data){
+					if(data.replay){
+						telOnlyStatus = true;
+						$("#workerPhone").next(".help-block").empty();
+					}else{
+						telOnlyStatus = false;
+						$("#workerPhone").next(".help-block").addClass("text-danger").text(data.message);
+					}
+				}
+			});
+		};
+		checkDiscard = function(){
+			var wc = $("#workerDisabilityCard").val();
+			if(wc.length<19){
+				workerDisabilityCard.next(".help-block").css("color","red").text("残疾证卡号最少20位");
+				return;
+			}
+			checkDisCardOnly();
+		};
+		$(document).ready(function(){
+			$("#workerDisabilityCard").blur(function(){
+				checkDisCardOnly();
+			});
+			$("#workerPhone").blur(function(){
+				checkTelOnly();
+			});
+			$("#addworker").submit(function(){
+				if(disCardOnlyStatus && telOnlyStatus){
+					return true;
+				}
+				checkDiscard();
+				checkTelOnly();
+				return false;
 			});
 		});
 	</script>

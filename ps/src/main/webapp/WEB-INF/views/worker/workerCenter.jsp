@@ -28,14 +28,12 @@
 		<div id=message></div>
 	</div>
 	<div class="container">
-		<form action="${contextPath}/security/addworker" method="post" id="addworker" name="addworker" role="form" class="form-horizontal" enctype="multipart/form-data">
+		<form action="${contextPath}/security/addworker" method="post" id="addworker" name="addworker" role="form" class="form-horizontal">
 			<div class="form-group">
 		      <label for="workerRealName" class="col-sm-2 control-label">真实姓名：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="workerRealName" id="workerRealName" value="${worker.workerRealName}" readonly="readonly">
 		         <span class="help-block"></span>
-		         
-		         
 		      </div>
 		   </div>
 		   <div class="form-group">
@@ -66,13 +64,7 @@
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
-		   <div class="form-group">
-		      <label for="workerImage" class="col-sm-2 control-label">照片：</label>
-		      <div class="col-sm-10">
-		         <input type="file" class="form-control" name="workerImage" id="workerImage"  value="${worker.workerImage}" readonly="readonly">
-		         <span class="help-block"></span>
-		      </div>
-		   </div>
+		  
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
 		         <button id="changeDataBtn" type="button" class="btn btn-primary">编辑资料</button>
@@ -84,11 +76,38 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function(){
-			
 			$("#changeDataBtn").click(function(){
 				$("#changeDataBtn").hide();
 				$("#workerBankCard,#workerPaypal,#workerPhone,#workerImage").removeAttr("readonly");
 				$("#updDataBtn").show();
+			});
+			$("#updDataBtn").click(function(){
+				var tel = $("#workerPhone");
+				if(checkout.text.isempty(tel,"电话号不能为空！")){
+					return;
+				}
+				var telNum = tel.val();
+				var workerBankCard = $("#workerBankCard").val();
+				var workerPaypal = $("#workerPaypal").val();
+				$.ajax({
+					type:'post',
+					url:'${contextPath}/security/updateWorker',
+					data:{"workerPhone":telNum,"workerBankCard":workerBankCard,"workerPaypal":workerPaypal},
+					dataType:'json',
+					success:function(data){
+						if(!data.replay){
+							var msgS = '<div class="alert alert-danger alert-dismissable">'
+										+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+										+ data.message + '</div>';
+							$("#message").html(msgS);
+						}else{
+							var msgS = '<div class="alert alert-success alert-dismissable">'
+										+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+										+ data.message + '</div>';
+							$("#message").html(msgS);
+						}
+					}
+				});
 			});
 		});
 			
