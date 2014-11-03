@@ -64,9 +64,9 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> registrationPost(String name, String card, int district ,String phone,String qq,String address,String des) {
+	public ModelAndView registrationPost(String name, String card, int district ,String phone,String qq,String address,String des) {
 		logger.debug("name{},card{},district{},phone:{},qq:{},adress:{},des:{}", name, card, district,phone,qq,address,des);
-		Map<String, Object> map = new HashMap<String, Object>();
+
 		Registration registration = new Registration();
 		registration.setName(name);
 		registration.setCard(card);
@@ -78,9 +78,8 @@ public class RegistrationController {
 		registration.setCreateMethod("registrationGet");
 		registration.setCreateTime(new Date());
 		registrationService.insertSelective(registration);
-		//0是失败,1是成功
-		map.put("result",1);
-		return map;
+
+		return new ModelAndView(Constants.REDIRECT+":"+"registration/regSuccess");
 	}
 
 	/**

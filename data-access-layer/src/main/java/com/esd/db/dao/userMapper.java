@@ -38,4 +38,6 @@ public interface userMapper {
     user selectByUserName(String userName);
     
     List<user> selectLikeUsername(Map<String,Object> map);
+    
+    int selectCountLikeUsername(Map<String,Object> map);
 }

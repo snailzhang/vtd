@@ -121,4 +121,24 @@ public class UserServiceImpl implements UserService {
 		return userMapper.selectLikeUsername(userTypeMap);
 	}
 
+	@Override
+	public int getCountLikeUsername(String userNameCondition, int userType) {
+		Map<String, Object> userTypeMap = new HashMap<String, Object>();
+		if (userNameCondition.isEmpty() || userNameCondition.trim().length() == 0) {
+			userNameCondition = "3 > 2";
+		} else {
+			userNameCondition = "username like %" + userNameCondition + "%";
+		}
+		userTypeMap.put("userNameCondition", userNameCondition);
+		String usertype = null;
+		if (userType == 0) {
+			usertype = "3 > 2";
+		} else {
+			usertype = "userType =" + userType;
+		}
+		userTypeMap.put("userType", usertype);
+		
+		return userMapper.selectCountLikeUsername(userTypeMap);
+	}
+
 }

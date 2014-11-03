@@ -184,8 +184,13 @@ public class WorkerController {
 		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId, downPackName);
 		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
 		logger.debug("workerRecordList:{}", workerRecordList);
+		int totlePage=0;
 		if (workerRecordList.isEmpty() || workerRecordList == null) {
-			return null;
+			map.clear();
+			map.put(Constants.TOTLE, totle);
+			map.put(Constants.TOTLE_PAGE, totlePage);
+			map.put(Constants.LIST, list);
+			return map;
 		}
 		for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
 			workerRecord workerRecord = (workerRecord) iterator.next();
@@ -207,8 +212,7 @@ public class WorkerController {
 			list.add(workerDownPackHistoryTrans);
 		}
 		map.clear();
-
-		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		map.put(Constants.LIST, list);

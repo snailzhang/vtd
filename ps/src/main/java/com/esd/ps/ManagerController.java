@@ -146,8 +146,9 @@ public class ManagerController {
 		Map<String, Object> map = new HashMap<String, Object>();	
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
-		int totle = Constants.ZERO, totlePage = Constants.ZERO;
+		int totlePage = Constants.ZERO;
 		List<user> userList = userService.getLikeUsername(userNameCondition,userType,page,Constants.ROW);
+		int totle = userService.getCountLikeUsername(userNameCondition, userType);
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();

@@ -82,6 +82,12 @@
 		from user
 		where #{userType} and #{userNameCondition} limit #{begin},#{end}
 	</select>
+	<select id="selectCountLikeUsername" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(user_id) totle
+		from user
+		where #{userType} and #{userNameCondition} 
+	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from user
 		where user_id = #{userId,jdbcType=INTEGER}
