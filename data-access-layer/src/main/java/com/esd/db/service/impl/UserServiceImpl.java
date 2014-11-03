@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
 		if (userNameCondition.isEmpty() || userNameCondition.trim().length() == 0) {
 			userNameCondition = "3 > 2";
 		} else {
-			userNameCondition = "username like %" + userNameCondition + "%";
+			userNameCondition = "username like \"%" + userNameCondition + "%\"";
 		}
 		userTypeMap.put("userNameCondition", userNameCondition);
 		String usertype = null;
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
 		if (userNameCondition.isEmpty() || userNameCondition.trim().length() == 0) {
 			userNameCondition = "3 > 2";
 		} else {
-			userNameCondition = "username like %" + userNameCondition + "%";
+			userNameCondition = "username like \"%" + userNameCondition + "%\"";
 		}
 		userTypeMap.put("userNameCondition", userNameCondition);
 		String usertype = null;
