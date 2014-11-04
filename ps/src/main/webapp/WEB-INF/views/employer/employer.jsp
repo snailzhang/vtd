@@ -104,7 +104,7 @@
 			<div class="tab-pane" id="packUnzip">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<form action="${contextPath}/security/uploadPack" method="post" id="uploadPack" name="employer" role="form" class="form-horizontal" enctype="multipart/form-data">
+						<form role="form" class="form-horizontal">
 							<div class="form-group" id="">
 								<label for="taskLvl" class="col-sm-2 control-label">任务等级：</label>
 								<div class="col-sm-10">

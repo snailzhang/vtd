@@ -71,6 +71,7 @@
 		var utDropdownOpen = false;
 		var nowUserType = 0;
 		var nowPage = 0;
+		var userNameCondition = "";
 		$(document).ready(function(){
 			chooseUserType(0,1,"");
 			
@@ -86,10 +87,11 @@
 			});
 			$("#searchBtn").click(function(){
 				var un = $("#userNameCondition").val();
-				chooseUserType(0,1,un);
+				userNameCondition = un
+				chooseUserType(0,1);
 			});
 		});
-		chooseUserType = function(userType,pageNum,userNameCondition){
+		chooseUserType = function(userType,pageNum){
 			//nowPage = pageNum;
 			//nowUserType = userType;
 			$.ajax({
@@ -121,13 +123,13 @@
 							for(var i=1;i<pageTotal+1;i++){
 								if(i==pageNum){
 									$(".pagination").append(
-										"<li class='active'><a onClick='chooseUserType("+userType+","+i+",\""+userNameCondition+"\")'>"+
+										"<li class='active'><a onClick='chooseUserType("+userType+","+i+")'>"+
 										i+
 										"</a></li>"
 									);
 								}else{
 									$(".pagination").append(
-										"<li><a onClick='chooseUserType("+userType+","+i+",\""+userNameCondition+"\")'>"+
+										"<li><a onClick='chooseUserType("+userType+","+i+")'>"+
 										i+
 										"</a></li>"
 									);

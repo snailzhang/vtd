@@ -32,6 +32,7 @@
 		      <label for="password" class="col-sm-2 control-label">登录密码：</label>
 		      <div class="col-sm-10">
 		         <input type="password" class="form-control" name="password" id="password" placeholder="请输入密码" autocomplete="off">
+		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
@@ -61,9 +62,11 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			var userAreadyUse = true;//用户名重复
+			var user = $("#username");
+			var userValue = user.val();
 			checkUserUsed = function(){
 				$.ajax({
-					type:'get',
+					type:'post',
 					url:'${contextPath}/security/checkUserName',
 					data:"username="+userValue,
 					dataType:'text',
@@ -105,10 +108,11 @@
 			};
 			
 			$("#username").blur(function(){
-				checkUserName();
-				checkUserUsed();
+				if(checkUserName()){;
+					checkUserUsed();
+				}
 			});
-			$("#repassword").blur(function(){
+			$("#password,#repassword").blur(function(){
 				checkUserPWD();
 			});
 			$("button[type=button]").click(function(){
