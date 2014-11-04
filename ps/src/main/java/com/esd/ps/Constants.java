@@ -12,6 +12,7 @@ public interface Constants {
 	public static final String VERSION = "1.0.0";//版本号
 	public static final String PROJECT_NAME = "ps";//项目名称
 	//项目应用常量
+	public static final String ID = "Id";//
 	public static final String USER_ID = "userId";//用户id
 	public static final String ADD_USER_ID = "addUserId";//新增用户id
 	public static final String EMPLOYER_ID = "employerId";//发包商id
@@ -49,9 +50,10 @@ public interface Constants {
 	public static final int ROW=20;//分页行数
 	public static final int ONE=1;//常量1
 	public static final int ZERO=0;//常量0
-	public static final String  REPLACE="3 > 2";//数据库查询替代常量
 	public static final String BEGIN="begin";//分页的开始
 	public static final String END="end";//分页的结束
 	public static final String TOTLE="totle";//总条数
 	public static final String TOTLE_PAGE="totlePage";//总页数
+	//报名
+	public static final String DISTRICT_NAME="districtName";//申请地
 }

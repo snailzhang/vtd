@@ -16,6 +16,8 @@ public interface DistrictService {
 	public int updateByPrimaryKey(District district);
 
 	public District selectByPrimaryKey(int id);
+	
+	public District getByUserName(String userName);
 
 	public List<District> selectByPid(int pid);
 	

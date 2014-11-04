@@ -1,11 +1,14 @@
 package com.esd.db.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.esd.db.dao.RegistrationMapper;
+import com.esd.db.model.District;
 import com.esd.db.model.Registration;
 import com.esd.db.service.RegistrationService;
 
@@ -59,6 +62,33 @@ public class RegistrationServiceImpl implements RegistrationService {
 	@Override
 	public List<Registration> selectBySelective(Registration record) {
 		return registrationMapper.selectBySelective(record);
+	}
+
+	@Override
+	public List<Registration> getByDistrictId(Integer districtId) {
+
+		return registrationMapper.selectByDistrictId(districtId);
+	}
+
+	@Override
+	public int getCountByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.clear();
+		map.put("districtId", districtId);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
+		return registrationMapper.selectCountByTimeAndDistrictId(map);
+	}
+
+	@Override
+	public List<Registration> getByTimeAndDistrictId(int districtId, String beginDate, String endDate, int page, int row) {
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.put("begin", ((page - 1) * row));
+		map.put("end", row);
+		map.put("districtId", districtId);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
+		return registrationMapper.selectByTimeAndDistrictId(map);
 	}
 
 }

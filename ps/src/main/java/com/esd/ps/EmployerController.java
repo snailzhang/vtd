@@ -97,6 +97,16 @@ public class EmployerController {
 	 */
 	@Value("${MSG_PACK_ERROR}")
 	private String MSG_PACK_ERROR;
+	/**
+	 * 任务正在做
+	 */
+	@Value("${MSG_DOING}")
+	private String MSG_DOING;
+	/**
+	 * 任务没人做
+	 */
+	@Value("${MSG_UNDO}")
+	private String MSG_UNDO;
 
 	/**
 	 * 登录发包商页
@@ -124,7 +134,7 @@ public class EmployerController {
 	@ResponseBody
 	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		logger.debug("employerId:{}", employerId);
@@ -139,7 +149,7 @@ public class EmployerController {
 			map.put(Constants.LIST, list);
 			return map;
 		}
-		List<pack> listPack = packService.getLikePackName(page,packStuts,packNameCondition,employerId,Constants.ROW);
+		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW);
 		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
 			packTrans packTrans = new packTrans();
@@ -225,10 +235,10 @@ public class EmployerController {
 	@ResponseBody
 	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		int totle = taskService.getTaskCountByPackIdAndTaskStatus(packId,taskStuts,taskNameCondition);
+		int totle = taskService.getTaskCountByPackIdAndTaskStatus(packId, taskStuts, taskNameCondition);
 		if (totle == 0) {
 			map.clear();
 			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
@@ -236,16 +246,24 @@ public class EmployerController {
 			map.put(Constants.TOTLE, totle);
 			map.put(Constants.LIST, list);
 			return map;
-		}List<task> listTask=null;
-		listTask = taskService.getLikeTaskName(packId,page,taskStuts,taskNameCondition,Constants.ROW);
+		}
+		List<task> listTask = null;
+		listTask = taskService.getLikeTaskName(packId, page, taskStuts, taskNameCondition, Constants.ROW);
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();
 
 			taskTrans.setTaskName(task.getTaskName());
 			taskTrans.setTaskEffective(task.getTaskEffective());
-			taskTrans.setCreateTime(sdf.format(task.getCreateTime()));
-
+			if (task.getWorkerId() == null) {
+				taskTrans.setCreateTime(MSG_DOING);
+			} else {
+				if (task.getTaskMarkTime() == null) {
+					taskTrans.setCreateTime(MSG_UNDO);
+				} else {
+					taskTrans.setCreateTime(sdf.format(task.getTaskUploadTime()));
+				}
+			}
 			list.add(taskTrans);
 		}
 		map.clear();

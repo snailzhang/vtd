@@ -1,6 +1,7 @@
 package com.esd.db.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.Registration;
 
@@ -23,4 +24,10 @@ public interface RegistrationMapper {
 	int updateByPrimaryKey(Registration record);
 
 	List<Registration> selectBySelective(Registration record);
+	
+	List<Registration> selectByDistrictId(Integer districtId);
+	
+	int selectCountByTimeAndDistrictId(Map<String, Object> map);
+	
+	List<Registration> selectByTimeAndDistrictId(Map<String, Object> map);
 }

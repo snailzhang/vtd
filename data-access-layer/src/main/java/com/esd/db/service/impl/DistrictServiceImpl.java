@@ -59,4 +59,10 @@ public class DistrictServiceImpl implements DistrictService {
 		return districtMapper.selectAll();
 	}
 
+	@Override
+	public District getByUserName(String userName) {
+
+		return districtMapper.selectByUserName(userName);
+	}
+
 }

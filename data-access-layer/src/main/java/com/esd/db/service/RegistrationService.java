@@ -1,7 +1,6 @@
 package com.esd.db.service;
 
 import java.util.List;
-
 import com.esd.db.model.Registration;
 
 public interface RegistrationService {
@@ -23,4 +22,10 @@ public interface RegistrationService {
 	public Registration selectByName(String name);
 
 	List<Registration> selectBySelective(Registration record);
+	
+	List<Registration> getByDistrictId(Integer districtId);
+	
+	int getCountByTimeAndDistrictId(int districtId,String beginDate,String endDate);
+	
+	List<Registration> getByTimeAndDistrictId(int districtId,String beginDate,String endDate,int page,int row);
 }
