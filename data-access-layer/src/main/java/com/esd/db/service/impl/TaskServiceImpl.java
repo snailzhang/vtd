@@ -59,6 +59,7 @@ public class TaskServiceImpl implements TaskService {
 
 		return taskMapper.updateByPrimaryKey(record);
 	}
+
 	@Override
 	public List<task> selectAllTaskId() {
 
@@ -189,7 +190,7 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public int updateByTaskId(task task) {
-		
+
 		return taskMapper.updateByTaskId(task);
 	}
 
@@ -198,11 +199,11 @@ public class TaskServiceImpl implements TaskService {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("begin", (page - 1) * row);
-		map.put("end", ((page - 1) * row + (row - 1)));
+		map.put("end", row);
 		map.put("packId", packId);
 		map.put("taskStatus", taskStuts);
 		if (taskNameCondition.trim().length() > 0)
-		map.put("taskNameCondition", taskNameCondition);
+			map.put("taskNameCondition", taskNameCondition);
 
 		return taskMapper.selectLikeTaskName(map);
 	}
@@ -210,12 +211,12 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public int getTaskCountByPackIdAndTaskStatus(int packId, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+
 		map.put("packId", packId);
 		map.put("taskStatus", taskStuts);
-		if (taskNameCondition.trim().length() > 0) 
-		map.put(taskNameCondition, taskNameCondition);
-		
+		if (taskNameCondition.trim().length() > 0)
+			map.put("taskNameCondition", taskNameCondition);
+
 		return taskMapper.selectTaskCountByPackIdAndTaskStatus(map);
 	}
 

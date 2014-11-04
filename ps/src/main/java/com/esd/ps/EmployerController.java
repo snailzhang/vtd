@@ -226,7 +226,6 @@ public class EmployerController {
 	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		int totle = taskService.getTaskCountByPackIdAndTaskStatus(packId,taskStuts,taskNameCondition);
@@ -237,8 +236,8 @@ public class EmployerController {
 			map.put(Constants.TOTLE, totle);
 			map.put(Constants.LIST, list);
 			return map;
-		}
-		List<task> listTask = taskService.getLikeTaskName(packId,page,taskStuts,taskNameCondition,Constants.ROW);
+		}List<task> listTask=null;
+		listTask = taskService.getLikeTaskName(packId,page,taskStuts,taskNameCondition,Constants.ROW);
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();

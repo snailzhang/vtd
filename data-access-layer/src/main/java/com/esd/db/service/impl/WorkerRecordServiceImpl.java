@@ -160,7 +160,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	public List<workerRecord> getWorkerRecordLikeDownPackName(int workerId, int page, String downPackName, int row) {
 		Map<String, Object> pageMap = new HashMap<String, Object>();
 		pageMap.put("begin", ((page - 1) * row));
-		pageMap.put("end", ((page - 1) * row + row));
+		pageMap.put("end", row);
 		pageMap.put("workerId", workerId);
 		if (downPackName.trim().length() > 0)
 			pageMap.put("downPackName", downPackName);

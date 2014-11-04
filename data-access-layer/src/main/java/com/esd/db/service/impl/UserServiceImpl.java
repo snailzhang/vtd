@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
 	public List<user> getLikeUsername(String userNameCondition, int userType, int page, int row) {
 		Map<String, Object> userTypeMap = new HashMap<String, Object>();
 		userTypeMap.put("begin", ((page - 1) * row));
-		userTypeMap.put("end", ((page - 1) * row + row));
+		userTypeMap.put("end", row);
 		if (userNameCondition.trim().length() > 0)
 			userTypeMap.put("userNameCondition", userNameCondition);
 		
