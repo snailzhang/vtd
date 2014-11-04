@@ -26,3 +26,6 @@ input[type=file] {
 }
 ul.pagination{display:block;text-align:center;}
 ul.pagination > li > a{float:none;}
+.panel > .panel-body + .table, .panel > .panel-body + .table-responsive{
+	border-bottom: 1px solid #ddd;
+}

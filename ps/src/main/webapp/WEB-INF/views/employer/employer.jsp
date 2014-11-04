@@ -43,7 +43,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon">任务包名称：</div>
-									<input class="form-control" id="unpackNameCondition" type="text" placeholder="查询未完成任务包">
+									<input class="form-control" id="unpackNameCondition" type="text" placeholder="查询未完成任务包" onkeydown="if(event.keyCode==13){return false;}">
 								</div>
 							</div>
 							<button type="button" id="un_searchBtn" class="btn btn-default">查询</button>
@@ -77,7 +77,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon">任务包名称：</div>
-									<input class="form-control" id="packNameCondition" type="text" placeholder="查询已完成任务包">
+									<input class="form-control" id="packNameCondition" type="text" placeholder="查询已完成任务包" onkeydown="if(event.keyCode==13){return false;}">
 								</div>
 							</div>
 							<button type="button" id="searchBtn" class="btn btn-default">查询</button>
@@ -157,18 +157,31 @@
 					<h4 class="modal-title">任务包详细内容</h4>
 				</div>
 				<div class="modal-body">
-					<table class="table table-striped table-bordered">
-						<thead>
-							<tr>
-								<th>序号</th>
-								<th>任务名称</th>
-								<th>完成时间</th>
-								<th>检测结果</th>
-							</tr>
-						</thead>
-						<tbody id="packDetailTBody"></tbody>
-					</table>
-					<ul class="pagination"></ul>
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<form class="form-inline" role="form">
+								<div class="form-group">
+									<div class="input-group">
+										<div class="input-group-addon">任务名称：</div>
+										<input class="form-control" id="taskSearch" type="text" placeholder="查询任务" onkeydown="if(event.keyCode==13){return false;}">
+									</div>
+								</div>
+								<button type="button" id="tasksearchBtn" class="btn btn-default">查询</button>
+							</form>
+						</div>
+						<table class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th>序号</th>
+									<th>任务名称</th>
+									<th>完成时间</th>
+									<th>检测结果</th>
+								</tr>
+							</thead>
+							<tbody id="packDetailTBody"></tbody>
+						</table>
+						<ul class="pagination"></ul>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -199,6 +212,8 @@
 	</div><!-- /.modal -->
 	
 	<script type="text/javascript">
+		var taskNameCondition = "";
+		var searchPackId = 0;
 		if('${match}' == '1'){
 			alert("文件已存在");
 		}
@@ -215,7 +230,11 @@
 				var pc = $("#packNameCondition").val();
 				loadCompletePackList(1,pc);
 			});
-			
+			$("#tasksearchBtn").click(function(){
+				var tnc = $("#taskSearch").val();
+				taskNameCondition = tnc;
+				loadPackDetailList(searchPackId,1,2);
+			});
 		});
 		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
 		loadUnCompletePackList = function(pageNum,packNameCondition){
@@ -398,13 +417,14 @@
 		showPackDetail = function(packId){
 			$("#packDetailTBody").empty();
 			loadPackDetailList(packId,1,2);
+			searchPackId = packId;
 			$("#packDetailModal").modal('show');
 		};
 		loadPackDetailList = function(packId,pageNum,taskStuts){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/packDetail',
-				data:{"packId":packId,"page":pageNum,"taskStuts":taskStuts},
+				data:{"packId":packId,"page":pageNum,"taskStuts":taskStuts,"taskNameCondition":taskNameCondition},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -428,13 +448,13 @@
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
 								$("#packDetailModal .pagination").append(
-									"<li class='active'><a onClick='loadUnCompletePackList("+packId+","+i+","+taskStuts+")'>"+
+									"<li class='active'><a onClick='loadPackDetailList("+packId+","+i+","+taskStuts+")'>"+
 									i+
 									"</a></li>"
 								);
 							}else{
 								$("#packDetailModal .pagination").append(
-									"<li><a onClick='loadUnCompletePackList("+packId+","+i+","+taskStuts+")'>"+
+									"<li><a onClick='loadPackDetailList("+packId+","+i+","+taskStuts+")'>"+
 									i+
 									"</a></li>"
 								);

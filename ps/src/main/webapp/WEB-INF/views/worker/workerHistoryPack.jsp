@@ -35,7 +35,7 @@
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">任务包名称：</div>
-								<input class="form-control" id="downPackName" type="text" placeholder="查询任务包">
+								<input class="form-control" id="downPackName" type="text" placeholder="查询任务包"  onkeydown="if(event.keyCode==13){return false;}">
 							</div>
 						</div>
 						<button type="button" id="searchBtn" class="btn btn-default">查询</button>

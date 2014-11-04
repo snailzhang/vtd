@@ -28,7 +28,7 @@
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-addon">用户名：</div>
-							<input class="form-control" id="userNameCondition" type="text" placeholder="查询用户">
+							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
 						</div>
 					</div>
 					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
@@ -137,8 +137,6 @@
 							}
 						});
 					}
-					
-					
 				}
 			});
 		}
