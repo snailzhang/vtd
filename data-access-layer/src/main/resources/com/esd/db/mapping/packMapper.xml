@@ -32,7 +32,24 @@
 		select
 		<include refid="Base_Column_List" />
 		from pack
-		where #{employerId} and #{packStatus} and #{packNameCondition} limit #{begin},#{end}
+		<where>
+			employer_id = #{employerId} and pack_status = #{packStuts}
+			<if test="packNameCondition !=null">
+				and pack_name like "%${packNameCondition}%"
+			</if>
+		</where>
+		limit #{begin},#{end}
+	</select>
+	<select id="selectCountLikePackName" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(pack_id) totle
+		from pack
+		<where>
+			employer_id = #{employerId} and pack_status = #{packStuts}
+			<if test="packNameCondition !=null">
+				and pack_name like "%${packNameCondition}%"
+			</if>
+		</where>
 	</select>
 	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select

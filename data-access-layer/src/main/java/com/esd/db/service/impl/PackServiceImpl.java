@@ -184,19 +184,25 @@ public class PackServiceImpl implements PackService {
 
 	@Override
 	public List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId,int row) {
-		Map<String, Object> map1 = new HashMap<String, Object>();
-		map1.put("begin", (page - 1) * row);
-		map1.put("end", ((page - 1) * row + (row - 1)));
-		String employerid = "employer_id = " + employerId;
-		map1.put("employerId", employerid);
-		if (packNameCondition.isEmpty() || packNameCondition.trim().length() == 0) {
-			packNameCondition = "3 > 2";
-		} else {
-			packNameCondition = "pack_name like %" + packNameCondition + "%";
-		}
-		map1.put(packNameCondition, packNameCondition);
-		String packStatus = "pack_status = " + packStuts;
-		map1.put(packStatus, packStatus);
-		return packMapper.selectLikePackName(map1);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("begin", (page - 1) * row);
+		map.put("end", ((page - 1) * row + (row - 1)));
+		map.put("employerId", employerId);
+		map.put("packStuts",packStuts);
+		if (packNameCondition.trim().length()>0)
+		map.put("packNameCondition", packNameCondition);
+	
+		return packMapper.selectLikePackName(map);
+	}
+
+	@Override
+	public int getCountLikePackName(int packStuts, String packNameCondition, int employerId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("employerId", employerId);
+		map.put("packStuts",packStuts);
+		if (packNameCondition.trim().length()>0)
+		map.put("packNameCondition", packNameCondition);
+	
+		return packMapper.selectCountLikePackName(map);
 	}
 }

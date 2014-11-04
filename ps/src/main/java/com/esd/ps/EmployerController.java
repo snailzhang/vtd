@@ -131,11 +131,15 @@ public class EmployerController {
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-		int totle = Constants.ZERO;
-		List<pack> listPack = packService.getLikePackName(page,packStuts,packNameCondition,employerId,Constants.ROW);
-		if (listPack == null) {
-			return null;
+		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId);
+		if (totle == 0) {
+			map.clear();
+			map.put(Constants.TOTLE, totle);
+			map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
+			map.put(Constants.LIST, list);
+			return map;
 		}
+		List<pack> listPack = packService.getLikePackName(page,packStuts,packNameCondition,employerId,Constants.ROW);
 		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
 			packTrans packTrans = new packTrans();
@@ -222,14 +226,19 @@ public class EmployerController {
 	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		List<task> listTask = taskService.getLikeTaskName(packId,page,taskStuts,taskNameCondition,Constants.ROW);
-		int totle = 0;
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
-		totle = taskService.getTaskCountByPackIdAndTaskStatus(packId,taskStuts,taskNameCondition);
-		if (listTask == null) {
-			return null;
+		int totle = taskService.getTaskCountByPackIdAndTaskStatus(packId,taskStuts,taskNameCondition);
+		if (totle == 0) {
+			map.clear();
+			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+			map.put(Constants.TOTLE_PAGE, totlePage);
+			map.put(Constants.TOTLE, totle);
+			map.put(Constants.LIST, list);
+			return map;
 		}
+		List<task> listTask = taskService.getLikeTaskName(packId,page,taskStuts,taskNameCondition,Constants.ROW);
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();

@@ -40,7 +40,48 @@
 		select
 		<include refid="Base_Column_List" />
 		from task
-		where #{taskId} and #{taskStatus} and #{taskNameCondition} limit #{begin},#{end}
+		<where>
+			pack_id = #{packId}
+			<if test="taskNameCondition !=null and taskStatus == 0">
+				and task_name like "%${taskNameCondition}%" and (task_mark_time Is NULL or task_mark_time =0)
+			</if>
+			<if test="taskNameCondition !=null and taskStatus == 1">
+				and task_name like "%${taskNameCondition}%" and task_mark_time > 0
+			</if>
+			<if test="taskNameCondition !=null and taskStatus == 2">
+				and task_name like "%${taskNameCondition}%"
+			</if>
+			<if test="taskStatus == 0 and taskNameCondition ==null">
+				and (task_mark_time Is NULL or task_mark_time =0)
+			</if>
+			<if test="taskStatus == 1 and taskNameCondition ==null">
+				and task_mark_time > 0
+			</if>
+		</where>
+		limit #{begin},#{end}
+	</select>
+	<select id="selectTaskCountByPackIdAndTaskStatus" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(task_id) total
+		from task
+		<where>
+			pack_id = #{packId}
+			<if test="taskNameCondition !=null and taskStatus == 0">
+				and task_name like "%${taskNameCondition}%" and (task_mark_time Is NULL or task_mark_time =0)
+			</if>
+			<if test="taskNameCondition !=null and taskStatus == 1">
+				and task_name like "%${taskNameCondition}%" and task_mark_time > 0
+			</if>
+			<if test="taskNameCondition !=null and taskStatus == 2">
+				and task_name like "%${taskNameCondition}%"
+			</if>
+			<if test="taskStatus == 0 and taskNameCondition ==null">
+				and (task_mark_time Is NULL or task_mark_time =0)
+			</if>
+			<if test="taskStatus == 1 and taskNameCondition ==null">
+				and task_mark_time > 0
+			</if>
+		</where>
 	</select>
 	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
@@ -127,12 +168,6 @@
 		count(task_id) total
 		from task
 		where pack_id = #{packId,jdbcType=INTEGER} and worker_id is null
-	</select>
-	<select id="selectTaskCountByPackIdAndTaskStatus" resultType="java.lang.Integer" parameterType="java.util.Map">
-		select
-		count(task_id) total
-		from task
-		where #{packId} and #{taskStatus} and #{taskNameCondition}
 	</select>
 	<select id="selectTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
@@ -497,7 +532,8 @@
 		set
 		worker_id = #{workerId,jdbcType=INTEGER},
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
-		update_method = #{updateMethod,jdbcType=VARCHAR},
+		update_method =
+		#{updateMethod,jdbcType=VARCHAR},
 		version = #{version,jdbcType=VARCHAR}
 		where task_id = #{taskId,jdbcType=INTEGER}
 	</update>

@@ -32,7 +32,24 @@
 		select
 		<include refid="Base_Column_List" />
 		from worker_record
-		where #{workerId} and #{downPackName} limit #{begin},#{end}
+		<where>
+			worker_id = #{workerId}
+			<if test="downPackName != null">
+				and down_pack_name like "%${downPackName}%"
+			</if>
+		</where>
+		group by down_pack_name
+		limit #{begin},#{end}
+	</select>
+	<select id="selectDownPackNameCountByworkerIdGroupByDownPackName" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(rowCount) count from (select
+		count(down_pack_name)
+		rowCount,down_pack_name
+		from worker_record
+		where worker_id = #{workerId} group by down_pack_name) a
+		<if test="downPackName != null">
+			where down_pack_name like "%${downPackName}%"
+		</if>
 	</select>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
@@ -114,14 +131,8 @@
 		down_pack_name,task_down_time
 		from worker_record
 		where worker_id =
-		#{workerId} group by down_pack_name limit #{begin},#{end}
-	</select>
-	<select id="selectDownPackNameCountByworkerIdGroupByDownPackName" resultType="java.lang.Integer" parameterType="java.util.Map">
-		select count(rowCount) count from (select
-		count(down_pack_name) rowCount,down_pack_name
-		from worker_record
-		where 
-		#{workerId} group by down_pack_name) a where #{downPackName}
+		#{workerId}
+		group by down_pack_name limit #{begin},#{end}
 	</select>
 	<select id="selectTaskCountByDownPackName" resultType="java.lang.Integer" parameterType="java.lang.String">
 		select
