@@ -52,6 +52,7 @@ public class RegListController {
 	 * 登录列表页
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(RegListController.class);
+	
 	@RequestMapping(value = "/regList", method = RequestMethod.GET)
 	public ModelAndView regListGET(HttpSession session) {
 		int districtId=Integer.parseInt(session.getAttribute(Constants.ID).toString());

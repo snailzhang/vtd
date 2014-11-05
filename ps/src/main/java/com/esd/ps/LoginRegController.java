@@ -127,7 +127,8 @@ public class LoginRegController {
 				session.setAttribute(Constants.USER_NAME, district.getUserName());
 				session.setAttribute(Constants.ID, district.getId());
 				session.setAttribute(Constants.DISTRICT_NAME, district.getName());
-				return new ModelAndView(Constants.REDIRECT+":" + "security/regList");
+				//return new ModelAndView(Constants.REDIRECT+":" + "security/regList");
+				return new ModelAndView("registration/regList");
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
 			}

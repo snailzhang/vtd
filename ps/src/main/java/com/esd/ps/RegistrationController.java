@@ -79,7 +79,7 @@ public class RegistrationController {
 		registration.setCreateTime(new Date());
 		registrationService.insertSelective(registration);
 
-		return new ModelAndView(Constants.REDIRECT+":"+"registration/regSuccess");
+		return new ModelAndView("registration/regSuccess");
 	}
 
 	/**
