@@ -117,7 +117,7 @@
 				wc.next(".help-block").css("color","red").text("残疾证卡号最少20位");
 				return false;
 			}
-			
+			return true;
 		};
 		$(document).ready(function(){
 			$("#workerDisabilityCard").blur(function(){
