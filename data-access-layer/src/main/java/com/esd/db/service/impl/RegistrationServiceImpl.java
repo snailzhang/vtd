@@ -71,32 +71,38 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 	@Override
 	public int getCountByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
-		Map<String, Object> map=new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		map.put("districtId", districtId);
-		map.put("beginDate", beginDate);
-		map.put("endDate", endDate);
+		if (!beginDate.isEmpty() || beginDate.trim().length() > 0) {
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+		}
 		return registrationMapper.selectCountByTimeAndDistrictId(map);
 	}
 
 	@Override
 	public List<Registration> getByTimeAndDistrictId(int districtId, String beginDate, String endDate, int page, int row) {
-		Map<String, Object> map=new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("begin", ((page - 1) * row));
 		map.put("end", row);
 		map.put("districtId", districtId);
-		map.put("beginDate", beginDate);
-		map.put("endDate", endDate);
+		if (!beginDate.isEmpty() || beginDate.trim().length() > 0) {
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+		}
 		return registrationMapper.selectByTimeAndDistrictId(map);
 	}
 
 	@Override
 	public List<Registration> getAllByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
-		Map<String, Object> map=new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		map.put("districtId", districtId);
-		map.put("beginDate", beginDate);
-		map.put("endDate", endDate);
+		if (!beginDate.isEmpty() || beginDate.trim().length() > 0) {
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+		}
 		return registrationMapper.selectAllByTimeAndDistrictId(map);
 	}
 
