@@ -90,4 +90,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 		return registrationMapper.selectByTimeAndDistrictId(map);
 	}
 
+	@Override
+	public List<Registration> getAllByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
+		Map<String, Object> map=new HashMap<String, Object>();
+		map.clear();
+		map.put("districtId", districtId);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
+		return registrationMapper.selectAllByTimeAndDistrictId(map);
+	}
+
 }

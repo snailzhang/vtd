@@ -311,7 +311,7 @@ public class ManagerController {
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView(Constants.REDIRECT + ":" + "manager");
+		return new ModelAndView(Constants.REDIRECT + ":" + "security/manager");
 	}
 
 	/**
@@ -331,10 +331,10 @@ public class ManagerController {
 		String address = null;
 		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address = Constants.REDIRECT + ":" + "employer";
+			address = Constants.REDIRECT + ":" + "security/employer";
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address = Constants.REDIRECT + ":" + "manager";
+			address = Constants.REDIRECT + ":" + "security/manager";
 		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
@@ -469,10 +469,10 @@ public class ManagerController {
 			String address = null;
 			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-				address = Constants.REDIRECT + ":" + "worker";
+				address = Constants.REDIRECT + ":" + "security/worker";
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address = Constants.REDIRECT + ":" + "manager";
+				address = Constants.REDIRECT + ":" + "security/manager";
 			}
 
 			if (!workerImage.isEmpty()) {

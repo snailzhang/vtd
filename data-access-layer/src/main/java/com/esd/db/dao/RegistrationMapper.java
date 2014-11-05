@@ -30,4 +30,7 @@ public interface RegistrationMapper {
 	int selectCountByTimeAndDistrictId(Map<String, Object> map);
 	
 	List<Registration> selectByTimeAndDistrictId(Map<String, Object> map);
+	
+	List<Registration> selectAllByTimeAndDistrictId(Map<String, Object> map);
+
 }

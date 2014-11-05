@@ -5,12 +5,16 @@
  */
 package com.esd.ps;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -27,6 +31,7 @@ import com.esd.db.model.District;
 import com.esd.db.model.Registration;
 import com.esd.db.service.DistrictService;
 import com.esd.db.service.RegistrationService;
+import com.esd.ps.excel.PoiCreateExcel;
 import com.esd.ps.model.RegistrationTrans;
 
 
@@ -51,7 +56,7 @@ public class RegListController {
 	public ModelAndView regListGET(HttpSession session) {
 		int districtId=Integer.parseInt(session.getAttribute(Constants.ID).toString());
 		District district=districtService.selectByPrimaryKey(districtId);
-		return new ModelAndView("loginReg","districtName",district.getName());
+		return new ModelAndView("registration/regList","districtName",district.getName());
 	}
 	/**
 	 * 取得列表
@@ -96,5 +101,39 @@ public class RegListController {
 		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
 		map.put(Constants.LIST, list);
 		return map;
+	}
+	/**
+	 * 批量导出审核信息
+	 * 
+	 * @param idArr
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/export", method = RequestMethod.POST)
+	@ResponseBody
+	public String export(String beginDate,String endDate,HttpServletRequest request,HttpSession session) {
+		boolean b = true;
+		int districtId=Integer.parseInt(session.getAttribute(Constants.ID).toString());
+		// 下载全部
+		 List<Registration> list=registrationService.getAllByTimeAndDistrictId(districtId, beginDate, endDate);
+		String url = request.getServletContext().getRealPath("/");
+		// 创建导出文件夹
+		File downloadPath = new File(url + "temp");
+		if (!(downloadPath.exists())) {
+			downloadPath.mkdir();
+		}
+
+		// 创建文件唯一名称
+		String uuid = UUID.randomUUID().toString();
+		String exportPath = downloadPath + File.separator + uuid + ".xls";
+		String FileDownloadPath = "null";
+		// 导出文件
+		b = PoiCreateExcel.createRegistrationExcel(exportPath, list);
+		if (b) {
+			String destPath = request.getLocalAddr() + ":"
+					+ request.getLocalPort() + request.getContextPath();
+			FileDownloadPath = "http://" + destPath + "/temp/" + uuid + ".xls";
+		}
+		return FileDownloadPath;
 	}
 }
