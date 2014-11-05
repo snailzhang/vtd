@@ -25,8 +25,9 @@
 		from registration
 		where district_id = #{districtId}
 		<if test="beginDate != null || endDate !=null">
-			and create_time between #{beginDate} and #{endDate}
+			and create_time between DATE_FORMAT(#{beginDate}, '%Y-%m-%d') and DATE_FORMAT(#{endDate}, '%Y-%m-%d')
 		</if>
+		
 		limit #{begin},#{end}
 	</select>
 	<select id="selectCountByTimeAndDistrictId" parameterType="java.util.Map" resultType="java.lang.Integer">
@@ -35,7 +36,7 @@
 		from registration
 		where district_id = #{districtId}
 		<if test="beginDate != null || endDate !=null">
-			and create_time between #{beginDate} and #{endDate}
+			and create_time between DATE_FORMAT(#{beginDate}, '%Y-%m-%d') and DATE_FORMAT(#{endDate}, '%Y-%m-%d')
 		</if>
 	</select>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

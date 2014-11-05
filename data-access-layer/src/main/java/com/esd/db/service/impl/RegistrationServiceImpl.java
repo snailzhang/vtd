@@ -70,7 +70,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 
 	@Override
-	public int getCountByTimeAndDistrictId(int districtId, int beginDate, int endDate) {
+	public int getCountByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.clear();
 		map.put("districtId", districtId);
@@ -80,7 +80,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 
 	@Override
-	public List<Registration> getByTimeAndDistrictId(int districtId, int beginDate, int endDate, int page, int row) {
+	public List<Registration> getByTimeAndDistrictId(int districtId, String beginDate, String endDate, int page, int row) {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("begin", ((page - 1) * row));
 		map.put("end", row);

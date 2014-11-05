@@ -57,19 +57,18 @@ public class RegListController {
 	 * 取得列表
 	 * @param session
 	 * @param page
-	 * @param beginDate
-	 * @param endDate
+	 * @param beginDateate
+	 * @param endDateate
 	 * @return
 	 */
 	@RequestMapping(value = "/regList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> regListPost(HttpSession session,int page,String beginD,String endD) {
-		logger.debug("beginDate:{},endDate:{}",beginD,endD);
+	public Map<String, Object> regListPost(HttpSession session,int page,String beginDate,String endDate) {
+		logger.debug("beginDateate:{},endDateate:{}",beginDate,endDate);
 		Map<String, Object> map=new HashMap<String, Object>();
 		int districtId=Integer.parseInt(session.getAttribute(Constants.ID).toString());
 		List<RegistrationTrans> list = new ArrayList<RegistrationTrans>();
-		int beginDate=0,endDate=5;
-		int totle=registrationService.getCountByTimeAndDistrictId(districtId, beginDate, endDate);
+		int totle=registrationService.getCountByTimeAndDistrictId(districtId,beginDate, endDate);
 		if(totle == 0){
 			map.clear();
 			map.put(Constants.TOTLE, totle);
