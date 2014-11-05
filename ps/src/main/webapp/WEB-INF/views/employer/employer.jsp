@@ -174,7 +174,7 @@
 								<tr>
 									<th>序号</th>
 									<th>任务名称</th>
-									<th>完成时间</th>
+									<th>任务状态</th>
 									<th>检测结果</th>
 								</tr>
 							</thead>
@@ -419,6 +419,7 @@
 			loadPackDetailList(packId,1,2);
 			searchPackId = packId;
 			$("#packDetailModal").modal('show');
+			$("#taskSearch").focus();
 		};
 		loadPackDetailList = function(packId,pageNum,taskStuts){
 			$.ajax({
@@ -433,13 +434,13 @@
 					}else{
 						$("#packDetailTBody,#packDetailModal .pagination").empty();
 						$.each(data.list,function(i,item){
-							var upTime = "";
-							if(item.taskUploadTime != null)upTime = item.taskUploadTime;
+							var te = "";
+							if(item.taskEffective != null)te = item.taskEffective;
 							$("#packDetailTBody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.taskName+"</td>"+
-									"<td>"+upTime+"</td>"+
+									"<td>"+item.taskUploadTime+"</td>"+
 									"<td>"+item.taskEffective+"</td>"+
 								"</tr>"
 							);

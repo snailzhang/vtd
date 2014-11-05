@@ -70,7 +70,7 @@ public class LoginRegController {
 	 */
 	@RequestMapping(value = "/loginReg", method = RequestMethod.GET)
 	public ModelAndView loginRegGET() {
-		return new ModelAndView("loginReg");
+		return new ModelAndView("registration/loginReg");
 	}
 
 	/**

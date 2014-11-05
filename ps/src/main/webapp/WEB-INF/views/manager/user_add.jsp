@@ -117,7 +117,7 @@
 			});
 			$("button[type=button]").click(function(){
 				var formName = $("#addUser");
-				if(checkUserName()&&checkUserPWD()&&userAreadyUse){
+				if(checkUserName()&&checkUserPWD()&&!userAreadyUse){
 					formName.submit();
 				};
 			});
