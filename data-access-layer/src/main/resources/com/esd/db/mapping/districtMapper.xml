@@ -42,7 +42,7 @@
 		where id = #{id,jdbcType=INTEGER}
 	</delete>
 	<insert id="insert" parameterType="com.esd.db.model.District">
-		insert into district (id, pid,user_name,password name,
+		insert into district (id, pid,user_name,password ,name,
 		phone, address, bank
 		)
 		values (#{id,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER},
@@ -137,8 +137,7 @@
 		set pid = #{pid,jdbcType=INTEGER},
 		user_name = #{userName,jdbcType=VARCHAR},
 		password = #{password,jdbcType=VARCHAR},
-		name =
-		#{name,jdbcType=VARCHAR},
+		name = #{name,jdbcType=VARCHAR},
 		phone = #{phone,jdbcType=VARCHAR},
 		address = #{address,jdbcType=VARCHAR},
 		bank = #{bank,jdbcType=INTEGER}

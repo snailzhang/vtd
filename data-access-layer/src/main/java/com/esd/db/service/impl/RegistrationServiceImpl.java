@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.esd.db.dao.RegistrationMapper;
-import com.esd.db.model.District;
 import com.esd.db.model.Registration;
 import com.esd.db.service.RegistrationService;
 
-@Service
+@Service("RegistrationService")
 public class RegistrationServiceImpl implements RegistrationService {
 
 	@Autowired
@@ -71,7 +70,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 
 	@Override
-	public int getCountByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
+	public int getCountByTimeAndDistrictId(int districtId, int beginDate, int endDate) {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.clear();
 		map.put("districtId", districtId);
@@ -81,7 +80,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 
 	@Override
-	public List<Registration> getByTimeAndDistrictId(int districtId, String beginDate, String endDate, int page, int row) {
+	public List<Registration> getByTimeAndDistrictId(int districtId, int beginDate, int endDate, int page, int row) {
 		Map<String, Object> map=new HashMap<String, Object>();
 		map.put("begin", ((page - 1) * row));
 		map.put("end", row);

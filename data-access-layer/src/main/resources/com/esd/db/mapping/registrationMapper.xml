@@ -19,6 +19,25 @@
 		id, name, card, district_id, phone, qq, address, des, create_time, create_method,
 		update_time, update_method
 	</sql>
+	<select id="selectByTimeAndDistrictId" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from registration
+		where district_id = #{districtId}
+		<if test="beginDate != null || endDate !=null">
+			and create_time between #{beginDate} and #{endDate}
+		</if>
+		limit #{begin},#{end}
+	</select>
+	<select id="selectCountByTimeAndDistrictId" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select
+		count(id) totle
+		from registration
+		where district_id = #{districtId}
+		<if test="beginDate != null || endDate !=null">
+			and create_time between #{beginDate} and #{endDate}
+		</if>
+	</select>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -31,31 +50,7 @@
 		from registration
 		where district_id = #{districtId,jdbcType=INTEGER}
 	</select>
-	<select id="selectByTimeAndDistrictId" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from registration
-		where district_id = #{districtId}
-		<if test="begin != null">
-			and create_time > "${beginDate}"
-		</if>
-		<if test="end != null">
-			and create_time > "${endDate}"
-		</if>
-		limit #{begin},{end}
-	</select>
-	<select id="selectCountByTimeAndDistrictId" parameterType="java.util.Map" resultMap="java.lang.Integer">
-		select
-		count(id) totle
-		from registration
-		where district_id = #{districtId}
-		<if test="begin != null">
-			and create_time > "${beginDate}"
-		</if>
-		<if test="end != null">
-			and create_time > "${endDate}"
-		</if>
-	</select>
+
 	<select id="selectByName" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

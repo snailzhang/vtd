@@ -25,7 +25,7 @@ public interface RegistrationService {
 	
 	List<Registration> getByDistrictId(Integer districtId);
 	
-	int getCountByTimeAndDistrictId(int districtId,String beginDate,String endDate);
+	int getCountByTimeAndDistrictId(int districtId,int beginDate,int endDate);
 	
-	List<Registration> getByTimeAndDistrictId(int districtId,String beginDate,String endDate,int page,int row);
+	List<Registration> getByTimeAndDistrictId(int districtId,int beginDate,int endDate,int page,int row);
 }
