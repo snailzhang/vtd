@@ -137,7 +137,8 @@
 		set pid = #{pid,jdbcType=INTEGER},
 		user_name = #{userName,jdbcType=VARCHAR},
 		password = #{password,jdbcType=VARCHAR},
-		name = #{name,jdbcType=VARCHAR},
+		name =
+		#{name,jdbcType=VARCHAR},
 		phone = #{phone,jdbcType=VARCHAR},
 		address = #{address,jdbcType=VARCHAR},
 		bank = #{bank,jdbcType=VARCHAR}

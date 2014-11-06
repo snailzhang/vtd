@@ -1,6 +1,7 @@
 package com.esd.ps;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -25,6 +26,19 @@ public class DistrictController {
 	
 	@Autowired
 	DistrictService districtService;
+	
+	@RequestMapping(value = "/district", method = RequestMethod.GET)
+	public ModelAndView districtGET(){
+		return new ModelAndView("registration/district");
+	}
+	@RequestMapping(value = "/district", method = RequestMethod.POST)
+	public Map<String, Object> addDistrictPOST(){
+		Map<String, Object> map = new  HashMap<String, Object>();
+		List<District> list = districtService.getAll();
+		map.clear();
+		map.put(Constants.LIST,list);
+		return map;
+	}
 	
 	@RequestMapping(value = "/addDistrict", method = RequestMethod.GET)
 	public ModelAndView addDistrictGET(){

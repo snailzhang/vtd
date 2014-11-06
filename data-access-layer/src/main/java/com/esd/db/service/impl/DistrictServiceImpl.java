@@ -55,7 +55,6 @@ public class DistrictServiceImpl implements DistrictService {
 
 	@Override
 	public List<District> getAll() {
-		// TODO Auto-generated method stub
 		return districtMapper.selectAll();
 	}
 
