@@ -70,9 +70,9 @@ public class RegListController {
 	 */
 	@RequestMapping(value = "/regList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> regListPost(HttpSession session,String beginDate,String endDate) {
+	public Map<String, Object> regListPost(HttpSession session,int page,String beginDate,String endDate) {
 		logger.debug("beginDateate:{},endDateate:{}",beginDate,endDate);
-		int page=0;
+		
 		Map<String, Object> map=new HashMap<String, Object>();
 		int districtId=Integer.parseInt(session.getAttribute(Constants.ID).toString());
 		List<RegistrationTrans> list = new ArrayList<RegistrationTrans>();
