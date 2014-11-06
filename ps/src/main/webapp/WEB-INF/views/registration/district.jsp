@@ -19,7 +19,7 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
+	<jsp:include page="head_reg.jsp" />
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">用户列表</div>
