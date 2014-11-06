@@ -17,9 +17,13 @@
 <link href="http://cdn.bootcss.com/jqueryui/1.11.2/jquery-ui.theme.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-<script src="http://cdn.bootcss.com/jqueryui/1.11.2/jquery-ui.min.js"></script>
+
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.datepicker.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.datepicker-ch.js"></script>
 </head>
 <body>
 	<jsp:include page="head_reg.jsp" />
@@ -33,17 +37,20 @@
 							<div class="input-group-addon">起始时间：</div>
 							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id=beginDate type="text" placeholder="起始时间">
 						</div>
-						<span id="bdhelp" class="help-block"></span>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-addon">截止时间：</div>
-							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="endDate" type="text" placeholder="起始时间">
+							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="endDate" type="text" placeholder="截止时间">
 						</div>
-						<span id="edhelp" class="help-block"></span>
 					</div>
 					<div class="form-group">
 						<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+					</div>
+					<div class="form-group">
+						<button type="button" id="exportBtn" class="btn btn-default">导出列表</button>
+					</div>
+					<div class="form-group">
 						<span class="help-block"></span>
 					</div>
 					
@@ -67,27 +74,49 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+		var beginDate = "";
+		var endDate = "";
 		$(document).ready(function(){
-			chooseUserType("","",1);
+			$.datepicker.regional[ "ch" ];
 			$("#beginDate,#endDate").datepicker();
+			/*-----------------------页面加载-------------------------------*/
+			chooseUserType(1);
+			/*-----------------------搜索日期-------------------------------*/
 			$("#searchBtn").click(function(){
 				var bd = $("#beginDate").val();
 				var ed = $("#endDate").val();
-				if(bd == ed == ""){
-					chooseUserType("","",1);
-					$("#edhelp,#bdhelp").empty();
+				if((bd == "")&&(ed == "")){
+					beginDate = "";
+					endDate = "";
+					chooseUserType(1);
+					$(".help-block").empty();
 				}else if((bd != "")&&(ed != "")){
-					chooseUserType(bd,ed,1);
-					$("#edhelp,#bdhelp").empty();
+					beginDate = bd;
+					endDate = ed;
+					chooseUserType(1);
+					$(".help-block").empty();
 				}else if((bd != "")&&(ed == "")){
-					$("#edhelp").css("color","red").text("请填写截止日期");
+					$(".help-block").css("color","red").text("请填写截止日期");
 				}else{
-					$("#edhelp").css("color","red").text("请填写起始日期");
+					$(".help-block").css("color","red").text("请填写起始日期");
 				}
-				
+			});
+			/*-----------------------导出列表-------------------------------*/
+			$("#exportBtn").click(function(){
+				$.ajax({
+					type:'POST',
+					data:{"beginDate":beginDate,"endDate":endDate},
+					url:'${contextPath}/export',
+					dataType:'json',
+					success:function(data){
+						if(data.wrongPath != ""){
+							window.open(data.wrongPath);
+						}
+					}
+				});
 			});
 		});
-		chooseUserType = function(beginDate,endDate,pageNum){
+		chooseUserType = function(pageNum){
 			$.ajax({
 				type:'POST',
 				data:{"beginDate":beginDate,"endDate":endDate,"page":pageNum},
@@ -117,13 +146,13 @@
 							for(var i=1;i<pageTotal+1;i++){
 								if(i==pageNum){
 									$(".pagination").append(
-										"<li class='active'><a onClick='chooseUserType(\""+beginDate+"\",\""+endDate+"\","+i+")'>"+
+										"<li class='active'><a onClick='chooseUserType("+i+")'>"+
 										i+
 										"</a></li>"
 									);
 								}else{
 									$(".pagination").append(
-										"<li><a onClick='chooseUserType(\""+beginDate+"\",\""+endDate+"\","+i+")'>"+
+										"<li><a onClick='chooseUserType("+i+")'>"+
 										i+
 										"</a></li>"
 									);
