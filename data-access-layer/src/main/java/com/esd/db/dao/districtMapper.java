@@ -23,4 +23,6 @@ public interface districtMapper {
     
     List<District> selectAll(Map<String, Object> map);
     
+    int selectAllCount(Map<String, Object> map);
+    
 }

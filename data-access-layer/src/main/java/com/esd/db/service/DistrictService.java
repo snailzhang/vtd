@@ -22,4 +22,6 @@ public interface DistrictService {
 	public List<District> selectByPid(int pid);
 	
 	List<District> getAll(int page,String userName,String name,int row);
+	
+	int getAllCount(String userName,String name);
 }

@@ -34,9 +34,12 @@ public class DistrictController {
 	@RequestMapping(value = "/district", method = RequestMethod.POST)
 	public Map<String, Object> addDistrictPOST(int page,String userName,String name){
 		Map<String, Object> map = new  HashMap<String, Object>();
+		int totle = districtService.getAllCount(userName, name);
 		List<District> list = districtService.getAll(page,userName,name,Constants.ROW);
-		map.clear();
-		map.put(Constants.LIST,list);
+		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
 	
