@@ -192,14 +192,16 @@ public class EmployerController {
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		String url = employerService.getUploadUrlByEmployerId(employerId);
 		List<String> list = new ArrayList<>();
-		File fold = new File(url);
-		if (fold.exists()) {
-			File[] file = fold.listFiles();
-			for (int i = 0; i < file.length; i++) {
-				String zipName = new String();
-				zipName = file[i].getName();
-				if (packService.getCountPackByPackName(zipName) == Constants.ZERO) {
-					list.add(zipName);
+		if (url != null && url.isEmpty() == false && url.trim().length() > 0) {
+			File fold = new File(url);
+			if (fold.exists()) {
+				File[] file = fold.listFiles();
+				for (int i = 0; i < file.length; i++) {
+					String zipName = new String();
+					zipName = file[i].getName();
+					if (packService.getCountPackByPackName(zipName) == Constants.ZERO) {
+						list.add(zipName);
+					}
 				}
 			}
 		}

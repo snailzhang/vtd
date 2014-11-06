@@ -244,11 +244,11 @@ public class ManagerController {
 		int replay = 0;
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
-			return new ModelAndView(Constants.REDIRECT + ":" + "security/addUser");
+			return new ModelAndView(Constants.REDIRECT + ":" + "addUser");
 		}
 		if (StringUtils.isBlank(password)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
-			return new ModelAndView(Constants.REDIRECT + ":" + "security/addUser");
+			return new ModelAndView(Constants.REDIRECT + ":" + "addUser");
 		}
 		user user = userService.getAllUsersByUserName(username);
 		if (user != null) {
@@ -286,7 +286,7 @@ public class ManagerController {
 			logger.debug("page:{}", page);
 			return new ModelAndView("manager/" + page + "_add", "userRegisted", 1);
 		}
-		return new ModelAndView(Constants.REDIRECT + ":" + "security/addUser");
+		return new ModelAndView(Constants.REDIRECT + ":" + "addUser");
 	}
 
 	/**
@@ -311,7 +311,7 @@ public class ManagerController {
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView(Constants.REDIRECT + ":" + "security/manager");
+		return new ModelAndView(Constants.REDIRECT + ":" + "manager");
 	}
 
 	/**
@@ -331,10 +331,10 @@ public class ManagerController {
 		String address = null;
 		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address = Constants.REDIRECT + ":" + "security/employer";
+			address = Constants.REDIRECT + ":" + "employer";
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address = Constants.REDIRECT + ":" + "security/manager";
+			address = Constants.REDIRECT + ":" + "manager";
 		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
@@ -469,10 +469,10 @@ public class ManagerController {
 			String address = null;
 			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-				address = Constants.REDIRECT + ":" + "security/worker";
+				address = Constants.REDIRECT + ":" + "worker";
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address = Constants.REDIRECT + ":" + "security/manager";
+				address = Constants.REDIRECT + ":" + "manager";
 			}
 
 			if (!workerImage.isEmpty()) {
@@ -497,7 +497,7 @@ public class ManagerController {
 			return new ModelAndView(address);
 		}
 		redirectAttributes.addFlashAttribute("worker", worker);
-		return new ModelAndView(Constants.REDIRECT + ":" + "security/addworker");
+		return new ModelAndView(Constants.REDIRECT + ":" + "addworker");
 	}
 
 	/**

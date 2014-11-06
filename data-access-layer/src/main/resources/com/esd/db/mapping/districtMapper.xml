@@ -7,12 +7,13 @@
 		<result column="user_name" property="userName" jdbcType="VARCHAR" />
 		<result column="password" property="password" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="pinyin" property="pinyin" jdbcType="VARCHAR" />
 		<result column="phone" property="phone" jdbcType="VARCHAR" />
 		<result column="address" property="address" jdbcType="VARCHAR" />
 		<result column="bank" property="bank" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, pid,user_name,password, name, phone, address, bank
+		id, pid,user_name,password, name, pinyin,phone, address, bank
 	</sql>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
@@ -42,11 +43,11 @@
 		where id = #{id,jdbcType=INTEGER}
 	</delete>
 	<insert id="insert" parameterType="com.esd.db.model.District">
-		insert into district (id, pid,user_name,password ,name,
+		insert into district (id, pid,user_name,password ,name,pinyin,
 		phone, address, bank
 		)
 		values (#{id,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER},
-		#{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{pinyin,jdbcType=VARCHAR},
 		#{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{bank,jdbcType=VARCHAR}
 		)
 	</insert>
@@ -67,6 +68,9 @@
 			</if>
 			<if test="name != null">
 				name,
+			</if>
+			<if test="pinyin != null">
+				pinyin,
 			</if>
 			<if test="phone != null">
 				phone,
@@ -94,6 +98,9 @@
 			<if test="name != null">
 				#{name,jdbcType=VARCHAR},
 			</if>
+			<if test="pinyin != null">
+				#{pinyin,jdbcType=VARCHAR},
+			</if>
 			<if test="phone != null">
 				#{phone,jdbcType=VARCHAR},
 			</if>
@@ -120,6 +127,9 @@
 			<if test="name != null">
 				name = #{name,jdbcType=VARCHAR},
 			</if>
+			<if test="pinyin != null">
+				pinyin = #{pinyin,jdbcType=VARCHAR},
+			</if>
 			<if test="phone != null">
 				phone = #{phone,jdbcType=VARCHAR},
 			</if>
@@ -137,8 +147,8 @@
 		set pid = #{pid,jdbcType=INTEGER},
 		user_name = #{userName,jdbcType=VARCHAR},
 		password = #{password,jdbcType=VARCHAR},
-		name =
-		#{name,jdbcType=VARCHAR},
+		name = #{name,jdbcType=VARCHAR},
+		pinyin = #{pinyin,jdbcType=VARCHAR},
 		phone = #{phone,jdbcType=VARCHAR},
 		address = #{address,jdbcType=VARCHAR},
 		bank = #{bank,jdbcType=VARCHAR}

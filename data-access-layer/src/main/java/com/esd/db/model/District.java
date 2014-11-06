@@ -11,6 +11,8 @@ public class District {
     private String password;
     
     private String name;
+    
+    private String pinyin;
 
     private String phone;
 
@@ -57,8 +59,16 @@ public class District {
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
     }
+    
+    public String getPinyin() {
+		return pinyin;
+	}
 
-    public String getPhone() {
+	public void setPinyin(String pinyin) {
+		this.pinyin = pinyin;
+	}
+
+	public String getPhone() {
         return phone;
     }
 

@@ -8,6 +8,7 @@ package com.esd.ps.excel;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -16,6 +17,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.esd.db.model.Registration;
+import com.esd.ps.Constants;
 
 public class PoiCreateExcel {
 
@@ -54,6 +56,7 @@ public class PoiCreateExcel {
 
 		headell = headRow.createCell(5);
 		headell.setCellValue("报名时间");
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		for (int i = 1; i <= list.size(); i++) {
 			Registration r = list.get(i - 1);
 			// 创建一个Excel的单元格
@@ -77,7 +80,7 @@ public class PoiCreateExcel {
 			cell.setCellValue(r.getAddress());
 			// 报名时间
 			cell = row.createCell(5);
-			cell.setCellValue(r.getCreateTime());
+			cell.setCellValue(sdf.format(r.getCreateTime()));
 		}
 		try {
 			FileOutputStream os = new FileOutputStream(FilePath);
