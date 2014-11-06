@@ -32,9 +32,9 @@ public class DistrictController {
 		return new ModelAndView("registration/district");
 	}
 	@RequestMapping(value = "/district", method = RequestMethod.POST)
-	public Map<String, Object> addDistrictPOST(){
+	public Map<String, Object> addDistrictPOST(int page,String userName,String name){
 		Map<String, Object> map = new  HashMap<String, Object>();
-		List<District> list = districtService.getAll();
+		List<District> list = districtService.getAll(page,userName,name,Constants.ROW);
 		map.clear();
 		map.put(Constants.LIST,list);
 		return map;

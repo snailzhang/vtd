@@ -6,8 +6,10 @@
 
 package com.esd.ps;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,11 +49,17 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
 	public ModelAndView registrationGet() {
-		List<District> list=districtService.getAll();
-		if(list != null){
-			return new ModelAndView("registration/reg","districts",list);
+		List<District> districtList = districtService.getAll(0, null, null, 0);
+		List<District> list = new ArrayList<>();
+		if (districtList != null) {
+			for (Iterator<District> iterator = districtList.iterator(); iterator.hasNext();) {
+				District district = (District) iterator.next();
+				if (district.getName().equals(Constants.ADMIN_NAME) == false) {
+					list.add(district);
+				}
+			}
 		}
-		return new ModelAndView("registration/reg","districts",null);
+		return new ModelAndView("registration/reg", "districts", list);
 	}
 
 	/**
@@ -64,8 +72,8 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView registrationPost(String name, String card, int district ,String phone,String qq,String address,String des) {
-		logger.debug("name{},card{},district{},phone:{},qq:{},adress:{},des:{}", name, card, district,phone,qq,address,des);
+	public ModelAndView registrationPost(String name, String card, int district, String phone, String qq, String address, String des) {
+		logger.debug("name{},card{},district{},phone:{},qq:{},adress:{},des:{}", name, card, district, phone, qq, address, des);
 
 		Registration registration = new Registration();
 		registration.setName(name);
@@ -91,17 +99,17 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/rc", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> remoteCheck(String name, String card) {
+	public Map<String, Object> remoteCheck(String name, String card) {
 		Map<String, Object> map = new HashMap<>();
-//		String name = request.getParameter("name");
-//		String card = request.getParameter("card");
+		// String name = request.getParameter("name");
+		// String card = request.getParameter("card");
 		// name = "王云虓";
 		// card = "23010719740308061044";
-		if(checkDisabilityCard(name, card)){
-			map.put("result",1);
+		if (checkDisabilityCard(name, card)) {
+			map.put("result", 1);
 			return map;
 		}
-		map.put("result",0);
+		map.put("result", 0);
 		return map;
 	}
 

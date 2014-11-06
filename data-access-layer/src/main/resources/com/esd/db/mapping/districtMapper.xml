@@ -33,10 +33,22 @@
 		from district
 		where pid = #{pid,jdbcType=INTEGER}
 	</select>
-	<select id="selectAll" resultMap="BaseResultMap">
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
 		from district
+		<if test="userName != null and name != null">
+			where user_name like '%${userName}%' and name like '%${name}%'
+		</if>
+		<if test="userName != null and name == null" > 
+			where user_name like '%${userName}%'
+		</if>
+		<if test="name != null and userName == null">
+			where name like '%${name}%'
+		</if>
+		<if test="begin != 0" >
+			limit #{begin},#{end}
+		</if>
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from district
@@ -147,7 +159,8 @@
 		set pid = #{pid,jdbcType=INTEGER},
 		user_name = #{userName,jdbcType=VARCHAR},
 		password = #{password,jdbcType=VARCHAR},
-		name = #{name,jdbcType=VARCHAR},
+		name =
+		#{name,jdbcType=VARCHAR},
 		pinyin = #{pinyin,jdbcType=VARCHAR},
 		phone = #{phone,jdbcType=VARCHAR},
 		address = #{address,jdbcType=VARCHAR},

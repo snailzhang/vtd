@@ -144,13 +144,13 @@ public class RegListController {
 			if (beginDate.isEmpty() || beginDate == null || beginDate.trim().length() == 0) {
 				fileName = pinyin + "_" + sdf.format(new Date());
 			} else {
+				fileName = sdf.format(sdf.parse(beginDate)) + "-" + sdf.format(sdf.parse(endDate)) + "_" + pinyin + "_" + sdf.format(new Date());
 				Date myDate = formatter.parse(endDate);
 				Calendar c = Calendar.getInstance();
 				c.setTime(myDate);
 				c.add(Calendar.DATE, 1);
 				myDate = c.getTime();
-				endDate = sdf.format(myDate);
-				fileName = sdf.format(sdf.parse(beginDate)) + "-" + endDate + "_" + pinyin + "_" + sdf.format(new Date());
+				endDate = sdf.format(myDate);		
 			}
 			exportPath = downloadPath + File.separator + fileName + ".xls";
 			List<Registration> list = registrationService.getAllByTimeAndDistrictId(districtId, beginDate, endDate);

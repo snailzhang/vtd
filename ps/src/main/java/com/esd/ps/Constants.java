@@ -15,6 +15,7 @@ public interface Constants {
 	public static final String ID = "Id";//
 	public static final String USER_ID = "userId";//用户id
 	public static final String ADMIN = "admin";//管理员
+	public static final String ADMIN_NAME = "管理员";//管理员
 	public static final String ADD_USER_ID = "addUserId";//新增用户id
 	public static final String EMPLOYER_ID = "employerId";//发包商id
 	public static final String WORKER_ID = "workerId";//发包商id

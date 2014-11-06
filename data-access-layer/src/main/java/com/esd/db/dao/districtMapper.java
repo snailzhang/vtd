@@ -1,6 +1,7 @@
 package com.esd.db.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.District;
 
@@ -20,6 +21,6 @@ public interface districtMapper {
 
     int updateByPrimaryKey(District record);
     
-    List<District> selectAll();
+    List<District> selectAll(Map<String, Object> map);
     
 }
