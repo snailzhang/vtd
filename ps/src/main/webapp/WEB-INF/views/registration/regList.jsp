@@ -87,7 +87,7 @@
 			$.ajax({
 				type:'POST',
 				data:{"beginDate":beginDate,"endDate":endDate,"pageNum":pageNum},
-				url:'${contextPath}/security/regList',
+				url:'${contextPath}/regList',
 				dataType:'json',
 				success:function(data){
 					$("tbody").empty();
