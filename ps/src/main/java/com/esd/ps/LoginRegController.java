@@ -80,9 +80,10 @@ public class LoginRegController {
 	 */
 	@RequestMapping(value = "/quitReg", method = RequestMethod.GET)
 	public ModelAndView quitRegGet(HttpSession session) {
-		session.removeAttribute(Constants.USER_ID);
+		session.removeAttribute(Constants.DISTRICT_NAME);
 		session.removeAttribute(Constants.USER_NAME);
 		session.removeAttribute(Constants.ID);
+		session.removeAttribute("pinyin");
 		return new ModelAndView(Constants.REDIRECT + ":" + "loginReg");
 	}
 
@@ -127,8 +128,9 @@ public class LoginRegController {
 				session.setAttribute(Constants.USER_NAME, district.getUserName());
 				session.setAttribute(Constants.ID, district.getId());
 				session.setAttribute(Constants.DISTRICT_NAME, district.getName());
+				session.setAttribute("pinyin", district.getPinyin());
 				if (Constants.ADMIN.equals(username)) {
-					return new ModelAndView("redirect:addDistrict");
+					return new ModelAndView("redirect:district");
 				}
 				return new ModelAndView("redirect:regList");
 			} else {
