@@ -114,7 +114,8 @@ public class RegListController {
 	 */
 	@RequestMapping(value = "/export", method = RequestMethod.POST)
 	@ResponseBody
-	public String export(String beginDate,String endDate,HttpServletRequest request,HttpSession session) {
+	public Map<String, Object> export(String beginDate,String endDate,HttpServletRequest request,HttpSession session) {
+		Map<String, Object> map= new HashMap<>();
 		boolean b = true;
 		int districtId=Integer.parseInt(session.getAttribute(Constants.ID).toString());
 		// 下载全部
@@ -137,6 +138,8 @@ public class RegListController {
 					+ request.getLocalPort() + request.getContextPath();
 			FileDownloadPath = "http://" + destPath + "/temp/" + uuid + ".xls";
 		}
-		return FileDownloadPath;
+		map.clear();
+		map.put(Constants.WRONGPATH, FileDownloadPath);
+		return map;
 	}
 }
