@@ -42,7 +42,11 @@
 						</div>
 						<span id="edhelp" class="help-block"></span>
 					</div>
-					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+					<div class="form-group">
+						<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+						<span class="help-block"></span>
+					</div>
+					
 				</form>
 			</div>
 			<table class="table table-striped table-bordered">
@@ -86,7 +90,7 @@
 		chooseUserType = function(beginDate,endDate,pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"beginDate":beginDate,"endDate":endDate,"pageNum":pageNum},
+				data:{"beginDate":beginDate,"endDate":endDate,"page":pageNum},
 				url:'${contextPath}/regList',
 				dataType:'json',
 				success:function(data){
