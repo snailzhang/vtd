@@ -185,6 +185,7 @@ public class LoginController {
 					}
 				}
 				return new ModelAndView(Constants.REDIRECT+":" + "security/" + typeName);
+
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
 			}

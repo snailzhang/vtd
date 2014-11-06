@@ -44,7 +44,7 @@ public class DistrictServiceImpl implements DistrictService {
 	@Override
 	public District selectByPrimaryKey(int id) {
 		// TODO Auto-generated method stub
-		return null;
+		return districtMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
