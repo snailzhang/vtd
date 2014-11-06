@@ -9,7 +9,7 @@
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="phone" property="phone" jdbcType="VARCHAR" />
 		<result column="address" property="address" jdbcType="VARCHAR" />
-		<result column="bank" property="bank" jdbcType="INTEGER" />
+		<result column="bank" property="bank" jdbcType="VARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, pid,user_name,password, name, phone, address, bank
@@ -47,7 +47,7 @@
 		)
 		values (#{id,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER},
 		#{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
-		#{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{bank,jdbcType=INTEGER}
+		#{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{bank,jdbcType=VARCHAR}
 		)
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.District">
@@ -101,7 +101,7 @@
 				#{address,jdbcType=VARCHAR},
 			</if>
 			<if test="bank != null">
-				#{bank,jdbcType=INTEGER},
+				#{bank,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -127,7 +127,7 @@
 				address = #{address,jdbcType=VARCHAR},
 			</if>
 			<if test="bank != null">
-				bank = #{bank,jdbcType=INTEGER},
+				bank = #{bank,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}
@@ -140,7 +140,7 @@
 		name = #{name,jdbcType=VARCHAR},
 		phone = #{phone,jdbcType=VARCHAR},
 		address = #{address,jdbcType=VARCHAR},
-		bank = #{bank,jdbcType=INTEGER}
+		bank = #{bank,jdbcType=VARCHAR}
 		where id =
 		#{id,jdbcType=INTEGER}
 	</update>

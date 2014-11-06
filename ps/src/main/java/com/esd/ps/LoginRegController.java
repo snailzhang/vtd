@@ -83,7 +83,7 @@ public class LoginRegController {
 		session.removeAttribute(Constants.USER_ID);
 		session.removeAttribute(Constants.USER_NAME);
 		session.removeAttribute(Constants.ID);
-		return new ModelAndView(Constants.REDIRECT+":"+"loginReg");
+		return new ModelAndView(Constants.REDIRECT + ":" + "loginReg");
 	}
 
 	/**
@@ -127,6 +127,9 @@ public class LoginRegController {
 				session.setAttribute(Constants.USER_NAME, district.getUserName());
 				session.setAttribute(Constants.ID, district.getId());
 				session.setAttribute(Constants.DISTRICT_NAME, district.getName());
+				if (Constants.ADMIN.equals(username)) {
+					return new ModelAndView("redirect:addDistrict");
+				}
 				return new ModelAndView("redirect:regList");
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
@@ -134,7 +137,7 @@ public class LoginRegController {
 		}
 		redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
 		redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
-		return new ModelAndView(Constants.REDIRECT+":"+"loginReg");
+		return new ModelAndView(Constants.REDIRECT + ":" + "loginReg");
 	}
 
 	/**

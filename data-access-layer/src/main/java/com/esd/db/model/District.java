@@ -16,7 +16,7 @@ public class District {
 
     private String address;
 
-    private Integer bank;
+    private String bank;
 
     public Integer getId() {
         return id;
@@ -74,11 +74,11 @@ public class District {
         this.address = address == null ? null : address.trim();
     }
 
-    public Integer getBank() {
+    public String getBank() {
         return bank;
     }
 
-    public void setBank(Integer bank) {
+    public void setBank(String bank) {
         this.bank = bank;
     }
 }
