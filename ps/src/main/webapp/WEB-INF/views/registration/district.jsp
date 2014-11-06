@@ -75,7 +75,7 @@
 		loadMainList = function(pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"user_name":user_name,"name":dep,"page":pageNum},
+				data:{"userName":user_name,"name":dep,"page":pageNum},
 				url:'${contextPath}/district',
 				dataType:'json',
 				success:function(data){
@@ -89,7 +89,7 @@
 							$("tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
-									"<td>"+item.user_name+"</td>"+
+									"<td>"+item.userName+"</td>"+
 									"<td>"+item.name+"</td>"+
 									"<td>"+item.phone+"</td>"+
 									"<td>"+item.address+"</td>"+
@@ -100,13 +100,13 @@
 							for(var i=1;i<pageTotal+1;i++){
 								if(i==pageNum){
 									$(".pagination").append(
-										"<li class='active'><a onClick='loadMainList("+userType+","+i+")'>"+
+										"<li class='active'><a onClick='loadMainList("+i+")'>"+
 										i+
 										"</a></li>"
 									);
 								}else{
 									$(".pagination").append(
-										"<li><a onClick='loadMainList("+userType+","+i+")'>"+
+										"<li><a onClick='loadMainList("+i+")'>"+
 										i+
 										"</a></li>"
 									);
@@ -116,7 +116,7 @@
 					}
 				}
 			});
-		}
+		};
 	</script>
 </body>
 </html>
