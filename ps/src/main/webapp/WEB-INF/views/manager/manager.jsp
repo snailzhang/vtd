@@ -73,7 +73,7 @@
 		var nowPage = 0;
 		var userNameCondition = "";
 		$(document).ready(function(){
-			chooseUserType(0,1,"");
+			chooseUserType(0,1);
 			
 			$("#userType").click(function(){
 				var utd = $(this);
@@ -87,13 +87,11 @@
 			});
 			$("#searchBtn").click(function(){
 				var un = $("#userNameCondition").val();
-				userNameCondition = un
+				userNameCondition = un;
 				chooseUserType(0,1);
 			});
 		});
 		chooseUserType = function(userType,pageNum){
-			//nowPage = pageNum;
-			//nowUserType = userType;
 			$.ajax({
 				type:'POST',
 				data:{"userType":userType,"page":pageNum,"userNameCondition":userNameCondition},
