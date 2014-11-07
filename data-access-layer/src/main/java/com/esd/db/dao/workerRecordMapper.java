@@ -56,4 +56,6 @@ public interface workerRecordMapper {
 	List<workerRecord> selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
 	
 	Double selectTaskMarkTimeMonthByWorkerIdAndMonth(Map<String, Object> map);
+	
+	Double selectSUMTaskMarkTimeByPackId(int packId);
 }

@@ -166,7 +166,12 @@ public class EmployerController {
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setUnzip(pack.getUnzip());
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
-
+			Double taskMarkTime = workerRecordService.getSUMTaskMarkTimeByPackId(pack.getPackId());
+			if(taskMarkTime==null){
+				packTrans.setTaskMarkTime(0.00);
+			}else{
+				packTrans.setTaskMarkTime(taskMarkTime);
+			}	
 			list.add(packTrans);
 		}
 		map.clear();

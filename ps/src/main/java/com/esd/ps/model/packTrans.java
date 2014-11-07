@@ -19,6 +19,8 @@ public class packTrans {
 	private Integer finishTaskCount;
 
 	private Integer downCount;
+	
+	private Double taskMarkTime;
 
 	public String getPackName() {
 		return packName;
@@ -90,6 +92,14 @@ public class packTrans {
 
 	public void setDownCount(Integer downCount) {
 		this.downCount = downCount;
+	}
+
+	public Double getTaskMarkTime() {
+		return taskMarkTime;
+	}
+
+	public void setTaskMarkTime(Double taskMarkTime) {
+		this.taskMarkTime = taskMarkTime;
 	}
 
 }

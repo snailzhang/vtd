@@ -142,6 +142,7 @@ public class ManagerController {
 	 * @param userNameCondition
 	 * @param userType
 	 * @param page
+	 * @param year
 	 * @param month
 	 * @param taskUpload
 	 * @return
@@ -204,9 +205,16 @@ public class ManagerController {
 
 		return map;
 	}
+	/**
+	 * 工作者工作信息
+	 * @param userId
+	 * @param userName
+	 * @param session
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
 	public ModelAndView workerDetailGET(int userId,String userName,HttpSession session,Map<String, Object> model) {
-		int workerId = workerService.getWorkerIdByUserId(userId);
 		model.clear();
 		model.put("userId", userId);
 		model.put("userName", userName);
