@@ -60,7 +60,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer statu, Integer month, String taskNameCondition, int page, int row) {
+	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer statu, Integer year,Integer month, String taskNameCondition, int page, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("begin", ((page - 1) * row));
@@ -69,6 +69,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("statu", statu);
 		if (month > 0) {
 			map.put("month", month);
+			map.put("year", year);
 		}
 		if (taskNameCondition.trim().length() > 0) {
 			map.put("taskNameCondition", taskNameCondition);
@@ -77,11 +78,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getAllCountByWorkerId(Integer workerId, Integer statu, Integer month, String taskNameCondition) {
+	public int getAllCountByWorkerId(Integer workerId, Integer statu,Integer year, Integer month, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("workerId", workerId);
 		map.put("statu", statu);
+		map.put("year", year);
 		map.put("month", month);
 		if (taskNameCondition.trim().length() > 0) {
 			map.put("taskNameCondition", taskNameCondition);
@@ -193,11 +195,14 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, int month) {
+	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year, int month) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		if (workerId > 0) {
 			map.put("workerId", workerId);
+		}
+		if (year > 0) {
+			map.put("year", year);
 		}
 		if (month > 0) {
 			map.put("month", month);

@@ -148,7 +148,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> managerPost(String userNameCondition, int userType, int page, int month, int taskUpload) {
+	public Map<String, Object> managerPost(String userNameCondition, int userType, int page,int year, int month, int taskUpload) {
 		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -161,7 +161,7 @@ public class ManagerController {
 			userTrans trans = new userTrans();
 			if (user.getUsertype() == 4) {
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, month);
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId,year,month);
 				if (taskUpload == 1) {
 					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
 						continue;
@@ -191,7 +191,7 @@ public class ManagerController {
 			list.add(trans);
 		}
 		map.clear();
-		Double taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, month);
+		Double taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0,year,month);
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
@@ -206,6 +206,7 @@ public class ManagerController {
 	}
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
 	public ModelAndView workerDetailGET(int userId,String userName,HttpSession session,Map<String, Object> model) {
+		int workerId = workerService.getWorkerIdByUserId(userId);
 		model.clear();
 		model.put("userId", userId);
 		model.put("userName", userName);
@@ -223,7 +224,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerDetailPOST(HttpSession session,int userId,int userType,int page,int month,int statu,String taskNameCondition) {
+	public Map<String, Object> workerDetailPOST(HttpSession session,int userId,int userType,int page,int year,int month,int statu,String taskNameCondition) {
 		Map<String, Object> map = new HashMap<>();
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
@@ -232,9 +233,9 @@ public class ManagerController {
 		}
 		if (userType == 4) {
 			int workerId = workerService.getWorkerIdByUserId(userId);
-			List<workerRecord> list= workerRecordService.getAllByWorkerId(workerId,statu,month,taskNameCondition,page,Constants.ROW);
-			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, month, taskNameCondition);
-			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, month);
+			List<workerRecord> list= workerRecordService.getAllByWorkerId(workerId,statu,year,month,taskNameCondition,page,Constants.ROW);
+			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, year,month, taskNameCondition);
+			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId,year,month);
 			map.clear();
 			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 			map.put(Constants.LIST, list);

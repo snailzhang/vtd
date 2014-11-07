@@ -23,9 +23,9 @@ public interface WorkerRecordService {
 	
 	List<workerRecord> getDoingTask();
 	
-	List<workerRecord> getAllByWorkerId(Integer workerId,Integer statu,Integer month,String taskNameCondition,int page,int row);
+	List<workerRecord> getAllByWorkerId(Integer workerId,Integer statu,Integer year,Integer month,String taskNameCondition,int page,int row);
 	
-	int getAllCountByWorkerId(Integer workerId,Integer statu,Integer month,String taskNameCondition);
+	int getAllCountByWorkerId(Integer workerId,Integer statu,Integer year,Integer month,String taskNameCondition);
 	
 	String get1DownUrlByTaskName(String taskName);
 	
@@ -55,5 +55,5 @@ public interface WorkerRecordService {
 	
 	int getPkIDByTaskId(Integer taskId);
 	
-	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int month);
+	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year,int month);
 }
