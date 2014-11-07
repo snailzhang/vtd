@@ -85,6 +85,8 @@ public class RegistrationController {
 		registration.setDes(des);
 		registration.setCreateMethod("registrationGet");
 		registration.setCreateTime(new Date());
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		registration.setCreateMethod(items[1].toString());
 		registrationService.insertSelective(registration);
 
 		return new ModelAndView("registration/regSuccess");

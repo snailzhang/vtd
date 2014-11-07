@@ -219,12 +219,16 @@ public class LoginController {
 						update.setTaskStatu(2);//2表示任务已过时
 						update.setUpdateTime(new Date());
 						update.setRecordId(workerRecord.getRecordId());
+						StackTraceElement[] items = Thread.currentThread().getStackTrace();
+						update.setUpdateMethod(items[1].toString());
 						workerRecordService.updateByPrimaryKeySelective(update);
 						// 更新task表
 						task task = new task();
 						task.setWorkerId(null);
 						task.setUpdateTime(new Date());
 						task.setTaskId(workerRecord.getTaskId());
+						
+						task.setUpdateMethod(items[1].toString());
 						taskService.updateByTaskId(task);
 
 						// 删除任务的下载备份

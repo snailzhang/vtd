@@ -291,6 +291,7 @@ public class ManagerController {
 	@RequestMapping(value = "/userStatus", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> userStatus(int userId, int userStatus) {
+		logger.debug("userId:{},userStatus:{}",userId,userStatus);
 		Map<String, Object> map = new HashMap<>();
 		user user = new user();
 		user.setUserId(userId);
@@ -298,7 +299,9 @@ public class ManagerController {
 			user.setUserStatus(true);
 		}else if(userStatus == 0){
 			user.setUserStatus(false);
-		}	
+		}
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		user.setUpdateMethod(items[1].toString());
 		userService.updateByPrimaryKeySelective(user);
 		map.clear();
 		map.put(Constants.REPLAY, MSG_UPDATE_SUCCESS);
@@ -359,7 +362,8 @@ public class ManagerController {
 			user1.setPassword(md5Password);
 			user1.setUsertype(usertype);
 			user1.setUpdateTime(new Date());
-			user1.setCreateMethod("create");
+			StackTraceElement[] items = Thread.currentThread().getStackTrace();
+			user1.setCreateMethod(items[1].toString());
 			user1.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 			if (replay == 0) {
 				userService.insertSelective(user1);
@@ -395,6 +399,8 @@ public class ManagerController {
 			manager.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
 		}
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		manager.setCreateMethod(items[1].toString());
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(Constants.REDIRECT + ":" + "manager");
@@ -423,7 +429,8 @@ public class ManagerController {
 			address = Constants.REDIRECT + ":" + "manager";
 		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		employer.setCreateMethod(items[1].toString());
 		employerService.insertSelective(employer);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(address);
@@ -578,6 +585,8 @@ public class ManagerController {
 
 			worker.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 			worker.setUpdateTime(new Date());
+			StackTraceElement[] items = Thread.currentThread().getStackTrace();
+			worker.setCreateMethod(items[1].toString());
 			workerService.insertSelective(worker);
 			session.removeAttribute(Constants.ADD_USER_ID);
 			return new ModelAndView(address);
@@ -648,6 +657,8 @@ public class ManagerController {
 			String md5Password = md5.getMd5(username, newPassWord);
 			user.setPassword(md5Password);
 			user.setUserId(userId);
+			StackTraceElement[] items = Thread.currentThread().getStackTrace();
+			user.setUpdateMethod(items[1].toString());
 			userService.updateByPrimaryKeySelective(user);
 			map.clear();
 			map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
@@ -689,6 +700,8 @@ public class ManagerController {
 		worker.setWorkerPhone(workerPhone);
 
 		worker.setUpdateTime(new Date());
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		worker.setUpdateMethod(items[1].toString());
 		workerService.updateByPrimaryKeySelective(worker);
 		map.clear();
 		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);

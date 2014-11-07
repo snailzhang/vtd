@@ -399,6 +399,8 @@ public class WorkerController {
 				// 更新task表
 				taskWithBLOBs.setTaskDownloadTime(new Date());
 				taskWithBLOBs.setWorkerId(workerId);
+				StackTraceElement[] items = Thread.currentThread().getStackTrace();
+				taskWithBLOBs.setUpdateMethod(items[1].toString());
 				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 				// 更新worker_record 工作者的任务记录
 				workerRecord workerRecord = new workerRecord();
@@ -416,6 +418,8 @@ public class WorkerController {
 				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
 				workerRecord.setTaskStatu(0);
 				workerRecord.setWorkerId(workerId);
+				StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+				workerRecord.setCreateMethod(items1[1].toString());
 				workerRecordService.insertSelective(workerRecord);
 			}
 			session.setAttribute(Constants.WORKERMARK, 1);
@@ -508,6 +512,8 @@ public class WorkerController {
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
+								StackTraceElement[] items = Thread.currentThread().getStackTrace();
+								taskWithBLOBs.setUpdateMethod(items[1].toString());
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 
 								workerRecord workerRecord = new workerRecord();
@@ -515,6 +521,8 @@ public class WorkerController {
 								workerRecord.setTaskStatu(1);
 								workerRecord.setTaskMarkTime(taskMarkTime);
 								workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
+								StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+								workerRecord.setUpdateMethod(items1[1].toString());
 								workerRecordService.updateByPrimaryKeySelective(workerRecord);
 								listMath.add(uploadTaskNameI);
 							} else if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
@@ -522,6 +530,8 @@ public class WorkerController {
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
 								taskWithBLOBs.setUpdateTime(new Date());
+								StackTraceElement[] items = Thread.currentThread().getStackTrace();
+								taskWithBLOBs.setUpdateMethod(items[1].toString());
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 								listMath.add(uploadTaskNameI);
 							}

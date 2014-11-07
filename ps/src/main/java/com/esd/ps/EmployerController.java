@@ -333,6 +333,8 @@ public class EmployerController {
 				packWithBLOBs.setPackStatus(false);
 				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setVersion(1);
+				StackTraceElement[] items = Thread.currentThread().getStackTrace();
+				packWithBLOBs.setCreateMethod(items[1].toString());
 				packService.insert(packWithBLOBs);
 			}
 			// 从临时文件取出要解压的文件上传TaskService
@@ -396,6 +398,8 @@ public class EmployerController {
 		pack.setPackId(packId);
 		pack.setUpdateTime(new Date());
 		pack.setDownCount((packService.getDownCountByPackId(packId) + 1));
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		pack.setUpdateMethod(items[1].toString());
 		packService.updateByPrimaryKeySelective(pack);
 
 		// 项目在服务器上的远程绝对地址
@@ -520,6 +524,8 @@ public class EmployerController {
 				taskWithBLOBs.setTaskDir(taskDir);
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
+				StackTraceElement[] items = Thread.currentThread().getStackTrace();
+				taskWithBLOBs.setCreateMethod(items[1].toString());
 				taskService.insert(taskWithBLOBs);
 			}
 			zip.close();
@@ -532,6 +538,8 @@ public class EmployerController {
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
 		pack.setUnzip(1);
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		pack.setUpdateMethod(items[1].toString());
 		packService.updateByPrimaryKeySelective(pack);
 	}
 }
