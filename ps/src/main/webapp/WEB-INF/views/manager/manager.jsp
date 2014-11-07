@@ -14,6 +14,7 @@
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
+<style>.tmtt{text-align:right;}</style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
@@ -22,7 +23,7 @@
 	<jsp:include page="../head.jsp" />
 	<div class="container">
 		<div class="panel panel-default">
-			<div class="panel-heading">用户列表</div>
+			<div class="panel-heading">用户列表<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span></div>
 			<div class="panel-body">
 				<form class="form-inline" role="form">
 					<div class="form-group">
@@ -30,6 +31,35 @@
 							<div class="input-group-addon">用户名：</div>
 							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
 						</div>
+					</div>
+					<div class="form-group">
+						<p class="form-control-static">月份：</p>
+					</div>
+					<div class="form-group">
+						<select class="form-control" id="month">
+							<option value="1">1月</option>
+							<option value="2">2月</option>
+							<option value="3">3月</option>
+							<option value="4">4月</option>
+							<option value="5">5月</option>
+							<option value="6">6月</option>
+							<option value="7">7月</option>
+							<option value="8">8月</option>
+							<option value="9">9月</option>
+							<option value="10">10月</option>
+							<option value="11">11月</option>
+							<option value="12">12月</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<p class="form-control-static">本月工作状态：</p>
+					</div>
+					<div class="form-group">
+						<select class="form-control" id="taskUpload">
+							<option value="2">全部</option>
+							<option value="1">工作</option>
+							<option value="0">无工作</option>
+						</select>
 					</div>
 					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
 				</form>
@@ -39,19 +69,9 @@
 					<tr>
 						<th>序号</th>
 						<th>姓名</th>
-						<th class="dropdown">
-							<a id="userType" data-target="#" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								用户组<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu" aria-labelledby="userType">
-								<li><a href="#" onClick="chooseUserType(0,1)">全部</a></li>
-								<li><a href="#" onClick="chooseUserType(1,1)">管理员</a></li>
-								<li><a href="#" onClick="chooseUserType(2,1)">发包商</a></li>
-								<li><a href="#" onClick="chooseUserType(3,1)">质检员</a></li>
-								<li><a href="#" onClick="chooseUserType(4,1)">工作者</a></li>
-							</ul>
-						</th>
+						<th>用户组</th>
 						<th>创建时间</th>
+						<th>标注时间</th>
 						<th>用户状态</th>
 					</tr>
 				</thead>
@@ -65,16 +85,20 @@
 		</form>
 		
 	</div>
-	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-	<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		var utDropdownOpen = false;
-		var nowUserType = 0;
+		var nowUserType = 4;
 		var nowPage = 0;
 		var userNameCondition = "";
+		var month = 0;
+		var taskUpload = 2;
 		$(document).ready(function(){
-			chooseUserType(0,1);
-			
+			var date = new Date();
+			var nowMonth = date.getMonth()+1;
+			month = nowMonth;
+			$("#month option[value="+month+"]").attr("selected","selected");
+			chooseUserType(1);
+			/*
 			$("#userType").click(function(){
 				var utd = $(this);
 				if(utDropdownOpen){
@@ -85,16 +109,19 @@
 					utDropdownOpen = true;
 				}
 			});
+			*/
 			$("#searchBtn").click(function(){
 				var un = $("#userNameCondition").val();
+				month = $("#month").val();
+				taskUpload = $("#taskUpload").val();
 				userNameCondition = un;
-				chooseUserType(0,1);
+				chooseUserType(1);
 			});
 		});
-		chooseUserType = function(userType,pageNum){
+		chooseUserType = function(pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"userType":userType,"page":pageNum,"userNameCondition":userNameCondition},
+				data:{"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"month":month,"taskUpload":taskUpload},
 				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){
@@ -104,6 +131,8 @@
 						$("tbody").empty();
 						$("tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
 					}else{
+						var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
+						$("#taskMarkTimeMonthTotle").text("本月标注总时长："+taskMarkTimeMonthTotle);
 						var pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";
@@ -114,6 +143,7 @@
 									"<td>"+item.username+"</td>"+
 									"<td>"+item.usertypeenglish+"</td>"+
 									"<td>"+item.createTime+"</td>"+
+									"<td>"+item.taskMarkTimeMonth+"</td>"+
 									"<td>"+status+"</td>"+
 								"</tr>"
 							);
@@ -121,13 +151,13 @@
 							for(var i=1;i<pageTotal+1;i++){
 								if(i==pageNum){
 									$(".pagination").append(
-										"<li class='active'><a onClick='chooseUserType("+userType+","+i+")'>"+
+										"<li class='active'><a onClick='chooseUserType("+i+")'>"+
 										i+
 										"</a></li>"
 									);
 								}else{
 									$(".pagination").append(
-										"<li><a onClick='chooseUserType("+userType+","+i+")'>"+
+										"<li><a onClick='chooseUserType("+i+")'>"+
 										i+
 										"</a></li>"
 									);
