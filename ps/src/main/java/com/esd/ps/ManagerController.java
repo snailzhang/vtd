@@ -204,6 +204,21 @@ public class ManagerController {
 
 		return map;
 	}
+	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
+	public ModelAndView workerDetailGET(String userName,RedirectAttributes redirectAttributes) {
+		redirectAttributes.addFlashAttribute(Constants.USER_NAME, userName);
+		return new ModelAndView(Constants.REDIRECT+":workerDetail");
+	}
+	/**
+	 * 工作者工作信息
+	 * @param userId
+	 * @param userType
+	 * @param page
+	 * @param month
+	 * @param statu
+	 * @param taskNameCondition
+	 * @return
+	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> workerDetailPOST(int userId, int userType,int page,int month,int statu,String taskNameCondition) {
