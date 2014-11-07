@@ -14,7 +14,6 @@
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
-<style>.tmtt{text-align:right;}</style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
@@ -31,6 +30,18 @@
 							<div class="input-group-addon">用户名：</div>
 							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
 						</div>
+					</div>
+					<div class="form-group">
+						<p class="form-control-static">年份：</p>
+					</div>
+					<div class="form-group">
+						<select class="form-control" id="year">
+							<option value="2014">2014年</option>
+							<option value="2015">2015年</option>
+							<option value="2016">2016年</option>
+							<option value="2017">2017年</option>
+							<option value="2018">2018年</option>
+						</select>
 					</div>
 					<div class="form-group">
 						<p class="form-control-static">月份：</p>
@@ -92,44 +103,35 @@
 		var userNameCondition = "";
 		var month = 0;
 		var taskUpload = 2;
+		var year = 0;
 		$(document).ready(function(){
 			var date = new Date();
 			var nowMonth = date.getMonth()+1;
+			var nowYear = date.getYear();
 			month = nowMonth;
+			year = nowYear;
 			$("#month option[value="+month+"]").attr("selected","selected");
+			$("#year option[value="+year+"]").attr("selected","selected");
 			chooseUserType(1);
-			/*
-			$("#userType").click(function(){
-				var utd = $(this);
-				if(utDropdownOpen){
-					utd.parent(".dropdown").removeClass("open");
-					utDropdownOpen = false;
-				}else{
-					utd.parent(".dropdown").addClass("open");
-					utDropdownOpen = true;
-				}
-			});
-			*/
 			$("#searchBtn").click(function(){
-				var un = $("#userNameCondition").val();
 				month = $("#month").val();
+				year = $("#year").val();
 				taskUpload = $("#taskUpload").val();
-				userNameCondition = un;
+				userNameCondition = $("#userNameCondition").val();
 				chooseUserType(1);
 			});
 		});
 		chooseUserType = function(pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"month":month,"taskUpload":taskUpload},
+				data:{"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"month":month,"taskUpload":taskUpload,"year":year},
 				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){
 					$("tbody").empty();
-					utDropdownOpen = false;
 					if(data.list == ""){
 						$("tbody").empty();
-						$("tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
+						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
 						var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
 						$("#taskMarkTimeMonthTotle").text("本月标注总时长："+taskMarkTimeMonthTotle);
@@ -140,7 +142,7 @@
 							$("tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
-									"<td>"+item.username+"</td>"+
+									"<td><a target='_blank' href='${contextPath}/security/workerDetail?userId="+item.userId+"&username="+item.username+"'>"+item.username+"</a></td>"+
 									"<td>"+item.usertypeenglish+"</td>"+
 									"<td>"+item.createTime+"</td>"+
 									"<td>"+item.taskMarkTimeMonth+"</td>"+

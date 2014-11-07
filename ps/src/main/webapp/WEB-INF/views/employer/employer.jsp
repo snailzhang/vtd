@@ -53,15 +53,16 @@
 						<thead>
 							<tr>
 								<th>序号</th>
-								<th>任务包名称</th>
-								<th>任务总数</th>
-								<th>未完成任务数</th>
-								<th>已完成任务数</th>
-								<th>完成任务比例</th>
+								<th>名称</th>
+								<th>总数</th>
+								<th>剩余数</th>
+								<th>完成数</th>
+								<th>完成比例</th>
 								<th>下载次数</th>
 								<th>回传时间</th>
 								<th>创建时间</th>
-								<th>下载任务包</th>
+								<th>标注时间</th>
+								<th>下载</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -92,6 +93,7 @@
 								<th>下载次数</th>
 								<th>回传时间</th>
 								<th>创建时间</th>
+								<th>标注时间</th>
 								<th>下载任务包</th>
 							</tr>
 						</thead>
@@ -246,7 +248,7 @@
 				success:function(data){
 					if(data.list == ""){
 						$("#packUncomplete tbody").empty();
-						$("#packUncomplete tbody").append("<tr class='text-danger'><td colspan='10'>无内容</td></tr>");
+						$("#packUncomplete tbody").append("<tr class='text-danger'><td colspan='11'>无内容</td></tr>");
 					}else{
 						$("#packUncomplete tbody").empty();
 						$.each(data.list,function(i,item){
@@ -263,7 +265,7 @@
 									item.packLockTime = "";
 								}
 								var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
-								var finishTaskRatio = item.finishTaskCount/item.taskCount;//完成任务比例
+								var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
 								var downloadPack = "<td></td>";
 								if(item.finishTaskCount != 0){
 									downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
@@ -279,6 +281,7 @@
 										"<td>"+item.downCount+"</td>"+
 										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
+										"<td>"+item.taskMarkTime+"</td>"+
 										downloadPack+
 									"</tr>"
 								);
@@ -316,7 +319,7 @@
 				success:function(data){
 					if(data.list == ""){
 						$("#packComplete tbody").empty();
-						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='7'>无内容</td></tr>");
+						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='8'>无内容</td></tr>");
 					}else{
 						$("#packComplete tbody").empty();
 						$.each(data.list,function(i,item){
@@ -332,6 +335,7 @@
 									"<td>"+item.DownCount+"</td>"+
 									"<td>"+item.packLockTime+"小时</td>"+
 									"<td>"+item.createTime+"</td>"+
+									"<td>"+item.taskMarkTime+"</td>"+
 									downloadPack+
 								"</tr>"
 							);
