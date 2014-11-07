@@ -23,7 +23,9 @@ public interface WorkerRecordService {
 	
 	List<workerRecord> getDoingTask();
 	
-	List<workerRecord> getAllByWorkerId(Integer workerId);
+	List<workerRecord> getAllByWorkerId(Integer workerId,Integer statu,Integer month,String taskNameCondition,int page,int row);
+	
+	int getAllCountByWorkerId(Integer workerId,Integer statu,Integer month,String taskNameCondition);
 	
 	String get1DownUrlByTaskName(String taskName);
 	

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.esd.db.dao.workerRecordMapper">
+<mapper namespace="com.esd.db.dao.workerRecordMapper"> 
 	<resultMap id="BaseResultMap" type="com.esd.db.model.workerRecord">
 		<id column="record_id" property="recordId" jdbcType="INTEGER" />
 		<result column="worker_id" property="workerId" jdbcType="INTEGER" />
@@ -66,17 +66,46 @@
 		</if>
 
 	</select>
+	<select id="selectAllByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		<where>
+			worker_id = #{workerId}
+			<if test="taskNameCondition != null">
+				and task_name like "%${taskNameCondition}%"
+			</if>
+			<if test="month != null">
+				and DATE_FORMAT(task_upload_time,"%m") = "${month}"
+			</if>
+			<if test="statu == 0 or statu == 1 or statu == 2">
+				and task_statu = #{statu}
+			</if>
+			limit #{begin},#{end}
+		</where>
+	</select>
+	<select id="selectAllCountByWorkerId" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(record_id) totle
+		from worker_record
+		<where>
+			worker_id = #{workerId}
+			<if test="taskNameCondition != null">
+				and task_name like "%${taskNameCondition}%"
+			</if>
+			<if test="month != null">
+				and DATE_FORMAT(task_upload_time,'%m')='${month}'
+			</if>
+			<if test="statu == 0 or statu == 1 or statu == 2">
+				and task_statu = #{statu}
+			</if>
+		</where>
+	</select>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />
 		from worker_record
 		where record_id = #{recordId,jdbcType=INTEGER}
-	</select>
-	<select id="selectAllByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-		select
-		<include refid="Base_Column_List" />
-		from worker_record
-		where worker_id = #{workerId,jdbcType=INTEGER}
 	</select>
 	<select id="selectAllByDownPackName" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select

@@ -23,7 +23,9 @@ public interface workerRecordMapper {
 	
 	List<workerRecord> selectDoingTask();
 	
-	List<workerRecord> selectAllByWorkerId(Integer workerId);
+	List<workerRecord> selectAllByWorkerId(Map<String, Object> map);
+	
+	int selectAllCountByWorkerId(Map<String, Object> map);
 	
 	String selectDownUrlByTaskName(String taskName);
 	

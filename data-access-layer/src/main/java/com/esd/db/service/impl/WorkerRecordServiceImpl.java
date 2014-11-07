@@ -60,9 +60,33 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getAllByWorkerId(Integer workerId) {
+	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer statu, Integer month, String taskNameCondition, int page, int row) {
+		Map<String, Object> map = new HashMap<String, Object>();
 
-		return workerRecordMapper.selectAllByWorkerId(workerId);
+		map.put("begin", ((page - 1) * row));
+		map.put("end", row);
+		map.put("workerId", workerId);
+		map.put("statu", statu);
+		if (month > 0) {
+			map.put("month", month);
+		}
+		if (taskNameCondition.trim().length() > 0) {
+			map.put("taskNameCondition", taskNameCondition);
+		}
+		return workerRecordMapper.selectAllByWorkerId(map);
+	}
+
+	@Override
+	public int getAllCountByWorkerId(Integer workerId, Integer statu, Integer month, String taskNameCondition) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("workerId", workerId);
+		map.put("statu", statu);
+		map.put("month", month);
+		if (taskNameCondition.trim().length() > 0) {
+			map.put("taskNameCondition", taskNameCondition);
+		}
+		return workerRecordMapper.selectAllCountByWorkerId(map);
 	}
 
 	@Override
@@ -175,9 +199,9 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		if (workerId > 0) {
 			map.put("workerId", workerId);
 		}
-		if(month>0){
+		if (month > 0) {
 			map.put("month", month);
-		}	
+		}
 		return workerRecordMapper.selectTaskMarkTimeMonthByWorkerIdAndMonth(map);
 	}
 

@@ -35,6 +35,7 @@ import com.esd.db.model.manager;
 import com.esd.db.model.user;
 import com.esd.db.model.userTrans;
 import com.esd.db.model.worker;
+import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.UserService;
@@ -141,6 +142,8 @@ public class ManagerController {
 	 * @param userNameCondition
 	 * @param userType
 	 * @param page
+	 * @param month
+	 * @param taskUpload
 	 * @return
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
@@ -201,7 +204,34 @@ public class ManagerController {
 
 		return map;
 	}
-
+	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> workerDetailPOST(int userId, int userType,int page,int month,int statu,String taskNameCondition) {
+		Map<String, Object> map = new HashMap<>();
+		
+		if (userType == 2) {
+			employer employer = employerService.getEmployerByUserId(userId);
+			map.clear();
+			map.put(Constants.USER_DETAIL, employer);
+		}
+		if (userType == 4) {
+			int workerId = workerService.getWorkerIdByUserId(userId);
+			List<workerRecord> list= workerRecordService.getAllByWorkerId(workerId,statu,month,taskNameCondition,page,Constants.ROW);
+			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, month, taskNameCondition);
+			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, month);
+			map.clear();
+			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+			map.put(Constants.LIST, list);
+			map.put(Constants.TOTLE, totle);
+			map.put(Constants.TOTLE_PAGE, totlePage);
+			if(taskMarkTimeMonth==null){
+				map.put("taskMarkTimeMonth", 0.00);
+			}else{
+				map.put("taskMarkTimeMonth", taskMarkTimeMonth);
+			}
+		}
+		return map;
+	}
 	/**
 	 * 用户详细信息
 	 * 
