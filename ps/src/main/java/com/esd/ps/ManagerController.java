@@ -290,11 +290,15 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/userStatus", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> userStatus(int userId, Boolean userStatus) {
+	public Map<String, Object> userStatus(int userId, int userStatus) {
 		Map<String, Object> map = new HashMap<>();
 		user user = new user();
 		user.setUserId(userId);
-		user.setUserStatus(userStatus);
+		if(userStatus == 1){
+			user.setUserStatus(true);
+		}else if(userStatus == 0){
+			user.setUserStatus(false);
+		}	
 		userService.updateByPrimaryKeySelective(user);
 		map.clear();
 		map.put(Constants.REPLAY, MSG_UPDATE_SUCCESS);
