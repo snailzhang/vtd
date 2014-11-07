@@ -137,6 +137,7 @@ public class ManagerController {
 
 	/**
 	 * 返回user list
+	 * 
 	 * @param userNameCondition
 	 * @param userType
 	 * @param page
@@ -144,43 +145,60 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> managerPost(String userNameCondition, int userType, int page,int month,int taskUpload) {
+	public Map<String, Object> managerPost(String userNameCondition, int userType, int page, int month, int taskUpload) {
 		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
-		Map<String, Object> map = new HashMap<String, Object>();	
+		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		int totlePage = Constants.ZERO;
-		List<user> userList = userService.getLikeUsername(userNameCondition,userType,page,Constants.ROW);
+		List<user> userList = userService.getLikeUsername(userNameCondition, userType, page, Constants.ROW);
 		int totle = userService.getCountLikeUsername(userNameCondition, userType);
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
-			if(user.getUsertype()==4){
+			if (user.getUsertype() == 4) {
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId,month);
-				trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, month);
+				if (taskUpload == 1) {
+					if (!(taskMarkTimeMonth > 0)) {
+						continue;
+					}
+				} else if (taskUpload == 0) {
+					if (taskMarkTimeMonth > 0) {
+						continue;
+					}
+				}
+				if (taskMarkTimeMonth == null) {
+					trans.setTaskMarkTimeMonth(0.00);
+				} else {
+					trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
+				}
+				trans.setUserId(user.getUserId());
+				trans.setUserStatus(user.getUserStatus());
+				trans.setUsername(user.getUsername());
+				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
+				if (user.getUpdateTime() == null) {
+					trans.setUpdateTime("");
+				} else {
+					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
+				}
+				trans.setCreateTime(sdf.format(user.getCreateTime()));
 			}
-			trans.setUserId(user.getUserId());
-			trans.setUserStatus(user.getUserStatus());
-			trans.setUsername(user.getUsername());
-			trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
-			if (user.getUpdateTime() == null) {
-				trans.setUpdateTime("");
-			} else {
-				trans.setUpdateTime(sdf.format(user.getUpdateTime()));
-			}
-
-			trans.setCreateTime(sdf.format(user.getCreateTime()));
 
 			list.add(trans);
 		}
 		map.clear();
-		Double taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0,month);
+		Double taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, month);
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
-		map.put("taskMarkTimeMonthTotle", taskMarkTimeMonthTotle);
+		if (taskMarkTimeMonthTotle == null) {
+			map.put("taskMarkTimeMonthTotle", 0.00);
+		} else {
+			map.put("taskMarkTimeMonthTotle", taskMarkTimeMonthTotle);
+		}
+
 		return map;
 	}
 
