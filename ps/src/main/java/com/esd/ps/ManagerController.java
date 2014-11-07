@@ -163,11 +163,11 @@ public class ManagerController {
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
 				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, month);
 				if (taskUpload == 1) {
-					if (!(taskMarkTimeMonth > 0)) {
+					if (taskMarkTimeMonth == null) {
 						continue;
 					}
 				} else if (taskUpload == 0) {
-					if (taskMarkTimeMonth > 0) {
+					if (taskMarkTimeMonth != null) {
 						continue;
 					}
 				}
