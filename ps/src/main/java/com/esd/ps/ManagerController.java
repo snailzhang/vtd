@@ -163,11 +163,11 @@ public class ManagerController {
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
 				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, month);
 				if (taskUpload == 1) {
-					if (taskMarkTimeMonth == null) {
+					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
 						continue;
 					}
 				} else if (taskUpload == 0) {
-					if (taskMarkTimeMonth != null) {
+					if (taskMarkTimeMonth != null && taskMarkTimeMonth > 0) {
 						continue;
 					}
 				}
@@ -205,9 +205,11 @@ public class ManagerController {
 		return map;
 	}
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public ModelAndView workerDetailGET(String userName,RedirectAttributes redirectAttributes) {
-		redirectAttributes.addFlashAttribute(Constants.USER_NAME, userName);
-		return new ModelAndView(Constants.REDIRECT+":workerDetail");
+	public ModelAndView workerDetailGET(int userId,String userName,HttpSession session,Map<String, Object> model) {
+		model.clear();
+		model.put("userId", userId);
+		model.put("userName", userName);
+		return new ModelAndView("manager/workerDetail","model",model);
 	}
 	/**
 	 * 工作者工作信息
@@ -221,9 +223,8 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerDetailPOST(int userId, int userType,int page,int month,int statu,String taskNameCondition) {
+	public Map<String, Object> workerDetailPOST(HttpSession session,int userId,int userType,int page,int month,int statu,String taskNameCondition) {
 		Map<String, Object> map = new HashMap<>();
-		
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
 			map.clear();
