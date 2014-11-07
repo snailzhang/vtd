@@ -46,6 +46,7 @@
 		<if test="name != null and userName == null">
 			where name like '%${name}%'
 		</if>
+		order by id desc
 		<if test="begin != 0" >
 			limit #{begin},#{end}
 		</if>

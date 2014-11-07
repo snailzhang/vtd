@@ -256,14 +256,20 @@ public class EmployerController {
 			taskTrans taskTrans = new taskTrans();
 
 			taskTrans.setTaskName(task.getTaskName());
-			taskTrans.setTaskEffective(task.getTaskEffective());
+			if(task.getTaskEffective()==null){
+				taskTrans.setTaskEffective("");
+			}else if(task.getTaskEffective()){
+				taskTrans.setTaskEffective("合格");
+			}else if(task.getTaskEffective() == false){
+				taskTrans.setTaskEffective("不合格");
+			}
 			if (task.getWorkerId() == null) {
-				taskTrans.setCreateTime(MSG_DOING);
+				taskTrans.setTaskUploadTime(MSG_UNDO);
 			} else {
 				if (task.getTaskMarkTime() == null) {
-					taskTrans.setCreateTime(MSG_UNDO);
+					taskTrans.setTaskUploadTime(MSG_DOING);
 				} else {
-					taskTrans.setCreateTime(sdf.format(task.getTaskUploadTime()));
+					taskTrans.setTaskUploadTime(sdf.format(task.getTaskUploadTime()));
 				}
 			}
 			list.add(taskTrans);
