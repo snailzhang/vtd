@@ -9,6 +9,8 @@ public class userTrans {
 	private String username;
 
 	private String usertypeenglish;
+	
+	private Double taskMarkTimeMonth;
 
 	private String createTime;
 
@@ -44,6 +46,14 @@ public class userTrans {
 
 	public void setUsertypeenglish(String usertypeenglish) {
 		this.usertypeenglish = usertypeenglish;
+	}
+	
+	public Double getTaskMarkTimeMonth() {
+		return taskMarkTimeMonth;
+	}
+
+	public void setTaskMarkTimeMonth(Double taskMarkTimeMonth) {
+		this.taskMarkTimeMonth = taskMarkTimeMonth;
 	}
 
 	public String getCreateTime() {

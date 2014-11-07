@@ -52,4 +52,6 @@ public interface WorkerRecordService {
 	int getDownPackNameCountByworkerIdGroupByDownPackName(int workerId,String downPackName);
 	
 	int getPkIDByTaskId(Integer taskId);
+	
+	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int month);
 }

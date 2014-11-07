@@ -149,8 +149,8 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 
 		pageMap.put("workerId", workerId);
 		if (downPackName.trim().length() > 0)
-		pageMap.put("downPackName", downPackName);
-		
+			pageMap.put("downPackName", downPackName);
+
 		return workerRecordMapper.selectDownPackNameCountByworkerIdGroupByDownPackName(pageMap);
 	}
 
@@ -166,6 +166,19 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 			pageMap.put("downPackName", downPackName);
 
 		return workerRecordMapper.selectWorkerRecordLikeDownPackName(pageMap);
+	}
+
+	@Override
+	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, int month) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.clear();
+		if (workerId > 0) {
+			map.put("workerId", workerId);
+		}
+		if(month>0){
+			map.put("month", month);
+		}	
+		return workerRecordMapper.selectTaskMarkTimeMonthByWorkerIdAndMonth(map);
 	}
 
 }

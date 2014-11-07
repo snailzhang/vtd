@@ -51,6 +51,21 @@
 			where down_pack_name like "%${downPackName}%"
 		</if>
 	</select>
+	<select id="selectTaskMarkTimeMonthByWorkerIdAndMonth" resultType="java.lang.Double" parameterType="java.util.Map">
+		select sum(task_mark_time) month
+		from worker_record
+		<if test="workerId !=null and month!= null">
+			where worker_id = #{workerId}
+			and DATE_FORMAT(task_upload_time,'%m')='${month}'
+		</if>
+		<if test="workerId !=null and month == null">
+			where worker_id = #{workerId}
+		</if>
+		<if test="workerId ==null and month == null">
+			where DATE_FORMAT(task_upload_time,'%m')='${month}'
+		</if>
+
+	</select>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />

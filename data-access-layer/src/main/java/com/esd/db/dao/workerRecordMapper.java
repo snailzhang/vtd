@@ -52,4 +52,6 @@ public interface workerRecordMapper {
 	int selectDownPackNameCountByworkerIdGroupByDownPackName(Map<String, Object> map);
 	
 	List<workerRecord> selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map);
+	
+	Double selectTaskMarkTimeMonthByWorkerIdAndMonth(Map<String, Object> map);
 }

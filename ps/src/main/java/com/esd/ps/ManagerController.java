@@ -39,6 +39,7 @@ import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
+import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
 
 import org.slf4j.Logger;
@@ -64,6 +65,8 @@ public class ManagerController {
 	private EmployerService employerService;
 	@Autowired
 	private WorkerService workerService;
+	@Autowired
+	private WorkerRecordService workerRecordService;
 	/**
 	 * 用户不能为空
 	 */
@@ -141,7 +144,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> managerPost(String userNameCondition, int userType, int page) {
+	public Map<String, Object> managerPost(String userNameCondition, int userType, int page,int month,int taskUpload) {
 		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
 		Map<String, Object> map = new HashMap<String, Object>();	
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -152,7 +155,11 @@ public class ManagerController {
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
-
+			if(user.getUsertype()==4){
+				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId,month);
+				trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
+			}
 			trans.setUserId(user.getUserId());
 			trans.setUserStatus(user.getUserStatus());
 			trans.setUsername(user.getUsername());
@@ -168,10 +175,12 @@ public class ManagerController {
 			list.add(trans);
 		}
 		map.clear();
+		Double taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0,month);
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
+		map.put("taskMarkTimeMonthTotle", taskMarkTimeMonthTotle);
 		return map;
 	}
 
