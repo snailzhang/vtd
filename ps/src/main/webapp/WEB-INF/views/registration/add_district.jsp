@@ -50,6 +50,13 @@
 		      </div>
 		   </div>
 		   <div class="form-group">
+		      <label for="pinyin" class="col-sm-2 control-label">部门拼音：</label>
+		      <div class="col-sm-10">
+		         <input type="text" class="form-control" name="pinyin" id="pinyin" placeholder="请输入部门拼音" autocomplete="off" required="required">
+		         <span class="help-block"></span>
+		      </div>
+		   </div>
+		   <div class="form-group">
 		      <label for="phone" class="col-sm-2 control-label">电话号码：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="phone" id="phone" placeholder="请输入电话号码" autocomplete="off" required="required">
