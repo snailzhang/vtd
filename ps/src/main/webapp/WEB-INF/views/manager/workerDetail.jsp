@@ -22,7 +22,7 @@
 	<jsp:include page="../head.jsp" />
 	<div class="container">
 		<div class="panel panel-default">
-			<div class="panel-heading">${model.userName}的工作信息</div>
+			<div class="panel-heading">${model.chooseUserName}的工作信息</div>
 			<div class="panel-body">
 				<form class="form-inline" role="form">
 					<div class="form-group">
