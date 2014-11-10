@@ -48,9 +48,8 @@ public class DistrictController {
 		return new ModelAndView("registration/add_district");
 	}
 	@RequestMapping(value = "/addDistrict", method = RequestMethod.POST)
-	public Map<String, Object> addDistrictPOST(String userName,String password,String name,String phone,String address,String bank){
+	public ModelAndView addDistrictPOST(String userName,String password,String name,String pinyin,String phone,String address,String bank){
 		logger.debug("userName:{},password:{},name:{},phone:{},address:{},bank:{}",userName,password,name,phone,address,bank);
-		Map<String, Object> map = new  HashMap<String, Object>();
 		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 		String md5Password = md5.getMd5(userName, password);
 		logger.debug("md5Password:{}",md5Password);
@@ -62,8 +61,6 @@ public class DistrictController {
 		district.setAddress(address);
 		district.setBank(bank);
 		districtService.insertSelective(district);
-		map.clear();
-		map.put(Constants.REPLAY,1);
-		return map;
+		return new ModelAndView(Constants.REDIRECT+":district");
 	}
 }

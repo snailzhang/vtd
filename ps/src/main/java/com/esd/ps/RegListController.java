@@ -81,6 +81,21 @@ public class RegListController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int districtId = Integer.parseInt(session.getAttribute(Constants.ID).toString());
 		List<RegistrationTrans> list = new ArrayList<RegistrationTrans>();
+		if (endDate.trim().length() > 0 || endDate.isEmpty()) {
+			try {
+				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				Date myDate = formatter.parse(endDate);
+				Calendar c = Calendar.getInstance();
+				c.setTime(myDate);
+				c.add(Calendar.DATE, 1);
+				myDate = c.getTime();
+				endDate = sdf1.format(myDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+
 		int totle = registrationService.getCountByTimeAndDistrictId(districtId, beginDate, endDate);
 		if (totle == 0) {
 			map.clear();
@@ -131,7 +146,7 @@ public class RegListController {
 			// 下载全部
 			String url = request.getServletContext().getRealPath("/");
 			// 创建导出文件夹
-			File downloadPath = new File(url + "temp");
+			File downloadPath = new File(url + "excel");
 			if (!(downloadPath.exists())) {
 				downloadPath.mkdir();
 			}
@@ -149,7 +164,7 @@ public class RegListController {
 				c.setTime(myDate);
 				c.add(Calendar.DATE, 1);
 				myDate = c.getTime();
-				endDate = sdf.format(myDate);		
+				endDate = sdf.format(myDate);
 			}
 			exportPath = downloadPath + File.separator + fileName + ".xls";
 			List<Registration> list = registrationService.getAllByTimeAndDistrictId(districtId, beginDate, endDate);
@@ -157,7 +172,7 @@ public class RegListController {
 			b = PoiCreateExcel.createRegistrationExcel(exportPath, list);
 			if (b) {
 				String destPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
-				FileDownloadPath = "http://" + destPath + "/temp/" + fileName + ".xls";
+				FileDownloadPath = "http://" + destPath + "/excel/" + fileName + ".xls";
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -165,6 +180,5 @@ public class RegListController {
 		map.clear();
 		map.put(Constants.WRONGPATH, FileDownloadPath);
 		return map;
-
 	}
 }

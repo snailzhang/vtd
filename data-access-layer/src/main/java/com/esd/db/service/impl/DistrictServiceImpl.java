@@ -23,8 +23,8 @@ public class DistrictServiceImpl implements DistrictService {
 
 	@Override
 	public int insertSelective(District district) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return districtMapper.insertSelective(district);
 	}
 
 	@Override
