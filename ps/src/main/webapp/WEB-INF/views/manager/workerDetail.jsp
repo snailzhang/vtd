@@ -22,7 +22,7 @@
 	<jsp:include page="../head.jsp" />
 	<div class="container">
 		<div class="panel panel-default">
-			<div class="panel-heading">${model.chooseUserName}的工作信息</div>
+			<div class="panel-heading">${model.chooseUserName}的工作信息<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span></div>
 			<div class="panel-body">
 				<form class="form-inline" role="form">
 					<div class="form-group">
@@ -132,6 +132,7 @@
 						$("tbody").append("<tr class='text-danger'><td colspan='7'>无内容</td></tr>");
 					}else{
 						var pageTotal = data.totlePage;
+						$("#taskMarkTimeMonthTotle").text("本月标注总时长:"+data.taskMarkTimeMonth);
 						$.each(data.list,function(i,item){
 							
 							$("tbody").append(

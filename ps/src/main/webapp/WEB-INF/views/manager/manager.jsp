@@ -146,7 +146,7 @@
 									"<td>"+item.usertypeenglish+"</td>"+
 									"<td>"+item.createTime+"</td>"+
 									"<td>"+item.taskMarkTimeMonth+"</td>"+
-									"<td>"+status+"</td>"+
+									"<td class='userStatus'><a href='#'>"+status+"</a></td>"+
 								"</tr>"
 							);
 							$(".pagination").empty();
