@@ -60,6 +60,7 @@ public class DistrictController {
 		district.setPhone(phone);
 		district.setAddress(address);
 		district.setBank(bank);
+		district.setPinyin(pinyin);
 		districtService.insertSelective(district);
 		return new ModelAndView(Constants.REDIRECT+":district");
 	}
