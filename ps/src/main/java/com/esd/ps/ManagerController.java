@@ -182,7 +182,11 @@ public class ManagerController {
 					trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
 				}
 				trans.setUserId(user.getUserId());
-				trans.setUserStatus(user.getUserStatus());
+				if(user.getUserStatus()){
+					trans.setUserStatus(1);
+				}else{
+					trans.setUserStatus(0);
+				}	
 				trans.setUsername(user.getUsername());
 				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
 				if (user.getUpdateTime() == null) {

@@ -20,7 +20,7 @@ public class WorkerRecordTrans {
 
 	private Double taskMarkTime;
 
-	private Boolean taskEffective;
+	private String taskEffective;
 	
 	
 
@@ -88,11 +88,11 @@ public class WorkerRecordTrans {
 		this.taskMarkTime = taskMarkTime;
 	}
 
-	public Boolean getTaskEffective() {
+	public String getTaskEffective() {
 		return taskEffective;
 	}
 
-	public void setTaskEffective(Boolean taskEffective) {
+	public void setTaskEffective(String taskEffective) {
 		this.taskEffective = taskEffective;
 	}
 

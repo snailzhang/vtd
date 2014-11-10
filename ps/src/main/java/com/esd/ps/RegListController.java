@@ -77,15 +77,14 @@ public class RegListController {
 	@ResponseBody
 	public Map<String, Object> regListPost(HttpSession session, int page, String beginDate, String endDate) {
 		logger.debug("beginDateate:{},endDateate:{}", beginDate, endDate);
-
 		Map<String, Object> map = new HashMap<String, Object>();
 		int districtId = Integer.parseInt(session.getAttribute(Constants.ID).toString());
 		List<RegistrationTrans> list = new ArrayList<RegistrationTrans>();
-		if (endDate.trim().length() > 0 || endDate.isEmpty()) {
+		if (endDate.trim().length() > 0 || !endDate.isEmpty()) {
 			try {
 				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
 				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-				Date myDate = formatter.parse(endDate);
+				Date myDate = formatter.parse(endDate);			
 				Calendar c = Calendar.getInstance();
 				c.setTime(myDate);
 				c.add(Calendar.DATE, 1);

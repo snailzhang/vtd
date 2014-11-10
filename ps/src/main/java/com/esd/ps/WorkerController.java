@@ -180,18 +180,18 @@ public class WorkerController {
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(workerId, page, downPackName, Constants.ROW);
 		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId, downPackName);
 		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
-		logger.debug("workerRecordList:{}", workerRecordList);
 		int totlePage=0;
-		if (workerRecordList.isEmpty() || workerRecordList == null) {
+		if (totle == 0) {
 			map.clear();
 			map.put(Constants.TOTLE, totle);
 			map.put(Constants.TOTLE_PAGE, totlePage);
 			map.put(Constants.LIST, list);
 			return map;
 		}
+		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(workerId, page, downPackName, Constants.ROW);
+		logger.debug("workerRecordList:{}", workerRecordList);
 		for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
 			workerRecord workerRecord = (workerRecord) iterator.next();
 			WorkerDownPackHistoryTrans workerDownPackHistoryTrans = new WorkerDownPackHistoryTrans();
@@ -242,7 +242,14 @@ public class WorkerController {
 			WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
 			workerRecordTrans.setDownPackName(downPackName);
 			workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
-			workerRecordTrans.setTaskEffective(workerRecord.getTaskEffective());
+			if(workerRecord.getTaskEffective()==null){
+				workerRecordTrans.setTaskEffective("未检测");
+			}else if(!workerRecord.getTaskEffective()){
+				workerRecordTrans.setTaskEffective("不合格");
+			}else if(workerRecord.getTaskEffective()){
+				workerRecordTrans.setTaskEffective("合格");
+			}
+			
 			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime() / 3600000);
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			workerRecordTrans.setTaskId(workerRecord.getTaskId());
@@ -409,7 +416,6 @@ public class WorkerController {
 				workerRecord.setDownUrl(wrongPath);
 				workerRecord.setPackId(taskWithBLOBs.getPackId());
 				workerRecord.setTaskDownTime(new Date());
-				workerRecord.setTaskEffective(false);
 				workerRecord.setTaskId(taskWithBLOBs.getTaskId());
 				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
 				if (packLockTime > 0) {

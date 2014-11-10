@@ -2,7 +2,7 @@ package com.esd.db.model;
 
 public class userTrans {
 	
-	private Boolean userStatus;
+	private int userStatus;
 	
 	private int userId;
 	
@@ -28,11 +28,11 @@ public class userTrans {
 		return username;
 	}
 	
-	public Boolean getUserStatus() {
+	public int getUserStatus() {
 		return userStatus;
 	}
 
-	public void setUserStatus(Boolean userStatus) {
+	public void setUserStatus(int userStatus) {
 		this.userStatus = userStatus;
 	}
 

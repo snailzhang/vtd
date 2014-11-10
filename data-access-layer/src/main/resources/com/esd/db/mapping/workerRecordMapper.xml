@@ -38,7 +38,7 @@
 				and down_pack_name like "%${downPackName}%"
 			</if>
 		</where>
-		group by down_pack_name
+		group by down_pack_name ORDER BY record_id DESC
 		limit #{begin},#{end}
 	</select>
 	<select id="selectDownPackNameCountByworkerIdGroupByDownPackName" resultType="java.lang.Integer" parameterType="java.util.Map">
@@ -154,7 +154,7 @@
 		select
 		record_id
 		from worker_record
-		where task_id = #{TaskId,jdbcType=INTEGER}
+		where task_id = #{TaskId,jdbcType=INTEGER} and task_statu = 0 
 	</select>
 	<select id="selectWorkerRecordByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
