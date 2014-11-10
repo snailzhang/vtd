@@ -83,7 +83,7 @@
 				var pwd1 = $("#password").val();
 				var pwd2 = $("#repassword").val();
 				if(pwd1 != pwd2){
-					pwd2Obj.next(".help-block").css("color","red").text("密码不一致");
+					$("#repassword").next(".help-block").css("color","red").text("密码不一致");
 					return false;
 				}
 				return true;
