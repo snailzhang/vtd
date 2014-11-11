@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.esd.common.disability.CheckDisabilityCard;
 import com.esd.db.model.Registration;
@@ -72,23 +73,39 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView registrationPost(String name, String card, int district, String phone, String qq, String address, String des) {
+	public ModelAndView registrationPost(String name, String card, int district, String phone, String qq, String address, String des, RedirectAttributes redirectAttributes) {
 		logger.debug("name{},card{},district{},phone:{},qq:{},adress:{},des:{}", name, card, district, phone, qq, address, des);
+		if (checkDisabilityCard(name, card)) {
+			Registration registration = new Registration();
+			registration.setName(name);
+			registration.setCard(card);
+			registration.setDistrictId(district);
+			registration.setPhone(phone);
+			registration.setQq(qq);
+			registration.setAddress(address);
+			registration.setDes(des);
+			registration.setCreateMethod("registrationGet");
+			registration.setCreateTime(new Date());
+			StackTraceElement[] items = Thread.currentThread().getStackTrace();
+			registration.setCreateMethod(items[1].toString());
+			registrationService.insertSelective(registration);
+			return new ModelAndView(Constants.REDIRECT + ":regSuccess", "replay", 1);
+		}
+		redirectAttributes.addFlashAttribute("name", name);
+		redirectAttributes.addFlashAttribute("card", card);
+		redirectAttributes.addFlashAttribute("district", district);
+		redirectAttributes.addFlashAttribute(phone, phone);
+		redirectAttributes.addFlashAttribute("qq", qq);
+		redirectAttributes.addFlashAttribute("address", address);
+		return new ModelAndView(Constants.REDIRECT + ":registration", "replay", 0);
+	}
 
-		Registration registration = new Registration();
-		registration.setName(name);
-		registration.setCard(card);
-		registration.setDistrictId(district);
-		registration.setPhone(phone);
-		registration.setQq(qq);
-		registration.setAddress(address);
-		registration.setDes(des);
-		registration.setCreateMethod("registrationGet");
-		registration.setCreateTime(new Date());
-		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		registration.setCreateMethod(items[1].toString());
-		registrationService.insertSelective(registration);
-
+	/**
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/regSuccess", method = RequestMethod.GET)
+	public ModelAndView regSuccessGet() {
 		return new ModelAndView("registration/regSuccess");
 	}
 

@@ -11,6 +11,8 @@ public class workerRecord {
     private Integer packId;
 
     private Integer taskId;
+    
+    private String userName;
 
     private String taskName;
 
@@ -74,8 +76,17 @@ public class workerRecord {
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
+    
+    
+    public String getUserName() {
+		return userName;
+	}
 
-    public String getTaskName() {
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getTaskName() {
         return taskName;
     }
 

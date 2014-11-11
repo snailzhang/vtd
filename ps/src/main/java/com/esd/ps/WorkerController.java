@@ -424,6 +424,7 @@ public class WorkerController {
 				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
 				workerRecord.setTaskStatu(0);
 				workerRecord.setWorkerId(workerId);
+				workerRecord.setUserName(session.getAttribute(Constants.USER_NAME).toString());
 				StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
 				workerRecord.setCreateMethod(items1[1].toString());
 				workerRecordService.insertSelective(workerRecord);

@@ -124,7 +124,11 @@ public class ManagerController {
 	 */
 	@Value("${MSG_OLD_PASSWORD_ERROR}")
 	private String MSG_OLD_PASSWORD_ERROR;
-
+	/**
+	 * 修改失败
+	 */
+	@Value("${MSG_UPDATE_ERROR}")
+	private String MSG_UPDATE_ERROR;
 	/**
 	 * 登录管理员页
 	 * 
@@ -150,7 +154,7 @@ public class ManagerController {
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> managerPost(String userNameCondition, int userType, int page, int year, int month, int taskUpload) {
-		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
+		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, year, month);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
@@ -166,7 +170,7 @@ public class ManagerController {
 					continue;
 				}
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month);
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month,null);
 				if (taskUpload == 1) {
 					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
 						continue;
@@ -182,11 +186,11 @@ public class ManagerController {
 					trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
 				}
 				trans.setUserId(user.getUserId());
-				if(user.getUserStatus()){
+				if (user.getUserStatus()) {
 					trans.setUserStatus(1);
-				}else{
+				} else {
 					trans.setUserStatus(0);
-				}	
+				}
 				trans.setUsername(user.getUsername());
 				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
 				if (user.getUpdateTime() == null) {
@@ -200,7 +204,10 @@ public class ManagerController {
 			list.add(trans);
 		}
 		map.clear();
-		Double taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month);
+		Double taskMarkTimeMonthTotle = 0.00;
+		if (taskUpload > 0) {
+			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month,userNameCondition);
+		}
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
@@ -224,7 +231,7 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public ModelAndView workerDetailGET(RedirectAttributes redirectAttributes,int userId, String username, HttpSession session) {
+	public ModelAndView workerDetailGET(RedirectAttributes redirectAttributes, int userId, String username, HttpSession session) {
 		Map<String, Object> model = new HashMap<>();
 		model.clear();
 		model.put("userId", userId);
@@ -256,7 +263,7 @@ public class ManagerController {
 			int workerId = workerService.getWorkerIdByUserId(userId);
 			List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, statu, year, month, taskNameCondition, page, Constants.ROW);
 			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, year, month, taskNameCondition);
-			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month);
+			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month,null);
 			map.clear();
 			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 			map.put(Constants.LIST, list);
@@ -316,9 +323,16 @@ public class ManagerController {
 		}
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		user.setUpdateMethod(items[1].toString());
-		userService.updateByPrimaryKeySelective(user);
+		int replay = userService.updateByPrimaryKeySelective(user);
+		if(replay == 1){
+			map.clear();
+			map.put(Constants.REPLAY,replay);
+			map.put(Constants.MESSAGE,MSG_UPDATE_SUCCESS);
+			return map;
+		}
 		map.clear();
-		map.put(Constants.REPLAY, MSG_UPDATE_SUCCESS);
+		map.put(Constants.REPLAY,0);
+		map.put(Constants.MESSAGE, MSG_UPDATE_ERROR);
 		return map;
 	}
 
