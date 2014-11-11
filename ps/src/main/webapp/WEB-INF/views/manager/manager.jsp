@@ -106,12 +106,12 @@
 						<form class="form-inline" role="form">
 						<div class="form-group">
 							<label class="radio-inline">
-								<input type="radio" class="changeust" name="inlineRadioOptions" id="" value="1">可用
+								<input type="radio" class="changeust" name="inlineRadioOptions" id="" value="1" autocomplete="off">可用
 							</label>
 					   </div>
 					   <div class="form-group">
 							<label class="radio-inline">
-								<input type="radio" class="changeust" name="inlineRadioOptions" id="" value="0">禁用
+								<input type="radio" class="changeust" name="inlineRadioOptions" id="" value="0" autocomplete="off">禁用
 							</label>
 					   </div>
 					   </form>
@@ -162,16 +162,17 @@
 					dataType:'json',
 					success:function(data){
 						if(data.replay == 1){
-							$("#updateStatus").addClass("success").text(data.message);
-							$("#usta"+userId+"").text("ustv");
+							$("#updateStatus").addClass("text-success").text(data.message);
+							$("#usta"+userId+"").text(ustv);
 						}else{
-							$("#updateStatus").addClass("danger").text(data.message);
+							$("#updateStatus").addClass("text-danger").text(data.message);
 						}
 					}
 				});
 			});
 			$(".modal").on('hidden.bs.modal', function (e) {
 				$("#updateStatus,.modal-title").empty();
+				$(".radio-inline input").removeAttr("checked");
 			});
 		});
 		/*--------------------------------------更改用户状态-------------------------------------------------------*/
@@ -181,7 +182,7 @@
 			if(userStatus == 1){
 				$(".radio-inline input[value=1]").attr("checked","checked");
 			}else{
-				$(".radio-inline input[value=2]").attr("checked","checked");
+				$(".radio-inline input[value=0]").attr("checked","checked");
 			}
 			$(".modal").modal('show');
 			
