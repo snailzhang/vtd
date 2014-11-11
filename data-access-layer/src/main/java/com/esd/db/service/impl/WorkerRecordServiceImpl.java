@@ -195,7 +195,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year, int month) {
+	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year, int month,String userNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		if (workerId > 0) {

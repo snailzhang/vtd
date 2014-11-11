@@ -55,7 +55,7 @@ public interface WorkerRecordService {
 	
 	int getPkIDByTaskId(Integer taskId);
 	
-	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year,int month);
+	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year,int month,String userNameCondition);
 	
 	Double getSUMTaskMarkTimeByPackId(int packId);
 }

@@ -6,6 +6,7 @@
 		<result column="worker_id" property="workerId" jdbcType="INTEGER" />
 		<result column="pack_id" property="packId" jdbcType="INTEGER" />
 		<result column="task_id" property="taskId" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
 		<result column="pack_name" property="packName" jdbcType="VARCHAR" />
 		<result column="down_pack_name" property="downPackName" jdbcType="VARCHAR" />
@@ -22,7 +23,7 @@
 		<result column="task_effective" property="taskEffective" jdbcType="BIT" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		record_id, worker_id, pack_id, task_id, task_name, pack_name,down_pack_name,down_url,
+		record_id, worker_id, pack_id, task_id, user_name,task_name, pack_name,down_pack_name,down_url,
 		task_down_time, task_upload_time,
 		task_statu, task_lock_time, task_mark_time, create_time,
 		create_method, update_time,
@@ -61,8 +62,8 @@
 		<if test="workerId !=null and month == null">
 			where worker_id = #{workerId}
 		</if>
-		<if test="workerId ==null and month == null">
-			where DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}'
+		<if test="workerId ==null and month != null">
+			where DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}' and user_name like '%${userNameCondition}%'
 		</if>
 
 	</select>
@@ -87,7 +88,7 @@
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record
 
-			WHERE pack_id = #{packId,jdbcType=INTEGER}
+		WHERE pack_id = #{packId,jdbcType=INTEGER}
 
 	</select>
 	<select id="selectAllCountByWorkerId" resultType="java.lang.Integer" parameterType="java.util.Map">
@@ -154,7 +155,7 @@
 		select
 		record_id
 		from worker_record
-		where task_id = #{TaskId,jdbcType=INTEGER} and task_statu = 0 
+		where task_id = #{TaskId,jdbcType=INTEGER} and task_statu = 0
 	</select>
 	<select id="selectWorkerRecordByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
@@ -210,17 +211,20 @@
 	</delete>
 	<insert id="insert" parameterType="com.esd.db.model.workerRecord">
 		insert into worker_record (record_id, worker_id, pack_id,
-		task_id, task_name, pack_name,down_pack_name,down_url
-		task_down_time, task_upload_time, task_statu,
+		task_id,user_name, task_name, pack_name,down_pack_name,down_url
+		task_down_time, task_upload_time,
+		task_statu,
 		task_lock_time, task_mark_time, create_time,
 		create_method, update_time, update_method,
 		task_effective)
-		values (#{recordId,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER}, #{packId,jdbcType=INTEGER},
-		#{taskId,jdbcType=INTEGER}, #{taskName,jdbcType=VARCHAR}, #{packName,jdbcType=VARCHAR},
+		values (#{recordId,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER},
+		#{packId,jdbcType=INTEGER},
+		#{taskId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},#{taskName,jdbcType=VARCHAR}, #{packName,jdbcType=VARCHAR},
 		#{downPackName,jdbcType=VARCHAR},#{downUrl,jdbcType=VARCHAR},
 		#{taskDownTime,jdbcType=TIMESTAMP},
 		#{taskUploadTime,jdbcType=TIMESTAMP}, #{taskStatu,jdbcType=INTEGER},
-		#{taskLockTime,jdbcType=INTEGER}, #{taskMarkTime,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
+		#{taskLockTime,jdbcType=INTEGER},
+		#{taskMarkTime,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
 		#{createMethod,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
 		#{taskEffective,jdbcType=BIT})
 	</insert>
@@ -238,6 +242,9 @@
 			</if>
 			<if test="taskId != null">
 				task_id,
+			</if>
+			<if test="userName != null">
+				user_name,
 			</if>
 			<if test="taskName != null">
 				task_name,
@@ -295,6 +302,9 @@
 			<if test="taskId != null">
 				#{taskId,jdbcType=INTEGER},
 			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
 			<if test="taskName != null">
 				#{taskName,jdbcType=VARCHAR},
 			</if>
@@ -351,6 +361,9 @@
 			<if test="taskId != null">
 				task_id = #{taskId,jdbcType=INTEGER},
 			</if>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
 			<if test="taskName != null">
 				task_name = #{taskName,jdbcType=VARCHAR},
 			</if>
@@ -401,19 +414,23 @@
 		set worker_id = #{workerId,jdbcType=INTEGER},
 		pack_id = #{packId,jdbcType=INTEGER},
 		task_id = #{taskId,jdbcType=INTEGER},
+		user_name = #{userName,jdbcType=VARCHAR},
 		task_name = #{taskName,jdbcType=VARCHAR},
 		pack_name = #{packName,jdbcType=VARCHAR},
 		down_pack_name = #{downPackName,jdbcType=VARCHAR},
-		down_url = #{downUrl,jdbcType=VARCHAR},
+		down_url =
+		#{downUrl,jdbcType=VARCHAR},
 		task_down_time =
 		#{taskDownTime,jdbcType=TIMESTAMP},
 		task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
 		task_statu = #{taskStatu,jdbcType=INTEGER},
-		task_lock_time = #{taskLockTime,jdbcType=INTEGER},
+		task_lock_time =
+		#{taskLockTime,jdbcType=INTEGER},
 		task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
 		create_time = #{createTime,jdbcType=TIMESTAMP},
 		create_method = #{createMethod,jdbcType=VARCHAR},
-		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_time =
+		#{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
 		task_effective = #{taskEffective,jdbcType=BIT}
 		where record_id = #{recordId,jdbcType=INTEGER}
