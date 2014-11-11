@@ -94,7 +94,35 @@
 		<form role="form" class="form-signin" action="${contextPath}/security/addUser" method="get">
 			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
 		</form>
-		
+		<div class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body">
+						<span id="updateStatus"></span>
+						<form class="form-inline" role="form">
+						<div class="form-group">
+							<label class="radio-inline">
+								<input type="radio" class="changeust" name="inlineRadioOptions" id="" value="1">可用
+							</label>
+					   </div>
+					   <div class="form-group">
+							<label class="radio-inline">
+								<input type="radio" class="changeust" name="inlineRadioOptions" id="" value="0">禁用
+							</label>
+					   </div>
+					   </form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" id="changeUserStatusBtn" class="btn btn-primary">修改</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 	</div>
 	<script type="text/javascript">
 		var utDropdownOpen = false;
@@ -104,15 +132,17 @@
 		var month = 0;
 		var taskUpload = 2;
 		var year = 0;
+		var userId = 0;
 		$(document).ready(function(){
 			var date = new Date();
 			var nowMonth = date.getMonth()+1;
-			var nowYear = date.getYear();
+			var nowYear = date.getFullYear();
 			month = nowMonth;
 			year = nowYear;
 			$("#month option[value="+month+"]").attr("selected","selected");
 			$("#year option[value="+year+"]").attr("selected","selected");
 			chooseUserType(1);
+			/*--------------------------------------点击查询按钮-------------------------------------------------------*/
 			$("#searchBtn").click(function(){
 				month = $("#month").val();
 				year = $("#year").val();
@@ -120,7 +150,43 @@
 				userNameCondition = $("#userNameCondition").val();
 				chooseUserType(1);
 			});
+			/*--------------------------------------点击更改用户状态-------------------------------------------------------*/
+			$("#changeUserStatusBtn").click(function(){
+				var ust = $(".changeust:checked").val();
+				var ustv = "不可用";
+				if(ust == 1)ustv = "可用";
+				$.ajax({
+					type:'POST',
+					data:{"userId":userId,"userStatus":ust},
+					url:'${contextPath}/security/userStatus',
+					dataType:'json',
+					success:function(data){
+						if(data.replay == 1){
+							$("#updateStatus").addClass("success").text(data.message);
+							$("#usta"+userId+"").text("ustv");
+						}else{
+							$("#updateStatus").addClass("danger").text(data.message);
+						}
+					}
+				});
+			});
+			$(".modal").on('hidden.bs.modal', function (e) {
+				$("#updateStatus,.modal-title").empty();
+			});
 		});
+		/*--------------------------------------更改用户状态-------------------------------------------------------*/
+		changeUserStatus = function(uId,userStatus,username){
+			userId = uId;
+			$(".modal-title").text("修改"+username+"状态");
+			if(userStatus == 1){
+				$(".radio-inline input[value=1]").attr("checked","checked");
+			}else{
+				$(".radio-inline input[value=2]").attr("checked","checked");
+			}
+			$(".modal").modal('show');
+			
+		};
+		/*--------------------------------------加载页面-------------------------------------------------------*/
 		chooseUserType = function(pageNum){
 			$.ajax({
 				type:'POST',
@@ -138,7 +204,7 @@
 						var pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";
-							if(item.userStatus)status = "可用";
+							if(item.userStatus == "1")status = "可用";
 							$("tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
@@ -146,7 +212,7 @@
 									"<td>"+item.usertypeenglish+"</td>"+
 									"<td>"+item.createTime+"</td>"+
 									"<td>"+item.taskMarkTimeMonth+"</td>"+
-									"<td class='userStatus'><a href='#'>"+status+"</a></td>"+
+									"<td class='userStatus'><a id='usta"+item.userId+"' href='#' onClick='changeUserStatus("+item.userId+","+item.userStatus+",\""+item.username+"\")'>"+status+"</a></td>"+
 								"</tr>"
 							);
 							$(".pagination").empty();

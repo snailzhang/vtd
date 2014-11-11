@@ -92,6 +92,8 @@
 				if(pwd1 != pwd2){
 					$("#repassword").next(".help-block").css("color","red").text("密码不一致");
 					return false;
+				}else{
+					$("#repassword").next(".help-block").empty();
 				}
 				return true;
 			};

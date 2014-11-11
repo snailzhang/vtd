@@ -177,7 +177,7 @@
 
 		$(document).ready(function() {
 			$("#form").submit(function() {
-				checkNameAndCard();
+				//checkNameAndCard();
 				checkAgreement();
 				if(nameandCardCorrect&&checkAgreementCorrect){
 					return true;
