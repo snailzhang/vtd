@@ -20,7 +20,12 @@
 </head>
 <body>
 	<div class="container">
-
+		<c:if test=”${replay==0}”>
+			<div class="alert alert-danger alert-dismissable">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				错误：姓名和残疾证号不匹配!
+			</div>
+		</c:if>
 
 		<form id="form" action="${contextPath}/registration" method="post" class="form-horizontal" role="form">
 			<h1 class="text-center">语音标注网上报名系统</h1>
@@ -28,13 +33,13 @@
 			<div class="form-group">
 				<label for="name" class="col-sm-2 control-label">姓名</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="name" name="name" placeholder="姓名">
+					<input type="text" class="form-control" value=${name} id="name" name="name" placeholder="姓名">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="card" class="col-sm-2 control-label">残疾证号</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="card" name="card" placeholder="残疾证号">
+					<input type="text" class="form-control" value=${card} id="card" name="card" placeholder="残疾证号">
 				</div>
 			</div>
 			<div class="form-group">
@@ -43,6 +48,9 @@
 					<select class="form-control" name="district" placeholder="发证机构">
 						<option value="0">请选择发证机构</option>
 						<c:forEach items="${districts}" var="item">
+							<c:if test=”${district==item.id}”>
+								<option value="${item.id}" selected="selected">${item.name}</option>
+							</c:if>
 							<option value="${item.id}">${item.name}</option>
 						</c:forEach>
 					</select>
@@ -51,19 +59,19 @@
 			<div class="form-group">
 				<label for="phone" class="col-sm-2 control-label">手机</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" maxlength="12" id="phone" name="phone" placeholder="手机">
+					<input type="text" class="form-control" value=${phone} maxlength="12" id="phone" name="phone" placeholder="手机">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="qq" class="col-sm-2 control-label">QQ</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="qq" name="qq" placeholder="QQ">
+					<input type="text" class="form-control" value=${qq} id="qq" name="qq" placeholder="QQ">
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="address" class="col-sm-2 control-label">家庭住址</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" id="address" name="address" placeholder="家庭住址">
+					<input type="text" class="form-control" value=${address} id="address" name="address" placeholder="家庭住址">
 				</div>
 			</div>
 			<div class="form-group">
