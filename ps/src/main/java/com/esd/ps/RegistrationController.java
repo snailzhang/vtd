@@ -62,7 +62,6 @@ public class RegistrationController {
 				}
 			}
 		}
-		session.setAttribute(Constants.REPLAY, 1);
 		return new ModelAndView("registration/reg", "districts", list);
 	}
 
@@ -94,13 +93,14 @@ public class RegistrationController {
 			registrationService.insertSelective(registration);
 			return new ModelAndView(Constants.REDIRECT + ":regSuccess", "replay", 1);
 		}
+		redirectAttributes.addFlashAttribute("replay",0);
 		redirectAttributes.addFlashAttribute("name", name);
 		redirectAttributes.addFlashAttribute("card", card);
 		redirectAttributes.addFlashAttribute("district", district);
 		redirectAttributes.addFlashAttribute(phone, phone);
 		redirectAttributes.addFlashAttribute("qq", qq);
 		redirectAttributes.addFlashAttribute("address", address);
-		return new ModelAndView(Constants.REDIRECT + ":registration", "replay", 0);
+		return new ModelAndView(Constants.REDIRECT + ":registration");
 	}
 
 	/**
