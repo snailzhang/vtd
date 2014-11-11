@@ -99,11 +99,11 @@
 									downloadTD = "<td><a onClick='downloadTask("+item.taskId+",\""+item.taskId+"\")'>下载</a></td>";
 								}
 								var tS = "";
-								if(item.taskStatu == 0){
+								if(item.taskStatus == 0){
 									tS = "未完成";
-								}else if(item.taskStatu == 1){
+								}else if(item.taskStatus == 1){
 									tS = "已完成";
-								}else if(item.taskStatu == 2){
+								}else if(item.taskStatus == 2){
 									tS = "超时";
 								}
 								addBodyTr +=
@@ -155,16 +155,16 @@
 							var ps = "";
 							var downloadTD = "<td></td>";
 							var packDetailTR = "<tr role='tabpanel' class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
-							if(item.packStatu == 0){
+							if(item.packStatus == 0){
 								ps = "未完成";
 								var pName = "";
 								 pName= item.downPackName;
 								//pName = pName.substring(0,item.downPackName.indexOf(".zip"));
 								downloadTD = "<td><a class='downloadPack' onClick='downloadPack(\""+pName+"\")'>下载</a></td>";
 								packDetailTR = "<tr role='tabpanel' class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
-							}else if(item.packStatu == 1){
+							}else if(item.packStatus == 1){
 								ps = "已完成";
-							}else if(item.packStatu == 2){
+							}else if(item.packStatus == 2){
 								ps = "已超时";
 							}
 							$("tbody").append(
