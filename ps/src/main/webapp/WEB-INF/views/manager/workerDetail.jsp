@@ -104,7 +104,7 @@
 		$(document).ready(function(){
 			var date = new Date();
 			var nowMonth = date.getMonth()+1;
-			var nowYear = date.getYear();
+			var nowYear = date.getFullYear();
 			month = nowMonth;
 			year = nowYear;
 			$("#month option[value="+month+"]").attr("selected","selected");
