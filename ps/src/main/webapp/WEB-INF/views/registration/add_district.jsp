@@ -43,6 +43,17 @@
 		      </div>
 		   </div>
 		   <div class="form-group">
+				<label for="district" class="col-sm-2 control-label">所属部门上级</label>
+				<div class="col-sm-10">
+					<select class="form-control" name="pId" placeholder="所属部门上级">
+						<option value="0">请选择所属部门上级</option>
+						<c:forEach items="${list}" var="item">
+							<option value="${item.id}">${item.name}</option>
+						</c:forEach>
+					</select>
+				</div>
+			</div>
+		   <div class="form-group">
 		      <label for="name" class="col-sm-2 control-label">所属部门：</label>
 		      <div class="col-sm-10">
 		         <input type="text" class="form-control" name="name" id="name" placeholder="请输入部门名称" autocomplete="off" required="required">

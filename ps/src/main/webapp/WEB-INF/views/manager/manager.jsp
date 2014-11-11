@@ -172,7 +172,7 @@
 			});
 			$(".modal").on('hidden.bs.modal', function (e) {
 				$("#updateStatus,.modal-title").empty();
-				$(".radio-inline input").removeAttr("checked");
+				$(".radio-inline input").attr("checked"," ");
 			});
 		});
 		/*--------------------------------------更改用户状态-------------------------------------------------------*/
