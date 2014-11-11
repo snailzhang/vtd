@@ -19,7 +19,7 @@ import com.esd.db.model.District;
 import com.esd.db.service.DistrictService;
 
 /**
- * 
+ * 区域 
  * @author chen
  * 
  */
@@ -30,11 +30,24 @@ public class DistrictController {
 	@Autowired
 	DistrictService districtService;
 
+	/**
+	 * 农垦信息页
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value = "/district", method = RequestMethod.GET)
 	public ModelAndView districtGET() {
 		return new ModelAndView("registration/district");
 	}
 
+	/**
+	 * 农垦信息列表
+	 * 
+	 * @param page
+	 * @param userName
+	 * @param name
+	 * @return
+	 */
 	@RequestMapping(value = "/district", method = RequestMethod.POST)
 	public Map<String, Object> addDistrictPOST(int page, String userName, String name) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -47,6 +60,11 @@ public class DistrictController {
 		return map;
 	}
 
+	/**
+	 * 增加农垦局页面
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value = "/addDistrict", method = RequestMethod.GET)
 	public ModelAndView addDistrictGET() {
 		List<District> districtList = districtService.getAll(0, null, null, 0);
@@ -59,12 +77,25 @@ public class DistrictController {
 				}
 			}
 		}
-		return new ModelAndView("registration/add_district","list",list);
+		return new ModelAndView("registration/add_district", "list", list);
 	}
 
+	/**
+	 * 增加农垦局信息
+	 * 
+	 * @param userName
+	 * @param password
+	 * @param pId
+	 * @param name
+	 * @param pinyin
+	 * @param phone
+	 * @param address
+	 * @param bank
+	 * @return
+	 */
 	@RequestMapping(value = "/addDistrict", method = RequestMethod.POST)
-	public ModelAndView addDistrictPOST(String userName, String password, int pId,String name, String pinyin, String phone, String address, String bank) {
-		logger.debug("userName:{},password:{},pId:{},name:{},phone:{},address:{},bank:{}", userName, password, pId,name, phone, address, bank);
+	public ModelAndView addDistrictPOST(String userName, String password, int pId, String name, String pinyin, String phone, String address, String bank) {
+		logger.debug("userName:{},password:{},pId:{},name:{},phone:{},address:{},bank:{}", userName, password, pId, name, phone, address, bank);
 		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 		String md5Password = md5.getMd5(userName, password);
 		logger.debug("md5Password:{}", md5Password);

@@ -42,6 +42,7 @@ import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
+import com.esd.ps.model.WorkerRecordTrans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,6 +130,7 @@ public class ManagerController {
 	 */
 	@Value("${MSG_UPDATE_ERROR}")
 	private String MSG_UPDATE_ERROR;
+
 	/**
 	 * 登录管理员页
 	 * 
@@ -170,7 +172,7 @@ public class ManagerController {
 					continue;
 				}
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month,null);
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, null);
 				if (taskUpload == 1) {
 					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
 						continue;
@@ -206,7 +208,7 @@ public class ManagerController {
 		map.clear();
 		Double taskMarkTimeMonthTotle = 0.00;
 		if (taskUpload > 0) {
-			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month,userNameCondition);
+			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month, userNameCondition);
 		}
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
@@ -261,9 +263,45 @@ public class ManagerController {
 		}
 		if (userType == 4) {
 			int workerId = workerService.getWorkerIdByUserId(userId);
-			List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, statu, year, month, taskNameCondition, page, Constants.ROW);
 			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, year, month, taskNameCondition);
-			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month,null);
+			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, null);
+			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId, statu, year, month, taskNameCondition, page, Constants.ROW);
+			List<WorkerRecordTrans> list = new ArrayList<>();
+			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
+				workerRecord workerRecord = (workerRecord) iterator.next();
+				WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
+
+				workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
+				if (workerRecord.getTaskEffective() == null) {
+					workerRecordTrans.setTaskEffective("未审核");
+				} else if (workerRecord.getTaskEffective()) {
+					workerRecordTrans.setTaskEffective("合格");
+				} else if (!workerRecord.getTaskEffective()) {
+					workerRecordTrans.setTaskEffective("不合格");
+				}
+				if (workerRecord.getTaskMarkTime() == null) {
+					workerRecordTrans.setTaskMarkTime(0.00);
+				} else {
+					workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
+				}
+				workerRecordTrans.setTaskName(workerRecord.getTaskName());
+				if (workerRecord.getTaskStatu() == 1) {
+					workerRecordTrans.setTaskStatu("已完成");
+				} else if (workerRecord.getTaskStatu() == 0) {
+					workerRecordTrans.setTaskStatu("进行中");
+				} else if (workerRecord.getTaskStatu() == 2) {
+					workerRecordTrans.setTaskStatu("已超时");
+				}
+				if (workerRecord.getTaskUploadTime() == null) {
+					workerRecordTrans.setTaskUploadTime("");
+				} else {
+					workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
+				}
+
+				list.add(workerRecordTrans);
+			}
+
 			map.clear();
 			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 			map.put(Constants.LIST, list);
@@ -324,14 +362,14 @@ public class ManagerController {
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		user.setUpdateMethod(items[1].toString());
 		int replay = userService.updateByPrimaryKeySelective(user);
-		if(replay == 1){
+		if (replay == 1) {
 			map.clear();
-			map.put(Constants.REPLAY,replay);
-			map.put(Constants.MESSAGE,MSG_UPDATE_SUCCESS);
+			map.put(Constants.REPLAY, replay);
+			map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
 			return map;
 		}
 		map.clear();
-		map.put(Constants.REPLAY,0);
+		map.put(Constants.REPLAY, 0);
 		map.put(Constants.MESSAGE, MSG_UPDATE_ERROR);
 		return map;
 	}

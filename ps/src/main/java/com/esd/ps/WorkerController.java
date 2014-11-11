@@ -243,7 +243,7 @@ public class WorkerController {
 			workerRecordTrans.setDownPackName(downPackName);
 			workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
 			if(workerRecord.getTaskEffective()==null){
-				workerRecordTrans.setTaskEffective("未检测");
+				workerRecordTrans.setTaskEffective("未审核");
 			}else if(!workerRecord.getTaskEffective()){
 				workerRecordTrans.setTaskEffective("不合格");
 			}else if(workerRecord.getTaskEffective()){
@@ -254,7 +254,13 @@ public class WorkerController {
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			workerRecordTrans.setTaskId(workerRecord.getTaskId());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
-			workerRecordTrans.setTaskStatu(workerRecord.getTaskStatu());
+			if (workerRecord.getTaskStatu() == 1) {
+				workerRecordTrans.setTaskStatu("已完成");
+			} else if (workerRecord.getTaskStatu() == 0) {
+				workerRecordTrans.setTaskStatu("进行中");
+			} else if (workerRecord.getTaskStatu() == 2) {
+				workerRecordTrans.setTaskStatu("已超时");
+			}
 			if (workerRecord.getTaskUploadTime() == null) {
 				workerRecordTrans.setTaskUploadTime("");
 			} else {
