@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,7 @@ public class RegistrationController {
 	 * @return
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.GET)
-	public ModelAndView registrationGet() {
+	public ModelAndView registrationGet(HttpSession session) {
 		List<District> districtList = districtService.getAll(0, null, null, 0);
 		List<District> list = new ArrayList<>();
 		if (districtList != null) {
@@ -60,6 +62,7 @@ public class RegistrationController {
 				}
 			}
 		}
+		session.setAttribute(Constants.REPLAY, 1);
 		return new ModelAndView("registration/reg", "districts", list);
 	}
 
