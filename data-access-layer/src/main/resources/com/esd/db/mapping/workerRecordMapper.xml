@@ -77,13 +77,14 @@
 				and task_name like "%${taskNameCondition}%"
 			</if>
 			<if test="month != null">
-				and DATE_FORMAT(task_upload_time,"%m") = "${month}" and year(task_upload_time) = '${year}'
+				and DATE_FORMAT(task_down_time,"%m") = "${month}" and year(task_down_time) = '${year}'
 			</if>
 			<if test="statu == 0 or statu == 1 or statu == 2">
 				and task_statu = #{statu}
 			</if>
-			limit #{begin},#{end}
 		</where>
+			limit #{begin},#{end}
+		
 	</select>
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record

@@ -259,11 +259,10 @@ public class ManagerController {
 	 * @param userId
 	 * @param userName
 	 * @param session
-	 * @param model
 	 * @return
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public ModelAndView workerDetailGET(RedirectAttributes redirectAttributes, int userId, String username, HttpSession session) {
+	public ModelAndView workerDetailGET(int userId, String username, HttpSession session) {
 		Map<String, Object> model = new HashMap<>();
 		model.clear();
 		model.put(Constants.USER_ID, userId);

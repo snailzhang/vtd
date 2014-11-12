@@ -193,8 +193,9 @@ public class TaskServiceImpl implements TaskService {
 
 		return taskMapper.updateByTaskId(task);
 	}
-
-	@Override
+	/**
+	 * 
+	 */
 	public List<task> getLikeTaskName(int packId, int page, int taskStuts, String taskNameCondition, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
@@ -218,6 +219,12 @@ public class TaskServiceImpl implements TaskService {
 			map.put("taskNameCondition", taskNameCondition);
 
 		return taskMapper.selectTaskCountByPackIdAndTaskStatus(map);
+	}
+	
+	@Override
+	public int updateByPackId(task task) {
+		
+		return taskMapper.updateByPackId(task);
 	}
 
 }

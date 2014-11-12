@@ -36,6 +36,8 @@ public interface TaskService {
 	int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record);
 
 	int updateByPrimaryKey(task record);
+	
+	 int updateByPackId(task task);
 
 	int getUndoTaskCount();
 

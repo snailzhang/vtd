@@ -168,6 +168,7 @@ public class EmployerController {
 		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
 			packTrans packTrans = new packTrans();
+
 			packTrans.setPackId(pack.getPackId());
 			packTrans.setPackName(pack.getPackName());
 			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
@@ -187,6 +188,7 @@ public class EmployerController {
 			} else {
 				packTrans.setTaskMarkTime(taskMarkTime);
 			}
+
 			list.add(packTrans);
 		}
 		map.clear();
@@ -195,6 +197,23 @@ public class EmployerController {
 		map.put(Constants.LIST, list);
 		logger.debug("list:{},totle:{},totlePages", list, totle, Math.ceil((double) totle / (double) Constants.ROW));
 		return map;
+	}
+
+	/**
+	 * 修改任务等级
+	 * 
+	 * @param packId
+	 * @param taskLvl
+	 * @return
+	 */
+	@RequestMapping(value = "/updateTaskLvl", method = RequestMethod.POST)
+	@ResponseBody
+	public ModelAndView updateTaskLvlPOST(int packId, int taskLvl) {
+		task task = new task();
+		task.setPackId(packId);
+		task.setTaskLvl(taskLvl);
+		taskService.updateByPackId(task);
+		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.EMPLOYER);
 	}
 
 	/**

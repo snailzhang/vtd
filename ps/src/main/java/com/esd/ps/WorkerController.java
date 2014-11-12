@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
 import com.esd.ps.model.WorkerDownPackHistoryTrans;
@@ -271,7 +273,11 @@ public class WorkerController {
 			}
 
 			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime() / 3600000);
-			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
+			if (workerRecord.getTaskMarkTime() == null) {
+				workerRecordTrans.setTaskMarkTime(0.00);
+			} else {
+				workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
+			}
 			workerRecordTrans.setTaskId(workerRecord.getTaskId());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskStatus(workerRecord.getTaskStatu());
@@ -486,6 +492,7 @@ public class WorkerController {
 		}
 		List<String> listMath = new ArrayList<String>();
 		List<String> listAll = new ArrayList<String>();
+		int task_id = Constants.ZERO;
 		for (int i = 0; i < files.length; i++) {
 			listAll.add(files[i].getOriginalFilename());
 		}
@@ -499,11 +506,13 @@ public class WorkerController {
 					e2.printStackTrace();
 				}
 				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(Constants.POINT)) + Constants.POINT + Constants.WAV;
+				// nameWav上传的文件名在,taskName工作者正在做的任务名
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();
 					String uploadTaskNameI = files[i].getOriginalFilename();
 					for (int l = 0; l < files.length; l++) {
 						String uploadTaskNameJ = files[l].getOriginalFilename();
+						// 判断文件类型前的名相同的是否有两个,上传必须是两个同名不同类型的文件同时上传
 						if (uploadTaskNameI.substring(0, uploadTaskNameI.indexOf(Constants.POINT)).equals(uploadTaskNameJ.substring(0, uploadTaskNameJ.indexOf(Constants.POINT)))
 								&& uploadTaskNameI.equals(uploadTaskNameJ) == false) {
 							byte[] bytes = files[i].getBytes();
@@ -519,6 +528,7 @@ public class WorkerController {
 									while ((tempString = reader.readLine()) != null) {
 										str = tempString.split(" ");
 										if (str.length > 2 && str[2].equals(FILE_MATCH_CONDITION)) {
+											// 统计标注时间
 											taskMarkTime = taskMarkTime + (Double.parseDouble(str[4]) - Double.parseDouble(str[3])) + 0.08;
 										}
 									}
@@ -533,7 +543,8 @@ public class WorkerController {
 											e1.printStackTrace();
 										}
 									}
-								} 
+								}
+								// 更新task表
 								taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format("%.12f", taskMarkTime)));
 								taskWithBLOBs.setTaskTag(bytes);
 								taskWithBLOBs.setTaskId(taskId);
@@ -542,7 +553,7 @@ public class WorkerController {
 								StackTraceElement[] items = Thread.currentThread().getStackTrace();
 								taskWithBLOBs.setUpdateMethod(items[1].toString());
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-
+								// 更新workerRecord表
 								workerRecord workerRecord = new workerRecord();
 								workerRecord.setTaskUploadTime(new Date());
 								workerRecord.setTaskStatu(1);
@@ -552,6 +563,7 @@ public class WorkerController {
 								workerRecord.setUpdateMethod(items1[1].toString());
 								workerRecordService.updateByPrimaryKeySelective(workerRecord);
 								listMath.add(uploadTaskNameI);
+								task_id = taskId;
 							} else if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
 								taskWithBLOBs.setTaskTextgrid(bytes);
 								taskWithBLOBs.setTaskId(taskId);
@@ -562,12 +574,24 @@ public class WorkerController {
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 								listMath.add(uploadTaskNameI);
 							}
-
 						}
 					}
 				}
 			}
 		}
+		/**
+		 * 查看任务包的任务完成情况,当任务数等于完成数时更新pack表的pack_status
+		 */
+		if (task_id > 0) {
+			int packId = workerRecordService.getPkIDByTaskId(task_id);
+			if (taskService.getTaskCountByPackId(packId) == workerRecordService.getFinishTaskCountByPackId(packId)) {
+				packWithBLOBs pack = new packWithBLOBs();
+				pack.setPackId(packId);
+				pack.setPackStatus(true);
+				packService.updateByPrimaryKey(pack);
+			}
+		}
+
 		int doingTaskCount = workerRecordService.getDoingTaskCountByWorkerId(workerId);
 		if (doingTaskCount == 0) {
 			workerRecord workerRecord = workerRecordService.getWorkerRecordByWorkerId(workerId);

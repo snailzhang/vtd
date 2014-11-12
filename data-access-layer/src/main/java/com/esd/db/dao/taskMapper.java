@@ -38,6 +38,8 @@ public interface taskMapper {
 
     int updateByPrimaryKey(task record);
     
+    int updateByPackId(task task);
+    
     int selectUndoTaskCount();
     
     int selectFirstPackIdOrderByTaskLvl();
