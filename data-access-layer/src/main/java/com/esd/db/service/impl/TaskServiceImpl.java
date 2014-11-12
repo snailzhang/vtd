@@ -227,4 +227,10 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.updateByPackId(task);
 	}
 
+	@Override
+	public int getTaskLvlByPackId(int packId) {
+		
+		return taskMapper.selectTaskLvlByPackId(packId);
+	}
+
 }

@@ -66,4 +66,6 @@ public interface TaskService {
 	int getFreePackCount();
 	
 	int updateByTaskId(task task);
+	
+	int getTaskLvlByPackId(int packId);
 }

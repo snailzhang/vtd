@@ -36,6 +36,12 @@
 	<sql id="Blob_Column_List">
 		task_wav, task_tag, task_textgrid
 	</sql>
+	<select id="selectTaskLvlByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		task_lvl
+		from task
+		where pack_id=#{packId,jdbcType=INTEGER} limit 0,1
+	</select>
 	<select id="selectLikeTaskName" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />

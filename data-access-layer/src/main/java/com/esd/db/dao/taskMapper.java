@@ -69,4 +69,6 @@ public interface taskMapper {
     int selectFreePackCount();
     
     int updateByTaskId(task task);
+    
+	int selectTaskLvlByPackId(int packId);
 }

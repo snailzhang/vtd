@@ -174,6 +174,7 @@ public class EmployerController {
 			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
 			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId()));
 			packTrans.setDownCount(pack.getDownCount());
+			packTrans.setTaskLvl(taskService.getTaskLvlByPackId(pack.getPackId()));
 			if (pack.getPackStatus()) {
 				packTrans.setPackStatus(1);
 			} else {
