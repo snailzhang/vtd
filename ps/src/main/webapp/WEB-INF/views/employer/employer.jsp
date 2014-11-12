@@ -214,36 +214,63 @@
 	</div><!-- /.modal -->
 	
 	<script type="text/javascript">
+		var unpackNameCondition = "";
+		var packNameCondition = "";
 		var taskNameCondition = "";
 		var searchPackId = 0;
+		var pucPageTotle = 0;
+		var pcPageTotle = 0;
+		var pdPageTotle = 0;
 		if('${match}' == '1'){
 			alert("文件已存在");
 		}
 		$(document).ready(function(){
-			loadUnCompletePackList(1,"");
-			loadCompletePackList(1,"");
+			loadUnCompletePackList(1);
+			loadCompletePackList(1);
 			loadUnzipPackList();
-			/*---------------------------------------上传文件check-------------------------------------------------------------------*/
+			/*---------------------------------------查询-------------------------------------------------------------------*/
 			$("#un_searchBtn").click(function(){
-				var upc = $("#unpackNameCondition").val();
-				loadUnCompletePackList(1,upc);
+				unpackNameConditionunpackNameCondition = $("#unpackNameCondition").val();
+				loadUnCompletePackList(1);
 			});
 			$("#searchBtn").click(function(){
-				var pc = $("#packNameCondition").val();
-				loadCompletePackList(1,pc);
+				packNameCondition = $("#packNameCondition").val();
+				loadCompletePackList(1);
 			});
 			$("#tasksearchBtn").click(function(){
 				var tnc = $("#taskSearch").val();
 				taskNameCondition = tnc;
-				loadPackDetailList(searchPackId,1,2);
+				loadPackDetailList(1);
+			});
+			/*--------------------------------------跳转页-------------------------------------------------------*/
+			$("#packUncomplete .pageGoBtn").click(function(){
+				var pageNum = 0;
+				pageNum = $("#packUncomplete .pageGoText").val();
+				if(pageNum !=0&&0<pageNum&&pageNum<pucPageTotle+1){
+					loadUnCompletePackList(pageNum);
+				}
+			});
+			$("#packComplete .pageGoBtn").click(function(){
+				var pageNum = 0;
+				pageNum = $("#packComplete .pageGoText").val();
+				if(pageNum !=0&&0<pageNum&&pageNum<pcPageTotle+1){
+					loadCompletePackList(pageNum);
+				}
+			});
+			$("#packDetailModal .pageGoBtn").click(function(){
+				var pageNum = 0;
+				pageNum = $("#packDetailModal .pageGoText").val();
+				if(pageNum !=0&&0<pageNum&&pageNum<pdPageTotle+1){
+					loadPackDetailList(pageNum);
+				}
 			});
 		});
 		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
-		loadUnCompletePackList = function(pageNum,packNameCondition){
+		loadUnCompletePackList = function(pageNum){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
-				data:{"packStuts":0,"page":pageNum,"packNameCondition":packNameCondition},
+				data:{"packStuts":0,"page":pageNum,"packNameCondition":unpackNameCondition},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -287,8 +314,11 @@
 								);
 							}
 						});
-						$("#packUncomplete .pagination").empty();
-						var pageTotal = data.totlePage;
+						var pageDom = $("#packUncomplete .pagination");
+						pageDom.empty();
+						pucPageTotle = data.totlePage;
+						page.creatPageHTML(pageNum,pucPageTotle,pageDom,"loadUnCompletePackList");
+						/*
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
 								$("#packUncomplete .pagination").append(
@@ -305,12 +335,13 @@
 								);
 							}
 						}
+						*/
 					}
 				}
 			});
 		};
 		/*---------------------------------------请求已完成任务包列表-------------------------------------------------------------------*/
-		loadCompletePackList = function(pageNum,packNameCondition){
+		loadCompletePackList = function(pageNum){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
@@ -332,7 +363,7 @@
 									"<td>"+(i+1)+"</td>"+
 									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
 									"<td>"+item.taskCount+"</td>"+
-									"<td>"+item.DownCount+"</td>"+
+									"<td>"+item.downCount+"</td>"+
 									"<td>"+item.packLockTime+"小时</td>"+
 									"<td>"+item.createTime+"</td>"+
 									"<td>"+item.taskMarkTime+"</td>"+
@@ -340,24 +371,28 @@
 								"</tr>"
 							);
 						});
-						$("#packComplete .pagination").empty();
-						var pageTotal = data.totlePage;
+						var pageDom = $("#packComplete .pagination");
+						pageDom.empty();
+						pcPageTotle = data.totlePage;
+						page.creatPageHTML(pageNum,pcPageTotle,pageDom,"loadCompletePackList");
+						/*
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
 								
 								$("#packComplete .pagination").append(
-									"<li class='active'><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
+									"<li class='active'><a onClick='loadCompletePackList("+i+",\""+packNameCondition+"\")'>"+
 									i+
 									"</a></li>"
 								);
 							}else{
 								$("#packComplete .pagination").append(
-									"<li><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
+									"<li><a onClick='loadCompletePackList("+i+",\""+packNameCondition+"\")'>"+
 									i+
 									"</a></li>"
 								);
 							}
 						}
+						*/
 					}
 				}
 			});
@@ -420,23 +455,23 @@
 		/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
 		showPackDetail = function(packId){
 			$("#packDetailTBody").empty();
-			loadPackDetailList(packId,1,2);
 			searchPackId = packId;
+			loadPackDetailList(1);
 			$("#packDetailModal").modal('show');
 			$("#taskSearch").focus();
 		};
-		loadPackDetailList = function(packId,pageNum,taskStuts){
+		loadPackDetailList = function(pageNum){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/packDetail',
-				data:{"packId":packId,"page":pageNum,"taskStuts":taskStuts,"taskNameCondition":taskNameCondition},
+				data:{"packId":searchPackId,"page":pageNum,"taskStuts":2,"taskNameCondition":taskNameCondition},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
 						$("#packDetailTBody").empty();
 						$("#packDetailTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
 					}else{
-						$("#packDetailTBody,#packDetailModal .pagination").empty();
+						$("#packDetailTBody").empty();
 						$.each(data.list,function(i,item){
 							var te = "";
 							if(item.taskEffective != null)te = item.taskEffective;
@@ -449,7 +484,11 @@
 								"</tr>"
 							);
 						});
-						var pageTotal = data.totlePage;
+						var pageDom = $("#packDetailModal .pagination");
+						pageDom.empty();
+						pdPageTotle = data.totlePage;
+						page.creatPageHTML(pageNum,pdPageTotle,pageDom,"loadPackDetailList");
+						/*
 						for(var i=1;i<pageTotal+1;i++){
 							if(i==pageNum){
 								$("#packDetailModal .pagination").append(
@@ -465,6 +504,7 @@
 								);
 							}
 						}
+						*/
 					}
 					
 					

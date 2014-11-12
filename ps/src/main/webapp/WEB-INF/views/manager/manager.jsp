@@ -133,6 +133,7 @@
 		var taskUpload = 2;
 		var year = 0;
 		var userId = 0;
+		var pageTotal = 0;
 		$(document).ready(function(){
 			var date = new Date();
 			var nowMonth = date.getMonth()+1;
@@ -174,6 +175,14 @@
 				$("#updateStatus,.modal-title").empty();
 				$(".radio-inline input").attr("checked"," ");
 			});
+			/*--------------------------------------跳转页-------------------------------------------------------*/
+			$(".pageGoBtn").click(function(){
+				var pageNum = 0;
+				pageNum = $(".pageGoText").val();
+				if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+					chooseUserType(pageNum);
+				}
+			});
 		});
 		/*--------------------------------------更改用户状态-------------------------------------------------------*/
 		changeUserStatus = function(uId,userStatus,username){
@@ -202,7 +211,7 @@
 					}else{
 						var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
 						$("#taskMarkTimeMonthTotle").text("本月标注总时长："+taskMarkTimeMonthTotle);
-						var pageTotal = data.totlePage;
+						pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";
 							if(item.userStatus == "1")status = "可用";
@@ -216,22 +225,10 @@
 									"<td class='userStatus'><a id='usta"+item.userId+"' href='#' onClick='changeUserStatus("+item.userId+","+item.userStatus+",\""+item.username+"\")'>"+status+"</a></td>"+
 								"</tr>"
 							);
-							$(".pagination").empty();
-							for(var i=1;i<pageTotal+1;i++){
-								if(i==pageNum){
-									$(".pagination").append(
-										"<li class='active'><a onClick='chooseUserType("+i+")'>"+
-										i+
-										"</a></li>"
-									);
-								}else{
-									$(".pagination").append(
-										"<li><a onClick='chooseUserType("+i+")'>"+
-										i+
-										"</a></li>"
-									);
-								}
-							}
+							var pageDom = $(".pagination");
+							pageDom.empty();
+							page.creatPageHTML(pageNum,pageTotal,pageDom,"chooseUserType");
+							
 						});
 					}
 				}

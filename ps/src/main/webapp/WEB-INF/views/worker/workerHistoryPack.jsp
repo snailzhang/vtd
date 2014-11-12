@@ -61,17 +61,26 @@
 
 	<script type="text/javascript">
 		$(document).ready(function(){
-			
+			var pageTotal = 0;
+			var downPackName = "";
 			$("#headJSPWorkerHistoryPack").hide();
 			$("#headJSPWorker").show();
-			loadPackListHistory(1,"");
+			loadPackListHistory(1);
+			/*--------------------------------------跳转页-------------------------------------------------------*/
+			$(".pageGoBtn").click(function(){
+				var pageNum = 0;
+				pageNum = $(".pageGoText").val();
+				if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+					loadPackListHistory(pageNum);
+				}
+			});
 			/*******************************刷新按钮**************************************************/
 			$("#refreshPage").click(function(){
 				window.location.reload();
 			});
 			$("#searchBtn").click(function(){
-				var downPackName = $("#downPackName").val();
-				loadPackListHistory(1,downPackName);
+				downPackName = $("#downPackName").val();
+				loadPackListHistory(1);
 			});
 			/*******************************显示任务包详细**************************************************/
 			$("#packHistoryTable").on('show.bs.collapse', function () {
@@ -96,7 +105,7 @@
 							$.each(data.list,function(i,item){
 								var downloadTD = "<td></td>";
 								if(isf == 0){
-									downloadTD = "<td><a onClick='downloadTask("+item.taskId+",\""+item.taskId+"\")'>下载</a></td>";
+									downloadTD = "<td><a onClick='downloadTask("+item.taskId+",\""+item.taskName+"\")'>下载</a></td>";
 								}
 								var tS = "";
 								if(item.taskStatus == 0){
@@ -139,7 +148,7 @@
 			});
 		});
 		/*******************************加载任务包历史列表**************************************************/
-		loadPackListHistory = function(pageNum,downPackName){
+		loadPackListHistory = function(pageNum){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/workerHistoryPack',
@@ -178,22 +187,11 @@
 								"</tr>"+packDetailTR
 							);
 						});
-						var pageTotal = data.totlePage;
-						for(var i=1;i<pageTotal+1;i++){
-							if(i==pageNum){
-								$(".pagination").append(
-									"<li class='active'><a onClick='loadPackListHistory("+i+",\""+downPackName+"\")'>"+
-									i+
-									"</a></li>"
-								);
-							}else{
-								$(".pagination").append(
-									"<li><a onClick='loadPackListHistory("+i+",\""+downPackName+"\")'>"+
-									i+
-									"</a></li>"
-								);
-							}
-						}
+						pageTotal = data.totlePage;
+						var pageDom = $(".pagination");
+						pageDom.empty();
+						page.creatPageHTML(pageNum,pageTotal,pageDom,"loadPackListHistory");
+						
 					}
 					
 				}

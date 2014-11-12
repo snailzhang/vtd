@@ -101,6 +101,7 @@
 		var month = 0;
 		var statu = 3;
 		var year = 0;
+		var pageTotal = 0;
 		$(document).ready(function(){
 			var date = new Date();
 			var nowMonth = date.getMonth()+1;
@@ -118,6 +119,14 @@
 				statu = $("#statu").val();
 				chooseUserType(1);
 			});
+			/*--------------------------------------跳转页-------------------------------------------------------*/
+			$(".pageGoBtn").click(function(){
+				var pageNum = 0;
+				pageNum = $(".pageGoText").val();
+				if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+					chooseUserType(pageNum);
+				}
+			});
 		});
 		chooseUserType = function(pageNum){
 			$.ajax({
@@ -129,9 +138,10 @@
 					$("tbody").empty();
 					if(data.list == ""){
 						$("tbody").empty();
+						$("#taskMarkTimeMonthTotle").text("本月标注总时长:0");
 						$("tbody").append("<tr class='text-danger'><td colspan='7'>无内容</td></tr>");
 					}else{
-						var pageTotal = data.totlePage;
+						pageTotal = data.totlePage;
 						$("#taskMarkTimeMonthTotle").text("本月标注总时长:"+data.taskMarkTimeMonth);
 						$.each(data.list,function(i,item){
 							
@@ -146,22 +156,10 @@
 									"<td>"+item.taskEffective+"</td>"+
 								"</tr>"
 							);
-							$(".pagination").empty();
-							for(var i=1;i<pageTotal+1;i++){
-								if(i==pageNum){
-									$(".pagination").append(
-										"<li class='active'><a onClick='chooseUserType("+i+")'>"+
-										i+
-										"</a></li>"
-									);
-								}else{
-									$(".pagination").append(
-										"<li><a onClick='chooseUserType("+i+")'>"+
-										i+
-										"</a></li>"
-									);
-								}
-							}
+							var pageDom = $(".pagination");
+							pageDom.empty();
+							page.creatPageHTML(pageNum,pageTotal,pageDom,"chooseUserType");
+							
 						});
 					}
 				}
