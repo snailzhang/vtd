@@ -15,6 +15,8 @@ public class WorkerRecordTrans {
 	private String taskUploadTime;
 
 	private String taskStatu;
+	
+	private int taskStatus;
 
 	private Integer taskLockTime;
 
@@ -66,6 +68,14 @@ public class WorkerRecordTrans {
 
 	public String getTaskStatu() {
 		return taskStatu;
+	}
+	
+	public int getTaskStatus() {
+		return taskStatus;
+	}
+
+	public void setTaskStatus(int taskStatus) {
+		this.taskStatus = taskStatus;
 	}
 
 	public void setTaskStatu(String taskStatu) {

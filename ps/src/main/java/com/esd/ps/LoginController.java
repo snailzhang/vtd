@@ -116,7 +116,7 @@ public class LoginController {
 		session.removeAttribute(Constants.USER_NAME);
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView(Constants.REDIRECT+":"+"login");
+		return new ModelAndView(Constants.REDIRECT+Constants.COLON+Constants.LOGIN);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class LoginController {
 			if (user.getUserStatus() == false) {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_STOP);
 				redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
-				return new ModelAndView(Constants.REDIRECT+":"+"login");
+				return new ModelAndView(Constants.REDIRECT+Constants.COLON+Constants.LOGIN);
 			}
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 			String md5Password = md5.getMd5(username, password);
@@ -169,22 +169,22 @@ public class LoginController {
 				usertype userType = userTypeService.getUserTypeById(user.getUsertype());
 				logger.debug("typeName:{}", userType.getUserTypeNameEnglish());
 				String typeName = userType.getUserTypeNameEnglish();
-				if (typeName.equals("manager")) {
+				if (typeName.equals(Constants.MANAGER)) {
 					if (managerService.getCountManagerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("manager/manager_add", "userRegisted", 0);
+						return new ModelAndView(Constants.MANAGER+Constants.SLASH+Constants.MANAGER+Constants.UNDERLINE+Constants.ADD, Constants.USER_REGISTED, 0);
 					}
-				} else if (typeName.equals("employer")) {
+				} else if (typeName.equals(Constants.EMPLOYER)) {
 					if (employerService.getCountEmployerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("manager/employer_add", "userRegisted", 0);
+						return new ModelAndView(Constants.MANAGER+Constants.SLASH+Constants.EMPLOYER+Constants.UNDERLINE+Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 				} else if (typeName.equals("inspector")) {
 
-				} else if (typeName.equals("worker")) {
+				} else if (typeName.equals(Constants.WORKER)) {
 					if (workerService.getCountWorkerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView("manager/worker_add", "userRegisted", 0);
+						return new ModelAndView(Constants.MANAGER+Constants.SLASH+Constants.WORKER+Constants.UNDERLINE+Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 				}
-				return new ModelAndView(Constants.REDIRECT+":" + "security/" + typeName);
+				return new ModelAndView(Constants.REDIRECT+Constants.COLON + Constants.SECURITY+Constants.SLASH + typeName);
 
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
@@ -192,7 +192,7 @@ public class LoginController {
 		}
 		redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
 		redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
-		return new ModelAndView(Constants.REDIRECT+":"+"login");
+		return new ModelAndView(Constants.REDIRECT+Constants.COLON+Constants.LOGIN);
 	}
 
 	/**
@@ -232,10 +232,10 @@ public class LoginController {
 						taskService.updateByTaskId(task);
 
 						// 删除任务的下载备份
-						String url = request.getServletContext().getRealPath("/");
+						String url = request.getServletContext().getRealPath(Constants.SLASH);
 						File fold = new File(url + Constants.WORKERTEMP);
 						if (fold.exists()) {
-							File zipFile = new File(url + "/" + workerRecord.getDownPackName());
+							File zipFile = new File(url + Constants.SLASH + workerRecord.getDownPackName());
 							if (zipFile.exists()) {
 								zipFile.delete();
 							}

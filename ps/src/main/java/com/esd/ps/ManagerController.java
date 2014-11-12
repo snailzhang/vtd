@@ -130,6 +130,36 @@ public class ManagerController {
 	 */
 	@Value("${MSG_UPDATE_ERROR}")
 	private String MSG_UPDATE_ERROR;
+	/**
+	 * 已完成
+	 */
+	@Value("${MSG_FINISH}")
+	private String MSG_FINISH;
+	/**
+	 * 已超时
+	 */
+	@Value("${MSG_TIME_OUT}")
+	private String MSG_TIME_OUT;
+	/**
+	 * 进行中
+	 */
+	@Value("${MSG_DOING}")
+	private String MSG_DOING;
+	/**
+	 * 未审核
+	 */
+	@Value("${MSG_UNAUDIT}")
+	private String MSG_UNAUDIT;
+	/**
+	 * 不合格
+	 */
+	@Value("${MSG_UNQUALIFY}")
+	private String MSG_UNQUALIFY;
+	/**
+	 * 合格
+	 */
+	@Value("${MSG_QUALIFY}")
+	private String MSG_QUALIFY;
 
 	/**
 	 * 登录管理员页
@@ -196,7 +226,7 @@ public class ManagerController {
 				trans.setUsername(user.getUsername());
 				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
 				if (user.getUpdateTime() == null) {
-					trans.setUpdateTime("");
+					trans.setUpdateTime(Constants.EMPTY);
 				} else {
 					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 				}
@@ -215,9 +245,9 @@ public class ManagerController {
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		if (taskMarkTimeMonthTotle == null) {
-			map.put("taskMarkTimeMonthTotle", 0.00);
+			map.put(Constants.TASKMARKTIMEMONTHTOTLE, 0.00);
 		} else {
-			map.put("taskMarkTimeMonthTotle", taskMarkTimeMonthTotle);
+			map.put(Constants.TASKMARKTIMEMONTHTOTLE, taskMarkTimeMonthTotle);
 		}
 
 		return map;
@@ -236,9 +266,9 @@ public class ManagerController {
 	public ModelAndView workerDetailGET(RedirectAttributes redirectAttributes, int userId, String username, HttpSession session) {
 		Map<String, Object> model = new HashMap<>();
 		model.clear();
-		model.put("userId", userId);
-		model.put("chooseUserName", username);
-		return new ModelAndView("manager/workerDetail", "model", model);
+		model.put(Constants.USER_ID, userId);
+		model.put(Constants.CHOOSEUSERNAME, username);
+		return new ModelAndView("manager/workerDetail", Constants.MODEL, model);
 	}
 
 	/**
@@ -274,11 +304,11 @@ public class ManagerController {
 
 				workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
 				if (workerRecord.getTaskEffective() == null) {
-					workerRecordTrans.setTaskEffective("未审核");
+					workerRecordTrans.setTaskEffective(MSG_UNAUDIT);
 				} else if (workerRecord.getTaskEffective()) {
-					workerRecordTrans.setTaskEffective("合格");
+					workerRecordTrans.setTaskEffective(MSG_QUALIFY);
 				} else if (!workerRecord.getTaskEffective()) {
-					workerRecordTrans.setTaskEffective("不合格");
+					workerRecordTrans.setTaskEffective(MSG_UNQUALIFY);
 				}
 				if (workerRecord.getTaskMarkTime() == null) {
 					workerRecordTrans.setTaskMarkTime(0.00);
@@ -287,14 +317,14 @@ public class ManagerController {
 				}
 				workerRecordTrans.setTaskName(workerRecord.getTaskName());
 				if (workerRecord.getTaskStatu() == 1) {
-					workerRecordTrans.setTaskStatu("已完成");
+					workerRecordTrans.setTaskStatu(MSG_FINISH);
 				} else if (workerRecord.getTaskStatu() == 0) {
-					workerRecordTrans.setTaskStatu("进行中");
+					workerRecordTrans.setTaskStatu(MSG_DOING);
 				} else if (workerRecord.getTaskStatu() == 2) {
-					workerRecordTrans.setTaskStatu("已超时");
+					workerRecordTrans.setTaskStatu(MSG_TIME_OUT);
 				}
 				if (workerRecord.getTaskUploadTime() == null) {
-					workerRecordTrans.setTaskUploadTime("");
+					workerRecordTrans.setTaskUploadTime(Constants.EMPTY);
 				} else {
 					workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
 				}
@@ -399,11 +429,11 @@ public class ManagerController {
 		int replay = 0;
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
-			return new ModelAndView(Constants.REDIRECT + ":" + "addUser");
+			return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.ADD_USER);
 		}
 		if (StringUtils.isBlank(password)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
-			return new ModelAndView(Constants.REDIRECT + ":" + "addUser");
+			return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.ADD_USER);
 		}
 		user user = userService.getAllUsersByUserName(username);
 		if (user != null) {
@@ -440,9 +470,9 @@ public class ManagerController {
 			String page = userTypeService.getUserTypeNameEnglish(usertype);
 			session.setAttribute(Constants.ADD_USER_ID, userService.getUserIdByUserName(username));
 			logger.debug("page:{}", page);
-			return new ModelAndView("manager/" + page + "_add", "userRegisted", 1);
+			return new ModelAndView(Constants.MANAGER + Constants.SLASH + page + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 1);
 		}
-		return new ModelAndView(Constants.REDIRECT + ":" + "addUser");
+		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.ADD_USER);
 	}
 
 	/**
@@ -469,7 +499,7 @@ public class ManagerController {
 		manager.setCreateMethod(items[1].toString());
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView(Constants.REDIRECT + ":" + "manager");
+		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.MANAGER);
 	}
 
 	/**
@@ -489,10 +519,10 @@ public class ManagerController {
 		String address = null;
 		if (userRegisted == 0) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address = Constants.REDIRECT + ":" + "employer";
+			address = Constants.REDIRECT + Constants.COLON + Constants.EMPLOYER;
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address = Constants.REDIRECT + ":" + "manager";
+			address = Constants.REDIRECT + Constants.COLON + Constants.MANAGER;
 		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
@@ -597,7 +627,8 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.GET)
 	public ModelAndView addWorkerGET() {
-		return new ModelAndView("manager/worker_add");
+		// manager/worker_add
+		return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.WORKER + Constants.UNDERLINE + Constants.ADD);
 	}
 
 	/**
@@ -628,12 +659,11 @@ public class ManagerController {
 			String address = null;
 			if (userRegisted == 0) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-				address = Constants.REDIRECT + ":" + "worker";
+				address = Constants.REDIRECT + Constants.COLON + Constants.WORKER;
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address = Constants.REDIRECT + ":" + "manager";
+				address = Constants.REDIRECT + Constants.COLON + Constants.MANAGER;
 			}
-
 			if (!workerImage.isEmpty()) {
 				try {
 					worker.setWorkerImage(workerImage.getBytes());
@@ -657,8 +687,8 @@ public class ManagerController {
 			session.removeAttribute(Constants.ADD_USER_ID);
 			return new ModelAndView(address);
 		}
-		redirectAttributes.addFlashAttribute("worker", worker);
-		return new ModelAndView(Constants.REDIRECT + ":" + "addworker");
+		redirectAttributes.addFlashAttribute(Constants.WORKER, worker);
+		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.ADD_WORKER);
 	}
 
 	/**
@@ -690,7 +720,7 @@ public class ManagerController {
 	public ModelAndView workerCenter(HttpSession session) {
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		worker worker = workerService.getWorkerByUserId(userId);
-		return new ModelAndView("worker/workerCenter", "worker", worker);
+		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKERCENTER, Constants.WORKER, worker);
 	}
 
 	/**
@@ -700,8 +730,8 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.GET)
 	public ModelAndView updatePassWordGET() {
-
-		return new ModelAndView("manager/updatePassword");
+		System.out.println(Constants.WORKER + Constants.SLASH + Constants.UPDATE_PASSWORD);
+		return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.UPDATE_PASSWORD);
 	}
 
 	/**

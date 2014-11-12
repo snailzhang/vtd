@@ -90,23 +90,38 @@ public class EmployerController {
 	/**
 	 * 解压完成
 	 */
-	@Value("${MSG_UNZIP_FINISH}")
-	private String MSG_UNZIP_FINISH;
+	@Value("${MSG_FINISH}")
+	private String MSG_FINISH;
 	/**
 	 * 包不符规范或已损坏
 	 */
 	@Value("${MSG_PACK_ERROR}")
 	private String MSG_PACK_ERROR;
 	/**
-	 * 任务正在做
+	 * 进行中
 	 */
 	@Value("${MSG_DOING}")
 	private String MSG_DOING;
 	/**
-	 * 任务没人做
+	 * 空闲中
 	 */
 	@Value("${MSG_UNDO}")
 	private String MSG_UNDO;
+	/**
+	 * 未审核
+	 */
+	@Value("${MSG_UNAUDIT}")
+	private String MSG_UNAUDIT;
+	/**
+	 * 不合格
+	 */
+	@Value("${MSG_UNQUALIFY}")
+	private String MSG_UNQUALIFY;
+	/**
+	 * 合格
+	 */
+	@Value("${MSG_QUALIFY}")
+	private String MSG_QUALIFY;
 
 	/**
 	 * 登录发包商页
@@ -118,7 +133,7 @@ public class EmployerController {
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		String ftpUrl = employerService.getUploadUrlByEmployerId(employerId);
-		return new ModelAndView("employer/employer", "ftpUrl", ftpUrl);
+		return new ModelAndView(Constants.EMPLOYER + Constants.SLASH + Constants.EMPLOYER, Constants.FTPURl, ftpUrl);
 	}
 
 	/**
@@ -167,11 +182,11 @@ public class EmployerController {
 			packTrans.setUnzip(pack.getUnzip());
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
 			Double taskMarkTime = workerRecordService.getSUMTaskMarkTimeByPackId(pack.getPackId());
-			if(taskMarkTime==null){
+			if (taskMarkTime == null) {
 				packTrans.setTaskMarkTime(0.00);
-			}else{
+			} else {
 				packTrans.setTaskMarkTime(taskMarkTime);
-			}	
+			}
 			list.add(packTrans);
 		}
 		map.clear();
@@ -226,7 +241,7 @@ public class EmployerController {
 	public ModelAndView detailpageGet(int packId, HttpSession session) {
 		logger.debug("packId:{}", packId);
 		session.setAttribute(Constants.PACK_ID, packId);
-		return new ModelAndView("employer/packDetail");// 返回值没写
+		return new ModelAndView(Constants.EMPLOYER + Constants.SLASH + Constants.PACK_DETAIL);// 返回值没写
 	}
 
 	/**
@@ -261,12 +276,12 @@ public class EmployerController {
 			taskTrans taskTrans = new taskTrans();
 
 			taskTrans.setTaskName(task.getTaskName());
-			if(task.getTaskEffective()==null){
-				taskTrans.setTaskEffective("");
-			}else if(task.getTaskEffective()){
-				taskTrans.setTaskEffective("合格");
-			}else if(task.getTaskEffective() == false){
-				taskTrans.setTaskEffective("不合格");
+			if (task.getTaskEffective() == null) {
+				taskTrans.setTaskEffective(MSG_UNAUDIT);
+			} else if (task.getTaskEffective()) {
+				taskTrans.setTaskEffective(MSG_QUALIFY);
+			} else if (task.getTaskEffective() == false) {
+				taskTrans.setTaskEffective(MSG_UNQUALIFY);
 			}
 			if (task.getWorkerId() == null) {
 				taskTrans.setTaskUploadTime(MSG_UNDO);
@@ -308,7 +323,7 @@ public class EmployerController {
 			map.put(Constants.MESSAGE, MSG_FOLD_NOT_EXIST);
 			return map;
 		}
-		File zipfile = new File(url + "/" + packName);
+		File zipfile = new File(url + Constants.SLASH + packName);
 		if (!zipfile.exists()) {
 			map.clear();
 			map.put(Constants.MESSAGE, MSG_PACK_NOT_EXIST);
@@ -322,7 +337,7 @@ public class EmployerController {
 				return map;
 			}
 
-			ZipFile zip = new ZipFile(url + "/" + packName);
+			ZipFile zip = new ZipFile(url + Constants.SLASH + packName);
 			if (zip.size() > 1) {
 
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
@@ -345,7 +360,7 @@ public class EmployerController {
 			return map;
 		}
 		map.clear();
-		map.put(Constants.MESSAGE, MSG_UNZIP_FINISH);
+		map.put(Constants.MESSAGE, MSG_FINISH);
 		return map;
 	}
 
@@ -371,7 +386,7 @@ public class EmployerController {
 			f.mkdir();
 		}
 		logger.debug("url:{}", packName);
-		File zipFile = new File(url + "/" + packName);
+		File zipFile = new File(url + Constants.SLASH + packName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
@@ -403,9 +418,9 @@ public class EmployerController {
 		packService.updateByPrimaryKeySelective(pack);
 
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.EMPLOYERTEMP + "/" + packName;
+		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH + packName;
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
 
@@ -420,7 +435,7 @@ public class EmployerController {
 	 * @return
 	 */
 	public static String url(HttpServletRequest request) {
-		String url = request.getServletContext().getRealPath("/");
+		String url = request.getServletContext().getRealPath(Constants.SLASH);
 		url = url + Constants.EMPLOYERTEMP;
 		File f = new File(url);
 		if (f.exists()) {
@@ -484,21 +499,21 @@ public class EmployerController {
 		String zipEntryName = null;
 		int packId = 0;
 		try {
-			ZipFile zip = new ZipFile(url + "/" + packName);
+			ZipFile zip = new ZipFile(url + Constants.SLASH + packName);
 			for (Enumeration<?> entries = zip.entries(); entries.hasMoreElements();) {
 				ZipEntry entry = (ZipEntry) entries.nextElement();
-				String taskDir = "";
+				String taskDir = Constants.EMPTY;
 				if (entry.isDirectory()) {// 判断是否是文件夹
 					continue;
 				}
 				zipEntryName = entry.getName();
-				if (zipEntryName.indexOf("/") < zipEntryName.lastIndexOf("/")) {
-					String str[] = zipEntryName.split("/");
+				if (zipEntryName.indexOf(Constants.SLASH) < zipEntryName.lastIndexOf(Constants.SLASH)) {
+					String str[] = zipEntryName.split(Constants.SLASH);
 					// (zipEntryName.indexOf("/") + 1)
-					taskDir = zipEntryName.substring((zipEntryName.indexOf("/") + 1), zipEntryName.lastIndexOf("/"));
+					taskDir = zipEntryName.substring((zipEntryName.indexOf(Constants.SLASH) + 1), zipEntryName.lastIndexOf(Constants.SLASH));
 					zipEntryName = str[(str.length - 1)];
 				}
-				zipEntryName = zipEntryName.substring(zipEntryName.indexOf("/") + 1, zipEntryName.length());
+				zipEntryName = zipEntryName.substring(zipEntryName.indexOf(Constants.SLASH) + 1, zipEntryName.length());
 				// 收集没有匹配的文件
 				if (zipEntryName.substring((zipEntryName.length() - 3), zipEntryName.length()).equals(Constants.WAV) == false) {
 					// String noMatch = zipEntryName;

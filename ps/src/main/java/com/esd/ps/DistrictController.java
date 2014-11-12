@@ -77,7 +77,7 @@ public class DistrictController {
 				}
 			}
 		}
-		return new ModelAndView("registration/add_district", "list", list);
+		return new ModelAndView("registration/add_district", Constants.LIST, list);
 	}
 
 	/**
@@ -109,6 +109,6 @@ public class DistrictController {
 		district.setBank(bank);
 		district.setPinyin(pinyin);
 		districtService.insertSelective(district);
-		return new ModelAndView(Constants.REDIRECT + ":district");
+		return new ModelAndView(Constants.REDIRECT + Constants.COLON+"district");
 	}
 }

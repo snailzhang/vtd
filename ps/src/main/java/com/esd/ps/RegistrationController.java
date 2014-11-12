@@ -92,13 +92,13 @@ public class RegistrationController {
 			registrationService.insertSelective(registration);
 			return new ModelAndView(Constants.REDIRECT + ":regSuccess", "replay", 1);
 		}
-		redirectAttributes.addFlashAttribute("replay",0);
-		redirectAttributes.addFlashAttribute("name", name);
-		redirectAttributes.addFlashAttribute("card", card);
-		redirectAttributes.addFlashAttribute("district", district);
-		redirectAttributes.addFlashAttribute(phone, phone);
-		redirectAttributes.addFlashAttribute("qq", qq);
-		redirectAttributes.addFlashAttribute("address", address);
+		redirectAttributes.addFlashAttribute(Constants.REPLAY,0);
+		redirectAttributes.addFlashAttribute(Constants.NAME, name);
+		redirectAttributes.addFlashAttribute(Constants.CARD, card);
+		redirectAttributes.addFlashAttribute(Constants.DISTRICT, district);
+		redirectAttributes.addFlashAttribute(Constants.PHONE, phone);
+		redirectAttributes.addFlashAttribute(Constants.QQ, qq);
+		redirectAttributes.addFlashAttribute(Constants.ADDRESS, address);
 		return new ModelAndView(Constants.REDIRECT + ":registration");
 	}
 

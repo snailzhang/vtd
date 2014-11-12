@@ -75,6 +75,27 @@ public class WorkerController {
 	 */
 	@Value("${MSG_TASK_NOT_ENOUGH}")
 	private String MSG_TASK_NOT_ENOUGH;
+	/**
+	 * 未审核
+	 */
+	@Value("${MSG_UNAUDIT}")
+	private String MSG_UNAUDIT;
+	/**
+	 * 不合格
+	 */
+	@Value("${MSG_UNQUALIFY}")
+	private String MSG_UNQUALIFY;
+	/**
+	 * 合格
+	 */
+	@Value("${MSG_QUALIFY}")
+	private String MSG_QUALIFY;
+	/**
+	 * task_mark_time计算的匹配条件 <Chinese-talk>
+	 */
+	@Value("${FILE_MATCH_CONDITION}")
+	private String FILE_MATCH_CONDITION;
+
 	int workerMark = 0;
 
 	/**
@@ -84,7 +105,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.GET)
 	public ModelAndView worker() {
-		return new ModelAndView("worker/worker");
+		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKER);
 	}
 
 	/**
@@ -116,8 +137,8 @@ public class WorkerController {
 		}
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		Date downloadTime = new Date();
-		int packId = 0;
-		workerMark = 1;
+		int packId = Constants.ZERO;
+		workerMark = Constants.ONE;
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
@@ -125,7 +146,7 @@ public class WorkerController {
 			packId = task.getPackId();
 			taskTrans taskTrans = new taskTrans();
 			if (task.getTaskDownloadTime() == null) {
-				taskTrans.setTaskDownloadTime("");
+				taskTrans.setTaskDownloadTime(Constants.EMPTY);
 			} else {
 				taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
 			}
@@ -147,7 +168,6 @@ public class WorkerController {
 			map.put(Constants.LIST, list);
 			map.put(Constants.MM, mm);
 		} catch (ParseException e) {
-
 			e.printStackTrace();
 		}
 		session.setAttribute(Constants.WORKER_ID, workerId);
@@ -161,7 +181,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/workerHistoryPack", method = RequestMethod.GET)
 	public ModelAndView workerHistoryPackGET() {
-		return new ModelAndView("worker/workerHistoryPack");
+		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKEHISTORYPACK);
 	}
 
 	/**
@@ -182,7 +202,7 @@ public class WorkerController {
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId, downPackName);
 		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
-		int totlePage=0;
+		int totlePage = 0;
 		if (totle == 0) {
 			map.clear();
 			map.put(Constants.TOTLE, totle);
@@ -205,7 +225,7 @@ public class WorkerController {
 			}
 
 			if (workerRecord.getTaskDownTime() == null) {
-				workerDownPackHistoryTrans.setDownTime("");
+				workerDownPackHistoryTrans.setDownTime(Constants.EMPTY);
 			} else {
 				workerDownPackHistoryTrans.setDownTime(sdf.format(workerRecord.getTaskDownTime()));
 			}
@@ -242,31 +262,24 @@ public class WorkerController {
 			WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
 			workerRecordTrans.setDownPackName(downPackName);
 			workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
-			if(workerRecord.getTaskEffective()==null){
-				workerRecordTrans.setTaskEffective("未审核");
-			}else if(!workerRecord.getTaskEffective()){
-				workerRecordTrans.setTaskEffective("不合格");
-			}else if(workerRecord.getTaskEffective()){
-				workerRecordTrans.setTaskEffective("合格");
+			if (workerRecord.getTaskEffective() == null) {
+				workerRecordTrans.setTaskEffective(MSG_UNAUDIT);
+			} else if (!workerRecord.getTaskEffective()) {
+				workerRecordTrans.setTaskEffective(MSG_UNQUALIFY);
+			} else if (workerRecord.getTaskEffective()) {
+				workerRecordTrans.setTaskEffective(MSG_QUALIFY);
 			}
-			
+
 			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime() / 3600000);
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			workerRecordTrans.setTaskId(workerRecord.getTaskId());
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
-			if (workerRecord.getTaskStatu() == 1) {
-				workerRecordTrans.setTaskStatu("已完成");
-			} else if (workerRecord.getTaskStatu() == 0) {
-				workerRecordTrans.setTaskStatu("进行中");
-			} else if (workerRecord.getTaskStatu() == 2) {
-				workerRecordTrans.setTaskStatu("已超时");
-			}
+			workerRecordTrans.setTaskStatus(workerRecord.getTaskStatu());
 			if (workerRecord.getTaskUploadTime() == null) {
-				workerRecordTrans.setTaskUploadTime("");
+				workerRecordTrans.setTaskUploadTime(Constants.EMPTY);
 			} else {
 				workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
 			}
-
 			list.add(workerRecordTrans);
 		}
 		map.put(Constants.LIST, list);
@@ -287,7 +300,7 @@ public class WorkerController {
 		File f = new File(url);
 		File zipFile = null;
 		if (f.exists()) {
-			zipFile = new File(url + "/" + downPackName);
+			zipFile = new File(url + Constants.SLASH + downPackName);
 			if (zipFile.exists()) {
 				map.put(Constants.WRONGPATH, workerRecordService.getDownUrlByDownPackName(downPackName));
 				return map;
@@ -305,9 +318,9 @@ public class WorkerController {
 			e.printStackTrace();
 		}
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.WORKERTEMP + "/" + downPackName;
+		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		map.put(Constants.WRONGPATH, wrongPath);
 		return map;
 	}
@@ -324,12 +337,12 @@ public class WorkerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String url = WorkerController.url(request);
 		File f = new File(url);
-		String zipName = taskName.substring(0, taskName.indexOf(".")) + ".zip";
-		File zipFile = new File(url + "/" + zipName);
+		String zipName = taskName.substring(0, taskName.indexOf(Constants.POINT)) + Constants.POINT + Constants.ZIP;
+		File zipFile = new File(url + Constants.SLASH + zipName);
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.WORKERTEMP + "/" + zipName;
+		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + zipName;
 		if (!f.exists()) {
 			f.mkdir();
 		}
@@ -374,19 +387,19 @@ public class WorkerController {
 		String url = WorkerController.url(request);
 		logger.debug("url:{}", url);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
-		String downPackName = sdf.format(new Date()) + "_" + downTaskCount + "_" + userId + "w.zip";
+		String downPackName = sdf.format(new Date()) + Constants.UNDERLINE + downTaskCount + Constants.UNDERLINE + userId + Constants.POINT + Constants.ZIP;
 		File f = new File(url);
 		if (f.exists() == false) {
 			f.mkdir();
 		}
-		File zipFile = new File(url + "/" + downPackName);
+		File zipFile = new File(url + Constants.SLASH + downPackName);
 		if (zipFile.exists()) {
 			zipFile.delete();
 		}
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
+		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = "http://" + serverAndProjectPath + "/" + Constants.WORKERTEMP + "/" + downPackName;
+		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
@@ -421,6 +434,7 @@ public class WorkerController {
 				workerRecord.setDownPackName(downPackName);
 				workerRecord.setDownUrl(wrongPath);
 				workerRecord.setPackId(taskWithBLOBs.getPackId());
+				workerRecord.setPackName(packService.getPackNameByPackId(taskWithBLOBs.getPackId()));
 				workerRecord.setTaskDownTime(new Date());
 				workerRecord.setTaskId(taskWithBLOBs.getTaskId());
 				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
@@ -484,27 +498,27 @@ public class WorkerController {
 				} catch (IOException e2) {
 					e2.printStackTrace();
 				}
-				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(".")) + "." + Constants.WAV;
+				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(Constants.POINT)) + Constants.POINT + Constants.WAV;
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();
 					String uploadTaskNameI = files[i].getOriginalFilename();
 					for (int l = 0; l < files.length; l++) {
 						String uploadTaskNameJ = files[l].getOriginalFilename();
-						if (uploadTaskNameI.substring(0, uploadTaskNameI.indexOf(".")).equals(uploadTaskNameJ.substring(0, uploadTaskNameJ.indexOf(".")))
+						if (uploadTaskNameI.substring(0, uploadTaskNameI.indexOf(Constants.POINT)).equals(uploadTaskNameJ.substring(0, uploadTaskNameJ.indexOf(Constants.POINT)))
 								&& uploadTaskNameI.equals(uploadTaskNameJ) == false) {
 							byte[] bytes = files[i].getBytes();
-							String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(".") + 1), files[i].getOriginalFilename().length());
+							String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(Constants.POINT) + 1), files[i].getOriginalFilename().length());
 							if (nameLast.equalsIgnoreCase(Constants.TAG)) {
 								BufferedReader reader = null;
 								double taskMarkTime = 0;
 								String str[] = null;
 								try {
-									reader = new BufferedReader(new InputStreamReader(files[i].getInputStream(), "GBK"));
+									reader = new BufferedReader(new InputStreamReader(files[i].getInputStream(), Constants.GBK));
 									String tempString = null;
 									// 按行读取文件的内容
 									while ((tempString = reader.readLine()) != null) {
 										str = tempString.split(" ");
-										if (str.length > 2 && str[2].equals("<Chinese-talk>")) {
+										if (str.length > 2 && str[2].equals(FILE_MATCH_CONDITION)) {
 											taskMarkTime = taskMarkTime + (Double.parseDouble(str[4]) - Double.parseDouble(str[3])) + 0.08;
 										}
 									}
@@ -519,8 +533,8 @@ public class WorkerController {
 											e1.printStackTrace();
 										}
 									}
-								}
-								taskWithBLOBs.setTaskMarkTime(taskMarkTime);
+								} 
+								taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format("%.12f", taskMarkTime)));
 								taskWithBLOBs.setTaskTag(bytes);
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
@@ -532,7 +546,7 @@ public class WorkerController {
 								workerRecord workerRecord = new workerRecord();
 								workerRecord.setTaskUploadTime(new Date());
 								workerRecord.setTaskStatu(1);
-								workerRecord.setTaskMarkTime(taskMarkTime);
+								workerRecord.setTaskMarkTime(Double.parseDouble(String.format("%.12f", taskMarkTime)));
 								workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
 								StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
 								workerRecord.setUpdateMethod(items1[1].toString());
@@ -558,13 +572,13 @@ public class WorkerController {
 		if (doingTaskCount == 0) {
 			workerRecord workerRecord = workerRecordService.getWorkerRecordByWorkerId(workerId);
 			String url = WorkerController.url(request);
-			File file = new File(url + "/" + workerRecord.getDownPackName());
+			File file = new File(url + Constants.SLASH + workerRecord.getDownPackName());
 			if (file.exists()) {
 				file.delete();
 			}
 		}
-		map.put("listMath", listMath);
-		map.put("listAll", listAll);
+		map.put(Constants.LISTMATH, listMath);
+		map.put(Constants.LISTALL, listAll);
 		return map;
 	}
 
@@ -575,7 +589,7 @@ public class WorkerController {
 	 * @return
 	 */
 	public static String url(HttpServletRequest request) {
-		String url = request.getServletContext().getRealPath("/");
+		String url = request.getServletContext().getRealPath(Constants.SLASH);
 		url = url + Constants.WORKERTEMP;
 		File f = new File(url);
 		if (f.exists()) {

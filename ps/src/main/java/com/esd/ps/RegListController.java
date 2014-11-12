@@ -61,7 +61,7 @@ public class RegListController {
 		}
 		int districtId = Integer.parseInt(session.getAttribute(Constants.ID).toString());
 		District district = districtService.selectByPrimaryKey(districtId);
-		return new ModelAndView("registration/regList", "districtName", district.getName());
+		return new ModelAndView("registration/regList", Constants.DISTRICT_NAME, district.getName());
 	}
 
 	/**
@@ -82,9 +82,9 @@ public class RegListController {
 		List<RegistrationTrans> list = new ArrayList<RegistrationTrans>();
 		if (endDate.trim().length() > 0 || !endDate.isEmpty()) {
 			try {
-				SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-				Date myDate = formatter.parse(endDate);			
+				SimpleDateFormat sdf1 = new SimpleDateFormat(Constants.DATE_FORMAT);
+				SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_HAVE_LINE);
+				Date myDate = formatter.parse(endDate);
 				Calendar c = Calendar.getInstance();
 				c.setTime(myDate);
 				c.add(Calendar.DATE, 1);
@@ -139,19 +139,19 @@ public class RegListController {
 		boolean b = true;
 		String FileDownloadPath = "null";
 		int districtId = Integer.parseInt(session.getAttribute(Constants.ID).toString());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
+		SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_HAVE_LINE);
 		try {
 			// 下载全部
 			String url = request.getServletContext().getRealPath("/");
 			// 创建导出文件夹
-			File downloadPath = new File(url + "excel");
+			File downloadPath = new File(url + Constants.EXCELTEMP);
 			if (!(downloadPath.exists())) {
 				downloadPath.mkdir();
 			}
 			// 创建文件唯一名称File.separator
 			// String uuid = UUID.randomUUID().toString();
-			String pinyin = session.getAttribute("pinyin").toString();
+			String pinyin = session.getAttribute(Constants.PINYIN).toString();
 			String exportPath = null, fileName = null;
 
 			if (beginDate.isEmpty() || beginDate == null || beginDate.trim().length() == 0) {
@@ -171,7 +171,7 @@ public class RegListController {
 			b = PoiCreateExcel.createRegistrationExcel(exportPath, list);
 			if (b) {
 				String destPath = request.getLocalAddr() + ":" + request.getLocalPort() + request.getContextPath();
-				FileDownloadPath = "http://" + destPath + "/excel/" + fileName + ".xls";
+				FileDownloadPath = "http://" + destPath + "/" + Constants.EXCELTEMP + "/" + fileName + ".xls";
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
