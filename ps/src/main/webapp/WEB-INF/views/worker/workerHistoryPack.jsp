@@ -60,20 +60,14 @@
 		</div>
 
 	<script type="text/javascript">
+		var pageTotal = 0;
+		var downPackName = "";
 		$(document).ready(function(){
-			var pageTotal = 0;
-			var downPackName = "";
+			
 			$("#headJSPWorkerHistoryPack").hide();
 			$("#headJSPWorker").show();
 			loadPackListHistory(1);
-			/*--------------------------------------跳转页-------------------------------------------------------*/
-			$(".pageGoBtn").click(function(){
-				var pageNum = 0;
-				pageNum = $(".pageGoText").val();
-				if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
-					loadPackListHistory(pageNum);
-				}
-			});
+			
 			/*******************************刷新按钮**************************************************/
 			$("#refreshPage").click(function(){
 				window.location.reload();
@@ -91,7 +85,7 @@
 				var id = collapseTR.attr("id");
 				var thisTD = collapseTR.children("td");
 				var dpn = collapseTR.attr("packName");
-				var isf = collapseTR.attr("isfinish");
+				//var isf = collapseTR.attr("isfinish");
 				$.ajax({
 					url:'${contextPath}/security/workerHistoryTask',
 					data:{"downPackName":dpn},
@@ -104,12 +98,10 @@
 							var addBodyTr = "";
 							$.each(data.list,function(i,item){
 								var downloadTD = "<td></td>";
-								if(isf == 0){
-									downloadTD = "<td><a onClick='downloadTask("+item.taskId+",\""+item.taskName+"\")'>下载</a></td>";
-								}
 								var tS = "";
 								if(item.taskStatus == 0){
 									tS = "未完成";
+									downloadTD = "<td><a href='#' onClick='downloadTask("+item.taskId+",\""+item.taskName+"\")'>下载</a></td>";
 								}else if(item.taskStatus == 1){
 									tS = "已完成";
 								}else if(item.taskStatus == 2){
@@ -159,7 +151,7 @@
 						$("tbody").empty();
 						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
-						$("tbody,.pagination").empty();
+						$("tbody").empty();
 						$.each(data.list,function(i,item){
 							var ps = "";
 							var downloadTD = "<td></td>";
@@ -191,7 +183,14 @@
 						var pageDom = $(".pagination");
 						pageDom.empty();
 						page.creatPageHTML(pageNum,pageTotal,pageDom,"loadPackListHistory");
-						
+						/*--------------------------------------跳转页-------------------------------------------------------*/
+						$(".pageGoBtn").click(function(){
+							var pageNum = 0;
+							pageNum = $(".pageGoText").val();
+							if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+								loadPackListHistory(pageNum);
+							}
+						});
 					}
 					
 				}

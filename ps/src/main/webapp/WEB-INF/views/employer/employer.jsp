@@ -242,28 +242,6 @@
 				taskNameCondition = tnc;
 				loadPackDetailList(1);
 			});
-			/*--------------------------------------跳转页-------------------------------------------------------*/
-			$("#packUncomplete .pageGoBtn").click(function(){
-				var pageNum = 0;
-				pageNum = $("#packUncomplete .pageGoText").val();
-				if(pageNum !=0&&0<pageNum&&pageNum<pucPageTotle+1){
-					loadUnCompletePackList(pageNum);
-				}
-			});
-			$("#packComplete .pageGoBtn").click(function(){
-				var pageNum = 0;
-				pageNum = $("#packComplete .pageGoText").val();
-				if(pageNum !=0&&0<pageNum&&pageNum<pcPageTotle+1){
-					loadCompletePackList(pageNum);
-				}
-			});
-			$("#packDetailModal .pageGoBtn").click(function(){
-				var pageNum = 0;
-				pageNum = $("#packDetailModal .pageGoText").val();
-				if(pageNum !=0&&0<pageNum&&pageNum<pdPageTotle+1){
-					loadPackDetailList(pageNum);
-				}
-			});
 		});
 		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
 		loadUnCompletePackList = function(pageNum){
@@ -295,12 +273,12 @@
 								var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
 								var downloadPack = "<td></td>";
 								if(item.finishTaskCount != 0){
-									downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
 								}
 								$("#packUncomplete tbody").append(
 									"<tr>"+
 										"<td>"+(i+1)+"</td>"+
-										"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
 										"<td>"+item.taskCount+"</td>"+
 										"<td>"+surplusTask+"</td>"+
 										"<td>"+item.finishTaskCount+"</td>"+
@@ -318,24 +296,13 @@
 						pageDom.empty();
 						pucPageTotle = data.totlePage;
 						page.creatPageHTML(pageNum,pucPageTotle,pageDom,"loadUnCompletePackList");
-						/*
-						for(var i=1;i<pageTotal+1;i++){
-							if(i==pageNum){
-								$("#packUncomplete .pagination").append(
-									"<li class='active'><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
-									i+
-									"</a></li>"
-								);
-							}else{
-								
-								$("#packUncomplete .pagination").append(
-									"<li><a onClick='loadUnCompletePackList("+i+",\""+packNameCondition+"\")'>"+
-									i+
-									"</a></li>"
-								);
+						$("#packUncomplete .pageGoBtn").click(function(){
+							var pageNum = 0;
+							pageNum = $("#packUncomplete .pageGoText").val();
+							if(pageNum !=0&&0<pageNum&&pageNum<pucPageTotle+1){
+								loadUnCompletePackList(pageNum);
 							}
-						}
-						*/
+						});
 					}
 				}
 			});
@@ -357,11 +324,11 @@
 							if(item.packLockTime == null){
 								item.packLockTime = "";
 							}
-							var downloadPack = "<td><a class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+							var downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
 							$("#packComplete tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
-									"<td><a class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+									"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
 									"<td>"+item.taskCount+"</td>"+
 									"<td>"+item.downCount+"</td>"+
 									"<td>"+item.packLockTime+"小时</td>"+
@@ -375,24 +342,13 @@
 						pageDom.empty();
 						pcPageTotle = data.totlePage;
 						page.creatPageHTML(pageNum,pcPageTotle,pageDom,"loadCompletePackList");
-						/*
-						for(var i=1;i<pageTotal+1;i++){
-							if(i==pageNum){
-								
-								$("#packComplete .pagination").append(
-									"<li class='active'><a onClick='loadCompletePackList("+i+",\""+packNameCondition+"\")'>"+
-									i+
-									"</a></li>"
-								);
-							}else{
-								$("#packComplete .pagination").append(
-									"<li><a onClick='loadCompletePackList("+i+",\""+packNameCondition+"\")'>"+
-									i+
-									"</a></li>"
-								);
+						$("#packComplete .pageGoBtn").click(function(){
+							var pageNum = 0;
+							pageNum = $("#packComplete .pageGoText").val();
+							if(pageNum !=0&&0<pageNum&&pageNum<pcPageTotle+1){
+								loadCompletePackList(pageNum);
 							}
-						}
-						*/
+						});
 					}
 				}
 			});
@@ -451,6 +407,7 @@
 					}
 				}
 			});
+			$("#dp"+packId+"").text("正在打包");
 		};
 		/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
 		showPackDetail = function(packId){
@@ -488,23 +445,13 @@
 						pageDom.empty();
 						pdPageTotle = data.totlePage;
 						page.creatPageHTML(pageNum,pdPageTotle,pageDom,"loadPackDetailList");
-						/*
-						for(var i=1;i<pageTotal+1;i++){
-							if(i==pageNum){
-								$("#packDetailModal .pagination").append(
-									"<li class='active'><a onClick='loadPackDetailList("+packId+","+i+","+taskStuts+")'>"+
-									i+
-									"</a></li>"
-								);
-							}else{
-								$("#packDetailModal .pagination").append(
-									"<li><a onClick='loadPackDetailList("+packId+","+i+","+taskStuts+")'>"+
-									i+
-									"</a></li>"
-								);
+						$("#packDetailModal .pageGoBtn").bind("click",function(){
+							var pageNum = 0;
+							pageNum = $("#packDetailModal .pageGoText").val();
+							if(pageNum !=0&&0<pageNum&&pageNum<pdPageTotle+1){
+								loadPackDetailList(pageNum);
 							}
-						}
-						*/
+						});
 					}
 					
 					

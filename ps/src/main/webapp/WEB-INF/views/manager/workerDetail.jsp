@@ -119,14 +119,7 @@
 				statu = $("#statu").val();
 				chooseUserType(1);
 			});
-			/*--------------------------------------跳转页-------------------------------------------------------*/
-			$(".pageGoBtn").click(function(){
-				var pageNum = 0;
-				pageNum = $(".pageGoText").val();
-				if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
-					chooseUserType(pageNum);
-				}
-			});
+			
 		});
 		chooseUserType = function(pageNum){
 			$.ajax({
@@ -159,7 +152,14 @@
 							var pageDom = $(".pagination");
 							pageDom.empty();
 							page.creatPageHTML(pageNum,pageTotal,pageDom,"chooseUserType");
-							
+							/*--------------------------------------跳转页-------------------------------------------------------*/
+							$(".pageGoBtn").click(function(){
+								var pageNum = 0;
+								pageNum = $(".pageGoText").val();
+								if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+									chooseUserType(pageNum);
+								}
+							});
 						});
 					}
 				}
