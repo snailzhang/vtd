@@ -262,7 +262,7 @@
 			loadUnzipPackList();
 			/*---------------------------------------查询-------------------------------------------------------------------*/
 			$("#un_searchBtn").click(function(){
-				unpackNameConditionunpackNameCondition = $("#unpackNameCondition").val();
+				unpackNameCondition = $("#unpackNameCondition").val();
 				loadUnCompletePackList(1);
 			});
 			$("#searchBtn").click(function(){
