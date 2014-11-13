@@ -552,8 +552,21 @@
 				$.ajax({
 					type:'post',
 					url:'${contextPath}/security/updateTaskLvl',
-					data:{"packId":packId,"taskLvl":lvl}
+					data:{"packId":packId,"taskLvl":lvl},
+					success:function(data){
+						if(data.replay == "1"){
+							$("#updateStatus").removeClass("text-danger").addClass("text-sucess").text("修改成功！");
+							window.location.reload();
+						}
+						else{
+							$("#updateStatus").removeClass("text-sucess").addClass("text-danger").text("修改失败！");
+						}
+					}
 				});
+			});
+			$("#changeTaskLevelModal").on('hidden.bs.modal', function (e) {
+				$("#updateStatus").empty();
+				$("#ctLvl option:selected").removeAttr("selected");
 			});
 		};
 	</script>
