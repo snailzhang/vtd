@@ -600,9 +600,7 @@
 			<if test="version != null">
 				version = #{version,jdbcType=VARCHAR},
 			</if>
-			<if test="taskWav != null">
-				task_wav = #{taskWav,jdbcType=LONGVARBINARY},
-			</if>
+			
 			<if test="taskTag != null">
 				task_tag = #{taskTag,jdbcType=LONGVARBINARY},
 			</if>
