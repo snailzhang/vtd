@@ -57,4 +57,6 @@ public interface PackService {
 	List<pack> getFinishPackPagesByEmployerId(Map<String, Integer> map);
 	
 	int getPackIdByPackName(String packName);
+	
+	 int getPackIdOrderByPackLvl();
 }

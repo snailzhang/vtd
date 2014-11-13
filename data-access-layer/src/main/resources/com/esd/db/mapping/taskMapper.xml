@@ -146,14 +146,14 @@
 		from task
 		where pack_id = #{packId} and task_mark_time > 0 order by task_id DESC limit #{begin},#{end}
 	</select>
-	<select id="selectTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+	<select id="selectTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
 		,
 		<include refid="Blob_Column_List" />
 		from task
-		where worker_id IS NULL
-		order by task_lvl,pack_id limit #{downTaskCount,jdbcType=INTEGER}
+		where worker_id IS NULL and pack_id = #{packId,jdbcType=INTEGER}
+		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select

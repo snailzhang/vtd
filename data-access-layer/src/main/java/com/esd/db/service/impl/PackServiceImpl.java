@@ -207,4 +207,9 @@ public class PackServiceImpl implements PackService {
 	
 		return packMapper.selectCountLikePackName(map);
 	}
+
+	@Override
+	public int getPackIdOrderByPackLvl() {
+		return packMapper.selectPackIdOrderByPackLvl();
+	}
 }

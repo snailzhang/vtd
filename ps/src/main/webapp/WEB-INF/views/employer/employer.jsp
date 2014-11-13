@@ -548,7 +548,7 @@
 			$("#ctLvl option[value="+taskLvl+"]").attr("selected","selected");
 			$("#changeTaskLevelModal").modal('show');
 			$("#changeTaskLvlBtn").click(function(){
-				var lvl = ("#ctLvl").val();
+				var lvl = $("#ctLvl").val();
 				$.ajax({
 					type:'post',
 					url:'${contextPath}/security/updateTaskLvl',

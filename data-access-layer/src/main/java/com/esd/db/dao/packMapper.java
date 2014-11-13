@@ -57,4 +57,6 @@ public interface packMapper {
     List<pack> selectFinishPackPagesByEmployerId(Map<String, Integer> map);
     
     int selectPackIdByPackName(String packName);
+    
+    int selectPackIdOrderByPackLvl();
 }

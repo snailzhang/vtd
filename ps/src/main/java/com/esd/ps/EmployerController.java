@@ -174,7 +174,7 @@ public class EmployerController {
 			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
 			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId()));
 			packTrans.setDownCount(pack.getDownCount());
-			packTrans.setTaskLvl(taskService.getTaskLvlByPackId(pack.getPackId()));
+			packTrans.setTaskLvl(pack.getPackLvl());
 			if (pack.getPackStatus()) {
 				packTrans.setPackStatus(1);
 			} else {
@@ -209,12 +209,15 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/updateTaskLvl", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView updateTaskLvlPOST(int packId, int taskLvl) {
-		task task = new task();
-		task.setPackId(packId);
-		task.setTaskLvl(taskLvl);
-		taskService.updateByPackId(task);
-		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.EMPLOYER);
+	public Map<String, Object> updateTaskLvlPOST(int packId, int taskLvl) {
+		Map<String, Object> map = new HashMap<>();
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setPackLvl(taskLvl);
+		packService.updateByPrimaryKeySelective(pack);
+		map.clear();
+		map.put(Constants.REPLAY, 1);
+		return map;
 	}
 
 	/**
@@ -367,6 +370,7 @@ public class EmployerController {
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
 				packWithBLOBs.setPackStatus(false);
 				packWithBLOBs.setUnzip(0);
+				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(1);
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				packWithBLOBs.setCreateMethod(items[1].toString());

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.esd.db.dao.taskMapper;
+import com.esd.db.dao.packMapper;
 import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.TaskService;
@@ -17,7 +18,8 @@ import com.esd.db.service.TaskService;
 public class TaskServiceImpl implements TaskService {
 	@Autowired
 	private taskMapper taskMapper;
-
+	@Autowired
+	private packMapper packMapper;
 	@Override
 	public int deleteByPrimaryKey(Integer taskId) {
 
@@ -80,8 +82,12 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount) {
-
-		return taskMapper.selectTaskOrderByTaskLvl(downTaskCount);
+		Map<String, Object> map = new HashMap<>();
+ 		int packId=packMapper.selectPackIdOrderByPackLvl();
+ 		map.clear();
+ 		map.put("downTaskCount", downTaskCount);
+ 		map.put("packId", packId);
+		return taskMapper.selectTaskOrderByTaskLvl(map);
 	}
 
 	@Override
@@ -99,7 +105,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public int getCountTaskDoing() {
 		try {
-			int packId = taskMapper.selectFirstPackIdOrderByTaskLvl();
+			int packId = packMapper.selectPackIdOrderByPackLvl();
 			return taskMapper.selectUndoTaskCountByPackId(packId);
 		} catch (BindingException b) {
 			return taskMapper.selectUndoTaskCountByPackId(0);
