@@ -600,13 +600,6 @@
 			<if test="version != null">
 				version = #{version,jdbcType=VARCHAR},
 			</if>
-			
-			<if test="taskTag != null">
-				task_tag = #{taskTag,jdbcType=LONGVARBINARY},
-			</if>
-			<if test="taskTextgrid != null">
-				task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY},
-			</if>
 		</set>
 		where pack_id = #{packId,jdbcType=INTEGER},
 	</update>
