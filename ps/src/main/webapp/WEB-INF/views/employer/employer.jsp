@@ -54,6 +54,7 @@
 							<tr>
 								<th>序号</th>
 								<th>名称</th>
+								<th>等级</th>
 								<th>总数</th>
 								<th>剩余数</th>
 								<th>完成数</th>
@@ -192,7 +193,7 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	<!-------------------------------- 进度条-------------------------------------------------->
-	<div id="packUploadProgressModal" class="modal fade">
+	<!--<div id="packUploadProgressModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -209,10 +210,41 @@
 					</div>
 				</div>
 				
-			</div><!-- /.modal-content -->
+			</div> /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-	
+	<!-------------------------------- 修改任务等级-------------------------------------------------->
+	<div id="changeTaskLevelModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title">修改任务等级</h4>
+					</div>
+					<div class="modal-body">
+						<span id="updateStatus"></span>
+						<form class="form-horizontal" role="form">
+							<div class="form-group" id="">
+								<label for="ctLvl" class="col-sm-3 control-label">任务等级：</label>
+								<div class="col-sm-9">
+									<select class="form-control" name="ctLvl" id="ctLvl">
+										<option value="1">1</option>
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+										<option value="5">5</option>
+									</select>
+								</div>
+							</div>
+					   </form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" id="changeTaskLvlBtn" class="btn btn-primary">修改</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 	<script type="text/javascript">
 		var unpackNameCondition = "";
 		var packNameCondition = "";
@@ -279,6 +311,7 @@
 									"<tr>"+
 										"<td>"+(i+1)+"</td>"+
 										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+										"<td><a href='javascript:changeTaskLvl("+item.packId+","+item.taskLvl+");'>"+item.taskLvl+"</a></td>"+
 										"<td>"+item.taskCount+"</td>"+
 										"<td>"+surplusTask+"</td>"+
 										"<td>"+item.finishTaskCount+"</td>"+
@@ -459,6 +492,7 @@
 			});
 		};
 		/*---------------------------------------上传任务进度条显示---------------------------------------------------------------*/
+		/*
 		var oTimer = null;
 		var zipTimer = null;
 		showUploadProgress = function(){
@@ -507,6 +541,18 @@
 						window.location.reload();
 					}
 				}
+			});
+		};*/
+		/*---------------------------------------修改任务等级---------------------------------------------------------------*/
+		changeTaskLvl = function(packId,taskLvl){
+			$("#ctLvl option[value="+taskLvl+"]").attr("selected","selected");
+			$("#changeTaskLevelModal").modal('show');
+			$("#changeTaskLvlBtn").click(function(){
+				$.ajax({
+					type:'post',
+					url:'${contextPath}/security/updateTaskLvl',
+					data:{"packId":packId,"taskLvl":taskLvl}
+				});
 			});
 		};
 	</script>

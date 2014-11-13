@@ -51,7 +51,7 @@ page.creatPageHTML = function(nowPage,pageCount,pageDom,onClickFn){
 	var moreStr = "<li><a href='#'>...</a></li>";//...
 	var lastPage = "";//上一页
 	var nextPage = "";//下一页
-	var inputStr = "<li><input class='pageGoText' type='text' value='' \><a class='pageGoBtn' href='#'>GO</a><li>";//跳转页面输入框
+	var inputStr = "<li><input class='pageGoText' type='text' value='' \><a class='pageGoBtn' href='#'>GO</a></li>";//跳转页面输入框
 
 	var pages = "";
 	

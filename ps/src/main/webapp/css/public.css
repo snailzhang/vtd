@@ -29,4 +29,10 @@ ul.pagination > li > a{float:none;}
 .panel > .panel-body + .table, .panel > .panel-body + .table-responsive{
 	border-bottom: 1px solid #ddd;
 }
-.pageGoText{margin:0 5px;width:40px;line-height:17px;border:1px solid #ddd;padding:5px;}
+.pageGoText{
+	margin:0 5px;
+	width:40px;
+	line-height:1.42857;
+	border:1px solid #ddd;
+	padding:6px 5px;
+}
