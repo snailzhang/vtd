@@ -601,6 +601,6 @@
 				version = #{version,jdbcType=VARCHAR},
 			</if>
 		</set>
-		where pack_id = #{packId,jdbcType=INTEGER},
+		where pack_id = #{packId,jdbcType=INTEGER}
 	</update>
 </mapper>
