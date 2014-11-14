@@ -222,7 +222,7 @@
 						<h4 class="modal-title">修改任务等级</h4>
 					</div>
 					<div class="modal-body">
-						<span id="updateStatus"></span>
+						<span id="updateStatus" class="text-center"></span>
 						<form class="form-horizontal" role="form">
 							<div class="form-group" id="">
 								<label for="ctLvl" class="col-sm-3 control-label">任务等级：</label>
@@ -253,6 +253,7 @@
 		var pucPageTotle = 0;
 		var pcPageTotle = 0;
 		var pdPageTotle = 0;
+		var changePackLvlPackId = 0;
 		if('${match}' == '1'){
 			alert("文件已存在");
 		}
@@ -274,6 +275,24 @@
 				taskNameCondition = tnc;
 				loadPackDetailList(1);
 			});
+			$("#changeTaskLvlBtn").click(function(){
+				var lvl = $("#ctLvl").val();
+				$.ajax({
+					type:'post',
+					url:'${contextPath}/security/updateTaskLvl',
+					data:{"packId":changePackLvlPackId,"taskLvl":lvl},
+					success:function(data){
+						if(data.replay == "1"){
+							$("#updateStatus").removeClass("text-danger").addClass("text-success").text("修改成功！");
+							window.location.reload();
+						}
+						else{
+							$("#updateStatus").removeClass("text-success").addClass("text-danger").text("修改失败！");
+						}
+					}
+				});
+			});
+			
 		});
 		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
 		loadUnCompletePackList = function(pageNum){
@@ -545,29 +564,12 @@
 		};*/
 		/*---------------------------------------修改任务等级---------------------------------------------------------------*/
 		changeTaskLvl = function(packId,taskLvl){
+			$("#updateStatus").empty();
+			$("#ctLvl option:selected").removeAttr("selected");
 			$("#ctLvl option[value="+taskLvl+"]").attr("selected","selected");
 			$("#changeTaskLevelModal").modal('show');
-			$("#changeTaskLvlBtn").click(function(){
-				var lvl = $("#ctLvl").val();
-				$.ajax({
-					type:'post',
-					url:'${contextPath}/security/updateTaskLvl',
-					data:{"packId":packId,"taskLvl":lvl},
-					success:function(data){
-						if(data.replay == "1"){
-							$("#updateStatus").removeClass("text-danger").addClass("text-sucess").text("修改成功！");
-							window.location.reload();
-						}
-						else{
-							$("#updateStatus").removeClass("text-sucess").addClass("text-danger").text("修改失败！");
-						}
-					}
-				});
-			});
-			$("#changeTaskLevelModal").on('hidden.bs.modal', function (e) {
-				$("#updateStatus").empty();
-				$("#ctLvl option:selected").removeAttr("selected");
-			});
+			changePackLvlPackId = packId;
+			
 		};
 	</script>
 </body>

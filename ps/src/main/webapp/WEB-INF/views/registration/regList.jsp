@@ -142,22 +142,18 @@
 									"<td>"+item.createTime+"</td>"+
 								"</tr>"
 							);
-							$(".pagination").empty();
-							for(var i=1;i<pageTotal+1;i++){
-								if(i==pageNum){
-									$(".pagination").append(
-										"<li class='active'><a onClick='chooseUserType("+i+")'>"+
-										i+
-										"</a></li>"
-									);
-								}else{
-									$(".pagination").append(
-										"<li><a onClick='chooseUserType("+i+")'>"+
-										i+
-										"</a></li>"
-									);
+							var pageDom = $(".pagination");
+							pageDom.empty();
+							page.creatPageHTML(pageNum,pageTotal,pageDom,"chooseUserType");
+							/*--------------------------------------跳转页-------------------------------------------------------*/
+							$(".pageGoBtn").click(function(){
+								var pageNum = 0;
+								pageNum = $(".pageGoText").val();
+								if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+									chooseUserType(pageNum);
 								}
-							}
+							});
+							
 						});
 					}
 				}
