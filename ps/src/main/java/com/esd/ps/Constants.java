@@ -76,7 +76,7 @@ public interface Constants {
 	public static final String PINYIN="pinyin";//
 	public static final String USER_REGISTED="userRegisted";//
 	
-	public static final int ROW=20;//分页行数
+	public static final int ROW=13;//分页行数
 	public static final int ONE=1;//常量1
 	public static final int ZERO=0;//常量0
 	public static final String EMPTY="";//空字符串 

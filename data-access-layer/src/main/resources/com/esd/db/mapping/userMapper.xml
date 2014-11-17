@@ -13,7 +13,7 @@
 		<result column="update_id" jdbcType="INTEGER" property="updateId" />
 		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
 		<result column="update_method" jdbcType="VARCHAR" property="updateMethod" />
-		<result column="version" jdbcType="INTEGER" property="version" />
+		<result column="version" jdbcType="VARCHAR" property="version" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		user_id,user_status, username, password, usertype, create_id, create_time, create_method, update_id,
@@ -119,7 +119,7 @@
 		#{usertype,jdbcType=INTEGER}, #{createId,jdbcType=INTEGER},
 		#{createTime,jdbcType=TIMESTAMP},
 		#{createMethod,jdbcType=VARCHAR}, #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
-		#{updateMethod,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER})
+		#{updateMethod,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.user">
 		insert into user
@@ -196,7 +196,7 @@
 				#{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="version != null">
-				#{version,jdbcType=INTEGER},
+				#{version,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -234,7 +234,7 @@
 				update_method = #{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="version != null">
-				version = #{version,jdbcType=INTEGER},
+				version = #{version,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where user_id = #{userId,jdbcType=INTEGER}
@@ -253,7 +253,7 @@
 		#{updateId,jdbcType=INTEGER},
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
-		version = #{version,jdbcType=INTEGER}
+		version = #{version,jdbcType=VARCHAR}
 		where user_id =
 		#{userId,jdbcType=INTEGER}
 	</update>

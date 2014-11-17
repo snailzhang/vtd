@@ -57,5 +57,7 @@ public interface workerRecordMapper {
 	
 	Double selectTaskMarkTimeMonthByWorkerIdAndMonth(Map<String, Object> map);
 	
-	Double selectSUMTaskMarkTimeByPackId(int packId);
+	Double selectSUMTaskMarkTimeByPackId(Integer packId);
+	
+	int selectPackIdByTaskId(Integer task_id);
 }

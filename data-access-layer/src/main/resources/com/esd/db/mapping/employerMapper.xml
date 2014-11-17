@@ -12,7 +12,7 @@
     <result column="update_id" property="updateId" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     employer_id, user_id, employer_name,upload_url, create_id, create_time, create_method, update_id, 
@@ -72,7 +72,7 @@
     values (#{employerId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{employerName,jdbcType=VARCHAR},#{uploadUrl,jdbcType=VARCHAR}, 
       #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR}, 
       #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}, 
-      #{version,jdbcType=INTEGER})
+      #{version,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.esd.db.model.employer" >
     insert into employer
@@ -143,7 +143,7 @@
         #{updateMethod,jdbcType=VARCHAR},
       </if>
       <if test="version != null" >
-        #{version,jdbcType=INTEGER},
+        #{version,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -178,7 +178,7 @@
         update_method = #{updateMethod,jdbcType=VARCHAR},
       </if>
       <if test="version != null" >
-        version = #{version,jdbcType=INTEGER},
+        version = #{version,jdbcType=VARCHAR},
       </if>
     </set>
     where employer_id = #{employerId,jdbcType=INTEGER}
@@ -194,7 +194,7 @@
       update_id = #{updateId,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_method = #{updateMethod,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER}
+      version = #{version,jdbcType=VARCHAR}
     where employer_id = #{employerId,jdbcType=INTEGER}
   </update>
 </mapper>

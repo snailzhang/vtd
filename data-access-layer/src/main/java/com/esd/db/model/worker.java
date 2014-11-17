@@ -34,7 +34,7 @@ public class worker {
 
     private String updateMethod;
 
-    private Integer version;
+    private String version;
 
     private byte[] workerImage;
 
@@ -158,11 +158,11 @@ public class worker {
 		this.updateMethod = updateMethod;
 	}
 
-	public Integer getVersion() {
+	public String getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 

@@ -216,4 +216,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectSUMTaskMarkTimeByPackId(packId);
 	}
 
+	@Override
+	public int getPackIdByTaskId(Integer task_id) {
+		
+		return workerRecordMapper.selectPackIdByTaskId(task_id);
+	}
+
 }

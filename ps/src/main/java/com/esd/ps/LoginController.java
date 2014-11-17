@@ -30,12 +30,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.esd.common.util.UsernameAndPasswordMd5;
+import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.user;
 import com.esd.db.model.usertype;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
+import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
@@ -65,6 +67,8 @@ public class LoginController {
 	private WorkerRecordService workerRecordService;
 	@Autowired
 	private TaskService taskService;
+	@Autowired
+	private PackService packService;
 
 	/**
 	 * 用户名不存在
@@ -116,7 +120,7 @@ public class LoginController {
 		session.removeAttribute(Constants.USER_NAME);
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView(Constants.REDIRECT+Constants.COLON+Constants.LOGIN);
+		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
 	}
 
 	/**
@@ -156,11 +160,12 @@ public class LoginController {
 			if (user.getUserStatus() == false) {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_STOP);
 				redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
-				return new ModelAndView(Constants.REDIRECT+Constants.COLON+Constants.LOGIN);
+				return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
 			}
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 			String md5Password = md5.getMd5(username, password);
 			logger.debug("md5Password:{}", md5Password);
+			// 密码比较
 			if (md5Password.equals(user.getPassword())) {
 				this.checkOldTask(request);
 				session.setAttribute(Constants.USER_NAME, user.getUsername());
@@ -171,20 +176,20 @@ public class LoginController {
 				String typeName = userType.getUserTypeNameEnglish();
 				if (typeName.equals(Constants.MANAGER)) {
 					if (managerService.getCountManagerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView(Constants.MANAGER+Constants.SLASH+Constants.MANAGER+Constants.UNDERLINE+Constants.ADD, Constants.USER_REGISTED, 0);
+						return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.MANAGER + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 				} else if (typeName.equals(Constants.EMPLOYER)) {
 					if (employerService.getCountEmployerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView(Constants.MANAGER+Constants.SLASH+Constants.EMPLOYER+Constants.UNDERLINE+Constants.ADD, Constants.USER_REGISTED, 0);
+						return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.EMPLOYER + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 				} else if (typeName.equals("inspector")) {
 
 				} else if (typeName.equals(Constants.WORKER)) {
 					if (workerService.getCountWorkerIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView(Constants.MANAGER+Constants.SLASH+Constants.WORKER+Constants.UNDERLINE+Constants.ADD, Constants.USER_REGISTED, 0);
+						return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.WORKER + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 				}
-				return new ModelAndView(Constants.REDIRECT+Constants.COLON + Constants.SECURITY+Constants.SLASH + typeName);
+				return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.SECURITY + Constants.SLASH + typeName);
 
 			} else {
 				redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_ERROR);
@@ -192,7 +197,7 @@ public class LoginController {
 		}
 		redirectAttributes.addFlashAttribute(Constants.USER_NAME, username);
 		redirectAttributes.addFlashAttribute(Constants.USER_PASSWORD, password);
-		return new ModelAndView(Constants.REDIRECT+Constants.COLON+Constants.LOGIN);
+		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
 	}
 
 	/**
@@ -216,7 +221,7 @@ public class LoginController {
 					if ((packLockTime - between) == 0 || (packLockTime - between) < 0) {
 						// 更新worker_record表
 						workerRecord update = new workerRecord();
-						update.setTaskStatu(2);//2表示任务已过时
+						update.setTaskStatu(2);// 2表示任务已过时
 						update.setUpdateTime(new Date());
 						update.setRecordId(workerRecord.getRecordId());
 						StackTraceElement[] items = Thread.currentThread().getStackTrace();
@@ -227,9 +232,14 @@ public class LoginController {
 						task.setWorkerId(null);
 						task.setUpdateTime(new Date());
 						task.setTaskId(workerRecord.getTaskId());
-						
+
 						task.setUpdateMethod(items[1].toString());
 						taskService.updateByTaskId(task);
+
+						packWithBLOBs pack = new packWithBLOBs();
+						pack.setPackStatus(0);
+						pack.setPackId(workerRecord.getPackId());
+						packService.updateByPrimaryKeySelective(pack);
 
 						// 删除任务的下载备份
 						String url = request.getServletContext().getRealPath(Constants.SLASH);

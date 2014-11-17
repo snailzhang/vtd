@@ -102,7 +102,7 @@
 				and task_name like "%${taskNameCondition}%"
 			</if>
 			<if test="month != null">
-				and DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}'
+				and DATE_FORMAT(task_down_time,'%m')='${month}' and year(task_down_time) = '${year}'
 			</if>
 			<if test="statu == 0 or statu == 1 or statu == 2">
 				and task_statu = #{statu}
@@ -157,6 +157,12 @@
 		record_id
 		from worker_record
 		where task_id = #{TaskId,jdbcType=INTEGER} and task_statu = 0
+	</select>
+	<select id="selectPackIdByTaskId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		pack_id
+		from worker_record
+		where task_id = #{TaskId,jdbcType=INTEGER}
 	</select>
 	<select id="selectWorkerRecordByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select

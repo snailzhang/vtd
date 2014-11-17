@@ -81,9 +81,9 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount) {
+	public List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId) {
 		Map<String, Object> map = new HashMap<>();
- 		int packId=packMapper.selectPackIdOrderByPackLvl();
+ 		
  		map.clear();
  		map.put("downTaskCount", downTaskCount);
  		map.put("packId", packId);
@@ -237,6 +237,12 @@ public class TaskServiceImpl implements TaskService {
 	public int getTaskLvlByPackId(int packId) {
 		
 		return taskMapper.selectTaskLvlByPackId(packId);
+	}
+
+	@Override
+	public int getUndoTaskCountByPackId(int packId) {
+		
+		return taskMapper.selectUndoTaskCountByPackId(packId);
 	}
 
 }

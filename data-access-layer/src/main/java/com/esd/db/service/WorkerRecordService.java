@@ -58,4 +58,6 @@ public interface WorkerRecordService {
 	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year,int month,String userNameCondition);
 	
 	Double getSUMTaskMarkTimeByPackId(int packId);
+	
+	int getPackIdByTaskId(Integer task_id);
 }

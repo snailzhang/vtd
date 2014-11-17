@@ -6,6 +6,7 @@
 package com.esd.ps;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -225,12 +226,8 @@ public class ManagerController {
 				}
 				trans.setUsername(user.getUsername());
 				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
-				if (user.getUpdateTime() == null) {
-					trans.setUpdateTime(Constants.EMPTY);
-				} else {
-					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
-				}
-				trans.setCreateTime(sdf.format(user.getCreateTime()));
+				trans.setUpdateTime(sdf.format(user.getCreateTime()));
+				trans.setCreateTime(sdf.format(user.getUpdateTime()));
 			}
 
 			list.add(trans);
@@ -257,17 +254,22 @@ public class ManagerController {
 	 * 工作者工作信息
 	 * 
 	 * @param userId
-	 * @param userName
-	 * @param session
+	 * @param request
 	 * @return
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public ModelAndView workerDetailGET(int userId, String username, HttpSession session) {
+	public ModelAndView workerDetailGET(int userId,HttpServletRequest request) {
 		Map<String, Object> model = new HashMap<>();
-		model.clear();
-		model.put(Constants.USER_ID, userId);
-		model.put(Constants.CHOOSEUSERNAME, username);
+		try {
+			String username = new String(request.getParameter("username").getBytes("iso-8859-1"), "utf-8");
+			model.clear();
+			model.put(Constants.USER_ID, userId);
+			model.put(Constants.CHOOSEUSERNAME, username);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return new ModelAndView("manager/workerDetail", Constants.MODEL, model);
+
 	}
 
 	/**
@@ -456,11 +458,12 @@ public class ManagerController {
 			String md5Password = md5.getMd5(username, password);
 			user1.setPassword(md5Password);
 			user1.setUsertype(usertype);
-			user1.setUpdateTime(new Date());
 			StackTraceElement[] items = Thread.currentThread().getStackTrace();
 			user1.setCreateMethod(items[1].toString());
 			user1.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 			if (replay == 0) {
+				user1.setUpdateTime(new Date());
+				user1.setVersion(Constants.VERSION);
 				userService.insertSelective(user1);
 			} else if (replay == 1) {
 				user1.setUserId(userService.getUserIdByUserName(username));
@@ -496,6 +499,7 @@ public class ManagerController {
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		manager.setCreateMethod(items[1].toString());
+		manager.setVersion(Constants.VERSION);
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.MANAGER);
@@ -526,6 +530,7 @@ public class ManagerController {
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		employer.setCreateMethod(items[1].toString());
+		employer.setVersion(Constants.VERSION);
 		employerService.insertSelective(employer);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(address);
@@ -682,6 +687,7 @@ public class ManagerController {
 			worker.setUpdateTime(new Date());
 			StackTraceElement[] items = Thread.currentThread().getStackTrace();
 			worker.setCreateMethod(items[1].toString());
+			worker.setVersion(Constants.VERSION);
 			workerService.insertSelective(worker);
 			session.removeAttribute(Constants.ADD_USER_ID);
 			return new ModelAndView(address);

@@ -10,7 +10,7 @@ public class pack {
 
 	private String packName;
 
-	private Boolean packStatus;
+	private Integer packStatus;
 
 	private Integer packLockTime;
 
@@ -32,7 +32,7 @@ public class pack {
 
 	private Integer downCount;
 
-	private Integer version;
+	private String version;
 
 	public Integer getPackId() {
 		return packId;
@@ -58,11 +58,11 @@ public class pack {
 		this.packName = packName == null ? null : packName.trim();
 	}
 
-	public Boolean getPackStatus() {
+	public Integer getPackStatus() {
 		return packStatus;
 	}
 
-	public void setPackStatus(Boolean packStatus) {
+	public void setPackStatus(Integer packStatus) {
 		this.packStatus = packStatus;
 	}
 
@@ -138,11 +138,11 @@ public class pack {
 		this.updateMethod = updateMethod == null ? null : updateMethod.trim();
 	}
 
-	public Integer getVersion() {
+	public String getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 

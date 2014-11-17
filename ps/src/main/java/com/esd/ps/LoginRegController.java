@@ -123,7 +123,7 @@ public class LoginRegController {
 		} else {
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 			String md5Password = md5.getMd5(username, password);
-			logger.debug("md5Password:{}", md5Password);
+			logger.debug("username:{},md5Password:{}", username,md5Password);
 			if (md5Password.equals(district.getPassword())) {
 				session.setAttribute(Constants.USER_NAME, district.getUserName());
 				session.setAttribute(Constants.ID, district.getId());

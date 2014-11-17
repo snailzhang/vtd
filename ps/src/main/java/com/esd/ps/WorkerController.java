@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.esd.db.dao.packMapper;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
@@ -66,6 +67,8 @@ public class WorkerController {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
 	private TaskService taskService;
+	@Autowired
+	private packMapper packMapper;
 	@Autowired
 	private WorkerService workerService;
 	@Autowired
@@ -386,7 +389,9 @@ public class WorkerController {
 		}
 		String userId = session.getAttribute(Constants.USER_ID).toString();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount);
+		int packId=packMapper.selectPackIdOrderByPackLvl();
+
+		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount,packId);
 		if (list == null) {
 			return null;
 		}
@@ -466,6 +471,12 @@ public class WorkerController {
 		} catch (IOException e) {
 
 			e.printStackTrace();
+		}
+		if(taskService.getUndoTaskCountByPackId(packId)==0){
+			packWithBLOBs pack = new packWithBLOBs();
+			pack.setPackId(packId);
+			pack.setPackStatus(2);
+			packService.updateByPrimaryKeySelective(pack);
 		}
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
@@ -549,7 +560,6 @@ public class WorkerController {
 								taskWithBLOBs.setTaskTag(bytes);
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
-								taskWithBLOBs.setUpdateTime(new Date());
 								StackTraceElement[] items = Thread.currentThread().getStackTrace();
 								taskWithBLOBs.setUpdateMethod(items[1].toString());
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
@@ -568,7 +578,6 @@ public class WorkerController {
 								taskWithBLOBs.setTaskTextgrid(bytes);
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
-								taskWithBLOBs.setUpdateTime(new Date());
 								StackTraceElement[] items = Thread.currentThread().getStackTrace();
 								taskWithBLOBs.setUpdateMethod(items[1].toString());
 								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
@@ -583,12 +592,12 @@ public class WorkerController {
 		 * 查看任务包的任务完成情况,当任务数等于完成数时更新pack表的pack_status
 		 */
 		if (task_id > 0) {
-			int packId = workerRecordService.getPkIDByTaskId(task_id);
+			int packId = workerRecordService.getPackIdByTaskId(task_id);
 			if (taskService.getTaskCountByPackId(packId) == workerRecordService.getFinishTaskCountByPackId(packId)) {
 				packWithBLOBs pack = new packWithBLOBs();
 				pack.setPackId(packId);
-				pack.setPackStatus(true);
-				packService.updateByPrimaryKey(pack);
+				pack.setPackStatus(1);
+				packService.updateByPrimaryKeySelective(pack);
 			}
 		}
 

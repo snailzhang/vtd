@@ -175,14 +175,10 @@ public class EmployerController {
 			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId()));
 			packTrans.setDownCount(pack.getDownCount());
 			packTrans.setTaskLvl(pack.getPackLvl());
-			if (pack.getPackStatus()) {
-				packTrans.setPackStatus(1);
-			} else {
-				packTrans.setPackStatus(0);
-			}
+			packTrans.setPackStatus(pack.getPackStatus());
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setUnzip(pack.getUnzip());
-			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
+			packTrans.setCreateTime(sdf.format(pack.getUpdateTime()));
 			Double taskMarkTime = workerRecordService.getSUMTaskMarkTimeByPackId(pack.getPackId());
 			if (taskMarkTime == null) {
 				packTrans.setTaskMarkTime(0.00);
@@ -368,13 +364,14 @@ public class EmployerController {
 				packWithBLOBs.setPackName(packName);
 				packWithBLOBs.setDownCount(0);
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
-				packWithBLOBs.setPackStatus(false);
+				packWithBLOBs.setPackStatus(0);
 				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setPackLvl(taskLvl);
-				packWithBLOBs.setVersion(1);
+				packWithBLOBs.setVersion(Constants.VERSION);
+				packWithBLOBs.setUpdateTime(new Date());
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				packWithBLOBs.setCreateMethod(items[1].toString());
-				packService.insert(packWithBLOBs);
+				packService.insertSelective(packWithBLOBs);
 			}
 			// 从临时文件取出要解压的文件上传TaskService
 			storeData(packName, taskLvl, session);
@@ -435,7 +432,6 @@ public class EmployerController {
 
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
-		pack.setUpdateTime(new Date());
 		pack.setDownCount((packService.getDownCountByPackId(packId) + 1));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		pack.setUpdateMethod(items[1].toString());
@@ -561,10 +557,12 @@ public class EmployerController {
 				taskWithBLOBs.setTaskName(zipEntryName);
 				// 存入压缩包的层次结构
 				taskWithBLOBs.setTaskDir(taskDir);
+				taskWithBLOBs.setUpdateTime(new Date());
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				taskWithBLOBs.setCreateMethod(items[1].toString());
+				taskWithBLOBs.setVersion(Constants.VERSION);
 				taskService.insert(taskWithBLOBs);
 			}
 			zip.close();

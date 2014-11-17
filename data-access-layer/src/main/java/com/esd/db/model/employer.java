@@ -24,7 +24,7 @@ public class employer {
 
 	private String updateMethod;
 
-	private Integer version;
+	private String version;
 
 	public Integer getEmployerId() {
 		return employerId;
@@ -106,11 +106,11 @@ public class employer {
 		this.updateMethod = updateMethod == null ? null : updateMethod.trim();
 	}
 
-	public Integer getVersion() {
+	public String getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 }

@@ -29,7 +29,7 @@ public interface TaskService {
 
 	List<task> getAllTaskByPackId(Integer packId);
 
-	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount);
+	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId);
 
 	int updateByPrimaryKeySelective(taskWithBLOBs record);
 
@@ -68,4 +68,6 @@ public interface TaskService {
 	int updateByTaskId(task task);
 	
 	int getTaskLvlByPackId(int packId);
+	
+	int getUndoTaskCountByPackId(int packId);
 }
