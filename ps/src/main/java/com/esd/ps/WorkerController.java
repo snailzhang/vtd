@@ -308,6 +308,10 @@ public class WorkerController {
 		String url = WorkerController.url(request);
 		File f = new File(url);
 		File zipFile = null;
+		// 项目在服务器上的远程绝对地址
+		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		// 文件所谓的远程绝对路径
+		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		if (f.exists()) {
 			zipFile = new File(url + Constants.SLASH + downPackName);
 			if (zipFile.exists()) {
@@ -323,14 +327,17 @@ public class WorkerController {
 			List<taskWithBLOBs> list = taskService.getDoingTaskByWorkerId(workerId);
 			logger.debug("workerId:{},list1:{}", workerId, list);
 			this.wrongPath(zipFile, list);
+			workerRecord workerRecord = new workerRecord();
+			workerRecord.setUpdateTime(new Date());
+			workerRecord.setDownUrl(wrongPath);
+			workerRecord.setDownPackName(downPackName);
+			workerRecordService.updateBydownPackName(workerRecord);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
-		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+
 		map.put(Constants.WRONGPATH, wrongPath);
+		logger.debug("wrongPath:{}", wrongPath);
 		return map;
 	}
 
@@ -389,9 +396,9 @@ public class WorkerController {
 		}
 		String userId = session.getAttribute(Constants.USER_ID).toString();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		int packId=packMapper.selectPackIdOrderByPackLvl();
+		int packId = packMapper.selectPackIdOrderByPackLvl();
 
-		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount,packId);
+		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, packId);
 		if (list == null) {
 			return null;
 		}
@@ -411,6 +418,7 @@ public class WorkerController {
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
 		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		logger.debug("wrongPath:{}", wrongPath);
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
@@ -439,6 +447,7 @@ public class WorkerController {
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				taskWithBLOBs.setUpdateMethod(items[1].toString());
 				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+
 				// 更新worker_record 工作者的任务记录
 				workerRecord workerRecord = new workerRecord();
 				workerRecord.setCreateTime(new Date());
@@ -472,7 +481,7 @@ public class WorkerController {
 
 			e.printStackTrace();
 		}
-		if(taskService.getUndoTaskCountByPackId(packId)==0){
+		if (taskService.getUndoTaskCountByPackId(packId) == 0) {
 			packWithBLOBs pack = new packWithBLOBs();
 			pack.setPackId(packId);
 			pack.setPackStatus(2);

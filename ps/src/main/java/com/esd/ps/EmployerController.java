@@ -178,7 +178,7 @@ public class EmployerController {
 			packTrans.setPackStatus(pack.getPackStatus());
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setUnzip(pack.getUnzip());
-			packTrans.setCreateTime(sdf.format(pack.getUpdateTime()));
+			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
 			Double taskMarkTime = workerRecordService.getSUMTaskMarkTimeByPackId(pack.getPackId());
 			if (taskMarkTime == null) {
 				packTrans.setTaskMarkTime(0.00);
@@ -368,7 +368,7 @@ public class EmployerController {
 				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(Constants.VERSION);
-				packWithBLOBs.setUpdateTime(new Date());
+				packWithBLOBs.setCreateTime(new Date());
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				packWithBLOBs.setCreateMethod(items[1].toString());
 				packService.insertSelective(packWithBLOBs);
@@ -557,7 +557,7 @@ public class EmployerController {
 				taskWithBLOBs.setTaskName(zipEntryName);
 				// 存入压缩包的层次结构
 				taskWithBLOBs.setTaskDir(taskDir);
-				taskWithBLOBs.setUpdateTime(new Date());
+				taskWithBLOBs.setCreateTime(new Date());
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();

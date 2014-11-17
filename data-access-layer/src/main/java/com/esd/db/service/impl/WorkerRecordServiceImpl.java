@@ -222,4 +222,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectPackIdByTaskId(task_id);
 	}
 
+	@Override
+	public int updateBydownPackName(workerRecord record) {
+		
+		return workerRecordMapper.updateBydownPackName(record);
+	}
+
 }

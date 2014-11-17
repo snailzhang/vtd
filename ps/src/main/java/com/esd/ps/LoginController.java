@@ -230,7 +230,6 @@ public class LoginController {
 						// 更新task表
 						task task = new task();
 						task.setWorkerId(null);
-						task.setUpdateTime(new Date());
 						task.setTaskId(workerRecord.getTaskId());
 
 						task.setUpdateMethod(items[1].toString());

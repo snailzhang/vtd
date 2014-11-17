@@ -21,6 +21,8 @@ public interface workerRecordMapper {
 
 	int updateByPrimaryKey(workerRecord record);
 	
+	int updateBydownPackName(workerRecord record);
+	
 	List<workerRecord> selectDoingTask();
 	
 	List<workerRecord> selectAllByWorkerId(Map<String, Object> map);

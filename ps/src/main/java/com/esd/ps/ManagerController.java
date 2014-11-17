@@ -161,6 +161,11 @@ public class ManagerController {
 	 */
 	@Value("${MSG_QUALIFY}")
 	private String MSG_QUALIFY;
+	/**
+	 * 数据没有更新
+	 */
+	@Value("${MSG_NOT_UPDATE}")
+	private String MSG_NOT_UPDATE;
 
 	/**
 	 * 登录管理员页
@@ -258,7 +263,7 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public ModelAndView workerDetailGET(int userId,HttpServletRequest request) {
+	public ModelAndView workerDetailGET(int userId, HttpServletRequest request) {
 		Map<String, Object> model = new HashMap<>();
 		try {
 			String username = new String(request.getParameter("username").getBytes("iso-8859-1"), "utf-8");
@@ -462,7 +467,7 @@ public class ManagerController {
 			user1.setCreateMethod(items[1].toString());
 			user1.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 			if (replay == 0) {
-				user1.setUpdateTime(new Date());
+				user1.setCreateTime(new Date());
 				user1.setVersion(Constants.VERSION);
 				userService.insertSelective(user1);
 			} else if (replay == 1) {
@@ -488,7 +493,7 @@ public class ManagerController {
 	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request, int userRegisted) {
 		manager manager = new manager();
 		manager.setManagerName(managerName);
-		manager.setUpdateTime(new Date());
+		manager.setCreateTime(new Date());
 		// int login =
 		// Integer.parseInt(request.getAttribute("login").toString());
 		if (userRegisted == 0) {
@@ -516,7 +521,7 @@ public class ManagerController {
 	public ModelAndView addemployer(String employerName, HttpSession session, HttpServletRequest request, int userRegisted) {
 		employer employer = new employer();
 		employer.setEmployerName(employerName);
-		employer.setUpdateTime(new Date());
+		employer.setCreateTime(new Date());
 		// int login =
 		// Integer.parseInt(request.getAttribute("login").toString());
 		String address = null;
@@ -684,7 +689,7 @@ public class ManagerController {
 			worker.setWorkerRealName(workerRealName);
 
 			worker.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			worker.setUpdateTime(new Date());
+			worker.setCreateTime(new Date());
 			StackTraceElement[] items = Thread.currentThread().getStackTrace();
 			worker.setCreateMethod(items[1].toString());
 			worker.setVersion(Constants.VERSION);
@@ -735,7 +740,6 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.GET)
 	public ModelAndView updatePassWordGET() {
-		System.out.println(Constants.WORKER + Constants.SLASH + Constants.UPDATE_PASSWORD);
 		return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.UPDATE_PASSWORD);
 	}
 
@@ -787,23 +791,31 @@ public class ManagerController {
 	public Map<String, Object> updateWorkerPOST(String workerPhone, String workerBankCard, String workerPaypal, HttpSession session) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
-		if (workerPhone(workerPhone) == 1) {
-			map.clear();
-			map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
-			return map;
-		}
-		worker worker = new worker();
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		int workerId = workerService.getWorkerIdByUserId(userId);
-		worker.setWorkerId(workerId);
-		worker.setWorkerBankCard(workerBankCard);
-		worker.setWorkerPaypal(workerPaypal);
-		worker.setWorkerPhone(workerPhone);
-
-		worker.setUpdateTime(new Date());
+		worker worker = workerService.getWorkerByUserId(userId);
+		worker newWorker = new worker();
+		if (worker.getWorkerPhone().equals(workerPhone.trim())) {
+			if(worker.getWorkerBankCard().equals(workerBankCard.trim()) && worker.getWorkerPaypal().equals(workerPaypal.trim())){
+				map.clear();
+				map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
+				map.put(Constants.REPLAY, 1);
+				return map;
+			}
+		} else {
+			if (workerPhone(workerPhone) == 1) {
+				map.clear();
+				map.put(Constants.MESSAGE, MSG_NOT_UPDATE);
+				return map;
+			} else {
+				newWorker.setWorkerPhone(workerPhone);
+			}
+		}
+		newWorker.setWorkerId(worker.getWorkerId());
+		newWorker.setWorkerBankCard(workerBankCard);
+		newWorker.setWorkerPaypal(workerPaypal);
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		worker.setUpdateMethod(items[1].toString());
-		workerService.updateByPrimaryKeySelective(worker);
+		newWorker.setUpdateMethod(items[1].toString());
+		workerService.updateByPrimaryKeySelective(newWorker);
 		map.clear();
 		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
 		map.put(Constants.REPLAY, 1);
