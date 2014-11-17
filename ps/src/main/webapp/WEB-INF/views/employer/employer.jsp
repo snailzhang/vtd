@@ -322,6 +322,7 @@
 								}
 								var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
 								var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
+								finishTaskRatio = finishTaskRatio.toFixed(2);
 								var downloadPack = "<td></td>";
 								if(item.finishTaskCount != 0){
 									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";

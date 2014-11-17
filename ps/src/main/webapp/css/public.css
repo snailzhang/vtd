@@ -36,3 +36,6 @@ ul.pagination > li > a{float:none;}
 	border:1px solid #ddd;
 	padding:6px 5px;
 }
+.modal-body,.modal-header{
+	padding:5px;
+}
