@@ -315,7 +315,7 @@ public class WorkerController {
 		if (f.exists()) {
 			zipFile = new File(url + Constants.SLASH + downPackName);
 			if (zipFile.exists()) {
-				map.put(Constants.WRONGPATH, workerRecordService.getDownUrlByDownPackName(downPackName));
+				map.put(Constants.WRONGPATH,wrongPath);
 				return map;
 			}
 		} else {
@@ -331,7 +331,8 @@ public class WorkerController {
 			workerRecord.setUpdateTime(new Date());
 			workerRecord.setDownUrl(wrongPath);
 			workerRecord.setDownPackName(downPackName);
-			workerRecordService.updateBydownPackName(workerRecord);
+			int a=workerRecordService.updateBydownPackName(workerRecord);
+			logger.debug("a:{}",a);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

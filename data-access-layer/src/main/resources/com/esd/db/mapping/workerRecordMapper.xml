@@ -83,8 +83,8 @@
 				and task_statu = #{statu}
 			</if>
 		</where>
-			limit #{begin},#{end}
-		
+		limit #{begin},#{end}
+
 	</select>
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record
@@ -356,60 +356,15 @@
 			</if>
 		</trim>
 	</insert>
-	
+
 	<update id="updateBydownPackName" parameterType="com.esd.db.model.workerRecord">
 		update worker_record
 		<set>
-			<if test="workerId != null">
-				worker_id = #{workerId,jdbcType=INTEGER},
-			</if>
-			<if test="packId != null">
-				pack_id = #{packId,jdbcType=INTEGER},
-			</if>
-			<if test="taskId != null">
-				task_id = #{taskId,jdbcType=INTEGER},
-			</if>
-			<if test="userName != null">
-				user_name = #{userName,jdbcType=VARCHAR},
-			</if>
-			<if test="taskName != null">
-				task_name = #{taskName,jdbcType=VARCHAR},
-			</if>
-			<if test="packName != null">
-				pack_name = #{packName,jdbcType=VARCHAR},
-			</if>
 			<if test="downUrl != null">
 				down_url = #{downUrl,jdbcType=VARCHAR},
 			</if>
-			<if test="taskDownTime != null">
-				task_down_time = #{taskDownTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="taskUploadTime != null">
-				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="taskStatu != null">
-				task_statu = #{taskStatu,jdbcType=INTEGER},
-			</if>
-			<if test="taskLockTime != null">
-				task_lock_time = #{taskLockTime,jdbcType=INTEGER},
-			</if>
-			<if test="taskMarkTime != null">
-				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
-			</if>
-			<if test="createTime != null">
-				create_time = #{createTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="createMethod != null">
-				create_method = #{createMethod,jdbcType=VARCHAR},
-			</if>
 			<if test="updateTime != null">
 				update_time = #{updateTime,jdbcType=TIMESTAMP},
-			</if>
-			<if test="updateMethod != null">
-				update_method = #{updateMethod,jdbcType=VARCHAR},
-			</if>
-			<if test="taskEffective != null">
-				task_effective = #{taskEffective,jdbcType=BIT},
 			</if>
 		</set>
 		where down_pack_name = #{downPackName,jdbcType=VARCHAR}
