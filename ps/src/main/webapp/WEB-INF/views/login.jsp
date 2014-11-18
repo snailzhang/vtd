@@ -64,8 +64,10 @@
 				data:"username="+userValue,
 				dataType:'json',
 				success:function(data){
-					if(data == "false"){
-						user.next(".help-block").css("color","red").text("用户不存在");
+					if(data.replay == "0"){
+						user.next(".help-block").removeClass("text-success").addClass("text-danger").text(data.message);
+					}else{
+						user.next(".help-block").removeClass("text-danger").addClass("text-success").text(data.message);
 					}
 				}
 			});

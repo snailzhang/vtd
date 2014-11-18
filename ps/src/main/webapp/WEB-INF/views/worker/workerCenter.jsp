@@ -14,9 +14,6 @@
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
-<style type="text/css">
-#updDataBtn{display:none;}
-</style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
@@ -32,42 +29,39 @@
 			<div class="form-group">
 		      <label for="workerRealName" class="col-sm-2 control-label">真实姓名：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerRealName" id="workerRealName" value="${worker.workerRealName}" readonly="readonly">
-		         <span class="help-block"></span>
+		         <p class="form-control-static">${worker.workerRealName}</p>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerDisabilityCard" class="col-sm-2 control-label">残疾证卡号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerDisabilityCard" id="workerDisabilityCard" value="${worker.workerDisabilityCard}" readonly="readonly">
-		         <span class="help-block"></span>
+		         <p class="form-control-static">${worker.workerDisabilityCard}</p>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerBankCard" class="col-sm-2 control-label">银行卡号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerBankCard" id="workerBankCard" value="${worker.workerBankCard}" readonly="readonly">
+		         <input type="text" class="form-control" name="workerBankCard" id="workerBankCard" value="${worker.workerBankCard}">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		   <div class="form-group">
 		      <label for="workerPaypal" class="col-sm-2 control-label">支付宝账号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerPaypal" id="workerPaypal"  value="${worker.workerPaypal}" readonly="readonly">
+		         <input type="text" class="form-control" name="workerPaypal" id="workerPaypal"  value="${worker.workerPaypal}">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		    <div class="form-group">
 		      <label for="workerPhone" class="col-sm-2 control-label">电话号：</label>
 		      <div class="col-sm-10">
-		         <input type="text" class="form-control" name="workerPhone" id="workerPhone"  value="${worker.workerPhone}" readonly="readonly">
+		         <input type="text" class="form-control" name="workerPhone" id="workerPhone"  value="${worker.workerPhone}">
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
 		  
 		   <div class="form-group">
 		      <div class="col-sm-offset-2 col-sm-10">
-		         <button id="changeDataBtn" type="button" class="btn btn-primary">编辑资料</button>
 		         <button id="updDataBtn" type="button" class="btn btn-warning">提交修改</button>
 		      </div>
 		   </div>
@@ -76,11 +70,6 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function(){
-			$("#changeDataBtn").click(function(){
-				$("#changeDataBtn").hide();
-				$("#workerBankCard,#workerPaypal,#workerPhone,#workerImage").removeAttr("readonly");
-				$("#updDataBtn").show();
-			});
 			$("#updDataBtn").click(function(){
 				var tel = $("#workerPhone");
 				if(checkout.text.isempty(tel,"电话号不能为空！")){

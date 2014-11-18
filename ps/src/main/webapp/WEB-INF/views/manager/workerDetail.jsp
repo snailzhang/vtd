@@ -80,13 +80,13 @@
 			<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
-						<th>序号</th>
-						<th>任务名称</th>
-						<th>下载时间</th>
-						<th>上传时间</th>
-						<th>任务状态</th>
-						<th>标注时间</th>
-						<th>审核状态</th>
+						<th width='6%'>序号</th>
+						<th width='20%'>任务名称</th>
+						<th width='20%'>下载时间</th>
+						<th width='20%'>上传时间</th>
+						<th width='8%'>任务状态</th>
+						<th width='18%'>标注时间</th>
+						<th width='8%'>审核状态</th>
 					</tr>
 				</thead>
 				<tbody></tbody>

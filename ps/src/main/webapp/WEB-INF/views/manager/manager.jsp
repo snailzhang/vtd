@@ -78,12 +78,12 @@
 			<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
-						<th>序号</th>
-						<th>姓名</th>
-						<th>用户组</th>
-						<th>创建时间</th>
-						<th>标注时间</th>
-						<th>用户状态</th>
+						<th width='10%'>序号</th>
+						<th width='15%'>姓名</th>
+						<th width='20%'>用户组</th>
+						<th width='20%'>创建时间</th>
+						<th width='20%'>标注时间</th>
+						<th width='15%'>用户状态</th>
 					</tr>
 				</thead>
 				<tbody></tbody>

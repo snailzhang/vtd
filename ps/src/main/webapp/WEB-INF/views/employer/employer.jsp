@@ -52,18 +52,18 @@
 					<table class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th>序号</th>
-								<th>名称</th>
-								<th>等级</th>
-								<th>总数</th>
-								<th>剩余数</th>
-								<th>完成数</th>
-								<th>完成比例</th>
-								<th>下载次数</th>
-								<th>回传时间</th>
-								<th>创建时间</th>
-								<th>标注时间</th>
-								<th>下载</th>
+								<th width='5%'>序号</th>
+								<th width='15%'>名称</th>
+								<th width='5%'>等级</th>
+								<th width='5%'>总数</th>
+								<th width='6%'>剩余数</th>
+								<th width='6%'>完成数</th>
+								<th width='7%'>完成比例</th>
+								<th width='8%'>下载次数</th>
+								<th width='8%'>回传时间</th>
+								<th width='15%'>创建时间</th>
+								<th width='15%'>标注时间</th>
+								<th width='5%'>下载</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -88,14 +88,14 @@
 					<table class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th>序号</th>
-								<th>任务包名称</th>
-								<th>任务总数</th>
-								<th>下载次数</th>
-								<th>回传时间</th>
-								<th>创建时间</th>
-								<th>标注时间</th>
-								<th>下载任务包</th>
+								<th width='5%'>序号</th>
+								<th width='17%'>任务包名称</th>
+								<th width='10%'>任务总数</th>
+								<th width='10%'>下载次数</th>
+								<th width='10%'>回传时间</th>
+								<th width='19%'>创建时间</th>
+								<th width='19%'>标注时间</th>
+								<th width='10%'>下载任务包</th>
 							</tr>
 						</thead>
 						<tbody></tbody>

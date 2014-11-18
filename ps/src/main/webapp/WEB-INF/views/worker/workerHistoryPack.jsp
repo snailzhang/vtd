@@ -64,8 +64,7 @@
 		var downPackName = "";
 		$(document).ready(function(){
 			
-			$("#headJSPWorkerHistoryPack").hide();
-			$("#headJSPWorker").show();
+			
 			loadPackListHistory(1);
 			
 			/*******************************刷新按钮**************************************************/

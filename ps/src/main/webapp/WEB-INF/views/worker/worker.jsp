@@ -16,7 +16,7 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
 <style type="text/css">
 	#downloadPanel,#uploadPanel{display:none;}
-	input[type=file]{
+	.form-inline .form-control[type=file]{
 		border:0;
 		padding:0;
 		box-shadow:none;
@@ -65,13 +65,15 @@
 				<div class="panel-heading">
 					<h3 class="panel-title" id="taskLeftTimeInterval">距离任务完成时间还剩:<span class="text-danger"></span></h3>
 				</div>
-				<form action="${contextPath}/security/upTagAndTextGrid" method="post" name="upTagAndTextGrid" role="form" class="form-horizontal" enctype="multipart/form-data">
-					<div class="form-group">
-				      <label for="TAG" class="col-sm-2 control-label">选择已完成任务</label>
-				      <div class="col-sm-10">
-				         <input type="file" class="form-control" name="file" id="fileupload" autocomplete="off" multiple>
-				      	<span class="help-block" id="uploadHelp">已选择0个文件</span>
+				<form action="${contextPath}/security/upTagAndTextGrid" method="post" name="upTagAndTextGrid" role="form" class="form-inline" enctype="multipart/form-data">
+					<div class="form-group" style="width:50%">
+				       <div class="col-sm-4">
+				      <label for="TAG" class="control-label">选择已完成任务</label>
 				      </div>
+				      <div class="col-sm-3">
+				         <input type="file" class="form-control" name="file" id="fileupload" autocomplete="off" multiple>
+				      </div>
+				      <span class="col-sm-5 help-block" id="uploadHelp">已选择0个文件</span>
 				   </div>
 				   
 				   <div class="form-group">

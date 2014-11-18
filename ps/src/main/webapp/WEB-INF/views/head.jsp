@@ -14,7 +14,7 @@ if(userType == 1){
 	ut = "worker";
 }
 %>
-<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+<nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header">
 			<a href="${contextPath}/security/<%=ut%>" class="navbar-brand"> 你好:${username}</a>
