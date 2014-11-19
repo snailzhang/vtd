@@ -47,7 +47,7 @@
 	
  	<table tableName="district" domainObjectName="district" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" />
  -->
- 	<table tableName="registration" domainObjectName="Registration" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" />
+ 	<table tableName="voice_note" domainObjectName="voiceNote" enableCountByExample="false" enableDeleteByExample="false" enableSelectByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" />
  		
 	</context>
 </generatorConfiguration>
