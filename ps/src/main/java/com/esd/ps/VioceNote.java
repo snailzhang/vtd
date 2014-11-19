@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.esd.db.model.voiceNote;
+import com.esd.db.model.voiceNoteWithBLOBs;
 import com.esd.db.service.VoiceNoteService;
 
 @Controller
@@ -71,8 +74,16 @@ public class VioceNote {
 	 * @return
 	 */
 	@RequestMapping(value = "/addVoiceNote", method = RequestMethod.POST)
-	public ModelAndView addVoiceNotePOST(String title, String content) {
-
+	public ModelAndView addVoiceNotePOST(String title, String content,HttpSession session) {
+//		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
+//		
+//		voiceNote.setNoteTitle(title);
+//		voiceNote.setNoteContentText(content);
+//		voiceNote.setCreateId(Integer.parseInt(session.getAttribute("userId").toString()));
+//		voiceNote.setCreateTime(new Date());
+//		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+//		voiceNote.setCreatteMethod(items[1].toString());
+//		voiceNote.setNoteId(noteId);
 		return new ModelAndView();
 	}
 
@@ -116,7 +127,12 @@ public class VioceNote {
 		// 文件所谓的远程绝对路径
 		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "image" + Constants.SLASH + noteImage.getOriginalFilename();
 		map.clear();
-		map.put("callback", wrongPath);
+		map.put("originalName", noteImage.getOriginalFilename());
+		map.put("name", noteImage.getOriginalFilename());
+		map.put("url", wrongPath);
+		map.put("size", noteImage.getSize());
+		map.put("type", noteImage.getOriginalFilename().split(".")[1]);
+		map.put("state", "success");
 		return map;
 	}
 }
