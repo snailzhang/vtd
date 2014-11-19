@@ -13,7 +13,7 @@ public interface VoiceNoteService {
 
     voiceNote selectByPrimaryKey(Integer id);
     
-    List<voiceNote> getById();
+    List<voiceNote> getAll();
 
     int updateByPrimaryKeySelective(voiceNote record);
 

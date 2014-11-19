@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ import com.esd.db.service.VoiceNoteService;
 public class VioceNote {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
-	private VoiceNoteService VoiceNoteService;
+	private VoiceNoteService voiceNoteService;
 
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.GET)
 	public ModelAndView VoiceNoteGET() {
@@ -44,7 +45,7 @@ public class VioceNote {
 	@ResponseBody
 	public Map<String, Object> VoiceNotePOST() {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<voiceNote> list = VoiceNoteService.getById();
+		List<voiceNote> list = voiceNoteService.getAll();
 		map.clear();
 		map.put("list", list);
 		return map;
@@ -60,7 +61,7 @@ public class VioceNote {
 	@ResponseBody
 	public Map<String, Object> VoiceNoteContentPOST(int id) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		voiceNote voiceNote = VoiceNoteService.selectByPrimaryKey(id);
+		voiceNote voiceNote = voiceNoteService.selectByPrimaryKey(id);
 		map.clear();
 		map.put("voiceNote", voiceNote);
 		return map;
@@ -74,15 +75,25 @@ public class VioceNote {
 	 * @return
 	 */
 	@RequestMapping(value = "/addVoiceNote", method = RequestMethod.POST)
-	public ModelAndView addVoiceNotePOST(String title, String content,HttpSession session) {
+	public ModelAndView addVoiceNotePOST(String title, String content, HttpSession session) {
 //		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
-//		
+//
 //		voiceNote.setNoteTitle(title);
 //		voiceNote.setNoteContentText(content);
 //		voiceNote.setCreateId(Integer.parseInt(session.getAttribute("userId").toString()));
 //		voiceNote.setCreateTime(new Date());
-//		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-//		voiceNote.setCreatteMethod(items[1].toString());
+//		// StackTraceElement[] items = Thread.currentThread().getStackTrace();
+//		// voiceNote.setCreatteMethod(items[1].toString());
+//
+//		List<voiceNote> list = voiceNoteService.getAll();
+//		int noteId = 0;
+//		for (int i = 0; i < list.size(); i++) {
+//			if (Integer.parseInt(list.get(i + 1).getNoteId()) > Integer.parseInt(list.get(i).getNoteId())) {
+//				noteId = Integer.parseInt(list.get(i + 1).getNoteId());
+//			} else {
+//				noteId = Integer.parseInt(list.get(i).getNoteId());
+//			}
+//		}
 //		voiceNote.setNoteId(noteId);
 		return new ModelAndView();
 	}
@@ -132,7 +143,7 @@ public class VioceNote {
 		map.put("url", wrongPath);
 		map.put("size", noteImage.getSize());
 		map.put("type", noteImage.getOriginalFilename().split(".")[1]);
-		map.put("state", "success");
+		map.put("state", "SUCCESS");
 		return map;
 	}
 }

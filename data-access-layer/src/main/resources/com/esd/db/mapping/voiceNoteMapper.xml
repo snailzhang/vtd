@@ -32,7 +32,7 @@
 		from voice_note
 		where id = #{id,jdbcType=INTEGER}
 	</select>
-	<select id="selectById" resultMap="BaseResultMap">
+	<select id="selectAll" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from voice_note
