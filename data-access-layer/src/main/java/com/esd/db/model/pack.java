@@ -7,6 +7,8 @@ public class pack {
 	private Integer packId;
 
 	private Integer employerId;
+	
+	private String noteId;
 
 	private String packName;
 
@@ -48,6 +50,14 @@ public class pack {
 
 	public void setEmployerId(Integer employerId) {
 		this.employerId = employerId;
+	}
+	
+	public String getNoteId() {
+		return noteId;
+	}
+
+	public void setNoteId(String noteId) {
+		this.noteId = noteId;
 	}
 
 	public String getPackName() {

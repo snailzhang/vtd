@@ -4,6 +4,7 @@
 	<resultMap id="BaseResultMap" type="com.esd.db.model.pack">
 		<id column="pack_id" property="packId" jdbcType="INTEGER" />
 		<result column="employer_id" property="employerId" jdbcType="INTEGER" />
+		<result column="note_id" property="noteId" jdbcType="VARCHAR" />
 		<result column="pack_name" property="packName" jdbcType="VARCHAR" />
 		<result column="pack_status" property="packStatus" jdbcType="INTEGER" />
 		<result column="pack_lock_time" property="packLockTime" jdbcType="INTEGER" />
@@ -23,7 +24,7 @@
 		<result column="pack_format" property="packFormat" jdbcType="LONGVARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		pack_id, employer_id, pack_name, pack_status, pack_lock_time,unzip,pack_lvl, create_id, create_time,
+		pack_id, employer_id,note_id, pack_name, pack_status, pack_lock_time,unzip,pack_lvl, create_id, create_time,
 		create_method, update_id, update_time, update_method,down_count, version
 	</sql>
 	<sql id="Blob_Column_List">
@@ -53,9 +54,9 @@
 		count(pack_id) totle
 		from pack
 		<where>
-			employer_id = #{employerId} 
+			employer_id = #{employerId}
 			<if test="packStuts == 1">
-			 	and pack_status = #{packStuts}
+				and pack_status = #{packStuts}
 			</if>
 			<if test="packStuts == 0">
 				<![CDATA[and (pack_status = 0 or pack_status = 2)]]>
@@ -182,18 +183,19 @@
 		where pack_name = #{packName,jdbcType=String}
 	</delete>
 	<insert id="insert" parameterType="com.esd.db.model.packWithBLOBs">
-		insert into pack (pack_id, employer_id, pack_name,
+		insert into pack (pack_id, employer_id,note_id, pack_name,
 		pack_status, pack_lock_time,unzip,pack_lvl create_id,
 		create_time, create_method, update_id,
 		update_time,
 		update_method,down_count, version,
 		pack_file,
 		pack_format)
-		values (#{packId,jdbcType=INTEGER}, #{employerId,jdbcType=INTEGER}, #{packName,jdbcType=VARCHAR},
+		values (#{packId,jdbcType=INTEGER}, #{employerId,jdbcType=INTEGER}, #{noteId,jdbcType=VARCHAR},#{packName,jdbcType=VARCHAR},
 		#{packStatus,jdbcType=INTEGER},
 		#{packLockTime,jdbcType=INTEGER},#{unzip,jdbcType=INTEGER},#{packLvl,jdbcType=INTEGER},
 		#{createId,jdbcType=INTEGER},
-		#{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createMethod,jdbcType=VARCHAR},
 		#{updateId,jdbcType=INTEGER},
 		#{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
 		#{downCount,jdbcType=INTEGER}, #{version,jdbcType=VARCHAR},
@@ -208,6 +210,9 @@
 			</if>
 			<if test="employerId != null">
 				employer_id,
+			</if>
+			<if test="noteId != null">
+				note_id,
 			</if>
 			<if test="packName != null">
 				pack_name,
@@ -262,6 +267,9 @@
 			<if test="employerId != null">
 				#{employerId,jdbcType=INTEGER},
 			</if>
+			<if test="noteId != null">
+				#{noteId,jdbcType=VARCHAR},
+			</if>
 			<if test="packName != null">
 				#{packName,jdbcType=VARCHAR},
 			</if>
@@ -315,6 +323,9 @@
 			<if test="employerId != null">
 				employer_id = #{employerId,jdbcType=INTEGER},
 			</if>
+			<if test="noteId != null">
+				note_id = #{noteId,jdbcType=VARCHAR},
+			</if>
 			<if test="packName != null">
 				pack_name = #{packName,jdbcType=VARCHAR},
 			</if>
@@ -366,7 +377,9 @@
 	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esd.db.model.packWithBLOBs">
 		update pack
 		set employer_id = #{employerId,jdbcType=INTEGER},
-		pack_name = #{packName,jdbcType=VARCHAR},
+		note_id = #{noteId,jdbcType=VARCHAR},
+		pack_name =
+		#{packName,jdbcType=VARCHAR},
 		pack_status =
 		#{packStatus,jdbcType=INTEGER},
 		pack_lock_time = #{packLockTime,jdbcType=INTEGER},
@@ -377,12 +390,14 @@
 		#{createTime,jdbcType=TIMESTAMP},
 		create_method = #{createMethod,jdbcType=VARCHAR},
 		update_id = #{updateId,jdbcType=INTEGER},
-		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_time =
+		#{updateTime,jdbcType=TIMESTAMP},
 		update_method =
 		#{updateMethod,jdbcType=VARCHAR},
 		down_count = #{downCount,jdbcType=INTEGER},
 		version = #{version,jdbcType=VARCHAR},
-		pack_file = #{packFile,jdbcType=LONGVARBINARY},
+		pack_file =
+		#{packFile,jdbcType=LONGVARBINARY},
 		pack_format =
 		#{packFormat,jdbcType=LONGVARCHAR}
 		where pack_id = #{packId,jdbcType=INTEGER}
@@ -390,23 +405,27 @@
 	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.pack">
 		update pack
 		set employer_id = #{employerId,jdbcType=INTEGER},
+		note_id = #{noteId,jdbcType=VARCHAR},
 		pack_name = #{packName,jdbcType=VARCHAR},
 		pack_status = #{packStatus,jdbcType=INTEGER},
 		pack_lock_time = #{packLockTime,jdbcType=INTEGER},
 		unzip= #{unzip,jdbcType=INTEGER},
 		pack_lvl= #{packLvl,jdbcType=INTEGER},
-		create_id = #{createId,jdbcType=INTEGER},
+		create_id =
+		#{createId,jdbcType=INTEGER},
 		create_time =
 		#{createTime,jdbcType=TIMESTAMP},
 		create_method = #{createMethod,jdbcType=VARCHAR},
 		update_id =
 		#{updateId,jdbcType=INTEGER},
-		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_time =
+		#{updateTime,jdbcType=TIMESTAMP},
 		update_method =
 		#{updateMethod,jdbcType=VARCHAR},
 		down_count = #{downCount,jdbcType=INTEGER},
 		version =
 		#{version,jdbcType=VARCHAR}
-		where pack_id = #{packId,jdbcType=INTEGER}
+		where pack_id =
+		#{packId,jdbcType=INTEGER}
 	</update>
 </mapper>

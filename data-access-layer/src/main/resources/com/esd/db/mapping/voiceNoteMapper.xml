@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esd.db.dao.voiceNoteMapper">
+	<resultMap id="BaseResultMap" type="com.esd.db.model.voiceNote">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="note_id" property="noteId" jdbcType="VARCHAR" />
+		<result column="note_title" property="noteTitle" jdbcType="VARCHAR" />
+		<result column="create_id" property="createId" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="creatte_method" property="creatteMethod" jdbcType="VARCHAR" />
+		<result column="update_id" property="updateId" jdbcType="INTEGER" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.esd.db.model.voiceNoteWithBLOBs" extends="BaseResultMap">
+		<result column="note_content_text" property="noteContentText" jdbcType="LONGVARCHAR" />
+		<result column="note_content" property="noteContent" jdbcType="LONGVARBINARY" />
+		<result column="note_image" property="noteImage" jdbcType="LONGVARBINARY" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, note_id, note_title, create_id, create_time, creatte_method, update_id, update_time,
+		update_method
+	</sql>
+	<sql id="Blob_Column_List">
+		note_content_text,note_content,note_image
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from voice_note
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectById" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from voice_note
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from voice_note
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.esd.db.model.voiceNoteWithBLOBs">
+		insert into voice_note (id, note_id, note_title,
+		create_id, create_time, creatte_method,
+		update_id, update_time, update_method,
+		note_content_text,note_content,note_image)
+		values (#{id,jdbcType=INTEGER}, #{noteId,jdbcType=VARCHAR}, #{noteTitle,jdbcType=VARCHAR},
+		#{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{creatteMethod,jdbcType=VARCHAR},
+		#{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
+		#{noteContentText,jdbcType=LONGVARCHAR},#{noteContent,jdbcType=LONGVARBINARY},#{noteImage,jdbcType=LONGVARBINARY})
+	</insert>
+	<insert id="insertSelective" parameterType="com.esd.db.model.voiceNoteWithBLOBs">
+		insert into voice_note
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="noteId != null">
+				note_id,
+			</if>
+			<if test="noteTitle != null">
+				note_title,
+			</if>
+			<if test="createId != null">
+				create_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="creatteMethod != null">
+				creatte_method,
+			</if>
+			<if test="updateId != null">
+				update_id,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateMethod != null">
+				update_method,
+			</if>
+			<if test="noteContentText != null">
+				note_content_text,
+			</if>
+			<if test="noteContent != null">
+				note_content,
+			</if>
+			<if test="noteImage != null">
+				note_image,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="noteId != null">
+				#{noteId,jdbcType=VARCHAR},
+			</if>
+			<if test="noteTitle != null">
+				#{noteTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="createId != null">
+				#{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creatteMethod != null">
+				#{creatteMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				#{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				#{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="noteContentText != null">
+				#{noteContentText,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="noteContent != null">
+				#{noteContent,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="noteImage != null">
+				#{noteImage,jdbcType=LONGVARBINARY},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.voiceNoteWithBLOBs">
+		update voice_note
+		<set>
+			<if test="noteId != null">
+				note_id = #{noteId,jdbcType=VARCHAR},
+			</if>
+			<if test="noteTitle != null">
+				note_title = #{noteTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creatteMethod != null">
+				creatte_method = #{creatteMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="noteContentText != null">
+				note_content_text = #{noteContentText,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="noteContent != null">
+				note_content = #{noteContent,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="noteImage != null">
+				note_image = #{noteImage,jdbcType=LONGVARBINARY},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esd.db.model.voiceNoteWithBLOBs">
+		update voice_note
+		set note_id = #{noteId,jdbcType=VARCHAR},
+		note_title = #{noteTitle,jdbcType=VARCHAR},
+		create_id =
+		#{createId,jdbcType=INTEGER},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		creatte_method = #{creatteMethod,jdbcType=VARCHAR},
+		update_id = #{updateId,jdbcType=INTEGER},
+		update_time =
+		#{updateTime,jdbcType=TIMESTAMP},
+		update_method = #{updateMethod,jdbcType=VARCHAR},
+		note_content_text = #{noteContentText,jdbcType=LONGVARCHAR},
+		note_content = #{noteContent,jdbcType=LONGVARBINARY},
+		note_image = #{noteImage,jdbcType=LONGVARBINARY}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.voiceNote">
+		update voice_note
+		set note_id = #{noteId,jdbcType=VARCHAR},
+		note_title = #{noteTitle,jdbcType=VARCHAR},
+		create_id = #{createId,jdbcType=INTEGER},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		creatte_method = #{creatteMethod,jdbcType=VARCHAR},
+		update_id = #{updateId,jdbcType=INTEGER},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_method = #{updateMethod,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

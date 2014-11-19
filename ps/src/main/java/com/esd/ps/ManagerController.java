@@ -231,8 +231,12 @@ public class ManagerController {
 				}
 				trans.setUsername(user.getUsername());
 				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
-				trans.setUpdateTime(sdf.format(user.getCreateTime()));
-				trans.setCreateTime(sdf.format(user.getUpdateTime()));
+				trans.setCreateTime(sdf.format(user.getCreateTime()));
+				if(user.getUpdateTime()==null){
+					trans.setUpdateTime("");
+				}else{
+					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
+				}	
 			}
 
 			list.add(trans);

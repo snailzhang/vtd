@@ -556,6 +556,11 @@ public class EmployerController {
 				taskWithBLOBs.setPackId(packId);
 				taskWithBLOBs.setTaskName(zipEntryName);
 				// 存入压缩包的层次结构
+				if (taskDir.trim().length() > 0) {
+					taskDir = packName.substring(0, (packName.length() - 4)) + Constants.SLASH + taskDir;
+				} else {
+					taskDir = packName.substring(0, (packName.length() - 4));
+				}
 				taskWithBLOBs.setTaskDir(taskDir);
 				taskWithBLOBs.setCreateTime(new Date());
 				// 包内任务的上传状态
