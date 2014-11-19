@@ -34,13 +34,19 @@ public class VioceNote {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
 	private VoiceNoteService voiceNoteService;
-
+	/**
+	 * 标注说明页
+	 * @return
+	 */
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.GET)
 	public ModelAndView VoiceNoteGET() {
 
 		return new ModelAndView("manager/voiceNote");
 	}
-
+	/**
+	 * 标注说明列表
+	 * @return
+	 */
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> VoiceNotePOST() {
@@ -50,13 +56,20 @@ public class VioceNote {
 		map.put("list", list);
 		return map;
 	}
-
+	/**
+	 * 标注说明内容页
+	 * @return
+	 */
 	@RequestMapping(value = "/voiceNoteContent", method = RequestMethod.GET)
 	public ModelAndView VoiceNoteContentGET() {
 
 		return new ModelAndView("manager/voiceNoteContent");
 	}
-
+	/**
+	 * 标注说明内容
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "/voiceNoteContent", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> VoiceNoteContentPOST(int id) {
