@@ -85,7 +85,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> uploadImagePOST(@RequestParam(value = "noteImage", required = false) MultipartFile noteImage, HttpServletRequest request) {
+	public Map<String, Object> uploadImagePOST(@RequestParam(value = "upfile", required = false) MultipartFile noteImage, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
 		if (noteImage.isEmpty()) {
 			return map;
