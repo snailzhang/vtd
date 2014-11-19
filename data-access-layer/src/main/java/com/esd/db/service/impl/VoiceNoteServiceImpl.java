@@ -57,8 +57,8 @@ public class VoiceNoteServiceImpl implements VoiceNoteService {
 	}
 
 	@Override
-	public List<voiceNote> getById() {
+	public List<voiceNote> getAll() {
 		
-		return voiceNoteMapper.selectById();
+		return voiceNoteMapper.selectAll();
 	}
 }
