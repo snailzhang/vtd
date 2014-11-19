@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,8 @@ public class VioceNote {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
 	private VoiceNoteService voiceNoteService;
+	@Value("MSG_ADD_SUCCESS")
+	private String MSG_ADD_SUCCESS;
 	/**
 	 * 标注说明页
 	 * @return
@@ -88,7 +91,8 @@ public class VioceNote {
 	 * @return
 	 */
 	@RequestMapping(value = "/addVoiceNote", method = RequestMethod.POST)
-	public ModelAndView addVoiceNotePOST(String title, String content, HttpSession session) {
+	public Map<String, Object> addVoiceNotePOST(String title, String content, HttpSession session) {
+		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
 
 		voiceNote.setNoteTitle(title);
@@ -112,7 +116,9 @@ public class VioceNote {
 		String noteId = "0000000" + (noteIdNum + 1);
 		voiceNote.setNoteId(noteId.substring((noteId.length() - 5), noteId.length()));
 		voiceNoteService.insertSelective(voiceNote);
-		return new ModelAndView(Constants.REDIRECT + ":" + "voiceNote");
+		map.put(Constants.REPLAY,1);
+		map.put(Constants.MESSAGE,MSG_ADD_SUCCESS);
+		return map;
 	}
 
 	/**
