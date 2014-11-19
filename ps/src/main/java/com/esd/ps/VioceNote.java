@@ -116,7 +116,7 @@ public class VioceNote {
 		// 文件所谓的远程绝对路径
 		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "image" + Constants.SLASH + noteImage.getOriginalFilename();
 		map.clear();
-		map.put("wrongPath", wrongPath);
+		map.put("callback", wrongPath);
 		return map;
 	}
 }
