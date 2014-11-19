@@ -76,26 +76,30 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/addVoiceNote", method = RequestMethod.POST)
 	public ModelAndView addVoiceNotePOST(String title, String content, HttpSession session) {
-//		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
-//
-//		voiceNote.setNoteTitle(title);
-//		voiceNote.setNoteContentText(content);
-//		voiceNote.setCreateId(Integer.parseInt(session.getAttribute("userId").toString()));
-//		voiceNote.setCreateTime(new Date());
-//		// StackTraceElement[] items = Thread.currentThread().getStackTrace();
-//		// voiceNote.setCreatteMethod(items[1].toString());
-//
-//		List<voiceNote> list = voiceNoteService.getAll();
-//		int noteId = 0;
-//		for (int i = 0; i < list.size(); i++) {
-//			if (Integer.parseInt(list.get(i + 1).getNoteId()) > Integer.parseInt(list.get(i).getNoteId())) {
-//				noteId = Integer.parseInt(list.get(i + 1).getNoteId());
-//			} else {
-//				noteId = Integer.parseInt(list.get(i).getNoteId());
-//			}
-//		}
-//		voiceNote.setNoteId(noteId);
-		return new ModelAndView();
+		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
+
+		voiceNote.setNoteTitle(title);
+		voiceNote.setNoteContentText(content);
+		voiceNote.setCreateId(Integer.parseInt(session.getAttribute("userId").toString()));
+		voiceNote.setCreateTime(new Date());
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		voiceNote.setCreatteMethod(items[1].toString());
+
+		List<voiceNote> list = voiceNoteService.getAll();
+		int noteIdNum = 0;
+		if (list != null) {
+			for (int i = 0; i < list.size(); i++) {
+				if (Integer.parseInt(list.get(i + 1).getNoteId()) > Integer.parseInt(list.get(i).getNoteId())) {
+					noteIdNum = Integer.parseInt(list.get(i + 1).getNoteId());
+				} else {
+					noteIdNum = Integer.parseInt(list.get(i).getNoteId());
+				}
+			}
+		}
+		String noteId = "0000000" + (noteIdNum + 1);
+		voiceNote.setNoteId(noteId.substring((noteId.length() - 5), noteId.length()));
+		voiceNoteService.insertSelective(voiceNote);
+		return new ModelAndView(Constants.REDIRECT + ":" + "voiceNote");
 	}
 
 	/**
