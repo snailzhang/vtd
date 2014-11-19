@@ -13,9 +13,13 @@
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/umeditor.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/umeditor.config.js"></script>
+<script type="text/javascript" src="${contextPath}/js/umeditor.js"></script>
+<script type="text/javascript" src="${contextPath}/lang/zh-cn/zh-cn.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
@@ -32,7 +36,9 @@
 		<ul class="nav nav-tabs" role="tablist">
 			<li class="active"><a href="#packUncomplete" role="tab" data-toggle="tab">未完成任务包列表</a></li>
 			<li><a href="#packComplete" role="tab" data-toggle="tab">已完成任务包列表</a></li>
+			<li><a href="#packAll" role="tab" data-toggle="tab">全部任务包列表</a></li>
 			<li><a href="#packUnzip" role="tab" data-toggle="tab">未解压任务包列表</a></li>
+			<li><a href="#editTaskRole" role="tab" data-toggle="tab">编辑任务规则</a></li>
 		</ul>
 		<div class="tab-content">
 		<!-- ****************************************未完成任务包列表******************************************************* -->
@@ -89,13 +95,53 @@
 						<thead>
 							<tr>
 								<th width='5%'>序号</th>
-								<th width='17%'>任务包名称</th>
-								<th width='10%'>任务总数</th>
-								<th width='10%'>下载次数</th>
-								<th width='10%'>回传时间</th>
-								<th width='19%'>创建时间</th>
-								<th width='19%'>标注时间</th>
-								<th width='10%'>下载任务包</th>
+								<th width='15%'>名称</th>
+								<th width='5%'>等级</th>
+								<th width='5%'>总数</th>
+								<th width='6%'>剩余数</th>
+								<th width='6%'>完成数</th>
+								<th width='7%'>完成比例</th>
+								<th width='8%'>下载次数</th>
+								<th width='8%'>回传时间</th>
+								<th width='15%'>创建时间</th>
+								<th width='15%'>标注时间</th>
+								<th width='5%'>下载</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
+			</div>
+			<!-- ****************************************全部任务包列表******************************************************* -->
+			<div class="tab-pane" id="packAll">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<form class="form-inline" role="form">
+							<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon">任务包名称：</div>
+									<input class="form-control" id="packNameCondition" type="text" placeholder="查询已完成任务包" onkeydown="if(event.keyCode==13){return false;}">
+								</div>
+							</div>
+							<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+						</form>
+					</div>
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th width='5%'>序号</th>
+								<th width='15%'>名称</th>
+								<th width='5%'>等级</th>
+								<th width='5%'>总数</th>
+								<th width='6%'>剩余数</th>
+								<th width='6%'>完成数</th>
+								<th width='7%'>完成比例</th>
+								<th width='8%'>下载次数</th>
+								<th width='8%'>回传时间</th>
+								<th width='15%'>创建时间</th>
+								<th width='15%'>标注时间</th>
+								<th width='5%'>下载</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -148,9 +194,33 @@
 				</div>
 				
 			</div>
+			<!-- ****************************************编辑任务规则******************************************************* -->
+			<div class="tab-pane" id="editTaskRole">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						编辑任务规则
+					</div>
+					<div class="panel-body">
+						<form role="form" class="form-horizontal">
+							<div class="form-group" id="">
+								<label for="noteTitle" class="col-sm-2 control-label">规则名称：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="noteTitle" id="noteTitle" placeholder="规则名称" required="required">
+								</div>
+							</div>
+							<script type="text/plain" id="myEditor" style="width:900px;height:240px;">
+    							<p>这里我可以写一些输入提示</p>
+							</script>
+						</form>
+					</div>
+				</div>
+				
+			</div>
 		</div>
 		
 	</div>
+	
+			
 	<!-------------------------------- 弹出窗口 任务包详细-------------------------------------------------->
 	<div id="packDetailModal" class="modal fade">
 		<div class="modal-dialog">
@@ -254,9 +324,12 @@
 		var pcPageTotle = 0;
 		var pdPageTotle = 0;
 		var changePackLvlPackId = 0;
+		window.UMEDITOR_CONFIG.imageUrl = "${contextPath}/security/uploadImage";
 		if('${match}' == '1'){
 			alert("文件已存在");
 		}
+		
+		var um = UM.getEditor('myEditor');
 		$(document).ready(function(){
 			loadUnCompletePackList(1);
 			loadCompletePackList(1);
@@ -304,7 +377,7 @@
 				success:function(data){
 					if(data.list == ""){
 						$("#packUncomplete tbody").empty();
-						$("#packUncomplete tbody").append("<tr class='text-danger'><td colspan='11'>无内容</td></tr>");
+						$("#packUncomplete tbody").append("<tr class='text-danger'><td colspan='12'>无内容</td></tr>");
 					}else{
 						$("#packUncomplete tbody").empty();
 						$.each(data.list,function(i,item){
@@ -326,6 +399,8 @@
 								var downloadPack = "<td></td>";
 								if(item.finishTaskCount != 0){
 									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+								}else{
+									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载</a></td>";
 								}
 								$("#packUncomplete tbody").append(
 									"<tr>"+
@@ -381,13 +456,17 @@
 							$("#packComplete tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
-									"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
-									"<td>"+item.taskCount+"</td>"+
-									"<td>"+item.downCount+"</td>"+
-									"<td>"+item.packLockTime+"小时</td>"+
-									"<td>"+item.createTime+"</td>"+
-									"<td>"+item.taskMarkTime+"</td>"+
-									downloadPack+
+										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+										"<td>"+item.taskLvl+"</td>"+
+										"<td>"+item.taskCount+"</td>"+
+										"<td>0</td>"+
+										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>100%</td>"+
+										"<td>"+item.downCount+"</td>"+
+										"<td>"+item.packLockTime+"小时</td>"+
+										"<td>"+item.createTime+"</td>"+
+										"<td>"+item.taskMarkTime+"</td>"+
+										downloadPack+
 								"</tr>"
 							);
 						});
@@ -400,6 +479,64 @@
 							pageNum = $("#packComplete .pageGoText").val();
 							if(pageNum !=0&&0<pageNum&&pageNum<pcPageTotle+1){
 								loadCompletePackList(pageNum);
+							}
+						});
+					}
+				}
+			});
+		};
+		/*---------------------------------------请求全部任务包列表-------------------------------------------------------------------*/
+		loadAllPackList = function(pageNum){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/employer',
+				data:{"packStuts":3,"page":pageNum,"packNameCondition":packNameCondition},
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("#packComplete tbody").empty();
+						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='12'>无内容</td></tr>");
+					}else{
+						$("#packComplete tbody").empty();
+						$.each(data.list,function(i,item){
+							if(item.packLockTime == null){
+								item.packLockTime = "";
+							}
+							var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
+							var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
+							finishTaskRatio = finishTaskRatio.toFixed(2);
+							var downloadPack = "<td></td>";
+							if(item.finishTaskCount != 0){
+								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+							}else{
+								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载</a></td>";
+							}
+							$("#packComplete tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
+										"<td>"+item.taskLvl+"</td>"+
+										"<td>"+item.taskCount+"</td>"+
+										"<td>"+surplusTask+"</td>"+
+										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>"+finishTaskRatio+"%</td>"+
+										"<td>"+item.downCount+"</td>"+
+										"<td>"+item.packLockTime+"小时</td>"+
+										"<td>"+item.createTime+"</td>"+
+										"<td>"+item.taskMarkTime+"</td>"+
+										downloadPack+
+								"</tr>"
+							);
+						});
+						var pageDom = $("#packAll .pagination");
+						pageDom.empty();
+						pcPageTotle = data.totlePage;
+						page.creatPageHTML(pageNum,pcPageTotle,pageDom,"loadAllPackList");
+						$("#packAll .pageGoBtn").click(function(){
+							var pageNum = 0;
+							pageNum = $("#packAll .pageGoText").val();
+							if(pageNum !=0&&0<pageNum&&pageNum<pcPageTotle+1){
+								loadAllPackList(pageNum);
 							}
 						});
 					}
@@ -423,7 +560,7 @@
 									"<td class='packZipStatus'><a href='javascript:zipOnePack(\""+item+"\",\"unziptr"+i+"\");'>解压</a></td>"+
 								"</tr>"
 							);
-						})
+						});
 					}else{
 						$("#packUnzip tbody").append("<tr><td colspan='3'>无未解压任务包</td></tr>");
 					}
@@ -448,19 +585,23 @@
 		};
 		/*---------------------------------------下载任务包---------------------------------------------------------------*/
 		downloadPackFn = function(packId){
-			$.ajax({
-				type:'GET',
-				url:'${contextPath}/security/downPack',
-				data:{"packId":packId},
-				dataType:'json',
-				success:function(data){
-					if(data.wrongPath != ""){
-						window.open(data.wrongPath);
-						window.location.reload();
+			if(packId == 0){
+				alert('没有已完成任务，不能下载！');
+			}else{
+				$.ajax({
+					type:'GET',
+					url:'${contextPath}/security/downPack',
+					data:{"packId":packId},
+					dataType:'json',
+					success:function(data){
+						if(data.wrongPath != ""){
+							window.open(data.wrongPath);
+							window.location.reload();
+						}
 					}
-				}
-			});
-			$("#dp"+packId+"").text("正在打包");
+				});
+				$("#dp"+packId+"").text("正在打包");
+			}
 		};
 		/*---------------------------------------查看上传包详细内容---------------------------------------------------------------*/
 		showPackDetail = function(packId){
