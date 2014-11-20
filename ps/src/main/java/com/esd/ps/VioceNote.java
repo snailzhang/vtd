@@ -104,7 +104,10 @@ public class VioceNote {
 
 		List<voiceNote> list = voiceNoteService.getAll("");
 		int noteIdNum = 0;
-		if (list != null) {
+		if(list.size() == 1){
+			noteIdNum = Integer.parseInt(list.get(0).getNoteId());
+		}
+		if (list != null && list.size()>1) {
 			for (int i = 0; i < list.size(); i++) {
 				if (Integer.parseInt(list.get(i + 1).getNoteId()) > Integer.parseInt(list.get(i).getNoteId())) {
 					noteIdNum = Integer.parseInt(list.get(i + 1).getNoteId());
