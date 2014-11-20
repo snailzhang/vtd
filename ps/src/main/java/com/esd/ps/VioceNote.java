@@ -35,7 +35,7 @@ public class VioceNote {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
 	private VoiceNoteService voiceNoteService;
-	@Value("MSG_ADD_SUCCESS")
+	@Value("${MSG_ADD_SUCCESS}")
 	private String MSG_ADD_SUCCESS;
 	/**
 	 * 标注说明页
@@ -160,11 +160,13 @@ public class VioceNote {
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
 		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "image" + Constants.SLASH + noteImage.getOriginalFilename();
+		System.out.println(noteImage.getOriginalFilename());
 		map.clear();
 		map.put("originalName", noteImage.getOriginalFilename());
 		map.put("name", noteImage.getOriginalFilename());
 		map.put("url", wrongPath);
 		map.put("size", noteImage.getSize());
+
 		map.put("type", noteImage.getOriginalFilename().split(".")[1]);
 		map.put("state", "SUCCESS");
 		return map;
