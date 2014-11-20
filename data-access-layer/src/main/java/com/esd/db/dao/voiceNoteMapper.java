@@ -16,6 +16,8 @@ public interface voiceNoteMapper {
     voiceNote selectByPrimaryKey(Integer id);
     
     List<voiceNote> selectAll(Map<String,Object> map);
+    
+    int selectAllCount(Map<String,Object> map);
 
     int updateByPrimaryKeySelective(voiceNote record);
 

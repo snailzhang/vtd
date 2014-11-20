@@ -7,7 +7,7 @@
 		<result column="note_title" property="noteTitle" jdbcType="VARCHAR" />
 		<result column="create_id" property="createId" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-		<result column="creatte_method" property="creatteMethod" jdbcType="VARCHAR" />
+		<result column="create_method" property="createMethod" jdbcType="VARCHAR" />
 		<result column="update_id" property="updateId" jdbcType="INTEGER" />
 		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
 		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
@@ -18,7 +18,7 @@
 		<result column="note_image" property="noteImage" jdbcType="LONGVARBINARY" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, note_id, note_title, create_id, create_time, creatte_method, update_id, update_time,
+		id, note_id, note_title, create_id, create_time, create_method, update_id, update_time,
 		update_method
 	</sql>
 	<sql id="Blob_Column_List">
@@ -36,10 +36,21 @@
 		select
 		<include refid="Base_Column_List" />
 		from voice_note
+		where 3>2
 		<if test="condition != null">
-			<where>
-				(note_id like "%${condition}%" or note_title like "%${condition}%")
-			</where>
+			and (note_id like "%${condition}%" or note_title like "%${condition}%")
+		</if>
+		<if test="begin != null">
+			limit #{begin},#{end}
+		</if>
+	</select>
+	<select id="selectAllCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(id) totle
+		from voice_note
+		where 3>2
+		<if test="condition != null">
+			and (note_id like "%${condition}%" or note_title like "%${condition}%")
 		</if>
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -48,11 +59,12 @@
 	</delete>
 	<insert id="insert" parameterType="com.esd.db.model.voiceNoteWithBLOBs">
 		insert into voice_note (id, note_id, note_title,
-		create_id, create_time, creatte_method,
+		create_id, create_time, create_method,
 		update_id, update_time, update_method,
 		note_content_text,note_content,note_image)
 		values (#{id,jdbcType=INTEGER}, #{noteId,jdbcType=VARCHAR}, #{noteTitle,jdbcType=VARCHAR},
-		#{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{creatteMethod,jdbcType=VARCHAR},
+		#{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		#{createMethod,jdbcType=VARCHAR},
 		#{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
 		#{noteContentText,jdbcType=LONGVARCHAR},#{noteContent,jdbcType=LONGVARBINARY},#{noteImage,jdbcType=LONGVARBINARY})
 	</insert>
@@ -74,8 +86,8 @@
 			<if test="createTime != null">
 				create_time,
 			</if>
-			<if test="creatteMethod != null">
-				creatte_method,
+			<if test="createMethod != null">
+				create_method,
 			</if>
 			<if test="updateId != null">
 				update_id,
@@ -112,8 +124,8 @@
 			<if test="createTime != null">
 				#{createTime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="creatteMethod != null">
-				#{creatteMethod,jdbcType=VARCHAR},
+			<if test="createMethod != null">
+				#{createMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="updateId != null">
 				#{updateId,jdbcType=INTEGER},
@@ -150,8 +162,8 @@
 			<if test="createTime != null">
 				create_time = #{createTime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="creatteMethod != null">
-				creatte_method = #{creatteMethod,jdbcType=VARCHAR},
+			<if test="createMethod != null">
+				create_method = #{createMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="updateId != null">
 				update_id = #{updateId,jdbcType=INTEGER},
@@ -181,7 +193,7 @@
 		create_id =
 		#{createId,jdbcType=INTEGER},
 		create_time = #{createTime,jdbcType=TIMESTAMP},
-		creatte_method = #{creatteMethod,jdbcType=VARCHAR},
+		create_method = #{createMethod,jdbcType=VARCHAR},
 		update_id = #{updateId,jdbcType=INTEGER},
 		update_time =
 		#{updateTime,jdbcType=TIMESTAMP},
@@ -197,7 +209,7 @@
 		note_title = #{noteTitle,jdbcType=VARCHAR},
 		create_id = #{createId,jdbcType=INTEGER},
 		create_time = #{createTime,jdbcType=TIMESTAMP},
-		creatte_method = #{creatteMethod,jdbcType=VARCHAR},
+		create_method = #{createMethod,jdbcType=VARCHAR},
 		update_id = #{updateId,jdbcType=INTEGER},
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR}

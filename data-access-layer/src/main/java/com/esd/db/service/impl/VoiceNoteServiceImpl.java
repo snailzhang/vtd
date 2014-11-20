@@ -59,13 +59,31 @@ public class VoiceNoteServiceImpl implements VoiceNoteService {
 	}
 
 	@Override
-	public List<voiceNote> getAll(String condition) {
+	public List<voiceNote> getAll(String condition, int page, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (condition.trim().length() > 0) {
 			map.put("condition", condition);
 		} else {
 			map.put("condition", null);
 		}
+		if (page == 0) {
+			map.put("begin", null);
+			map.put("end", null);
+		} else {
+			map.put("begin", (page - 1) * row);
+			map.put("end", row);
+		}
 		return voiceNoteMapper.selectAll(map);
+	}
+
+	@Override
+	public int getAllCount(String condition) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (condition.trim().length() > 0) {
+			map.put("condition", condition);
+		} else {
+			map.put("condition", null);
+		}
+		return voiceNoteMapper.selectAllCount(map);
 	}
 }

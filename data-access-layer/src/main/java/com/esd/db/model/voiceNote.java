@@ -14,7 +14,7 @@ public class voiceNote {
 
     private Date createTime;
 
-    private String creatteMethod;
+    private String createMethod;
 
     private Integer updateId;
 
@@ -62,12 +62,12 @@ public class voiceNote {
         this.createTime = createTime;
     }
 
-    public String getCreatteMethod() {
-        return creatteMethod;
+    public String getCreateMethod() {
+        return createMethod;
     }
 
-    public void setCreatteMethod(String creatteMethod) {
-        this.creatteMethod = creatteMethod == null ? null : creatteMethod.trim();
+    public void setCreateMethod(String createMethod) {
+        this.createMethod = createMethod == null ? null : createMethod.trim();
     }
 
     public Integer getUpdateId() {
