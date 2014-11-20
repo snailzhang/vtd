@@ -61,8 +61,11 @@ public class VoiceNoteServiceImpl implements VoiceNoteService {
 	@Override
 	public List<voiceNote> getAll(String condition) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("condition", condition);
-		
+		if (condition.trim().length() > 0) {
+			map.put("condition", condition);
+		} else {
+			map.put("condition", null);
+		}
 		return voiceNoteMapper.selectAll(map);
 	}
 }
