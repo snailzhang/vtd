@@ -1,6 +1,8 @@
 package com.esd.db.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,8 +59,10 @@ public class VoiceNoteServiceImpl implements VoiceNoteService {
 	}
 
 	@Override
-	public List<voiceNote> getAll() {
+	public List<voiceNote> getAll(String condition) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("condition", condition);
 		
-		return voiceNoteMapper.selectAll();
+		return voiceNoteMapper.selectAll(map);
 	}
 }

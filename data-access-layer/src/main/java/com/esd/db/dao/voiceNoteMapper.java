@@ -1,6 +1,7 @@
 package com.esd.db.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.voiceNote;
 
@@ -14,7 +15,7 @@ public interface voiceNoteMapper {
 
     voiceNote selectByPrimaryKey(Integer id);
     
-    List<voiceNote> selectAll();
+    List<voiceNote> selectAll(Map<String,Object> map);
 
     int updateByPrimaryKeySelective(voiceNote record);
 

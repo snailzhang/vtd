@@ -32,10 +32,15 @@
 		from voice_note
 		where id = #{id,jdbcType=INTEGER}
 	</select>
-	<select id="selectAll" resultMap="BaseResultMap">
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
 		from voice_note
+		<if test="condition != null">
+			<where>
+				(note_id like "%${condition}%" or note_title like "%${condition}%")
+			</where>
+		</if>
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from voice_note

@@ -52,9 +52,9 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> VoiceNotePOST() {
+	public Map<String, Object> VoiceNotePOST(String condition) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<voiceNote> list = voiceNoteService.getAll();
+		List<voiceNote> list = voiceNoteService.getAll(condition);
 		map.clear();
 		map.put("list", list);
 		return map;
@@ -102,7 +102,7 @@ public class VioceNote {
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		voiceNote.setCreatteMethod(items[1].toString());
 
-		List<voiceNote> list = voiceNoteService.getAll();
+		List<voiceNote> list = voiceNoteService.getAll("");
 		int noteIdNum = 0;
 		if (list != null) {
 			for (int i = 0; i < list.size(); i++) {
