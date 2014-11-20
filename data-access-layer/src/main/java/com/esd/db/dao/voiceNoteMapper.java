@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.esd.db.model.voiceNote;
+import com.esd.db.model.voiceNoteWithBLOBs;
 
 public interface voiceNoteMapper {
 
@@ -13,7 +14,7 @@ public interface voiceNoteMapper {
 
     int insertSelective(voiceNote record);
 
-    voiceNote selectByPrimaryKey(Integer id);
+    voiceNoteWithBLOBs selectByPrimaryKey(Integer id);
     
     List<voiceNote> selectAll(Map<String,Object> map);
     

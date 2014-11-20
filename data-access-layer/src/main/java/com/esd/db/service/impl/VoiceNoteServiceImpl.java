@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.esd.db.dao.voiceNoteMapper;
 import com.esd.db.model.voiceNote;
+import com.esd.db.model.voiceNoteWithBLOBs;
 import com.esd.db.service.VoiceNoteService;
 
 @Service("VoiceNoteService")
@@ -35,7 +36,7 @@ public class VoiceNoteServiceImpl implements VoiceNoteService {
 	}
 
 	@Override
-	public voiceNote selectByPrimaryKey(Integer id) {
+	public voiceNoteWithBLOBs selectByPrimaryKey(Integer id) {
 
 		return voiceNoteMapper.selectByPrimaryKey(id);
 	}

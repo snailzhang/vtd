@@ -1,9 +1,9 @@
 package com.esd.db.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.esd.db.model.voiceNote;
+import com.esd.db.model.voiceNoteWithBLOBs;
 
 public interface VoiceNoteService {
 	int deleteByPrimaryKey(Integer id);
@@ -12,7 +12,7 @@ public interface VoiceNoteService {
 
     int insertSelective(voiceNote record);
 
-    voiceNote selectByPrimaryKey(Integer id);
+    voiceNoteWithBLOBs selectByPrimaryKey(Integer id);
     
     List<voiceNote> getAll(String condition,int page,int row);
     

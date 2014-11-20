@@ -74,7 +74,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/voiceNoteContent", method = RequestMethod.GET)
 	public ModelAndView VoiceNoteContentGET(int id, int type) {
-		voiceNote voiceNote = voiceNoteService.selectByPrimaryKey(id);
+		voiceNoteWithBLOBs voiceNote = voiceNoteService.selectByPrimaryKey(id);
 		if (type == 0) {
 			return new ModelAndView("manager/showNote", "voiceNote", voiceNote);
 		}
