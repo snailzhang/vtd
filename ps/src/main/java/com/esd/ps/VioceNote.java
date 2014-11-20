@@ -164,13 +164,14 @@ public class VioceNote {
 		// 文件所谓的远程绝对路径
 		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "image" + Constants.SLASH + noteImage.getOriginalFilename();
 		System.out.println(noteImage.getOriginalFilename());
-		map.clear();
-		map.put("originalName", noteImage.getOriginalFilename());
-		map.put("name", noteImage.getOriginalFilename());
-		map.put("url", wrongPath);
-		map.put("size", noteImage.getSize());
+		String name = noteImage.getOriginalFilename();
 
-		map.put("type", noteImage.getOriginalFilename().split(".")[1]);
+		map.clear();
+		map.put("originalName", name);
+		map.put("name", name);
+		map.put("url", wrongPath);
+		map.put("size", noteImage.getSize());	
+		map.put("type", name.substring(name.indexOf(".") + 1,name.length()));
 		map.put("state", "SUCCESS");
 		return map;
 	}
