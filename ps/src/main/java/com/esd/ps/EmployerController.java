@@ -10,6 +10,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -342,8 +342,8 @@ public class EmployerController {
 			map.put(Constants.MESSAGE, MSG_FOLD_NOT_EXIST);
 			return map;
 		}
-		File zipfile = new File(url + Constants.SLASH + packName);
-		if (!zipfile.exists()) {
+		File file = new File(url + Constants.SLASH + packName);
+		if (!file.exists()) {
 			map.clear();
 			map.put(Constants.MESSAGE, MSG_PACK_NOT_EXIST);
 			return map;
@@ -355,9 +355,19 @@ public class EmployerController {
 				map.put(Constants.MESSAGE, MSG_PACK_EXIST);
 				return map;
 			}
-
-			ZipFile zip = new ZipFile(url + Constants.SLASH + packName);
-			if (zip.size() > 1) {
+			boolean flag = false;
+			if (file.isDirectory()) {
+				File[] f = file.listFiles();
+				if (f.length > 0) {
+					flag = true;
+				}
+			} else {
+				ZipFile zip = new ZipFile(url + Constants.SLASH + packName);
+				if (zip.size() > 1) {
+					flag = true;
+				}
+			}
+			if (flag) {
 
 				packWithBLOBs.setEmployerId(Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString()));
 				// packWithBLOBs.setPackFile(pack.getBytes());
@@ -368,13 +378,23 @@ public class EmployerController {
 				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(Constants.VERSION);
+				packWithBLOBs.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 				packWithBLOBs.setCreateTime(new Date());
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				packWithBLOBs.setCreateMethod(items[1].toString());
 				packService.insertSelective(packWithBLOBs);
+			} else {
+				map.clear();
+				map.put(Constants.MESSAGE, "没有要上传的文件");
+				return map;
 			}
 			// 从临时文件取出要解压的文件上传TaskService
-			storeData(packName, taskLvl, session);
+			if (file.isDirectory()) {
+				storeDataFold(packName, taskLvl, url);
+			} else {
+				storeDataZIP(packName, taskLvl, url);
+			}
+
 		} catch (IOException e) {
 			map.clear();
 			map.put(Constants.MESSAGE, MSG_PACK_ERROR);
@@ -393,7 +413,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/downPack", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downPackGET(final HttpServletResponse response, int packId, HttpSession session, HttpServletRequest request) {
+	public Map<String, Object> downPackGET(int packId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", packId);
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
@@ -407,29 +427,12 @@ public class EmployerController {
 			f.mkdir();
 		}
 		logger.debug("url:{}", packName);
-		File zipFile = new File(url + Constants.SLASH + packName);
-		if (zipFile.exists()) {
-			zipFile.delete();
+		if (packName.substring((packName.length() - 3), packName.length()).equalsIgnoreCase("zip")) {
+			downZIP(list, packName, url);
+		} else {
+			packName = packName + ".zip";
+			downZIP(list, packName, url);
 		}
-		try {
-			zipFile.createNewFile();
-			FileOutputStream fos = new FileOutputStream(zipFile);
-			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
-
-			this.writeInZIP(list, zos, Constants.WAV);
-			this.writeInZIP(list, zos, Constants.TAG);
-			this.writeInZIP(list, zos, Constants.TEXTGRID);
-
-			zos.close();// 不关闭,最后一个文件写入为0kb
-			fos.flush();
-			fos.close();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
 		pack.setDownCount((packService.getDownCountByPackId(packId) + 1));
@@ -446,6 +449,63 @@ public class EmployerController {
 
 		return map;
 
+	}
+
+	/**
+	 * 生成zip包
+	 * 
+	 * @param list
+	 * @param packName
+	 * @param url
+	 * @return
+	 */
+	public int downZIP(List<taskWithBLOBs> list, String packName, String url) {
+		logger.debug("url:{}", packName);
+		File zipFile = new File(url + Constants.SLASH + packName);
+		if (zipFile.exists()) {
+			zipFile.delete();
+		}
+		try {
+			zipFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(zipFile);
+			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
+
+			//writeInZIP(list, zos, Constants.WAV);
+			writeInZIP(list, zos, Constants.TAG);
+			writeInZIP(list, zos, Constants.TEXTGRID);
+
+			zos.close();// 不关闭,最后一个文件写入为0kb
+			fos.flush();
+			fos.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return 1;
+	}
+
+	/**
+	 * 生成文件夹
+	 * 
+	 * @param list
+	 * @param packName
+	 * @param url
+	 * @return
+	 */
+	public int downFOLD(List<taskWithBLOBs> list, String packName, String url) {
+		logger.debug("url:{}", packName);
+		File file = new File(url + Constants.SLASH + packName);
+		if (file.exists()) {
+			file.delete();
+		}
+		file.mkdir();
+
+		writeInFOLD(list, Constants.WAV, url);
+		writeInFOLD(list, Constants.TAG, url);
+		writeInFOLD(list, Constants.TEXTGRID, url);
+		return 1;
 	}
 
 	/**
@@ -506,15 +566,59 @@ public class EmployerController {
 	}
 
 	/**
-	 * 任务存入数据库
+	 * 读取数据库文件,存入相应的目录中
+	 * 
+	 * @param list
+	 * @param zos
+	 * @param fileType
+	 */
+	public void writeInFOLD(List<taskWithBLOBs> list, String fileType, String url) {
+		for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+			try {
+				byte[] bufs = new byte[1024 * 10];
+				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
+				fileName = fileName.substring(0, fileName.indexOf(".")) + "." + fileType;
+				File f = new File(url+Constants.SLASH+taskWithBLOBs.getTaskDir());
+				if(!f.exists()){
+					f.mkdirs();
+				}
+				byte[] data = null;
+				if (fileType.equalsIgnoreCase(Constants.WAV)) {
+					data = taskWithBLOBs.getTaskWav();
+				} else if (fileType.equalsIgnoreCase(Constants.TAG)) {
+					data = taskWithBLOBs.getTaskTag();
+				} else if (fileType.equalsIgnoreCase(Constants.TEXTGRID)) {
+					data = taskWithBLOBs.getTaskTextgrid();
+				}
+				InputStream is = new ByteArrayInputStream(data);
+				// 读取待压缩的文件并写进压缩包里
+				BufferedInputStream bis = new BufferedInputStream(is, 1024);
+				File outputFile = new File(url+Constants.SLASH+taskWithBLOBs.getTaskDir()+Constants.SLASH+fileName); 
+				FileOutputStream fos = new FileOutputStream(outputFile);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				int read;
+				while ((read = bis.read(bufs)) > 0) {
+					bos.write(bufs, 0, read);//
+				}
+				bis.close();
+				is.close();
+				bos.close();
+				fos.flush();
+				fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 任务存入数据库 zip
 	 * 
 	 * @param packName
-	 * @param session
 	 * @param taskLvl
 	 */
-	public void storeData(String packName, int taskLvl, HttpSession session) {
-		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
-		String url = employerService.getUploadUrlByEmployerId(employerId);
+	public void storeDataZIP(String packName, int taskLvl, String url) {
 		InputStream in = null;
 		String zipEntryName = null;
 		int packId = 0;
@@ -583,5 +687,109 @@ public class EmployerController {
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		pack.setUpdateMethod(items[1].toString());
 		packService.updateByPrimaryKeySelective(pack);
+	}
+
+	/**
+	 * 任务存入数据库 fold
+	 * 
+	 * @param packName
+	 * @param session
+	 * @param taskLvl
+	 */
+	public void storeDataFold(String packName, int taskLvl, String url) {
+		File fold = new File(url + Constants.SLASH + packName);
+		File[] list = fold.listFiles();
+		String foldUrl = url + Constants.SLASH + packName;
+		
+		int packId = storeMoreFold(packName, packName, taskLvl, foldUrl, list);
+
+		File fd = new File(packName);
+		fd.delete();
+		
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setUnzip(1);
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		pack.setUpdateMethod(items[1].toString());
+		packService.updateByPrimaryKeySelective(pack);
+	}
+
+	/**
+	 * 多层目录wav文件存储数据库
+	 * 
+	 * @param packName
+	 * @param taskLvl
+	 * @param foldUrl
+	 * @param list
+	 */
+	public int storeMoreFold(String packName, String taskDir, int taskLvl, String foldUrl, File[] list) {
+		int packId = 0;
+
+		for (int i = 0; i < list.length; i++) {
+			if (list[i].isDirectory()) {// 判断是否是文件夹
+				foldUrl = foldUrl + Constants.SLASH + list[i].getName();
+				File fold = new File(foldUrl);
+				File[] list1 = fold.listFiles();
+				taskDir = taskDir + Constants.SLASH + list[i].getName();
+				storeMoreFold(packName, taskDir, taskLvl, foldUrl, list1);
+				continue;
+			}
+			String fileName = list[i].getName();
+			// 判断文件类型wav
+			if (!fileName.trim().substring((fileName.trim().length() - 4), fileName.trim().length()).equalsIgnoreCase(".wav")) {
+				continue;
+			}
+			File f = new File(foldUrl + Constants.SLASH + fileName);
+			byte[] wav = getBytesFromFile(f);
+
+			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
+			packId = packService.getPackIdByPackName(packName);
+			taskWithBLOBs.setTaskWav(wav);
+			taskWithBLOBs.setTaskLvl(taskLvl);
+			// 上传的包的号
+			taskWithBLOBs.setPackId(packId);
+			taskWithBLOBs.setTaskName(fileName);
+			// 存入压缩包的层次结构
+
+			taskWithBLOBs.setTaskDir(taskDir);
+			taskWithBLOBs.setCreateTime(new Date());
+			// 包内任务的上传状态
+			taskWithBLOBs.setTaskUpload(false);
+			StackTraceElement[] items = Thread.currentThread().getStackTrace();
+			taskWithBLOBs.setCreateMethod(items[1].toString());
+			taskWithBLOBs.setVersion(Constants.VERSION);
+			taskService.insert(taskWithBLOBs);
+		}
+		return packId;
+	}
+
+	/**
+	 * 文件转成byte[]
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public static byte[] getBytesFromFile(File file) {
+		byte[] ret = null;
+		try {
+			if (file == null) {
+				// log.error("helper:the file is null!");
+				return null;
+			}
+			FileInputStream in = new FileInputStream(file);
+			ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
+			byte[] b = new byte[4096];
+			int n;
+			while ((n = in.read(b)) != -1) {
+				out.write(b, 0, n);
+			}
+			in.close();
+			out.close();
+			ret = out.toByteArray();
+		} catch (IOException e) {
+			// log.error("helper:get bytes from file process error!");
+			e.printStackTrace();
+		}
+		return ret;
 	}
 }
