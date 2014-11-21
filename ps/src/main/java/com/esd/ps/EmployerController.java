@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
+import com.esd.db.model.voiceNote;
 import com.esd.ps.model.packTrans;
 import com.esd.db.model.task;
 import com.esd.ps.model.taskTrans;
@@ -47,6 +48,7 @@ import com.esd.db.service.EmployerService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
+import com.esd.db.service.VoiceNoteService;
 import com.esd.db.service.WorkerRecordService;
 
 import org.slf4j.Logger;
@@ -72,6 +74,8 @@ public class EmployerController {
 	private TaskService taskService;
 	@Autowired
 	private WorkerRecordService workerRecordService;
+	@Autowired
+	private VoiceNoteService voiceNoteService;
 	/**
 	 * 文件夹不存在
 	 */
@@ -244,8 +248,10 @@ public class EmployerController {
 				}
 			}
 		}
+		List<voiceNote> voiceNoteList = voiceNoteService.getAll("",0,0);
 		map.clear();
 		map.put(Constants.LIST, list);
+		map.put("voiceNoteList", voiceNoteList);
 		return map;
 	}
 
@@ -332,7 +338,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> unzip(String packName, int taskLvl, int packLockTime, HttpSession session) {
+	public Map<String, Object> unzip(String packName,String noteId, int taskLvl, int packLockTime, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
 		String url = employerService.getUploadUrlByEmployerId(employerId);
@@ -376,6 +382,7 @@ public class EmployerController {
 				packWithBLOBs.setPackLockTime((packLockTime * 3600000));
 				packWithBLOBs.setPackStatus(0);
 				packWithBLOBs.setUnzip(0);
+				packWithBLOBs.setNoteId(noteId);
 				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(Constants.VERSION);
 				packWithBLOBs.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
