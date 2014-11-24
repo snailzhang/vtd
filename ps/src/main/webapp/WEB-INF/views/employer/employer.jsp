@@ -58,9 +58,9 @@
 					<table class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th width='5%'>序号</th>
-								<th width='15%'>名称</th>
-								<th width='5%'>等级</th>
+								<th width='4%'>序号</th>
+								<th width='17%'>名称</th>
+								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
 								<th width='6%'>剩余数</th>
 								<th width='6%'>完成数</th>
@@ -94,9 +94,9 @@
 					<table class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th width='5%'>序号</th>
-								<th width='15%'>名称</th>
-								<th width='5%'>等级</th>
+								<th width='4%'>序号</th>
+								<th width='17%'>名称</th>
+								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
 								<th width='6%'>剩余数</th>
 								<th width='6%'>完成数</th>
@@ -121,18 +121,18 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon">任务包名称：</div>
-									<input class="form-control" id="packNameCondition" type="text" placeholder="查询已完成任务包" onkeydown="if(event.keyCode==13){return false;}">
+									<input class="form-control" id="allPackNameCondition" type="text" placeholder="查询已完成任务包" onkeydown="if(event.keyCode==13){return false;}">
 								</div>
 							</div>
-							<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+							<button type="button" id="searchAllBtn" class="btn btn-default">查询</button>
 						</form>
 					</div>
 					<table class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th width='5%'>序号</th>
-								<th width='15%'>名称</th>
-								<th width='5%'>等级</th>
+								<th width='4%'>序号</th>
+								<th width='17%'>名称</th>
+								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
 								<th width='6%'>剩余数</th>
 								<th width='6%'>完成数</th>
@@ -153,28 +153,32 @@
 			<div class="tab-pane" id="packUnzip">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<form role="form" class="form-horizontal">
+						<form role="form" class="form-inline">
 							<div class="form-group" id="">
-								<label for="taskLvl" class="col-sm-2 control-label">任务等级：</label>
-								<div class="col-sm-10">
-									<select class="form-control" name="taskLvl" id="taskLvl">
-										<option value="1">1</option>
-										<option value="2">2</option>
-										<option selected="selected" value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
-									</select>
-								</div>
+								<p class="form-control-static">任务等级：</p>
 							</div>
-							<div class="form-group" id="lockTime">
-								<label for="packLockTime" class="col-sm-2 control-label">任务时间：</label>
-								<div class="col-sm-10">
-									<div class="input-group">
-										<input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
-										<span class="input-group-addon">小时</span>
-										
-									</div>
-									<span class="help-block"></span>
+							<div class="form-group" id="">
+								<select class="form-control" name="taskLvl" id="taskLvl">
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option selected="selected" value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+								</select>
+							</div>
+							<div class="form-group" id="">
+								<p class="form-control-static">任务说明：</p>
+							</div>
+							<div class="form-group" id="">
+								<select class="form-control" name="noteId" id="noteId"></select>
+							</div>
+							<div class="form-group" id="">
+								<p class="form-control-static">任务时间：</p>
+							</div>
+							<div class="form-group" id="">
+								<div class="input-group">
+									<input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
+									<span class="input-group-addon">小时</span>
 								</div>
 							</div>
 						</form>
@@ -205,14 +209,15 @@
 							<div class="form-group" id="">
 								<label for="noteTitle" class="col-sm-2 control-label">规则名称：</label>
 								<div class="col-sm-10">
-									<input type="text" class="form-control" name="noteTitle" id="noteTitle" placeholder="规则名称" required="required">
+									<input type="text" class="form-control" name="noteTitle" id="noteTitle" placeholder="规则名称" required="required" autocomplete="off">
+									<span class="help-block"></span>
 								</div>
 							</div>
-							<script type="text/plain" id="myEditor" style="width:900px;height:240px;">
-    							<p>这里我可以写一些输入提示</p>
-							</script>
+							<script type="text/plain" id="myEditor" style="width:900px;height:240px;"></script>
+							<button type="button" id="saveEdit" class="btn btn-default">保存</button>
 						</form>
 					</div>
+					
 				</div>
 				
 			</div>
@@ -319,6 +324,7 @@
 		var unpackNameCondition = "";
 		var packNameCondition = "";
 		var taskNameCondition = "";
+		var allPackNameCondition= "";
 		var searchPackId = 0;
 		var pucPageTotle = 0;
 		var pcPageTotle = 0;
@@ -333,6 +339,7 @@
 		$(document).ready(function(){
 			loadUnCompletePackList(1);
 			loadCompletePackList(1);
+			loadAllPackList(1);
 			loadUnzipPackList();
 			/*---------------------------------------查询-------------------------------------------------------------------*/
 			$("#un_searchBtn").click(function(){
@@ -342,6 +349,10 @@
 			$("#searchBtn").click(function(){
 				packNameCondition = $("#packNameCondition").val();
 				loadCompletePackList(1);
+			});
+			$("#searchAllBtn").click(function(){
+				allPackNameCondition = $("#allPackNameCondition").val();
+				loadAllPackList(1);
 			});
 			$("#tasksearchBtn").click(function(){
 				var tnc = $("#taskSearch").val();
@@ -365,7 +376,32 @@
 					}
 				});
 			});
-			
+			$("#saveEdit").click(function(){
+				var hasContent = false;
+				hasContent = UM.getEditor('myEditor').hasContents();
+				if(hasContent){
+					var con = UM.getEditor('myEditor').getContent();
+					var noteTitle = $("#noteTitle");
+					if(checkout.text.isempty(noteTitle,"名称不能为空！"))return;
+					$.ajax({
+						type:'POST',
+						url:'${contextPath}/security/addVoiceNote',
+						data:{"title":noteTitle.val(),"content":con,},
+						dataType:'json',
+						success:function(data){
+							if($("#editTaskRole .panel-body .alert").length>0)$("#editTaskRole .panel-body .alert").remove();
+							var $alertMsg = $("<div class='alert alert-dismissable'>"+data.message+"</div>");
+							$alertMsg.append("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>");
+							if(data.replay == "1"){
+								$alertMsg.addClass("alert-success");
+							}else{
+								$alertMsg.addClass("alert-success");
+							}
+							$("#editTaskRole .panel-body").prepend($alertMsg);
+						}
+					});
+				}
+			});
 		});
 		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
 		loadUnCompletePackList = function(pageNum){
@@ -445,7 +481,7 @@
 				success:function(data){
 					if(data.list == ""){
 						$("#packComplete tbody").empty();
-						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='8'>无内容</td></tr>");
+						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='12'>无内容</td></tr>");
 					}else{
 						$("#packComplete tbody").empty();
 						$.each(data.list,function(i,item){
@@ -490,14 +526,14 @@
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
-				data:{"packStuts":3,"page":pageNum,"packNameCondition":packNameCondition},
+				data:{"packStuts":3,"page":pageNum,"packNameCondition":allPackNameCondition},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
-						$("#packComplete tbody").empty();
-						$("#packComplete tbody").append("<tr class='text-danger'><td colspan='12'>无内容</td></tr>");
+						$("#packAll tbody").empty();
+						$("#packAll tbody").append("<tr class='text-danger'><td colspan='12'>无内容</td></tr>");
 					}else{
-						$("#packComplete tbody").empty();
+						$("#packAll tbody").empty();
 						$.each(data.list,function(i,item){
 							if(item.packLockTime == null){
 								item.packLockTime = "";
@@ -511,7 +547,7 @@
 							}else{
 								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载</a></td>";
 							}
-							$("#packComplete tbody").append(
+							$("#packAll tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
@@ -550,6 +586,13 @@
 				url:'${contextPath}/security/unzipList',
 				dataType:'json',
 				success:function(data){
+					if(data.voiceNoteList == ""){
+						$("#noteId").append("<option>无说明文件</option>");
+					}else{
+						$.each(data.voiceNoteList,function(i,item){
+							$("#noteId").append("<option value="+item.noteId+">"+item.noteId+"</option>");
+						});
+					}
 					if(data.list != ""){
 						$("#packUnzip tbody").empty();
 						$.each(data.list,function(i,item){
@@ -570,13 +613,14 @@
 		zipOnePack = function(pName,trClass){
 			
 			var taskLvl = $("#taskLvl").val();
+			var noteId = $("#noteId").val();
 			var packLockTimeObj = $("#packLockTime");
 			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) return;
 			$("."+trClass+" .packZipStatus").text("任务包解压中");
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/unzip',
-				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val()},
+				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val(),"noteId":noteId},
 				dataType:'json',
 				success:function(data){
 					$("."+trClass+" .packZipStatus").text(data.message);

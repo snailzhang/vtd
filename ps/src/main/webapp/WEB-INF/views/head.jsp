@@ -22,6 +22,7 @@ if(userType == 1){
 		<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 			<ul class="nav navbar-nav">
 				<li><a href="${contextPath}/security/updatePassWord">修改密码</a></li>
+				<li><a href="${contextPath}/security/voiceNote">标注说明</a></li>
 			<% 
 				if(userType == 4){
 					%>
