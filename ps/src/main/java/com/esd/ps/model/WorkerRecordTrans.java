@@ -24,7 +24,7 @@ public class WorkerRecordTrans {
 
 	private String taskEffective;
 	
-	private int Effective;
+	private int effective;
 	
 	
 
@@ -117,11 +117,11 @@ public class WorkerRecordTrans {
 	}
 
 	public int getEffective() {
-		return Effective;
+		return effective;
 	}
 
 	public void setEffective(int effective) {
-		Effective = effective;
+		this.effective = effective;
 	}
 	
 }
