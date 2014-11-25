@@ -25,6 +25,9 @@ public interface Constants {
 	public static final String EMPLOYER = "employer";//发包商id
 	public static final String WORKER = "worker";//
 	public static final String WORKERCENTER = "workerCenter";//工作者中心
+	public static final String VOICENOTE = "voiceNote";//
+	public static final String SHOWNOTE = "showNote";//
+	public static final String EDITNOTE = "editNote";//
 	public static final String WORKEHISTORYPACK = "workerHistoryPack";//工作者工作历史
 	public static final String EMPLOYER_ID = "employerId";//发包商id
 	public static final String WORKER_ID = "workerId";//
@@ -79,6 +82,8 @@ public interface Constants {
 	public static final int ROW=13;//分页行数
 	public static final int ONE=1;//常量1
 	public static final int ZERO=0;//常量0
+	public static final String ZEROS="0000000";//
+	public static final String SPILT_TWELVE="%.12f";//
 	public static final String EMPTY="";//空字符串 
 	public static final String COLON=":";//冒号
 	public static final String SLASH="/";//斜杠
@@ -91,8 +96,16 @@ public interface Constants {
 	public static final String TOTLE_PAGE="totlePage";//总页数
 	public static final String FTPURl="ftpUrl";//总条数
 	public static final String ZIP="zip";//总条数
+	public static final String IMAGE="image";//
 	public static final String GBK="GBK";//security
 	public static final String SECURITY="security";//
 	//报名
 	public static final String DISTRICT_NAME="districtName";//申请地
+	//富文本编辑器
+	public static final String ORIGINALNAME="originalName";
+	public static final String URL="url";
+	public static final String SIZE="size";
+	public static final String TYPE="type";
+	public static final String STATE="state";
+	public static final String SUCCESS="SUCCESS";
 }

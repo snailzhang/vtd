@@ -44,7 +44,7 @@ public class VioceNote {
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.GET)
 	public ModelAndView VoiceNoteGET() {
 
-		return new ModelAndView("manager/voiceNote");
+		return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.VOICENOTE);
 	}
 
 	/**
@@ -60,8 +60,8 @@ public class VioceNote {
 		List<voiceNote> list = voiceNoteService.getAll(condition,page,Constants.ROW);
 		int totle = voiceNoteService.getAllCount(condition);
 		map.clear();
-		map.put("list", list);
-		map.put("totle", totle);
+		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
 		return map;
 		
@@ -76,9 +76,9 @@ public class VioceNote {
 	public ModelAndView VoiceNoteContentGET(int id, int type) {
 		voiceNoteWithBLOBs voiceNote = voiceNoteService.selectByPrimaryKey(id);
 		if (type == 0) {
-			return new ModelAndView("manager/showNote", "voiceNote", voiceNote);
+			return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.SHOWNOTE, Constants.VOICENOTE, voiceNote);
 		}
-		return new ModelAndView("manager/editNote", "voiceNote", voiceNote);
+		return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.EDITNOTE, Constants.VOICENOTE, voiceNote);
 	}
 
 	/**
@@ -95,12 +95,12 @@ public class VioceNote {
 
 		voiceNote.setNoteTitle(title);
 		voiceNote.setNoteContentText(content);
-		voiceNote.setCreateId(Integer.parseInt(session.getAttribute("userId").toString()));
+		voiceNote.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		voiceNote.setCreateTime(new Date());
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		voiceNote.setCreateMethod(items[1].toString());
 
-		List<voiceNote> list = voiceNoteService.getAll("",0,Constants.ROW);
+		List<voiceNote> list = voiceNoteService.getAll(Constants.EMPTY,0,0);
 		int noteIdNum = 0;
 		if (list.size() == 1) {
 			noteIdNum = Integer.parseInt(list.get(0).getNoteId());
@@ -114,7 +114,7 @@ public class VioceNote {
 				}
 			}
 		}
-		String noteId = "0000000" + (noteIdNum + 1);
+		String noteId = Constants.ZEROS + (noteIdNum + 1);
 		voiceNote.setNoteId(noteId.substring((noteId.length() - 5), noteId.length()));
 		voiceNoteService.insertSelective(voiceNote);
 		map.put(Constants.REPLAY, 1);
@@ -136,7 +136,7 @@ public class VioceNote {
 		voiceNote.setId(id);
 		voiceNote.setNoteTitle(title);
 		voiceNote.setNoteContentText(content);
-		voiceNote.setUpdateId(Integer.parseInt(session.getAttribute("userId").toString()));
+		voiceNote.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		voiceNote.setUpdateMethod(items[1].toString());
 
@@ -162,7 +162,7 @@ public class VioceNote {
 		}
 		try {
 			String url = request.getServletContext().getRealPath(Constants.SLASH);
-			url = url + "image";
+			url = url + Constants.IMAGE;
 			File f = new File(url);
 			if (!f.exists()) {
 				f.mkdir();
@@ -184,17 +184,16 @@ public class VioceNote {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "image" + Constants.SLASH + noteImage.getOriginalFilename();
-		System.out.println(noteImage.getOriginalFilename());
+		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.IMAGE + Constants.SLASH + noteImage.getOriginalFilename();
 		String name = noteImage.getOriginalFilename();
 
 		map.clear();
-		map.put("originalName", name);
-		map.put("name", name);
-		map.put("url", wrongPath);
-		map.put("size", noteImage.getSize());
-		map.put("type", name.substring(name.indexOf(".") + 1, name.length()));
-		map.put("state", "SUCCESS");
+		map.put(Constants.ORIGINALNAME, name);
+		map.put(Constants.NAME, name);
+		map.put(Constants.URL, wrongPath);
+		map.put(Constants.SIZE, noteImage.getSize());
+		map.put(Constants.TYPE, name.substring(name.indexOf(Constants.POINT) + 1, name.length()));
+		map.put(Constants.STATE, Constants.SUCCESS);
 		return map;
 	}
 }

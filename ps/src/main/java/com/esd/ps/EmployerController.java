@@ -77,7 +77,7 @@ public class EmployerController {
 	@Autowired
 	private VoiceNoteService voiceNoteService;
 	/**
-	 * 文件夹不存在
+	 * 文件不存在
 	 */
 	@Value("${MSG_FOLD_NOT_EXIST}")
 	private String MSG_FOLD_NOT_EXIST;
@@ -392,7 +392,7 @@ public class EmployerController {
 				packService.insertSelective(packWithBLOBs);
 			} else {
 				map.clear();
-				map.put(Constants.MESSAGE, "没有要上传的文件");
+				map.put(Constants.MESSAGE, MSG_FOLD_NOT_EXIST);
 				return map;
 			}
 			// 从临时文件取出要解压的文件上传TaskService
@@ -434,10 +434,10 @@ public class EmployerController {
 			f.mkdir();
 		}
 		logger.debug("url:{}", packName);
-		if (packName.substring((packName.length() - 3), packName.length()).equalsIgnoreCase("zip")) {
+		if (packName.substring((packName.length() - 3), packName.length()).equalsIgnoreCase(Constants.ZIP)) {
 			downZIP(list, packName, url);
 		} else {
-			packName = packName + ".zip";
+			packName = packName + Constants.POINT + Constants.ZIP;
 			downZIP(list, packName, url);
 		}
 		packWithBLOBs pack = new packWithBLOBs();
@@ -545,9 +545,9 @@ public class EmployerController {
 				byte[] bufs = new byte[1024 * 10];
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-				fileName = fileName.substring(0, fileName.indexOf(".")) + "." + fileType;
+				fileName = fileName.substring(0, fileName.indexOf(Constants.POINT)) + Constants.POINT + fileType;
 				// 创建ZIP实体,并添加进压缩包,按原目录结构
-				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() + "/" + fileName);
+				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir() + Constants.SLASH + fileName);
 				zos.putNextEntry(zipEntry);
 				byte[] data = null;
 				if (fileType.equalsIgnoreCase(Constants.WAV)) {
@@ -585,7 +585,7 @@ public class EmployerController {
 				byte[] bufs = new byte[1024 * 10];
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-				fileName = fileName.substring(0, fileName.indexOf(".")) + "." + fileType;
+				fileName = fileName.substring(0, fileName.indexOf(Constants.POINT)) + Constants.POINT + fileType;
 				File f = new File(url+Constants.SLASH+taskWithBLOBs.getTaskDir());
 				if(!f.exists()){
 					f.mkdirs();

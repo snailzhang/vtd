@@ -40,11 +40,8 @@ public class workerRecord {
 
     private String updateMethod;
 
-    private Boolean taskEffective;
+    private int taskEffective;
     
-    
-    
-
     public Integer getRecordId() {
         return recordId;
     }
@@ -174,11 +171,11 @@ public class workerRecord {
         this.updateMethod = updateMethod == null ? null : updateMethod.trim();
     }
 
-    public Boolean getTaskEffective() {
+    public int getTaskEffective() {
         return taskEffective;
     }
 
-    public void setTaskEffective(Boolean taskEffective) {
+    public void setTaskEffective(int taskEffective) {
         this.taskEffective = taskEffective;
     }
 

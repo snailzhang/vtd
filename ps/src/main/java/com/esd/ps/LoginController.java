@@ -36,6 +36,7 @@ import com.esd.db.model.user;
 import com.esd.db.model.usertype;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
+import com.esd.db.service.InspectorService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
@@ -61,6 +62,8 @@ public class LoginController {
 	private ManagerService managerService;
 	@Autowired
 	private EmployerService employerService;
+	@Autowired
+	private InspectorService InspectorService;
 	@Autowired
 	private WorkerService workerService;
 	@Autowired
@@ -183,6 +186,9 @@ public class LoginController {
 						return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.EMPLOYER + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 				} else if (typeName.equals("inspector")) {
+					if (InspectorService.getCountInspectorIdByUserId(user.getUserId()) == 0) {
+						return new ModelAndView(Constants.MANAGER + Constants.SLASH + "inspector" + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
+					}
 
 				} else if (typeName.equals(Constants.WORKER)) {
 					if (workerService.getCountWorkerIdByUserId(user.getUserId()) == 0) {

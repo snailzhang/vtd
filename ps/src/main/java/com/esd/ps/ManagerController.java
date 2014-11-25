@@ -166,6 +166,12 @@ public class ManagerController {
 	 */
 	@Value("${MSG_NOT_UPDATE}")
 	private String MSG_NOT_UPDATE;
+	/**
+	 * 放弃
+	 */
+	@Value("${MSG_GIVEUP}")
+	private String MSG_GIVEUP;
+
 
 	/**
 	 * 登录管理员页
@@ -232,11 +238,11 @@ public class ManagerController {
 				trans.setUsername(user.getUsername());
 				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
 				trans.setCreateTime(sdf.format(user.getCreateTime()));
-				if(user.getUpdateTime()==null){
+				if (user.getUpdateTime() == null) {
 					trans.setUpdateTime("");
-				}else{
+				} else {
 					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
-				}	
+				}
 			}
 
 			list.add(trans);
@@ -313,12 +319,14 @@ public class ManagerController {
 				WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
 
 				workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
-				if (workerRecord.getTaskEffective() == null) {
+				if (workerRecord.getTaskEffective() == 0) {
 					workerRecordTrans.setTaskEffective(MSG_UNAUDIT);
-				} else if (workerRecord.getTaskEffective()) {
+				} else if (workerRecord.getTaskEffective() == 1) {
 					workerRecordTrans.setTaskEffective(MSG_QUALIFY);
-				} else if (!workerRecord.getTaskEffective()) {
+				} else if (workerRecord.getTaskEffective() == 2) {
 					workerRecordTrans.setTaskEffective(MSG_UNQUALIFY);
+				} else if (workerRecord.getTaskEffective() == 3) {
+					workerRecordTrans.setTaskEffective(MSG_GIVEUP);
 				}
 				if (workerRecord.getTaskMarkTime() == null) {
 					workerRecordTrans.setTaskMarkTime(0.00);
@@ -799,7 +807,7 @@ public class ManagerController {
 		worker worker = workerService.getWorkerByUserId(userId);
 		worker newWorker = new worker();
 		if (worker.getWorkerPhone().equals(workerPhone.trim())) {
-			if(worker.getWorkerBankCard().equals(workerBankCard.trim()) && worker.getWorkerPaypal().equals(workerPaypal.trim())){
+			if (worker.getWorkerBankCard().equals(workerBankCard.trim()) && worker.getWorkerPaypal().equals(workerPaypal.trim())) {
 				map.clear();
 				map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
 				map.put(Constants.REPLAY, 1);

@@ -267,11 +267,11 @@ public class WorkerController {
 			WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
 			workerRecordTrans.setDownPackName(downPackName);
 			workerRecordTrans.setTaskDownTime(sdf.format(workerRecord.getTaskDownTime()));
-			if (workerRecord.getTaskEffective() == null) {
+			if (workerRecord.getTaskEffective() == 0) {
 				workerRecordTrans.setTaskEffective(MSG_UNAUDIT);
-			} else if (!workerRecord.getTaskEffective()) {
+			} else if (workerRecord.getTaskEffective() == 2) {
 				workerRecordTrans.setTaskEffective(MSG_UNQUALIFY);
-			} else if (workerRecord.getTaskEffective()) {
+			} else if (workerRecord.getTaskEffective() == 1) {
 				workerRecordTrans.setTaskEffective(MSG_QUALIFY);
 			}
 
@@ -566,7 +566,7 @@ public class WorkerController {
 									}
 								}
 								// 更新task表
-								taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format("%.12f", taskMarkTime)));
+								taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
 								taskWithBLOBs.setTaskTag(bytes);
 								taskWithBLOBs.setTaskId(taskId);
 								taskWithBLOBs.setTaskUploadTime(new Date());
@@ -577,7 +577,7 @@ public class WorkerController {
 								workerRecord workerRecord = new workerRecord();
 								workerRecord.setTaskUploadTime(new Date());
 								workerRecord.setTaskStatu(1);
-								workerRecord.setTaskMarkTime(Double.parseDouble(String.format("%.12f", taskMarkTime)));
+								workerRecord.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
 								workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
 								StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
 								workerRecord.setUpdateMethod(items1[1].toString());

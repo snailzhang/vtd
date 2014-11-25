@@ -20,7 +20,7 @@
 		<result column="create_method" property="createMethod" jdbcType="VARCHAR" />
 		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
 		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
-		<result column="task_effective" property="taskEffective" jdbcType="BIT" />
+		<result column="task_effective" property="taskEffective" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		record_id, worker_id, pack_id, task_id, user_name,task_name, pack_name,down_pack_name,down_url,
@@ -212,6 +212,34 @@
 		where pack_id = #{packId, jdbcType=INTEGER} and
 		task_statu = 1
 	</select>
+	<select id="selectWorkerIdGroupByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		worker_id
+		from worker_record
+		where 3 > 2
+		<if test="timeMark == 0">
+		<![CDATA[and (sum(task_mark_time) > 600 or sum(task_mark_time) = 600)]]>
+		</if>
+		<if test="timeMark == 1">
+		<![CDATA[and sum(task_mark_time) < 600]]>
+		</if>
+		<if test="taskStatu == 1">
+			and task_statu = 1
+		</if>
+		<if test="task_effective == 3">
+			<![CDATA[and (task_effective = 0 or task_effective = 2)]]>
+		</if>
+		<if test="task_effective == 1">
+			<![CDATA[and task_effective = 1]]>
+		</if>
+		<if test="task_effective == 0">
+			<![CDATA[and task_effective = 0]]>
+		</if>
+		<if test="task_effective == 2">
+			<![CDATA[and task_effective = 2]]>
+		</if>
+		group by worker_id
+	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from worker_record
 		where record_id = #{recordId,jdbcType=INTEGER}
@@ -233,7 +261,7 @@
 		#{taskLockTime,jdbcType=INTEGER},
 		#{taskMarkTime,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
 		#{createMethod,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
-		#{taskEffective,jdbcType=BIT})
+		#{taskEffective,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.workerRecord">
 		insert into worker_record
@@ -352,7 +380,7 @@
 				#{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="taskEffective != null">
-				#{taskEffective,jdbcType=BIT},
+				#{taskEffective,jdbcType=INTEGER},
 			</if>
 		</trim>
 	</insert>
@@ -424,7 +452,7 @@
 				update_method = #{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="taskEffective != null">
-				task_effective = #{taskEffective,jdbcType=BIT},
+				task_effective = #{taskEffective,jdbcType=INTEGER},
 			</if>
 		</set>
 		where record_id = #{recordId,jdbcType=INTEGER}
@@ -452,7 +480,7 @@
 		update_time =
 		#{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
-		task_effective = #{taskEffective,jdbcType=BIT}
+		task_effective = #{taskEffective,jdbcType=INTEGER}
 		where record_id = #{recordId,jdbcType=INTEGER}
 	</update>
 </mapper>
