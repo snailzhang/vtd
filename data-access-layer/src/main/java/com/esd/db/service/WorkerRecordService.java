@@ -25,7 +25,7 @@ public interface WorkerRecordService {
 	
 	List<workerRecord> getDoingTask();
 	
-	List<workerRecord> getAllByWorkerId(Integer workerId,Integer statu,Integer year,Integer month,String taskNameCondition,int page,int row);
+	List<workerRecord> getAllByWorkerId(Integer workerId,Integer taskEffective,Integer statu,Integer year,Integer month,String taskNameCondition,int page,int row);
 	
 	int getAllCountByWorkerId(Integer workerId,Integer statu,Integer year,Integer month,String taskNameCondition);
 	

@@ -311,7 +311,7 @@ public class ManagerController {
 			int workerId = workerService.getWorkerIdByUserId(userId);
 			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, year, month, taskNameCondition);
 			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, null);
-			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId, statu, year, month, taskNameCondition, page, Constants.ROW);
+			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId,1,statu, year, month, taskNameCondition, page, Constants.ROW);
 			List<WorkerRecordTrans> list = new ArrayList<>();
 			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {

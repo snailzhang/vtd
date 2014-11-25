@@ -5,9 +5,15 @@
  */
 package com.esd.ps;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.HttpSession;
 
 import com.esd.db.model.workerRecord;
@@ -66,9 +72,9 @@ public class InspectorController {
 	 * @return
 	 */
 	@RequestMapping(value = "/inspector", method = RequestMethod.GET)
-	public ModelAndView inspectorGet(HttpSession session) {
+	public ModelAndView inspectorGet() {
 		
-		return new ModelAndView("inspector/inspectorList");
+		return new ModelAndView("inspector/inspector");
 	}
 	/**
 	 * 审核页
@@ -77,10 +83,45 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> inspectorPost(String userName,int timeMark,HttpSession session) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<workerRecord > list = workerRecordService.getWorkerIdGroupByWorkerId(userName,timeMark,1,3);
-		map.put(Constants.LIST,list);
+	public Map<String, Object> inspectorPost(int workerId) {
+		Map<String , Object> map = new HashMap<>();
+		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId,0,1, null, null, null,0,0);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_HAVE_LINE);
+		map.clear();
+		map.put("firstDate", sdf.format(list.get(0).getTaskUploadTime()));
+		map.put("lastDate", sdf.format(list.get(list.size() - 1).getTaskUploadTime()));
+		if(list.size() > 10 || list.size() == 10){
+			List<workerRecord> list1= new ArrayList<>();
+			//随机生成10个上传任务压入list1中
+			Set<Integer> set = new HashSet<Integer>();
+			boolean panduan = true;
+			while (true) {
+				int z = (int) (Math.random() * 15 + 1);
+				panduan = set.add(z);
+				if (!panduan) {
+					continue;
+				}else{
+					list1.add(list.get(z));
+				}
+				if (set.size() >= 10) {
+					break;
+				}
+			}
+			map.put("list", list1);
+		}else{
+			map.put("list", list);
+		}
+		return map;
+	}
+	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> auditingPost(int taskEffective,int day) {
+		Map<String , Object> map = new HashMap<>();
+		if(taskEffective == 1){
+			
+		}else{
+			
+		}
 		return map;
 	}
 	

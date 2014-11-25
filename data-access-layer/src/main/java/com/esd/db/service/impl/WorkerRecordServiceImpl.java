@@ -60,13 +60,14 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer statu, Integer year,Integer month, String taskNameCondition, int page, int row) {
+	public List<workerRecord> getAllByWorkerId(Integer workerId,Integer taskEffective,Integer statu, Integer year,Integer month, String taskNameCondition, int page, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("begin", ((page - 1) * row));
 		map.put("end", row);
 		map.put("workerId", workerId);
 		map.put("statu", statu);
+		map.put("taskEffective", taskEffective);
 		if (month > 0) {
 			map.put("month", month);
 			map.put("year", year);

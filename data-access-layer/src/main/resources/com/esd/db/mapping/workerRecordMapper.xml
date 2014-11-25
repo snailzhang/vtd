@@ -82,9 +82,16 @@
 			<if test="statu == 0 or statu == 1 or statu == 2">
 				and task_statu = #{statu}
 			</if>
+			<if test="taskEffective == 0 or taskEffective == 2">
+				and (task_effective = 0 or task_effective = 2)
+			</if>
 		</where>
-		limit #{begin},#{end}
-
+		<if test="statu == 1">
+			order by task_upload_time
+		</if>
+		<if test="end != null">
+			limit #{begin},#{end}
+		</if>
 	</select>
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record
@@ -239,7 +246,7 @@
 			<![CDATA[and task_effective = 2]]>
 		</if>
 		<if test="userName != null">
-			 and user_name like '%${userName}%'
+			and user_name like '%${userName}%'
 		</if>
 		group by worker_id
 	</select>
