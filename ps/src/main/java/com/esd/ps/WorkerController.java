@@ -281,7 +281,7 @@ public class WorkerController {
 			} else if (workerRecord.getTaskEffective() == 3) {
 				workerRecordTrans.setTaskEffective(MSG_GIVEUP);
 			}
-
+			workerRecordTrans.setEffective(workerRecord.getTaskEffective());
 			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime() / 3600000);
 			if (workerRecord.getTaskMarkTime() == null) {
 				workerRecordTrans.setTaskMarkTime(0.00);

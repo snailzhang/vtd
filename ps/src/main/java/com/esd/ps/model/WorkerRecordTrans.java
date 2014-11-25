@@ -24,6 +24,8 @@ public class WorkerRecordTrans {
 
 	private String taskEffective;
 	
+	private int Effective;
+	
 	
 
 	public int getTaskId() {
@@ -113,4 +115,13 @@ public class WorkerRecordTrans {
 	public void setDownPackName(String downPackName) {
 		this.downPackName = downPackName;
 	}
+
+	public int getEffective() {
+		return Effective;
+	}
+
+	public void setEffective(int effective) {
+		Effective = effective;
+	}
+	
 }
