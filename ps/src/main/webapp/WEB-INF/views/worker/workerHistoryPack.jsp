@@ -98,11 +98,15 @@
 							$.each(data.list,function(i,item){
 								var downloadTD = "<td></td>";
 								var tS = "";
-								if(item.taskStatus == 0){
-									tS = "未完成";
+								var taskEf = "";
+								if(item.effective == 0 || item.effective == 2){
 									downloadTD = "<td><a href='#' onClick='downloadTask("+item.taskId+",\""+item.taskName+"\")'>下载</a></td>";
+								}
+								if(item.taskStatus == 0){
+									tS = "未上传";
+									
 								}else if(item.taskStatus == 1){
-									tS = "已完成";
+									tS = "已上传";
 								}else if(item.taskStatus == 2){
 									tS = "超时";
 								}

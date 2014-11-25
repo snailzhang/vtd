@@ -185,6 +185,8 @@
         },
         uploadComplete: function(r){
             var me = this;
+            r = r.replace("<pre>","");
+            r = r.replace("</pre>","");
             try{
                 var json = eval('('+r+')');
                 Base.callback(me.editor, me.dialog, json.url, json.state);

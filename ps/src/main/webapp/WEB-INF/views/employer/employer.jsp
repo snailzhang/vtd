@@ -198,24 +198,24 @@
 				</div>
 				
 			</div>
-			<!-- ****************************************编辑任务规则******************************************************* -->
+			<!-- ****************************************编辑任务说明******************************************************* -->
 			<div class="tab-pane" id="editTaskRole">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						编辑任务规则
+						编辑任务说明
 					</div>
 					<div class="panel-body">
 						<form role="form" class="form-horizontal">
 							<div class="form-group" id="">
-								<label for="noteTitle" class="col-sm-2 control-label">规则名称：</label>
-								<div class="col-sm-10">
+								<label for="noteTitle" class="col-sm-2 control-label">说明名称：</label>
+								<div class="col-sm-6">
 									<input type="text" class="form-control" name="noteTitle" id="noteTitle" placeholder="规则名称" required="required" autocomplete="off">
 									<span class="help-block"></span>
 								</div>
 							</div>
-							<script type="text/plain" id="myEditor" style="width:900px;height:240px;"></script>
-							<button type="button" id="saveEdit" class="btn btn-default">保存</button>
+							<script type="text/plain" id="myEditor" style="width:960px;height:240px;"></script>
 						</form>
+						<div style="margin:10px;"><button type="button" id="saveEdit" class="btn btn-primary btn-lg center-block">增加新说明</button></div>
 					</div>
 					
 				</div>
