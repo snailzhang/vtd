@@ -96,6 +96,11 @@ public class WorkerController {
 	@Value("${MSG_QUALIFY}")
 	private String MSG_QUALIFY;
 	/**
+	 * 放弃
+	 */
+	@Value("${MSG_GIVEUP}")
+	private String MSG_GIVEUP;
+	/**
 	 * task_mark_time计算的匹配条件 <Chinese-talk>
 	 */
 	@Value("${FILE_MATCH_CONDITION}")
@@ -273,6 +278,8 @@ public class WorkerController {
 				workerRecordTrans.setTaskEffective(MSG_UNQUALIFY);
 			} else if (workerRecord.getTaskEffective() == 1) {
 				workerRecordTrans.setTaskEffective(MSG_QUALIFY);
+			} else if (workerRecord.getTaskEffective() == 3) {
+				workerRecordTrans.setTaskEffective(MSG_GIVEUP);
 			}
 
 			workerRecordTrans.setTaskLockTime(workerRecord.getTaskLockTime() / 3600000);
@@ -315,7 +322,7 @@ public class WorkerController {
 		if (f.exists()) {
 			zipFile = new File(url + Constants.SLASH + downPackName);
 			if (zipFile.exists()) {
-				map.put(Constants.WRONGPATH,wrongPath);
+				map.put(Constants.WRONGPATH, wrongPath);
 				return map;
 			}
 		} else {
@@ -331,8 +338,8 @@ public class WorkerController {
 			workerRecord.setUpdateTime(new Date());
 			workerRecord.setDownUrl(wrongPath);
 			workerRecord.setDownPackName(downPackName);
-			int a=workerRecordService.updateBydownPackName(workerRecord);
-			logger.debug("a:{}",a);
+			int a = workerRecordService.updateBydownPackName(workerRecord);
+			logger.debug("a:{}", a);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
