@@ -75,7 +75,7 @@ public class InspectorController {
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "/inspectorList", method = RequestMethod.POST)
+	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> inspectorPost(String userName,int timeMark,HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
