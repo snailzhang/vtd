@@ -214,7 +214,7 @@
 	</select>
 	<select id="selectWorkerIdGroupByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
-		worker_id,user_name
+		worker_id,user_name,count(worker_id) count
 		from worker_record
 		where 3 > 2
 		<if test="timeMark == 0">
