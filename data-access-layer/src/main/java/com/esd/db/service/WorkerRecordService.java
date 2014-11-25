@@ -62,4 +62,6 @@ public interface WorkerRecordService {
 	Double getSUMTaskMarkTimeByPackId(int packId);
 	
 	int getPackIdByTaskId(Integer task_id);
+	
+	List<workerRecord> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
 }

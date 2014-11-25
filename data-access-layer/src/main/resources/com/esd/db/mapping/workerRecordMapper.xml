@@ -214,7 +214,7 @@
 	</select>
 	<select id="selectWorkerIdGroupByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
-		worker_id
+		worker_id,user_name
 		from worker_record
 		where 3 > 2
 		<if test="timeMark == 0">
@@ -226,17 +226,20 @@
 		<if test="taskStatu == 1">
 			and task_statu = 1
 		</if>
-		<if test="task_effective == 3">
+		<if test="taskEffective == 3">
 			<![CDATA[and (task_effective = 0 or task_effective = 2)]]>
 		</if>
-		<if test="task_effective == 1">
+		<if test="taskEffective == 1">
 			<![CDATA[and task_effective = 1]]>
 		</if>
-		<if test="task_effective == 0">
+		<if test="taskEffective == 0">
 			<![CDATA[and task_effective = 0]]>
 		</if>
-		<if test="task_effective == 2">
+		<if test="taskEffective == 2">
 			<![CDATA[and task_effective = 2]]>
+		</if>
+		<if test="userName != null">
+			 and user_name like '%${userName}%'
 		</if>
 		group by worker_id
 	</select>

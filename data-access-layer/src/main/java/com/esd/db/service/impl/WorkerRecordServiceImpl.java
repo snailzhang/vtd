@@ -228,4 +228,16 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.updateBydownPackName(record);
 	}
 
+	@Override
+	public List<workerRecord> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective) {
+		Map<String, Object> map = new HashMap<>();
+		
+		map.clear();
+		map.put("userName",userName);
+		map.put("timeMark", timeMark);
+		map.put("taskStatu",taskStatu);
+		map.put("taskEffective", taskEffective);
+		return workerRecordMapper.selectWorkerIdGroupByWorkerId(map);
+	}
+
 }

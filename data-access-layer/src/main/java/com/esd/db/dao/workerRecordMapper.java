@@ -62,4 +62,6 @@ public interface workerRecordMapper {
 	Double selectSUMTaskMarkTimeByPackId(Integer packId);
 	
 	int selectPackIdByTaskId(Integer task_id);
+	
+	List<workerRecord> selectWorkerIdGroupByWorkerId(Map<String, Object> map);
 }

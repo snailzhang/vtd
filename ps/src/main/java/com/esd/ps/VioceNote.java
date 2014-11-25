@@ -33,8 +33,16 @@ public class VioceNote {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
 	private VoiceNoteService voiceNoteService;
+	/**
+	 * 新增成功
+	 */
 	@Value("${MSG_ADD_SUCCESS}")
 	private String MSG_ADD_SUCCESS;
+	/**
+	 * 删除成功
+	 */
+	@Value("${MSG_DELETE_SUCCESS}")
+	private String MSG_DELETE_SUCCESS;
 
 	/**
 	 * 标注说明页
@@ -89,6 +97,7 @@ public class VioceNote {
 	 * @return
 	 */
 	@RequestMapping(value = "/addVoiceNote", method = RequestMethod.POST)
+	@ResponseBody
 	public Map<String, Object> addVoiceNotePOST(String title, String content, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
@@ -130,6 +139,7 @@ public class VioceNote {
 	 * @return
 	 */
 	@RequestMapping(value = "/updateVoiceNote", method = RequestMethod.POST)
+	@ResponseBody
 	public Map<String, Object> updateVoiceNotePOST(int id,String title, String content, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
@@ -143,6 +153,20 @@ public class VioceNote {
 		voiceNoteService.updateByPrimaryKeySelective(voiceNote);
 		map.put(Constants.REPLAY, 1);
 		map.put(Constants.MESSAGE, MSG_ADD_SUCCESS);
+		return map;
+	}
+	/**
+	 * 删除标注说明
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteVoiceNote", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteVoiceNotePOST(int id) {
+		Map<String, Object> map = new HashMap<>();		
+		voiceNoteService.deleteByPrimaryKey(id);
+		map.put(Constants.REPLAY, 1);
+		map.put(Constants.MESSAGE, MSG_DELETE_SUCCESS);
 		return map;
 	}
 
