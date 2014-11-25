@@ -132,20 +132,15 @@ public class ManagerController {
 	@Value("${MSG_UPDATE_ERROR}")
 	private String MSG_UPDATE_ERROR;
 	/**
-	 * 已完成
+	 * 未上传
 	 */
-	@Value("${MSG_FINISH}")
-	private String MSG_FINISH;
+	@Value("${MSG_UNUPLOAD}")
+	private String MSG_UNUPLOAD;
 	/**
 	 * 已超时
 	 */
 	@Value("${MSG_TIME_OUT}")
 	private String MSG_TIME_OUT;
-	/**
-	 * 进行中
-	 */
-	@Value("${MSG_DOING}")
-	private String MSG_DOING;
 	/**
 	 * 未审核
 	 */
@@ -171,6 +166,11 @@ public class ManagerController {
 	 */
 	@Value("${MSG_GIVEUP}")
 	private String MSG_GIVEUP;
+	/**
+	 * 已上传
+	 */
+	@Value("${MSG_UPLOADED}")
+	private String MSG_UPLOADED;
 
 
 	/**
@@ -335,9 +335,9 @@ public class ManagerController {
 				}
 				workerRecordTrans.setTaskName(workerRecord.getTaskName());
 				if (workerRecord.getTaskStatu() == 1) {
-					workerRecordTrans.setTaskStatu(MSG_FINISH);
+					workerRecordTrans.setTaskStatu(MSG_UPLOADED);
 				} else if (workerRecord.getTaskStatu() == 0) {
-					workerRecordTrans.setTaskStatu(MSG_DOING);
+					workerRecordTrans.setTaskStatu(MSG_UNUPLOAD);
 				} else if (workerRecord.getTaskStatu() == 2) {
 					workerRecordTrans.setTaskStatu(MSG_TIME_OUT);
 				}
