@@ -187,7 +187,7 @@ public class LoginController {
 					}
 				} else if (typeName.equals("inspector")) {
 					if (InspectorService.getCountInspectorIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView(Constants.MANAGER + Constants.SLASH + "inspector" + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
+						return new ModelAndView(Constants.MANAGER + Constants.SLASH + "inspectorList" + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 
 				} else if (typeName.equals(Constants.WORKER)) {
