@@ -40,6 +40,8 @@ public interface taskMapper {
     
     int updateByPackId(task task);
     
+    int updateByWorkerId(task task);
+    
     int selectUndoTaskCount();
     
     int selectFirstPackIdOrderByTaskLvl();

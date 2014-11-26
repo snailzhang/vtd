@@ -603,7 +603,7 @@
 		</set>
 		where pack_id = #{packId,jdbcType=INTEGER}
 	</update>
-	<update id="updateByWorkerId" parameterType="java.util.Map">
+	<update id="updateByWorkerId" parameterType="com.esd.db.model.task">
 		update task
 		<set>
 			<if test="inspectorId != null">

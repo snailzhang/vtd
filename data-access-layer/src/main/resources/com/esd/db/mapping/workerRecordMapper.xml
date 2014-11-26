@@ -221,7 +221,7 @@
 		where pack_id = #{packId, jdbcType=INTEGER} and
 		task_statu = 1
 	</select>
-	<select id="selectWorkerIdGroupByWorkerId" resultMap="java.util.Map" parameterType="java.util.Map">
+	<select id="selectWorkerIdGroupByWorkerId" resultType="java.util.Map" parameterType="java.util.Map">
 		select a.worker_id,a.user_name,a.c
 		from (select
 		worker_id,user_name,count(worker_id) c,sum(task_mark_time) s

@@ -245,4 +245,10 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.selectUndoTaskCountByPackId(packId);
 	}
 
+	@Override
+	public int updateByWorkerId(task task) {
+		
+		return taskMapper.updateByWorkerId(task);
+	}
+
 }
