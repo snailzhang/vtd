@@ -48,19 +48,19 @@ public class InspectorController {
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "/inspectorList", method = RequestMethod.GET)
-	public ModelAndView inspectorListGet(HttpSession session) {
+	@RequestMapping(value = "/inspector", method = RequestMethod.GET)
+	public ModelAndView inspectorGet(HttpSession session) {
 
-		return new ModelAndView("inspector/inspectorList");
+		return new ModelAndView("inspector/inspector");
 	}
 	/**
 	 * 审核列表页
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "/inspectorList", method = RequestMethod.POST)
+	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> inspectorListPost(String userName,int timeMark,HttpSession session) {
+	public Map<String, Object> inspectorPost(String userName,int timeMark,HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<workerRecord> list = workerRecordService.getWorkerIdGroupByWorkerId(userName,timeMark,1,3);
 		map.put(Constants.LIST,list);
@@ -71,22 +71,22 @@ public class InspectorController {
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "/inspector", method = RequestMethod.GET)
-	public ModelAndView inspectorGet() {
+	@RequestMapping(value = "/inspectorList", method = RequestMethod.GET)
+	public ModelAndView inspectorListGet() {
 		
-		return new ModelAndView("inspector/inspector");
+		return new ModelAndView("inspector/inspectorList");
 	}
 	/**
 	 * 审核页
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
+	@RequestMapping(value = "/inspectorList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> inspectorPost(int workerId) {
+	public Map<String, Object> inspectorListPost(int workerId) {
 		Map<String , Object> map = new HashMap<>();
 		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId,0,1, null, null, null,0,0);
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_HAVE_LINE);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		map.clear();
 		map.put("firstDate", sdf.format(list.get(0).getTaskUploadTime()));
 		map.put("lastDate", sdf.format(list.get(list.size() - 1).getTaskUploadTime()));
@@ -115,13 +115,14 @@ public class InspectorController {
 	}
 	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> auditingPost(int taskEffective,int day) {
+	public Map<String, Object> auditingPost(int taskEffective,int day,int workerId,String firstDate,HttpSession session) {
 		Map<String , Object> map = new HashMap<>();
-		if(taskEffective == 1){
-			
-		}else{
-			
-		}
+//		if(taskEffective == 1){//合格
+//			workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate,Integer.parseInt(session.getAttribute("userId").toString()));
+//			
+//		}else if(taskEffective == 0){//不合格
+//			
+//		}
 		return map;
 	}
 	

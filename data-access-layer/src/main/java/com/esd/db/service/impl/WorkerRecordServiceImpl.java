@@ -241,4 +241,20 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectWorkerIdGroupByWorkerId(map);
 	}
 
+	@Override
+	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate,int inspectorId) {
+		Map<String,Object> map = new HashMap<>();
+		map.clear();
+		map.put("workerId",workerId);
+		map.put("taskEffective",taskEffective);
+		if(taskLockTime == 0){
+			map.put("taskLockTime",null);
+		}else{
+			map.put("taskLockTime",taskLockTime*24*3600);
+		}	
+		map.put("firstDate",firstDate);
+		map.put("inspectorId",inspectorId);
+		return workerRecordMapper.updateByWorkerId(map);
+	}
+
 }

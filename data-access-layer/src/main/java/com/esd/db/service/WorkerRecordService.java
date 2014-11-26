@@ -23,6 +23,8 @@ public interface WorkerRecordService {
 	
 	int updateBydownPackName(workerRecord record);
 	
+	int updateByWorkerId(int taskEffective,int taskLockTime,int workerId,String firstDate,int inspectorId);
+	
 	List<workerRecord> getDoingTask();
 	
 	List<workerRecord> getAllByWorkerId(Integer workerId,Integer taskEffective,Integer statu,Integer year,Integer month,String taskNameCondition,int page,int row);

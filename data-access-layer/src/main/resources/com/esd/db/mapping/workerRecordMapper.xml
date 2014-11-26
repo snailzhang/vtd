@@ -21,13 +21,15 @@
 		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
 		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
 		<result column="task_effective" property="taskEffective" jdbcType="INTEGER" />
+		<result column="inspector_id" property="inspectorId" jdbcType="INTEGER" />
+		<result column="version" property="version" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		record_id, worker_id, pack_id, task_id, user_name,task_name, pack_name,down_pack_name,down_url,
 		task_down_time, task_upload_time,
 		task_statu, task_lock_time, task_mark_time, create_time,
 		create_method, update_time,
-		update_method, task_effective
+		update_method, task_effective,inspector_id,version
 	</sql>
 	<select id="selectWorkerRecordLikeDownPackName" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
@@ -261,8 +263,9 @@
 		task_statu,
 		task_lock_time, task_mark_time, create_time,
 		create_method, update_time, update_method,
-		task_effective)
-		values (#{recordId,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER},
+		task_effective,inspector_id,version)
+		values (#{recordId,jdbcType=INTEGER},
+		#{workerId,jdbcType=INTEGER},
 		#{packId,jdbcType=INTEGER},
 		#{taskId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},#{taskName,jdbcType=VARCHAR}, #{packName,jdbcType=VARCHAR},
 		#{downPackName,jdbcType=VARCHAR},#{downUrl,jdbcType=VARCHAR},
@@ -271,7 +274,7 @@
 		#{taskLockTime,jdbcType=INTEGER},
 		#{taskMarkTime,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
 		#{createMethod,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
-		#{taskEffective,jdbcType=INTEGER})
+		#{taskEffective,jdbcType=INTEGER},#{inspectorId,jdbcType=INTEGER},#{version,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.workerRecord">
 		insert into worker_record
@@ -333,6 +336,12 @@
 			<if test="taskEffective != null">
 				task_effective,
 			</if>
+			<if test="inspectorId != null">
+				inspector_id,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="recordId != null">
@@ -392,6 +401,12 @@
 			<if test="taskEffective != null">
 				#{taskEffective,jdbcType=INTEGER},
 			</if>
+			<if test="inspectorId != null">
+				#{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=INTEGER},
+			</if>
 		</trim>
 	</insert>
 
@@ -404,8 +419,39 @@
 			<if test="updateTime != null">
 				update_time = #{updateTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="version != null">
+				version = (#{version,jdbcType=INTEGER} + 1),
+			</if>
 		</set>
 		where down_pack_name = #{downPackName,jdbcType=VARCHAR}
+		<if test="version != null">
+			and version = #{version,jdbcType=INTEGER},
+		</if>
+	</update>
+	<update id="updateByWorkerId" parameterType="java.util.Map">
+		update worker_record
+		<set>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective},
+			</if>
+			<if test="taskEffective == 2">
+				task_statu = 0,
+				task_mark_time = 0.00,
+			</if>
+			<if test="taskLockTime != null">
+				task_lock_time = #{taskLockTime},
+			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId},
+			</if>
+			<if test="version != null">
+				version = (#{version,jdbcType=INTEGER} + 1),
+			</if>
+		</set>
+		where task_statu = 1 and worker_id = #{workerId} and <![CDATA[(task_upload_time > #{firstDate} or task_upload_time = #{firstDate})]]>
+		<if test="version != null">
+			and version = #{version,jdbcType=INTEGER},
+		</if>
 	</update>
 	<update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.workerRecord">
 		update worker_record
@@ -464,8 +510,17 @@
 			<if test="taskEffective != null">
 				task_effective = #{taskEffective,jdbcType=INTEGER},
 			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="version != null">
+				version = (#{version,jdbcType=INTEGER} + 1),
+			</if>
 		</set>
 		where record_id = #{recordId,jdbcType=INTEGER}
+		<if test="version != null">
+			and version = #{version,jdbcType=INTEGER}
+		</if>
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.workerRecord">
 		update worker_record
@@ -490,7 +545,9 @@
 		update_time =
 		#{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
-		task_effective = #{taskEffective,jdbcType=INTEGER}
-		where record_id = #{recordId,jdbcType=INTEGER}
+		task_effective = #{taskEffective,jdbcType=INTEGER},
+		inspector_id = #{inspectorId,jdbcType=INTEGER},
+		where record_id =
+		#{recordId,jdbcType=INTEGER}
 	</update>
 </mapper>

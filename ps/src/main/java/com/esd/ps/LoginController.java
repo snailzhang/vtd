@@ -187,16 +187,13 @@ public class LoginController {
 					}
 				} else if (typeName.equals("inspector")) {
 					if (InspectorService.getCountInspectorIdByUserId(user.getUserId()) == 0) {
-						return new ModelAndView(Constants.MANAGER + Constants.SLASH + "inspectorList" + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
+						return new ModelAndView(Constants.MANAGER + Constants.SLASH + "inspector" + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
 					}
 
 				} else if (typeName.equals(Constants.WORKER)) {
 					if (workerService.getCountWorkerIdByUserId(user.getUserId()) == 0) {
 						return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.WORKER + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 0);
 					}
-				}
-				if(typeName.equals("inspector")){
-					return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.SECURITY + Constants.SLASH + "inspectorList");
 				}
 				return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.SECURITY + Constants.SLASH + typeName);
 

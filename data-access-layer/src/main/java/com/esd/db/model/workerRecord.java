@@ -42,6 +42,8 @@ public class workerRecord {
 
     private int taskEffective;
     
+    private int inspectorId;
+    
     public Integer getRecordId() {
         return recordId;
     }
@@ -193,6 +195,14 @@ public class workerRecord {
 
 	public void setDownUrl(String downUrl) {
 		this.downUrl = downUrl;
+	}
+
+	public int getInspectorId() {
+		return inspectorId;
+	}
+
+	public void setInspectorId(int inspectorId) {
+		this.inspectorId = inspectorId;
 	}
     
 }

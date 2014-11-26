@@ -598,9 +598,37 @@
 				update_method = #{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="version != null">
-				version = #{version,jdbcType=VARCHAR},
+				version = #{version,jdbcType=VARCHAR}
 			</if>
 		</set>
 		where pack_id = #{packId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByWorkerId" parameterType="java.util.Map">
+		update task
+		<set>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="taskEffective == false">
+				task_mark_time = null,
+				task_upload_time = null,
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective,jdbcType=BIT},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where worker_id = #{workerId,jdbcType=INTEGER} and <![CDATA[(task_upload_time > #{firstDate} or task_upload_time = #{firstDate})]]> 
 	</update>
 </mapper>

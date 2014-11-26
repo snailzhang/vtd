@@ -23,6 +23,8 @@ public interface workerRecordMapper {
 	
 	int updateBydownPackName(workerRecord record);
 	
+	int updateByWorkerId(Map<String, Object> map);
+	
 	List<workerRecord> selectDoingTask();
 	
 	List<workerRecord> selectAllByWorkerId(Map<String, Object> map);
