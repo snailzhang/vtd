@@ -234,7 +234,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		Map<String, Object> map = new HashMap<>();
 		
 		map.clear();
-		map.put("userName",userName);
+		if(userName.isEmpty() || userName.trim().length() == 0){
+			map.put("userName",null);
+		}else{
+			map.put("userName",userName);
+		}
 		map.put("timeMark", timeMark);
 		map.put("taskStatu",taskStatu);
 		map.put("taskEffective", taskEffective);

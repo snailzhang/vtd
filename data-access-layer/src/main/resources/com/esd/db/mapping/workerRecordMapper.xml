@@ -247,7 +247,7 @@
 		</if>
 		group by worker_id) a where 3>2
 		<if test="timeMark == 0">
-		<![CDATA[and a.s > 600 or a.s = 600)]]>
+		<![CDATA[and (a.s > 600 or a.s = 600)]]>
 		</if>
 		<if test="timeMark == 1">
 		<![CDATA[and a.s < 600]]>
@@ -438,6 +438,7 @@
 			<if test="taskEffective == 2">
 				task_statu = 0,
 				task_mark_time = 0.00,
+				task_down_time = NOW(),
 			</if>
 			<if test="taskLockTime != null">
 				task_lock_time = #{taskLockTime},
