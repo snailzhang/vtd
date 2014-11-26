@@ -65,5 +65,5 @@ public interface WorkerRecordService {
 	
 	int getPackIdByTaskId(Integer task_id);
 	
-	List<workerRecord> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
+	List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
 }

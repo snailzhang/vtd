@@ -62,7 +62,7 @@ public class InspectorController {
 	@ResponseBody
 	public Map<String, Object> inspectorPost(String userName,int timeMark,HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<workerRecord> list = workerRecordService.getWorkerIdGroupByWorkerId(userName,timeMark,1,3);
+		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName,timeMark,1,3);
 		map.put(Constants.LIST,list);
 		return map;
 	}

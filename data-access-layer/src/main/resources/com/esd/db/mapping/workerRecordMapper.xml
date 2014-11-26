@@ -221,17 +221,12 @@
 		where pack_id = #{packId, jdbcType=INTEGER} and
 		task_statu = 1
 	</select>
-	<select id="selectWorkerIdGroupByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
-		select
-		worker_id,user_name,count(worker_id) count
+	<select id="selectWorkerIdGroupByWorkerId" resultMap="java.util.Map" parameterType="java.util.Map">
+		select a.worker_id,a.user_name,a.c
+		from (select
+		worker_id,user_name,count(worker_id) c,sum(task_mark_time) s
 		from worker_record
 		where 3 > 2
-		<if test="timeMark == 0">
-		<![CDATA[and (sum(task_mark_time) > 600 or sum(task_mark_time) = 600)]]>
-		</if>
-		<if test="timeMark == 1">
-		<![CDATA[and sum(task_mark_time) < 600]]>
-		</if>
 		<if test="taskStatu == 1">
 			and task_statu = 1
 		</if>
@@ -250,7 +245,13 @@
 		<if test="userName != null">
 			and user_name like '%${userName}%'
 		</if>
-		group by worker_id
+		group by worker_id) a where 3>2
+		<if test="timeMark == 0">
+		<![CDATA[and a.s > 600 or a.s = 600)]]>
+		</if>
+		<if test="timeMark == 1">
+		<![CDATA[and a.s < 600]]>
+		</if>
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from worker_record

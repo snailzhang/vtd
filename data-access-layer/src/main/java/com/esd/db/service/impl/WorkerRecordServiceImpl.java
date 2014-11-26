@@ -230,7 +230,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective) {
+	public List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective) {
 		Map<String, Object> map = new HashMap<>();
 		
 		map.clear();
