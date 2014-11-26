@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpSession;
 
 import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
-import com.esd.db.service.InspectorService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
 
@@ -41,8 +39,7 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/security")
 public class InspectorController {
 	private static final Logger logger = LoggerFactory.getLogger(InspectorController.class);
-	@Autowired
-	private InspectorService InspectorService;
+
 	@Autowired
 	private WorkerRecordService workerRecordService;
 	@Autowired
@@ -69,6 +66,7 @@ public class InspectorController {
 	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> inspectorPost(String userName, int timeMark, HttpSession session) {
+		logger.debug("userName:{},timeMark:{}",userName,timeMark);
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3);
 		map.put(Constants.LIST, list);
@@ -82,9 +80,9 @@ public class InspectorController {
 	 * @return
 	 */
 	@RequestMapping(value = "/inspectorList", method = RequestMethod.GET)
-	public ModelAndView inspectorListGet() {
+	public ModelAndView inspectorListGet(int workerId) {
 
-		return new ModelAndView("inspector/inspectorList");
+		return new ModelAndView("inspector/inspectorList","workerId",workerId);
 	}
 
 	/**
