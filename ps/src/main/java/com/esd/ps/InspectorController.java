@@ -98,29 +98,34 @@ public class InspectorController {
 		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, 0, 0, "", 0, 0);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		map.clear();
-		map.put("firstDate", sdf.format(list.get(0).getTaskUploadTime()));
-		map.put("lastDate", sdf.format(list.get(list.size() - 1).getTaskUploadTime()));
-		if (list.size() > 10 || list.size() == 10) {
-			List<workerRecord> list1 = new ArrayList<>();
-			// 随机生成10个上传任务压入list1中
-			Set<Integer> set = new HashSet<Integer>();
-			boolean panduan = true;
-			while (true) {
-				int z = (int) (Math.random() * 15 + 1);
-				panduan = set.add(z);
-				if (!panduan) {
-					continue;
-				} else {
-					list1.add(list.get(z));
+		if(list == null || list.size() == 0){
+			map.put("firstDate", "");
+			map.put("lastDate", "");
+		}else{
+			map.put("firstDate", sdf.format(list.get(0).getTaskUploadTime()));
+			map.put("lastDate", sdf.format(list.get(list.size() - 1).getTaskUploadTime()));
+			if (list.size() > 10 || list.size() == 10) {
+				List<workerRecord> list1 = new ArrayList<>();
+				// 随机生成10个上传任务压入list1中
+				Set<Integer> set = new HashSet<Integer>();
+				boolean panduan = true;
+				while (true) {
+					int z = (int) (Math.random() * 15 + 1);
+					panduan = set.add(z);
+					if (!panduan) {
+						continue;
+					} else {
+						list1.add(list.get(z));
+					}
+					if (set.size() >= 10) {
+						break;
+					}
 				}
-				if (set.size() >= 10) {
-					break;
-				}
+				map.put("list", list1);
+			} else {
+				map.put("list", list);
 			}
-			map.put("list", list1);
-		} else {
-			map.put("list", list);
-		}
+		}	
 		return map;
 	}
 
