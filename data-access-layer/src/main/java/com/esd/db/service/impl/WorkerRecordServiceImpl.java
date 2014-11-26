@@ -60,11 +60,16 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getAllByWorkerId(Integer workerId,Integer taskEffective,Integer statu, Integer year,Integer month, String taskNameCondition, int page, int row) {
+	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer taskEffective, Integer statu, Integer year, Integer month, String taskNameCondition, int page, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		if (page == 0) {
+			map.put("begin", null);
+			map.put("end", null);
+		} else {
+			map.put("begin", ((page - 1) * row));
+			map.put("end", row);
+		}
 
-		map.put("begin", ((page - 1) * row));
-		map.put("end", row);
 		map.put("workerId", workerId);
 		map.put("statu", statu);
 		map.put("taskEffective", taskEffective);
@@ -79,7 +84,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getAllCountByWorkerId(Integer workerId, Integer statu,Integer year, Integer month, String taskNameCondition) {
+	public int getAllCountByWorkerId(Integer workerId, Integer statu, Integer year, Integer month, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("workerId", workerId);
@@ -196,7 +201,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year, int month,String userNameCondition) {
+	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, int year, int month, String userNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		if (workerId > 0) {
@@ -213,52 +218,75 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 
 	@Override
 	public Double getSUMTaskMarkTimeByPackId(int packId) {
-		
+
 		return workerRecordMapper.selectSUMTaskMarkTimeByPackId(packId);
 	}
 
 	@Override
 	public int getPackIdByTaskId(Integer task_id) {
-		
+
 		return workerRecordMapper.selectPackIdByTaskId(task_id);
 	}
 
 	@Override
 	public int updateBydownPackName(workerRecord record) {
-		
+
 		return workerRecordMapper.updateBydownPackName(record);
 	}
 
 	@Override
-	public List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective) {
+	public List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective, int page, int row) {
 		Map<String, Object> map = new HashMap<>();
-		
+
 		map.clear();
-		if(userName.isEmpty() || userName.trim().length() == 0){
-			map.put("userName",null);
-		}else{
-			map.put("userName",userName);
+		if (page == 0) {
+			map.put("begin", null);
+			map.put("end", null);
+		} else {
+			map.put("begin", ((page - 1) * row));
+			map.put("end", row);
+		}
+		if (userName.isEmpty() || userName.trim().length() == 0) {
+			map.put("userName", null);
+		} else {
+			map.put("userName", userName);
 		}
 		map.put("timeMark", timeMark);
-		map.put("taskStatu",taskStatu);
+		map.put("taskStatu", taskStatu);
 		map.put("taskEffective", taskEffective);
 		return workerRecordMapper.selectWorkerIdGroupByWorkerId(map);
 	}
 
 	@Override
-	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate,int inspectorId) {
-		Map<String,Object> map = new HashMap<>();
+	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId) {
+		Map<String, Object> map = new HashMap<>();
 		map.clear();
-		map.put("workerId",workerId);
-		map.put("taskEffective",taskEffective);
-		if(taskLockTime == 0){
-			map.put("taskLockTime",null);
-		}else{
-			map.put("taskLockTime",taskLockTime*24*3600);
-		}	
-		map.put("firstDate",firstDate);
-		map.put("inspectorId",inspectorId);
+		map.put("workerId", workerId);
+		map.put("taskEffective", taskEffective);
+		if (taskLockTime == 0) {
+			map.put("taskLockTime", null);
+		} else {
+			map.put("taskLockTime", taskLockTime * 3600);
+		}
+		map.put("firstDate", firstDate);
+		map.put("inspectorId", inspectorId);
 		return workerRecordMapper.updateByWorkerId(map);
+	}
+
+	@Override
+	public int getWorkerIdCountGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective) {
+		Map<String, Object> map = new HashMap<>();
+
+		map.clear();
+		if (userName.isEmpty() || userName.trim().length() == 0) {
+			map.put("userName", null);
+		} else {
+			map.put("userName", userName);
+		}
+		map.put("timeMark", timeMark);
+		map.put("taskStatu", taskStatu);
+		map.put("taskEffective", taskEffective);
+		return workerRecordMapper.selectWorkerIdCountGroupByWorkerId(map);
 	}
 
 }

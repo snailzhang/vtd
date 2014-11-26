@@ -66,4 +66,6 @@ public interface workerRecordMapper {
 	int selectPackIdByTaskId(Integer task_id);
 	
 	List<Map<String, Object>> selectWorkerIdGroupByWorkerId(Map<String, Object> map);
+	
+	int selectWorkerIdCountGroupByWorkerId(Map<String, Object> map);
 }

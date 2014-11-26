@@ -65,11 +65,15 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> inspectorPost(String userName, int timeMark, HttpSession session) {
+	public Map<String, Object> inspectorPost(String userName, int timeMark,int page, HttpSession session) {
 		logger.debug("userName:{},timeMark:{}",userName,timeMark);
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3);
+		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3,page,Constants.ROW);
+		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(userName, timeMark, 1, 3);
+		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
 

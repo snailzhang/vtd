@@ -65,5 +65,7 @@ public interface WorkerRecordService {
 	
 	int getPackIdByTaskId(Integer task_id);
 	
-	List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
+	List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective,int page,int row);
+
+	int getWorkerIdCountGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
 }

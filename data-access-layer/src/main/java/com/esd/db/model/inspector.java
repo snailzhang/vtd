@@ -4,113 +4,103 @@ import java.util.Date;
 
 public class inspector {
 
-    private Integer inspectorId;
+	private Integer inspectorId;
 
-    private String inspectorUsername;
+	private String inspectorName;
 
-    private String inspectorPassword;
+	private int userId;
 
-    private String inspectorRealName;
+	private Integer createId;
 
-    private Integer createId;
+	private Date createTime;
 
-    private Date createTime;
+	private String createMethod;
 
-    private String createMethod;
+	private Integer updateId;
 
-    private Integer updateId;
+	private Date updateTime;
 
-    private Date updateTime;
+	private String updateMethod;
 
-    private String updateMethod;
+	private String version;
 
-    private String version;
+	public Integer getInspectorId() {
+		return inspectorId;
+	}
 
-    public Integer getInspectorId() {
-        return inspectorId;
-    }
+	public void setInspectorId(Integer inspectorId) {
+		this.inspectorId = inspectorId;
+	}
 
-    public void setInspectorId(Integer inspectorId) {
-        this.inspectorId = inspectorId;
-    }
+	public String getInspectorName() {
+		return inspectorName;
+	}
 
-    public String getInspectorUsername() {
-        return inspectorUsername;
-    }
+	public void setInspectorName(String inspectorName) {
+		this.inspectorName = inspectorName;
+	}
 
-    public void setInspectorUsername(String inspectorUsername) {
-        this.inspectorUsername = inspectorUsername == null ? null : inspectorUsername.trim();
-    }
+	public int getUserId() {
+		return userId;
+	}
 
-    public String getInspectorPassword() {
-        return inspectorPassword;
-    }
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 
-    public void setInspectorPassword(String inspectorPassword) {
-        this.inspectorPassword = inspectorPassword == null ? null : inspectorPassword.trim();
-    }
+	public Integer getCreateId() {
+		return createId;
+	}
 
-    public String getInspectorRealName() {
-        return inspectorRealName;
-    }
+	public void setCreateId(Integer createId) {
+		this.createId = createId;
+	}
 
-    public void setInspectorRealName(String inspectorRealName) {
-        this.inspectorRealName = inspectorRealName == null ? null : inspectorRealName.trim();
-    }
+	public Date getCreateTime() {
+		return createTime;
+	}
 
-    public Integer getCreateId() {
-        return createId;
-    }
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 
-    public void setCreateId(Integer createId) {
-        this.createId = createId;
-    }
+	public String getCreateMethod() {
+		return createMethod;
+	}
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+	public void setCreateMethod(String createMethod) {
+		this.createMethod = createMethod == null ? null : createMethod.trim();
+	}
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	public Integer getUpdateId() {
+		return updateId;
+	}
 
-    public String getCreateMethod() {
-        return createMethod;
-    }
+	public void setUpdateId(Integer updateId) {
+		this.updateId = updateId;
+	}
 
-    public void setCreateMethod(String createMethod) {
-        this.createMethod = createMethod == null ? null : createMethod.trim();
-    }
+	public Date getUpdateTime() {
+		return updateTime;
+	}
 
-    public Integer getUpdateId() {
-        return updateId;
-    }
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
 
-    public void setUpdateId(Integer updateId) {
-        this.updateId = updateId;
-    }
+	public String getUpdateMethod() {
+		return updateMethod;
+	}
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+	public void setUpdateMethod(String updateMethod) {
+		this.updateMethod = updateMethod == null ? null : updateMethod.trim();
+	}
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+	public String getVersion() {
+		return version;
+	}
 
-    public String getUpdateMethod() {
-        return updateMethod;
-    }
-
-    public void setUpdateMethod(String updateMethod) {
-        this.updateMethod = updateMethod == null ? null : updateMethod.trim();
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 }
