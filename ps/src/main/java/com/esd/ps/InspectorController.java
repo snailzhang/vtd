@@ -95,7 +95,7 @@ public class InspectorController {
 	@ResponseBody
 	public Map<String, Object> inspectorListPost(int workerId) {
 		Map<String, Object> map = new HashMap<>();
-		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, null, null, null, 0, 0);
+		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, 0, 0, "", 0, 0);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		map.clear();
 		map.put("firstDate", sdf.format(list.get(0).getTaskUploadTime()));
