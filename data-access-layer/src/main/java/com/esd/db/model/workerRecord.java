@@ -44,6 +44,8 @@ public class workerRecord {
     
     private int inspectorId;
     
+    private int version;
+    
     public Integer getRecordId() {
         return recordId;
     }
@@ -203,6 +205,14 @@ public class workerRecord {
 
 	public void setInspectorId(int inspectorId) {
 		this.inspectorId = inspectorId;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
 	}
     
 }
