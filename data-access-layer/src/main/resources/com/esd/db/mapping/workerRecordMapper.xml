@@ -57,17 +57,19 @@
 	<select id="selectTaskMarkTimeMonthByWorkerIdAndMonth" resultType="java.lang.Double" parameterType="java.util.Map">
 		select sum(task_mark_time) month
 		from worker_record
-		<if test="workerId !=null and month!= null">
-			where worker_id = #{workerId}
-			and DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}'
+		where 3 > 2
+		<if test="workerId !=null">
+			and worker_id = #{workerId}
 		</if>
-		<if test="workerId !=null and month == null">
-			where worker_id = #{workerId}
+		<if test="month != null">
+			and DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}' 
 		</if>
-		<if test="workerId ==null and month != null">
-			where DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}' and user_name like '%${userNameCondition}%'
+		<if test="userNameCondition != null">
+			and user_name like '%${userNameCondition}%'
 		</if>
-
+		<if test="taskEffective != null">
+			and task_effective = #{taskEffective}
+		</if>
 	</select>
 	<select id="selectAllByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
@@ -219,7 +221,7 @@
 		count(record_id) count1
 		from worker_record
 		where pack_id = #{packId, jdbcType=INTEGER} and
-		task_statu = 1
+		task_effective = 1
 	</select>
 	<select id="selectWorkerIdGroupByWorkerId" resultType="java.util.Map" parameterType="java.util.Map">
 		select a.worker_id,a.user_name,a.c
@@ -485,7 +487,7 @@
 				version = (#{version,jdbcType=INTEGER} + 1),
 			</if>
 		</set>
-		where task_statu = 1 and worker_id = #{workerId} and <![CDATA[(task_upload_time > #{firstDate} or task_upload_time = #{firstDate})]]>
+		where task_statu = 1 and worker_id = #{workerId} and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
 		<if test="version != null">
 			and version = #{version,jdbcType=INTEGER},
 		</if>

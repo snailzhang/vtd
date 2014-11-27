@@ -603,32 +603,33 @@
 		</set>
 		where pack_id = #{packId,jdbcType=INTEGER}
 	</update>
-	<update id="updateByWorkerId" parameterType="com.esd.db.model.task">
+	<update id="updateByWorkerId" parameterType="java.util.Map">
 		update task
 		<set>
 			<if test="inspectorId != null">
-				inspector_id = #{inspectorId,jdbcType=INTEGER},
+				inspector_id = #{inspectorId},
 			</if>
-			<if test="taskEffective == false">
+			<if test="taskEffective == 2">
 				task_mark_time = null,
 				task_upload_time = null,
+				task_effective = false,
 			</if>
 			<if test="taskMarkTime != null">
-				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+				task_mark_time = #{taskMarkTime},
 			</if>
-			<if test="taskEffective != null">
-				task_effective = #{taskEffective,jdbcType=BIT},
+			<if test="taskEffective == 1">
+				task_effective = true,
 			</if>
 			<if test="updateId != null">
-				update_id = #{updateId,jdbcType=INTEGER},
+				update_id = #{updateId},
 			</if>
 			<if test="updateMethod != null">
-				update_method = #{updateMethod,jdbcType=VARCHAR},
+				update_method = #{updateMethod},
 			</if>
 			<if test="version != null">
-				version = #{version,jdbcType=VARCHAR}
+				version = #{version}
 			</if>
 		</set>
-		where worker_id = #{workerId,jdbcType=INTEGER} and <![CDATA[(task_upload_time > #{firstDate} or task_upload_time = #{firstDate})]]> 
+		where worker_id = #{workerId} and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]> 
 	</update>
 </mapper>

@@ -213,6 +213,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		if (month > 0) {
 			map.put("month", month);
 		}
+		if(userNameCondition.trim().length() == 0 || userNameCondition == null){
+			map.put("userNameCondition", null);
+		}else{
+			map.put("userNameCondition", userNameCondition);
+		}
 		return workerRecordMapper.selectTaskMarkTimeMonthByWorkerIdAndMonth(map);
 	}
 
@@ -262,7 +267,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
-		map.put("taskEffective", taskEffective);
+		if(taskEffective == 0){
+			map.put("taskEffective", 2);
+		}else if(taskEffective == 1){
+			map.put("taskEffective", 1);
+		}	
 		if (taskLockTime == 0) {
 			map.put("taskLockTime", null);
 		} else {

@@ -40,7 +40,7 @@ public interface taskMapper {
     
     int updateByPackId(task task);
     
-    int updateByWorkerId(task task);
+    int updateByWorkerId(Map<String, Object> map);
     
     int selectUndoTaskCount();
     

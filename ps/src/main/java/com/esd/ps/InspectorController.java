@@ -9,16 +9,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
-
-import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
+import com.esd.ps.model.WorkerRecordTrans;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -100,16 +100,25 @@ public class InspectorController {
 	public Map<String, Object> inspectorListPost(int workerId) {
 		Map<String, Object> map = new HashMap<>();
 		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, 0, 0, "", 0, 0);
+		List<WorkerRecordTrans> list2 = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		for (Iterator<workerRecord> iterator = list.iterator(); iterator.hasNext();) {
+			workerRecord workerRecord = (workerRecord) iterator.next();
+			WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
+			workerRecordTrans.setTaskName(workerRecord.getTaskName());
+			workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
+			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
+			list2.add(workerRecordTrans);
+		}
 		map.clear();
-		if(list == null || list.size() == 0){
+		if(list2 == null || list2.size() == 0){
 			map.put("firstDate", "");
 			map.put("lastDate", "");
 		}else{
-			map.put("firstDate", sdf.format(list.get(0).getTaskUploadTime()));
-			map.put("lastDate", sdf.format(list.get(list.size() - 1).getTaskUploadTime()));
-			if (list.size() > 10 || list.size() == 10) {
-				List<workerRecord> list1 = new ArrayList<>();
+			map.put("firstDate", list2.get(0).getTaskUploadTime());
+			map.put("lastDate", list2.get(list2.size() - 1).getTaskUploadTime());
+			if (list2.size() > 10 || list2.size() == 10) {
+				List<WorkerRecordTrans> list1 = new ArrayList<>();
 				// 随机生成10个上传任务压入list1中
 				Set<Integer> set = new HashSet<Integer>();
 				boolean panduan = true;
@@ -119,7 +128,7 @@ public class InspectorController {
 					if (!panduan) {
 						continue;
 					} else {
-						list1.add(list.get(z));
+						list1.add(list2.get(z));
 					}
 					if (set.size() >= 10) {
 						break;
@@ -127,7 +136,7 @@ public class InspectorController {
 				}
 				map.put("list", list1);
 			} else {
-				map.put("list", list);
+				map.put("list", list2);
 			}
 		}	
 		return map;
@@ -139,18 +148,9 @@ public class InspectorController {
 		Map<String, Object> map = new HashMap<>();
 
 		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()));
-		task task = new task();
-		task.setInspectorId(Integer.parseInt(session.getAttribute("userId").toString()));
-		if (taskEffective == 1) {
-			task.setTaskEffective(true);
-		} else if (taskEffective == 2) {
-			task.setTaskEffective(false);
-		}
-		task.setUpdateId(Integer.parseInt(session.getAttribute("userId").toString()));
+		int userId = Integer.parseInt(session.getAttribute("userId").toString());
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		task.setUpdateMethod(items[1].toString());
-		task.setWorkerId(workerId);
-		taskService.updateByWorkerId(task);
+		taskService.updateByWorkerId(userId,taskEffective,userId,items[1].toString(),workerId,firstDate);
 	    map.clear();
 	    map.put(Constants.REPLAY,1);
 	    map.put(Constants.MESSAGE,"审核完成");
