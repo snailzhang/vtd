@@ -26,7 +26,7 @@
 		display:inline-block;
 		margin-right:10px;
 	}
-	form{padding-top:10px;}
+	form{padding:10px;}
 </style>
 <script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/jquery.ui.widget.js"></script>
@@ -41,19 +41,17 @@
 	<div class="container" id="downloadPanel">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"></h3><button type="button" id="refreshPage" class="btn btn-default">刷新</button>
+				<h3 class="panel-title"></h3><button type="button" id="refreshPage" class="btn btn-info">刷新</button>
 			</div>
-			<form action="${contextPath}/security/downTask" method="get" id="downTask" name="downTask" role="form" class="form-horizontal">
+			<form action="${contextPath}/security/downTask" method="get" id="downTask" name="downTask" role="form" class="form-inline">
+				<div class="form-group" id="">
+					<p class="form-control-static">选择下载任务个数:</p>
+				</div>
 				<div class="form-group">
-			      <label for="downTaskCount" class="col-sm-2 control-label">选择下载任务个数:</label>
-			      <div class="col-sm-10">
-			      	<select class="form-control" name="downTaskCount" id="downTaskCount"></select>
-			      </div>
+			      <select class="form-control" name="downTaskCount" id="downTaskCount"></select>
 			   </div>
 			   <div class="form-group">
-			      <div class="col-sm-offset-2 col-sm-10">
-			         <button type="button" id="doneLoadBtn" class="btn btn-default">下载任务</button>
-			      </div>
+			      <button type="button" id="doneLoadBtn" class="btn btn-primary">下载任务</button>
 			   </div>
 			</form>
 		</div>

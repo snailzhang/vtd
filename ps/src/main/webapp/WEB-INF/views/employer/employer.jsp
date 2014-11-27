@@ -177,7 +177,7 @@
 							</div>
 							<div class="form-group" id="">
 								<div class="input-group">
-									<input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间">
+									<input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间" onkeydown="if(event.keyCode==13){return false;}">
 									<span class="input-group-addon">小时</span>
 								</div>
 							</div>

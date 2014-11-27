@@ -59,7 +59,7 @@
 						if(data.replay == "1"){
 							$alertMsg.addClass("alert-success");
 						}else{
-							$alertMsg.addClass("alert-success");
+							$alertMsg.addClass("alert-danger");
 						}
 						$("form").prepend($alertMsg);
 					}
