@@ -132,6 +132,12 @@
 		from pack
 		WHERE pack_id = #{packId,jdbcType=INTEGER}
 	</select>
+	<select id="selectNoteIdByPackId" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select
+		note_id
+		from pack
+		WHERE pack_id = #{packId,jdbcType=INTEGER}
+	</select>
 	<select id="selectPackNameByPackId" resultType="java.lang.String" parameterType="java.lang.Integer">
 		select
 		pack_name

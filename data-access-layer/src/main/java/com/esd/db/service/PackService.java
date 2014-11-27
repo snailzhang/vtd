@@ -7,10 +7,10 @@ import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 
 public interface PackService {
-	
-	List<pack> getLikePackName(int page, int packStuts, String packNameCondition,int employerId,int row);
-	
-	int getCountLikePackName(int packStuts, String packNameCondition,int employerId);
+
+	List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row);
+
+	int getCountLikePackName(int packStuts, String packNameCondition, int employerId);
 
 	int deleteByPrimaryKey(Integer packId);
 
@@ -55,8 +55,10 @@ public interface PackService {
 	List<pack> getDoingPackPagesByEmployerId(Map<String, Integer> map);
 
 	List<pack> getFinishPackPagesByEmployerId(Map<String, Integer> map);
-	
+
 	int getPackIdByPackName(String packName);
-	
-	 int getPackIdOrderByPackLvl();
+
+	int getPackIdOrderByPackLvl();
+
+	String getNoteIdByPackId();
 }

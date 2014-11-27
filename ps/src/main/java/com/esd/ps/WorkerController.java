@@ -140,8 +140,10 @@ public class WorkerController {
 			int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
+			String noteId = packService.getNoteIdByPackId();
 			map.put(Constants.COUNTPACKDOING, countPackDoing);
 			map.put(Constants.COUNTTASKDOING, countTaskDoing);
+			map.put("noteId", noteId);
 			map.put(Constants.WORKERMARK, workerMark);
 			return map;
 		}

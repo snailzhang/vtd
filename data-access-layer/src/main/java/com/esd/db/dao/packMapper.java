@@ -59,4 +59,6 @@ public interface packMapper {
     int selectPackIdByPackName(String packName);
     
     int selectPackIdOrderByPackLvl();
+    
+    String selectNoteIdByPackId(int packId);
 }
