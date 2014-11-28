@@ -59,7 +59,7 @@
 		from worker_record
 		where 3 > 2
 		<if test="workerId !=null">
-			and worker_id = #{workerId}
+			and worker_id = ${workerId}
 		</if>
 		<if test="month != null">
 			and DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}' 
@@ -68,7 +68,7 @@
 			and user_name like '%${userNameCondition}%'
 		</if>
 		<if test="taskEffective != null">
-			and task_effective = #{taskEffective}
+			and task_effective = ${taskEffective}
 		</if>
 	</select>
 	<select id="selectAllByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
@@ -96,6 +96,27 @@
 		<if test="end != null">
 			limit #{begin},#{end}
 		</if>
+	</select>
+	<select id="selectByWorkerIdAndEffective" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List"/>
+		from worker_record
+		where 3 > 2 
+		<if test="workerId != null">
+			and worker_id = ${workerId}
+		</if>
+		<if test="taskEffective == 3">
+			and (task_effective = 0 or task_effective = 2)
+		</if>
+		<if test="taskEffective == 0">
+			and task_effective = ${taskEffective}
+		</if>
+		<if test="taskEffective == 2">
+			and task_effective = ${taskEffective}
+		</if>
+		<if test="taskStatu == 0">
+			and task_statu = ${taskStatu}
+		</if>			
 	</select>
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record

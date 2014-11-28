@@ -132,7 +132,7 @@ public class ManagerController {
 					continue;
 				}
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, null);
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "",1);
 				if (taskUpload == 1) {
 					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
 						continue;
@@ -168,7 +168,7 @@ public class ManagerController {
 		map.clear();
 		Double taskMarkTimeMonthTotle = 0.00;
 		if (taskUpload > 0) {
-			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month, userNameCondition);
+			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month, userNameCondition,1);
 		}
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
@@ -228,7 +228,7 @@ public class ManagerController {
 		if (userType == 4) {
 			int workerId = workerService.getWorkerIdByUserId(userId);
 			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, year, month, taskNameCondition);
-			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, null);
+			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "",1);
 			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId,1,statu, year, month, taskNameCondition, page, Constants.ROW);
 			List<WorkerRecordTrans> list = new ArrayList<>();
 			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);

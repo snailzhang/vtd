@@ -131,10 +131,10 @@ public class WorkerController {
 		logger.debug("taskTotal:{}", taskService.getUndoTaskCount());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);
-		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
-		logger.debug("workerId:{},listTask:{}", workerId, listTask.isEmpty());
+		List<workerRecord> list = workerRecordService.getByWorkerIdAndEffective(workerId, 3,0);
+		logger.debug("workerId:{},listWorkerRecord:{}", workerId, list.isEmpty());
 		// 没有正在进行的任务
-		if (listTask == null || listTask.isEmpty()) {
+		if (list == null || list.isEmpty()) {
 			workerMark = 0;
 			// 可做任务的包数
 			int countPackDoing = taskService.getFreePackCount();
@@ -144,31 +144,53 @@ public class WorkerController {
 			map.put(Constants.COUNTPACKDOING, countPackDoing);
 			map.put(Constants.COUNTTASKDOING, countTaskDoing);
 			map.put("noteId", noteId);
-			map.put(Constants.WORKERMARK, workerMark);
+			map.put(Constants.WORKERMARK, 0);
 			return map;
 		}
-		List<taskTrans> list = new ArrayList<taskTrans>();
-		Date downloadTime = new Date();
-		int packId = Constants.ZERO;
-		workerMark = Constants.ONE;
+		List<workerRecord> list1 = workerRecordService.getByWorkerIdAndEffective(workerId, 0,0);
+		List<workerRecord> list2 = workerRecordService.getByWorkerIdAndEffective(workerId, 2,0);
+		logger.debug("list1:{},",list1);
+		logger.debug("list2:{},",list2);
+		workerMark = 1;
+		Map<String,Object> map1 = listTaskTrans(list1);//未审核
+		Map<String,Object> map2 = listTaskTrans(list2);//不合格
+		
+		map.put(Constants.WORKERMARK, 1);
+		map.put("list1", map1.get("list"));//未审核
+		map.put("mm1", map1.get("mm"));
+		map.put("list2", map2.get("list"));//不合格
+		map.put("mm2", map2.get("mm"));
+
+		session.setAttribute(Constants.WORKER_ID, workerId);
+		return map;
+	}
+	/**
+	 * 得到上传任务的时间限制,得到待上传文件列表(未审核,不合格)
+	 * @param list1
+	 * @return
+	 */
+	@ResponseBody
+	public Map<String, Object> listTaskTrans(List<workerRecord> list1) {
+		Map<String, Object> map = new HashMap<>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
-			task task = (task) iterator.next();
-			downloadTime = task.getTaskDownloadTime();
-			packId = task.getPackId();
+		Date downloadTime = new Date();
+		int packLockTime = 0;
+		List<taskTrans> list = new ArrayList<taskTrans>();
+		for (Iterator<workerRecord> iterator = list1.iterator(); iterator.hasNext();) {
+			workerRecord workerRecord = (workerRecord) iterator.next();
+			downloadTime = workerRecord.getTaskDownTime();
+			packLockTime = workerRecord.getTaskLockTime();
 			taskTrans taskTrans = new taskTrans();
-			if (task.getTaskDownloadTime() == null) {
+			if (workerRecord.getTaskDownTime() == null) {
 				taskTrans.setTaskDownloadTime(Constants.EMPTY);
 			} else {
-				taskTrans.setTaskDownloadTime(sdf.format(task.getTaskDownloadTime()));
+				taskTrans.setTaskDownloadTime(sdf.format(workerRecord.getTaskDownTime()));
 			}
 
-			taskTrans.setTaskName(task.getTaskName());
-			logger.debug("TaskName:{}", task.getTaskName());
+			taskTrans.setTaskName(workerRecord.getTaskName());
+			logger.debug("TaskName:{}", workerRecord.getTaskName());
 			list.add(taskTrans);
 		}
-		logger.debug("packId:{}", packId);
-		int packLockTime = packService.getPackLockTime(packId);
 		Date begin;
 		try {
 			begin = sdf.parse(sdf.format(downloadTime));
@@ -176,13 +198,12 @@ public class WorkerController {
 			long between = (end.getTime() - begin.getTime());// 毫秒
 			long mm = packLockTime - between;
 			logger.debug("packLockTime:{},between:{},mm:{}", packLockTime, between, mm);
-			map.put(Constants.WORKERMARK, workerMark);
-			map.put(Constants.LIST, list);
-			map.put(Constants.MM, mm);
+			map.clear();
+			map.put("list", list);
+			map.put("mm", mm);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		session.setAttribute(Constants.WORKER_ID, workerId);
 		return map;
 	}
 

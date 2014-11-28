@@ -68,4 +68,6 @@ public interface workerRecordMapper {
 	List<Map<String, Object>> selectWorkerIdGroupByWorkerId(Map<String, Object> map);
 	
 	int selectWorkerIdCountGroupByWorkerId(Map<String, Object> map);
+	
+	List<workerRecord> selectByWorkerIdAndEffective(Map<String, Object> map);
 }

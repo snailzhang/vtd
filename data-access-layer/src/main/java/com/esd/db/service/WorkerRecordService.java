@@ -59,7 +59,7 @@ public interface WorkerRecordService {
 	
 	int getPkIDByTaskId(Integer taskId);
 	
-	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year,int month,String userNameCondition);
+	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year,int month,String userNameCondition,int taskEffective);
 	
 	Double getSUMTaskMarkTimeByPackId(int packId);
 	
@@ -68,4 +68,6 @@ public interface WorkerRecordService {
 	List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective,int page,int row);
 
 	int getWorkerIdCountGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
+    
+	List<workerRecord> getByWorkerIdAndEffective(int workerId,int taskEffective,int taskStatu);
 }
