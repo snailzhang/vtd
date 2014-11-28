@@ -314,7 +314,7 @@ public class AdministratorController {
 			user1.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 			if (replay == 0) {
 				user1.setCreateTime(new Date());
-				user1.setVersion(Constants.VERSION);
+				user1.setVersion(1);
 				userService.insertSelective(user1);
 			} else if (replay == 1) {
 				user1.setUserId(userService.getUserIdByUserName(username));
@@ -350,7 +350,7 @@ public class AdministratorController {
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		manager.setCreateMethod(items[1].toString());
-		manager.setVersion(Constants.VERSION);
+		manager.setVersion(1);
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.MANAGER);
@@ -381,7 +381,7 @@ public class AdministratorController {
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		employer.setCreateMethod(items[1].toString());
-		employer.setVersion(Constants.VERSION);
+		employer.setVersion(1);
 		employerService.insertSelective(employer);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(address);
@@ -411,7 +411,7 @@ public class AdministratorController {
 		inspector.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		inspector.setCreateMethod(items[1].toString());
-		inspector.setVersion("1");
+		inspector.setVersion(1);
 		inspectorService.insertSelective(inspector);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		return new ModelAndView(address);
@@ -568,7 +568,7 @@ public class AdministratorController {
 			worker.setCreateTime(new Date());
 			StackTraceElement[] items = Thread.currentThread().getStackTrace();
 			worker.setCreateMethod(items[1].toString());
-			worker.setVersion(Constants.VERSION);
+			worker.setVersion(1);
 			workerService.insertSelective(worker);
 			session.removeAttribute(Constants.ADD_USER_ID);
 			return new ModelAndView(address);

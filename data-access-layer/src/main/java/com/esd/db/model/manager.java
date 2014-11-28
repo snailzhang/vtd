@@ -22,7 +22,7 @@ public class manager {
 
     private String updateMethod;
 
-    private String version;
+    private int version;
 
     public Integer getManagerId() {
         return managerId;
@@ -96,11 +96,11 @@ public class manager {
         this.updateMethod = updateMethod == null ? null : updateMethod.trim();
     }
 
-    public String getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 }

@@ -21,7 +21,7 @@
 		<result column="update_id" property="updateId" jdbcType="INTEGER" />
 		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
 		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
-		<result column="version" property="version" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="INTEGER" />
 	</resultMap>
 	<resultMap id="ResultMapWithBLOBs" type="com.esd.db.model.taskWithBLOBs" extends="BaseResultMap">
 		<result column="task_wav" property="taskWav" jdbcType="LONGVARBINARY" />
@@ -254,7 +254,7 @@
 		#{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
 		#{createMethod,jdbcType=VARCHAR}, #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
 		#{updateMethod,jdbcType=VARCHAR},
-		#{version,jdbcType=VARCHAR}, #{taskWav,jdbcType=LONGVARBINARY},
+		#{version,jdbcType=INTEGER}, #{taskWav,jdbcType=LONGVARBINARY},
 		#{taskTag,jdbcType=LONGVARBINARY}, #{taskTextgrid,jdbcType=LONGVARBINARY})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.taskWithBLOBs">
@@ -389,7 +389,7 @@
 				#{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="version != null">
-				#{version,jdbcType=VARCHAR},
+				#{version,jdbcType=INTEGER},
 			</if>
 			<if test="taskWav != null">
 				#{taskWav,jdbcType=LONGVARBINARY},
@@ -460,7 +460,7 @@
 				update_method = #{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="version != null">
-				version = #{version,jdbcType=VARCHAR},
+				version = #{version,jdbcType=INTEGER},
 			</if>
 			<if test="taskWav != null">
 				task_wav = #{taskWav,jdbcType=LONGVARBINARY},
@@ -495,7 +495,7 @@
 		update_id = #{updateId,jdbcType=INTEGER},
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
-		version = #{version,jdbcType=VARCHAR},
+		version = #{version,jdbcType=INTEGER},
 		task_wav =
 		#{taskWav,jdbcType=LONGVARBINARY},
 		task_tag = #{taskTag,jdbcType=LONGVARBINARY},
@@ -529,7 +529,7 @@
 		update_time =
 		#{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
-		version = #{version,jdbcType=VARCHAR}
+		version = #{version,jdbcType=INTEGER}
 		where task_id =
 		#{taskId,jdbcType=INTEGER}
 	</update>
@@ -540,7 +540,7 @@
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
 		update_method =
 		#{updateMethod,jdbcType=VARCHAR},
-		version = #{version,jdbcType=VARCHAR}
+		version = #{version,jdbcType=INTEGER}
 		where task_id = #{taskId,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPackId" parameterType="com.esd.db.model.task">
@@ -598,7 +598,7 @@
 				update_method = #{updateMethod,jdbcType=VARCHAR},
 			</if>
 			<if test="version != null">
-				version = #{version,jdbcType=VARCHAR}
+				version = #{version,jdbcType=INTEGER}
 			</if>
 		</set>
 		where pack_id = #{packId,jdbcType=INTEGER}

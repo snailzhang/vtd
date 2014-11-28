@@ -34,7 +34,7 @@ public class pack {
 
 	private Integer downCount;
 
-	private String version;
+	private int version;
 
 	public Integer getPackId() {
 		return packId;
@@ -148,11 +148,11 @@ public class pack {
 		this.updateMethod = updateMethod == null ? null : updateMethod.trim();
 	}
 
-	public String getVersion() {
+	public int getVersion() {
 		return version;
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(int version) {
 		this.version = version;
 	}
 

@@ -17,7 +17,7 @@
     <result column="update_id" property="updateId" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.esd.db.model.worker" extends="BaseResultMap" >
     <result column="worker_image" property="workerImage" jdbcType="LONGVARBINARY" />
@@ -88,7 +88,7 @@
       #{workerMac,jdbcType=VARCHAR}, #{workerBankCard,jdbcType=VARCHAR}, #{workerPaypal,jdbcType=VARCHAR}, 
       #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR}, 
       #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}, 
-      #{version,jdbcType=VARCHAR}, #{workerImage,jdbcType=LONGVARBINARY})
+      #{version,jdbcType=INTEGER}, #{workerImage,jdbcType=LONGVARBINARY})
   </insert>
   <insert id="insertSelective" parameterType="com.esd.db.model.worker" >
     <!--
@@ -197,7 +197,7 @@
         #{updateMethod,jdbcType=VARCHAR},
       </if>
       <if test="version != null" >
-        #{version,jdbcType=VARCHAR},
+        #{version,jdbcType=INTEGER},
       </if>
       <if test="workerImage != null" >
         #{workerImage,jdbcType=LONGVARBINARY},
@@ -255,7 +255,7 @@
         update_method = #{updateMethod,jdbcType=VARCHAR},
       </if>
       <if test="version != null" >
-        version = #{version,jdbcType=VARCHAR},
+        version = #{version,jdbcType=INTEGER},
       </if>
       <if test="workerImage != null" >
         worker_image = #{workerImage,jdbcType=LONGVARBINARY},
@@ -284,7 +284,7 @@
       update_id = #{updateId,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_method = #{updateMethod,jdbcType=VARCHAR},
-      version = #{version,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
       worker_image = #{workerImage,jdbcType=LONGVARBINARY}
     where worker_id = #{workerId,jdbcType=INTEGER}
   </update>
@@ -309,7 +309,7 @@
       update_id = #{updateId,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_method = #{updateMethod,jdbcType=VARCHAR},
-      version = #{version,jdbcType=VARCHAR}
+      version = #{version,jdbcType=INTEGER}
     where worker_id = #{workerId,jdbcType=INTEGER}
   </update>
 </mapper>

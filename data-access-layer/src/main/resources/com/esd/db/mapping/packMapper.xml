@@ -17,7 +17,7 @@
 		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
 		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
 		<result column="down_count" property="downCount" jdbcType="INTEGER" />
-		<result column="version" property="version" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="INTEGER" />
 	</resultMap>
 	<resultMap id="ResultMapWithBLOBs" type="com.esd.db.model.packWithBLOBs" extends="BaseResultMap">
 		<result column="pack_file" property="packFile" jdbcType="LONGVARBINARY" />
@@ -204,7 +204,7 @@
 		#{createMethod,jdbcType=VARCHAR},
 		#{updateId,jdbcType=INTEGER},
 		#{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
-		#{downCount,jdbcType=INTEGER}, #{version,jdbcType=VARCHAR},
+		#{downCount,jdbcType=INTEGER}, #{version,jdbcType=INTEGER},
 		#{packFile,jdbcType=LONGVARBINARY},
 		#{packFormat,jdbcType=LONGVARCHAR})
 	</insert>
@@ -313,7 +313,7 @@
 				#{downCount,jdbcType=INTEGER},
 			</if>
 			<if test="version != null">
-				#{version,jdbcType=VARCHAR},
+				#{version,jdbcType=INTEGER},
 			</if>
 			<if test="packFile != null">
 				#{packFile,jdbcType=LONGVARBINARY},
@@ -369,7 +369,7 @@
 				down_count = #{downCount,jdbcType=INTEGER},
 			</if>
 			<if test="version != null">
-				version = #{version,jdbcType=VARCHAR},
+				version = #{version,jdbcType=INTEGER},
 			</if>
 			<if test="packFile != null">
 				pack_file = #{packFile,jdbcType=LONGVARBINARY},
@@ -401,7 +401,7 @@
 		update_method =
 		#{updateMethod,jdbcType=VARCHAR},
 		down_count = #{downCount,jdbcType=INTEGER},
-		version = #{version,jdbcType=VARCHAR},
+		version = #{version,jdbcType=INTEGER},
 		pack_file =
 		#{packFile,jdbcType=LONGVARBINARY},
 		pack_format =
@@ -430,7 +430,7 @@
 		#{updateMethod,jdbcType=VARCHAR},
 		down_count = #{downCount,jdbcType=INTEGER},
 		version =
-		#{version,jdbcType=VARCHAR}
+		#{version,jdbcType=INTEGER}
 		where pack_id =
 		#{packId,jdbcType=INTEGER}
 	</update>

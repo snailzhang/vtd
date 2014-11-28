@@ -26,7 +26,7 @@ public class user {
 
     private String updateMethod;
 
-    private String version;
+    private int version;
 
     public Integer getUserId() {
         return userId;
@@ -116,11 +116,11 @@ public class user {
         this.updateMethod = updateMethod == null ? null : updateMethod.trim();
     }
 
-    public String getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 }

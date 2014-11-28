@@ -384,7 +384,7 @@ public class EmployerController {
 				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setNoteId(noteId);
 				packWithBLOBs.setPackLvl(taskLvl);
-				packWithBLOBs.setVersion(Constants.VERSION);
+				packWithBLOBs.setVersion(1);
 				packWithBLOBs.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 				packWithBLOBs.setCreateTime(new Date());
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
