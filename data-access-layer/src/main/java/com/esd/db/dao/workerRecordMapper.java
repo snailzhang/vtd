@@ -25,6 +25,8 @@ public interface workerRecordMapper {
 	
 	int updateByWorkerId(Map<String, Object> map);
 	
+	int updateByGiveUp(Map<String, Object> map);
+	
 	List<workerRecord> selectDoingTask();
 	
 	List<workerRecord> selectAllByWorkerId(Map<String, Object> map);

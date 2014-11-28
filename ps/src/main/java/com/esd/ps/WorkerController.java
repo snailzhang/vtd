@@ -165,7 +165,7 @@ public class WorkerController {
 			} else {
 				taskTrans.setTaskDownloadTime(sdf.format(workerRecord.getTaskDownTime()));
 			}
-
+			taskTrans.setTaskId(workerRecord.getTaskId());
 			taskTrans.setTaskName(workerRecord.getTaskName());
 			logger.debug("TaskName:{}", workerRecord.getTaskName());
 			list.add(taskTrans);
@@ -185,6 +185,21 @@ public class WorkerController {
 			e.printStackTrace();
 		}		
 		session.setAttribute(Constants.WORKER_ID, workerId);
+		return map;
+	}
+	/**
+	 * 放弃任务
+	 * @param session
+	 * @param taskId
+	 * @return
+	 */
+	@RequestMapping(value = "/GiveUpTask", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> GiveUpTaskPost(HttpSession session,int taskId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString())); 
+		workerRecordService.updateByGiveUp(workerId, 3, taskId, 0);
+		map.put(Constants.REPLAY, 1);		
 		return map;
 	}
 	/**

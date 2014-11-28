@@ -62,7 +62,7 @@
 			and worker_id = ${workerId}
 		</if>
 		<if test="month != null">
-			and DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}' 
+			and DATE_FORMAT(task_upload_time,'%m')='${month}' and year(task_upload_time) = '${year}'
 		</if>
 		<if test="userNameCondition != null">
 			and user_name like '%${userNameCondition}%'
@@ -99,9 +99,9 @@
 	</select>
 	<select id="selectByWorkerIdAndEffective" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
-		<include refid="Base_Column_List"/>
+		<include refid="Base_Column_List" />
 		from worker_record
-		where 3 > 2 
+		where 3 > 2
 		<if test="workerId != null">
 			and worker_id = ${workerId}
 		</if>
@@ -116,7 +116,7 @@
 		</if>
 		<if test="taskStatu == 0">
 			and task_statu = ${taskStatu}
-		</if>			
+		</if>
 	</select>
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record
@@ -276,7 +276,7 @@
 		<![CDATA[and a.s < 600]]>
 		</if>
 		<if test="end != null">
-		 limit #{begin},#{end}
+			limit #{begin},#{end}
 		</if>
 	</select>
 	<select id="selectWorkerIdCountGroupByWorkerId" resultType="java.lang.Integer" parameterType="java.util.Map">
@@ -511,6 +511,21 @@
 		where task_statu = 1 and worker_id = #{workerId} and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
 		<if test="version != null">
 			and version = #{version,jdbcType=INTEGER},
+		</if>
+	</update>
+	<update id="updateByGiveUp" parameterType="java.util.Map">
+		update worker_record
+		<set>
+			<if test="taskStatu == 3">
+				task_statu = 3,
+			</if>
+			<if test="version != null">
+				version = (${version} + 1),
+			</if>
+		</set>
+		where task_statu = 0 and worker_id = ${workerId} and task_id = ${taskId}
+		<if test="version != null">
+			and version = ${version},
 		</if>
 	</update>
 	<update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.workerRecord">

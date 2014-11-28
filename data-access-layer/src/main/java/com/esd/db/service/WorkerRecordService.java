@@ -23,6 +23,8 @@ public interface WorkerRecordService {
 	
 	int updateBydownPackName(workerRecord record);
 	
+	int updateByGiveUp(int workerId,int taskStatu,int taskId,int version);
+	
 	int updateByWorkerId(int taskEffective,int taskLockTime,int workerId,String firstDate,int inspectorId);
 	
 	List<workerRecord> getDoingTask();

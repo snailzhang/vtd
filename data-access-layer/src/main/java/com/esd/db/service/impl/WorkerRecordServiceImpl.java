@@ -201,7 +201,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, int year, int month, String userNameCondition,int taskEffective) {
+	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, int year, int month, String userNameCondition, int taskEffective) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		if (workerId > 0) {
@@ -213,9 +213,9 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		if (month > 0) {
 			map.put("month", month);
 		}
-		if(userNameCondition.trim().length() == 0 || userNameCondition == null){
+		if (userNameCondition.trim().length() == 0 || userNameCondition == null) {
 			map.put("userNameCondition", null);
-		}else{
+		} else {
 			map.put("userNameCondition", userNameCondition);
 		}
 		map.put("taskEffective", taskEffective);
@@ -268,11 +268,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
-		if(taskEffective == 0){
+		if (taskEffective == 0) {
 			map.put("taskEffective", 2);
-		}else if(taskEffective == 1){
+		} else if (taskEffective == 1) {
 			map.put("taskEffective", 1);
-		}	
+		}
 		if (taskLockTime == 0) {
 			map.put("taskLockTime", null);
 		} else {
@@ -300,13 +300,29 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getByWorkerIdAndEffective(int workerId, int taskEffective,int taskStatu) {
-		Map<String,Object> map = new HashMap<>();
+	public List<workerRecord> getByWorkerIdAndEffective(int workerId, int taskEffective, int taskStatu) {
+		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
 		map.put("taskEffective", taskEffective);
 		map.put("taskStatu", taskStatu);
 		return workerRecordMapper.selectByWorkerIdAndEffective(map);
+	}
+
+	@Override
+	public int updateByGiveUp(int workerId, int taskStatu, int taskId, int version) {
+		Map<String, Object> map = new HashMap<>();
+		map.clear();
+		map.put("workerId", workerId);
+		map.put("taskStatu", taskStatu);
+		map.put("taskId", taskId);
+		if (version == 0) {
+			map.put("version", null);
+		} else if (version > 0) {
+			map.put("version", version);
+		}
+
+		return workerRecordMapper.updateByGiveUp(map);
 	}
 
 }

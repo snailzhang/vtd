@@ -1,6 +1,8 @@
 package com.esd.ps.model;
 
 public class taskTrans {
+	
+	private int taskId;
 
     private String taskName;
 
@@ -17,8 +19,18 @@ public class taskTrans {
     private int taskTag;
     
     private int taskTextGrid;
+    
+    
 
-    public String getTaskName() {
+    public int getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(int taskId) {
+		this.taskId = taskId;
+	}
+
+	public String getTaskName() {
         return taskName;
     }
 
