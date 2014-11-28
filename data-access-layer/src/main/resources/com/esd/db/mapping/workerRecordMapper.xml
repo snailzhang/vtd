@@ -136,8 +136,14 @@
 			<if test="month != null">
 				and DATE_FORMAT(task_down_time,'%m')='${month}' and year(task_down_time) = '${year}'
 			</if>
-			<if test="statu == 0 or statu == 1 or statu == 2">
-				and task_statu = #{statu}
+			<if test="statu == 0">
+				and (task_statu = 0 or (task_statu = 1 and task_effective = 0))
+			</if>
+			<if test="statu == 1">
+				and task_effective = 1
+			</if>
+			<if test="statu == 2">
+				and (task_statu = 2 or task_statu = 3)
 			</if>
 		</where>
 	</select>

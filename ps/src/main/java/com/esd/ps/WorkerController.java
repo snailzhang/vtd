@@ -199,51 +199,14 @@ public class WorkerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString())); 
 		workerRecordService.updateByGiveUp(workerId, 3, taskId, 0);
+		task task = new task();
+		task.setWorkerId(0);
+		task.setTaskMarkTime(0.00);
+		task.setTaskId(taskId);
+		taskService.updateByTaskId(task);
 		map.put(Constants.REPLAY, 1);		
 		return map;
 	}
-	/**
-	 * 得到上传任务的时间限制,得到待上传文件列表(未审核,不合格)
-	 * @param list1
-	 * @return
-	 */
-//	@ResponseBody
-//	public Map<String, Object> listTaskTrans(List<workerRecord> list1) {
-//		Map<String, Object> map = new HashMap<>();
-//		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-//		Date downloadTime = new Date();
-//		int packLockTime = 0;
-//		List<taskTrans> list = new ArrayList<taskTrans>();
-//		for (Iterator<workerRecord> iterator = list1.iterator(); iterator.hasNext();) {
-//			workerRecord workerRecord = (workerRecord) iterator.next();
-//			downloadTime = workerRecord.getTaskDownTime();
-//			packLockTime = workerRecord.getTaskLockTime();
-//			taskTrans taskTrans = new taskTrans();
-//			if (workerRecord.getTaskDownTime() == null) {
-//				taskTrans.setTaskDownloadTime(Constants.EMPTY);
-//			} else {
-//				taskTrans.setTaskDownloadTime(sdf.format(workerRecord.getTaskDownTime()));
-//			}
-//
-//			taskTrans.setTaskName(workerRecord.getTaskName());
-//			logger.debug("TaskName:{}", workerRecord.getTaskName());
-//			list.add(taskTrans);
-//		}
-//		Date begin;
-//		try {
-//			begin = sdf.parse(sdf.format(downloadTime));
-//			Date end = sdf.parse(sdf.format(new Date()));
-//			long between = (end.getTime() - begin.getTime());// 毫秒
-//			long mm = packLockTime - between;
-//			logger.debug("packLockTime:{},between:{},mm:{}", packLockTime, between, mm);
-//			map.clear();
-//			map.put("list", list);
-//			map.put("mm", mm);
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
-//		return map;
-//	}
 
 	/**
 	 * worker的down pack完成历史页
