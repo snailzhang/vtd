@@ -91,9 +91,7 @@
 			<ul class="pagination"></ul>
 		</div>
 		
-		<form role="form" class="form-signin" action="${contextPath}/security/addUser" method="get">
-			<button type="submit" class="btn btn-lg btn-primary btn-block">添加用户</button>
-		</form>
+		
 		<div class="modal fade">
 			<div class="modal-dialog">
 				<div class="modal-content">

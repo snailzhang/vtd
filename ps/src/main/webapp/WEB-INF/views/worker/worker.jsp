@@ -60,9 +60,7 @@
 	<div class="container" id="uploadPanel">
 		<div class="container">
 			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title" id="taskLeftTimeInterval">距离任务完成时间还剩:<span class="text-danger"></span></h3>
-				</div>
+				
 				<form action="${contextPath}/security/upTagAndTextGrid" method="post" name="upTagAndTextGrid" role="form" class="form-inline" enctype="multipart/form-data">
 					<div class="form-group" style="width:50%">
 				       <div class="col-sm-4">
@@ -73,34 +71,60 @@
 				      </div>
 				      <span class="col-sm-5 help-block" id="uploadHelp">已选择0个文件</span>
 				   </div>
-				   
 				   <div class="form-group">
 				      <div class="col-sm-offset-2 col-sm-10">
-				         <button id="uploadBtn" type="button" class="btn btn-default" >上传文件</button>
+				         <button id="uploadBtn" type="button" class="btn btn-primary" >上传文件</button>
 				      </div>
 				   </div>
 				</form>
-				
 			</div>
-			
 		</div>
+		<!-------------------------------- 选项卡区域 -------------------------------------------------->
 		<div class="container">
-			<div id="uploadFalTable" class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">待上传任务列表</h3>
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="active"><a href="#uploadFalTable" role="tab" data-toggle="tab">待上传任务列表</a></li>
+				<li><a href="#unqualifiedList" role="tab" data-toggle="tab">不合格任务包列表</a></li>
+			</ul>
+			<div class="tab-content">
+			<!-- ****************************************待上传任务列表******************************************************* -->
+				<div class="tab-pane active" id="uploadFalTable">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<h3 class="panel-title" id="taskLeftTimeInterval">距离任务完成时间还剩:<span class="text-danger"></span></h3>
+						</div>
+						<table class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th width="10%">序号</th>
+									<th width="40%">任务名称</th>
+									<th width="40%">下载时间</th>
+									<th width="10%">放弃</th>
+								</tr>
+							</thead>
+							<tbody id="waitForUpTable"></tbody>
+						</table>
+					</div>
 				</div>
-				<table class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<th>序号</th>
-							<th>任务名称</th>
-							<th>下载时间</th>
-						</tr>
-					</thead>
-					<tbody id="waitForUpTable"></tbody>
-				</table>
+				<!-- ****************************************不合格任务包列表******************************************************* -->
+				<div class="tab-pane" id="unqualifiedList">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<h3 class="panel-title" id="taskUnLeftTimeInterval">距离任务完成时间还剩:<span class="text-danger"></span></h3>
+						</div>
+						<table class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th width="10%">序号</th>
+									<th width="40%">任务名称</th>
+									<th width="40%">下载时间</th>
+									<th width="10%">放弃</th>
+								</tr>
+							</thead>
+							<tbody id="unqualifiedTable"></tbody>
+						</table>
+					</div>
+				</div>
 			</div>
-			
 		</div>
 	</div>
 	<!-------------------------------- 弹出窗口 -------------------------------------------------->
@@ -128,16 +152,17 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 	<script type="text/javascript">
+		var tltInterval = 1000; 
+		var today = new Date();
+		var todayTime = today.valueOf();
 		$(document).ready(function(){
-			$("#headJSPWorker").hide();
-			$("#headJSPWorkerHistoryPack").show();
 			/*******************************加载页面**************************************************/
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/worker',
+				data:{"taskEffective":0},
 				dataType:'json',
 				success:function(data){
-					$("tbody").append("");
 					var workerMark = data.workerMark;
 					if(workerMark == 0){//下载
 						var taskTotal = data.countTaskDoing;
@@ -154,45 +179,33 @@
 						$("#uploadPanel").hide();
 						$("#downloadPanel").show();
 					}else{//上传
+						loadUnqualified();
 						var mm = data.mm;
 						if(data.list == ""){
 							$("#waitForUpTable").empty();
 							$("#waitForUpTable").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
 						}else{
 							$.each(data.list,function(i,item){
+								var giveUpBtn = "<td><a href='javascript:giveUpTask("+item.taskId+")'>放弃</a></td>";
 								$("#waitForUpTable").append(
 									"<tr>"+
 										"<td>"+(i+1)+"</td>"+
 										"<td>"+item.taskName+"</td>"+
 										"<td>"+item.taskDownloadTime+"</td>"+
+										giveUpBtn+
 									"</tr>"
 								);
 							});
 						}
-						
-						var tltInterval = 1000; 
-						var today = new Date();
-						var todayTime = today.valueOf();
 						var endTime = todayTime+mm ;
-						window.setInterval(function(){ShowCountDown(endTime);}, tltInterval);
+						window.setInterval(function(){ShowCountDown(endTime,$("#taskLeftTimeInterval span"));}, tltInterval);
 						$("#downloadPanel").hide();
 						$("#uploadPanel").show();
 					}
 					
 				}
 			});
-			/*******************************倒计时**************************************************/
-			function ShowCountDown(endTime){
-				var now = new Date(); 
-				var leftTime=endTime-now.valueOf(); 
-				var leftsecond = parseInt(leftTime/1000); 
-				var day1=Math.floor(leftsecond/(60*60*24)); 
-				var hour=Math.floor((leftsecond-day1*24*60*60)/3600); 
-				var minute=Math.floor((leftsecond-day1*24*60*60-hour*3600)/60); 
-				var second=Math.floor(leftsecond-day1*24*60*60-hour*3600-minute*60); 
-				
-				$("#taskLeftTimeInterval span").text(day1+"天"+hour+"小时"+minute+"分"+second+"秒"); 
-			}
+			
 			 /*******************************上传check**************************************************/
 			var textGridReady = false;
 			var tagReady = false;
@@ -338,6 +351,68 @@
 				window.location.reload();
 			});
 		});
+		/*******************************倒计时**************************************************/
+			function ShowCountDown(endTime,obj){
+				var now = new Date(); 
+				var leftTime=endTime-now.valueOf(); 
+				var leftsecond = parseInt(leftTime/1000); 
+				var day1=Math.floor(leftsecond/(60*60*24)); 
+				var hour=Math.floor((leftsecond-day1*24*60*60)/3600); 
+				var minute=Math.floor((leftsecond-day1*24*60*60-hour*3600)/60); 
+				var second=Math.floor(leftsecond-day1*24*60*60-hour*3600-minute*60); 
+				
+				obj.text(day1+"天"+hour+"小时"+minute+"分"+second+"秒"); 
+			}
+		/*-----------------------------------加载不合格任务列表----------------------------------------------------*/
+		function loadUnqualified(){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/worker',
+				data:{"taskEffective":2},
+				dataType:'json',
+				success:function(data){
+					var mm = data.mm;
+					if(data.list == ""){
+						$("#unqualifiedTable").empty();
+						$("#unqualifiedTable").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
+					}else{
+						$.each(data.list,function(i,item){
+							var giveUpBtn = "<td><a href='javascript:giveUpTask("+item.taskId+")'>放弃</a></td>";
+							$("#unqualifiedTable").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.taskName+"</td>"+
+									"<td>"+item.taskDownloadTime+"</td>"+giveUpBtn+
+								"</tr>"
+							);
+						});
+					}
+					if(mm != 0){
+						var endTime = todayTime+mm ;
+						window.setInterval(function(){ShowCountDown(endTime,$("#taskUnLeftTimeInterval span"));}, tltInterval);
+					}
+				}
+			});
+		}
+		function giveUpTask(taskId){
+			var conWin = confirm("确定要放弃该任务吗？");
+			if(conWin){
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/security/GiveUpTask',
+					data:{"taskId":taskId},
+					dataType:'json',
+					success:function(data){
+						if(data.replay == "1"){
+							alert("任务已放弃！");
+							window.location.reload();
+						}else{
+							alert("放弃任务失败！");
+						}
+					}
+				})
+			}
+		}
 	</script>
 </body>
 </html>

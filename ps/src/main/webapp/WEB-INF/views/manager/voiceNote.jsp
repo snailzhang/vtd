@@ -83,7 +83,7 @@
 						
 						$.each(data.list,function(i,item){
 							if(userType == '1'||userType == '2'){
-								editTd = "<td><a href='${contextPath}/security/voiceNoteContent?id="+item.id+"&type=1'>编辑</a></td>";
+								editTd = "<td><a href='${contextPath}/security/voiceNoteContent?id="+item.id+"&type=1' target='_blank'>编辑</a></td>";
 							}
 							$("tbody").append(
 								"<tr>"+

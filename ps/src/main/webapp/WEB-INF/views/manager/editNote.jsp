@@ -23,7 +23,7 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
+	
 	<div class="container">
 		<form role="form" class="form-horizontal">
 			<div class="form-group" id="">

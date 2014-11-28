@@ -99,12 +99,9 @@
 								var downloadTD = "<td></td>";
 								var tS = "";
 								var taskEf = "";
-								if(item.effective == 0 || item.effective == 2){
-									downloadTD = "<td><a href='#' onClick='downloadTask("+item.taskId+",\""+item.taskName+"\")'>下载</a></td>";
-								}
 								if(item.taskStatus == 0){
 									tS = "未上传";
-									
+									downloadTD = "<td><a href='#' onClick='downloadTask("+item.taskId+",\""+item.taskName+"\")'>下载</a></td>";
 								}else if(item.taskStatus == 1){
 									tS = "已上传";
 								}else if(item.taskStatus == 2){

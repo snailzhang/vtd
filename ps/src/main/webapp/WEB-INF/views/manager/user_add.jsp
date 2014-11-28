@@ -48,7 +48,9 @@
 		         <select class="form-control" id="usertype" name="usertype" autocomplete="off">
 			         <option value="1" checked="checked">管理员</option>
 			         <option value="2">发包商</option>
+			         <option value="3">审核员</option>
 			         <option value="4">工作者</option>
+			         <option value="5">超级管理员</option>
 			      </select>
 		      </div>
 		   </div>
