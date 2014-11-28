@@ -209,14 +209,36 @@ public class AdministratorController {
 	@ResponseBody
 	public Map<String, Object> userDetail(int userId, int userType) {
 		Map<String, Object> map = new HashMap<>();
+		if (userType == 1) {
+			manager manager = managerService.getManagerByUserId(userId);
+			map.clear();
+			map.put("name", manager.getManagerName());
+			map.put("userId",manager.getUserId());
+			map.put(Constants.USER_DETAIL, manager);
+		}
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
 			map.clear();
+			map.put("name", employer.getEmployerName());
+			map.put("userId",employer.getUserId());
 			map.put(Constants.USER_DETAIL, employer);
+		}
+		if (userType == 3) {
+			inspector inspector = inspectorService.getinspectorByUserId(userId);
+			map.clear();
+			map.put("name", inspector.getInspectorName());
+			map.put("userId",inspector.getUserId());
+			map.put(Constants.USER_DETAIL, inspector);
 		}
 		if (userType == 4) {
 			worker worker = workerService.getWorkerByUserId(userId);
 			map.clear();
+			map.put("name", worker.getWorkerRealName());
+			map.put("userId",worker.getUserId());
+			map.put("bankCard",worker.getWorkerBankCard());
+			map.put("disabilityCard",worker.getWorkerDisabilityCard());
+			map.put("paypal",worker.getWorkerPaypal());
+			map.put("phone",worker.getWorkerPhone());	
 			map.put(Constants.USER_DETAIL, worker);
 		}
 		return map;

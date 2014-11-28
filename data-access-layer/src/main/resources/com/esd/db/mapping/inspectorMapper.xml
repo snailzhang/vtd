@@ -23,6 +23,12 @@
 		from inspector
 		where inspector_id = #{inspectorId,jdbcType=INTEGER}
 	</select>
+	<select id="selectinspectorByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from inspector
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
 	<select id="selectCountInspectorIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		count(inspector_id) count

@@ -10,6 +10,8 @@ public interface InspectorService {
 	int insertSelective(inspector record);
 
 	inspector selectByPrimaryKey(Integer inspectorId);
+	
+	inspector getinspectorByUserId(int userId);
 
 	int updateByPrimaryKeySelective(inspector record);
 

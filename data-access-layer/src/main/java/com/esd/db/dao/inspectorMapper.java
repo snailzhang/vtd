@@ -11,6 +11,8 @@ public interface inspectorMapper {
     int insertSelective(inspector record);
 
     inspector selectByPrimaryKey(Integer inspectorId);
+    
+    inspector selectinspectorByUserId(int userId);
 
     int updateByPrimaryKeySelective(inspector record);
 

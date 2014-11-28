@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.voiceNote;
 import com.esd.db.model.voiceNoteWithBLOBs;
 import com.esd.db.service.VoiceNoteService;
+import com.esd.ps.model.voiceNoteTrans;
 
 @Controller
 @RequestMapping("/security")
@@ -62,17 +65,28 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> VoiceNotePOST(String condition,int page) {
-		logger.debug("condition:{}",condition);
+	public Map<String, Object> VoiceNotePOST(String condition, int page) {
+		logger.debug("condition:{}", condition);
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<voiceNote> list = voiceNoteService.getAll(condition,page,Constants.ROW);
+		List<voiceNoteTrans> list = new ArrayList<>();
+		List<voiceNote> listVoiceNote = voiceNoteService.getAll(condition, page, Constants.ROW);
+		for (Iterator<voiceNote> iterator = listVoiceNote.iterator(); iterator.hasNext();) {
+			voiceNote voiceNote = (voiceNote) iterator.next();
+			voiceNoteTrans voiceNoteTrans = new voiceNoteTrans();
+
+			voiceNoteTrans.setCreateTime(voiceNote.getCreateTime().toString());
+			voiceNoteTrans.setNoteId(voiceNote.getNoteId());
+			voiceNoteTrans.setNoteTitle(voiceNote.getNoteTitle());
+
+			list.add(voiceNoteTrans);
+		}
 		int totle = voiceNoteService.getAllCount(condition);
 		map.clear();
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
 		return map;
-		
+
 	}
 
 	/**
@@ -109,7 +123,7 @@ public class VioceNote {
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		voiceNote.setCreateMethod(items[1].toString());
 
-		List<voiceNote> list = voiceNoteService.getAll(Constants.EMPTY,0,0);
+		List<voiceNote> list = voiceNoteService.getAll(Constants.EMPTY, 0, 0);
 		int noteIdNum = 0;
 		if (list.size() == 1) {
 			noteIdNum = Integer.parseInt(list.get(0).getNoteId());
@@ -140,7 +154,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/updateVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateVoiceNotePOST(int id,String title, String content, HttpSession session) {
+	public Map<String, Object> updateVoiceNotePOST(int id, String title, String content, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
 		voiceNote.setId(id);
@@ -155,15 +169,17 @@ public class VioceNote {
 		map.put(Constants.MESSAGE, MSG_ADD_SUCCESS);
 		return map;
 	}
+
 	/**
 	 * 删除标注说明
+	 * 
 	 * @param id
 	 * @return
 	 */
 	@RequestMapping(value = "/deleteVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> deleteVoiceNotePOST(int id) {
-		Map<String, Object> map = new HashMap<>();		
+		Map<String, Object> map = new HashMap<>();
 		voiceNoteService.deleteByPrimaryKey(id);
 		map.put(Constants.REPLAY, 1);
 		map.put(Constants.MESSAGE, MSG_DELETE_SUCCESS);

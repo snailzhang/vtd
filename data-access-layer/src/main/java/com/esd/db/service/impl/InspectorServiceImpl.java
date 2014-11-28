@@ -51,4 +51,10 @@ public class InspectorServiceImpl implements InspectorService {
 		return inspectorMapper.selectCountInspectorIdByUserId(userId);
 	}
 
+	@Override
+	public inspector getinspectorByUserId(int userId) {
+		
+		return inspectorMapper.selectinspectorByUserId(userId);
+	}
+
 }
