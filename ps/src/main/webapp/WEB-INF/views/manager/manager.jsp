@@ -203,7 +203,7 @@
 						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
 						var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
-						$("#taskMarkTimeMonthTotle").text("本月标注总时长："+taskMarkTimeMonthTotle);
+						$("#taskMarkTimeMonthTotle").text("本月有效标注时长："+taskMarkTimeMonthTotle);
 						pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";
