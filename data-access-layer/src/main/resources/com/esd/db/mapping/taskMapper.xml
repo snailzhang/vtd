@@ -539,8 +539,8 @@
 		<if test="workerId != null">
 			worker_id = #{workerId,jdbcType=INTEGER},
 		</if>
-		<if test="updateMethod != null">
-			task_mark_time = #{task_mark_time,jdbcType=VARCHAR},
+		<if test="taskMarkTime != null">
+			task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
 		</if>
 		<if test="updateTime != null">
 			update_time = #{updateTime,jdbcType=TIMESTAMP},

@@ -235,10 +235,10 @@ public class LoginController {
 						workerRecordService.updateByPrimaryKeySelective(update);
 						// 更新task表
 						task task = new task();
-						task.setWorkerId(null);
+						task.setWorkerId(0);
 						task.setTaskId(workerRecord.getTaskId());
-
-						task.setUpdateMethod(items[1].toString());
+						StackTraceElement[] item = Thread.currentThread().getStackTrace();
+						task.setUpdateMethod(item[1].toString());
 						taskService.updateByTaskId(task);
 
 						packWithBLOBs pack = new packWithBLOBs();
