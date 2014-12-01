@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +47,11 @@ public class VioceNote {
 	 */
 	@Value("${MSG_DELETE_SUCCESS}")
 	private String MSG_DELETE_SUCCESS;
+	/**
+	 * 修改成功
+	 */
+	@Value("${MSG_UPDATE_SUCCESS}")
+	private String MSG_UPDATE_SUCCESS;
 
 	/**
 	 * 标注说明页
@@ -73,9 +79,10 @@ public class VioceNote {
 		for (Iterator<voiceNote> iterator = listVoiceNote.iterator(); iterator.hasNext();) {
 			voiceNote voiceNote = (voiceNote) iterator.next();
 			voiceNoteTrans voiceNoteTrans = new voiceNoteTrans();
-
-			voiceNoteTrans.setCreateTime(voiceNote.getCreateTime().toString());
+			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+			voiceNoteTrans.setCreateTime(sdf.format(voiceNote.getCreateTime()));
 			voiceNoteTrans.setNoteId(voiceNote.getNoteId());
+			voiceNoteTrans.setId(voiceNote.getId());
 			voiceNoteTrans.setNoteTitle(voiceNote.getNoteTitle());
 
 			list.add(voiceNoteTrans);
@@ -166,7 +173,7 @@ public class VioceNote {
 
 		voiceNoteService.updateByPrimaryKeySelective(voiceNote);
 		map.put(Constants.REPLAY, 1);
-		map.put(Constants.MESSAGE, MSG_ADD_SUCCESS);
+		map.put(Constants.MESSAGE,MSG_UPDATE_SUCCESS);
 		return map;
 	}
 
