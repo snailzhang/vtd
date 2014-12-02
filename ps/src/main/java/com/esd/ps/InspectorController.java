@@ -157,7 +157,7 @@ public class InspectorController {
 
 	@RequestMapping(value = "/downAuditTask", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> downAuditTaskPost(List<WorkerRecordTrans> list, int workerId, HttpServletRequest request) {
+	public Map<String, Object> downAuditTaskPost(Map<String, Object> map1, int workerId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
 
 		String url = request.getServletContext().getRealPath(Constants.SLASH);
@@ -168,14 +168,14 @@ public class InspectorController {
 		}
 		workerRecord workerRecord = workerRecordService.getWorkerRecordByWorkerId(workerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
-		String packName = sdf.format(new Date()) + "_" + workerRecord.getUserName();
+		String packName = sdf.format(new Date()) + "_" + workerRecord.getUserName() + ".zip";
 		List<taskWithBLOBs> list1 = new ArrayList<>();
-		for (Iterator<WorkerRecordTrans> iterator = list.iterator(); iterator.hasNext();) {
-			WorkerRecordTrans workerRecordTrans = (WorkerRecordTrans) iterator.next();
-			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
-			taskWithBLOBs = taskService.selectByPrimaryKey(workerRecordTrans.getTaskId());
-			list1.add(taskWithBLOBs);
-		}
+//		for (Iterator<WorkerRecordTrans> iterator = list.iterator(); iterator.hasNext();) {
+//			WorkerRecordTrans workerRecordTrans = (WorkerRecordTrans) iterator.next();
+//			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
+//			taskWithBLOBs = taskService.selectByPrimaryKey(workerRecordTrans.getTaskId());
+//			list1.add(taskWithBLOBs);
+//		}
 
 		EmployerController employc = new EmployerController();
 		employc.downZIP(list1, packName, url);

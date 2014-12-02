@@ -307,18 +307,14 @@ public class LoginController {
 		}
 		return map;
 	}
-
 	/**
 	 * 检测用户是否已经登录了
-	 * 
 	 * @param loginName
-	 * @param application
+	 * @param request
 	 * @return
 	 */
 	public int loginName(String loginName, HttpServletRequest request) {
 		ServletContext servletContext = request.getSession().getServletContext();
-		// WebApplicationContext webApplicationContext =
-		// (WebApplicationContext)servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
 		if (servletContext.getAttribute(loginName) == null) {
 			servletContext.setAttribute(loginName, loginName);
 			return 1;
