@@ -41,6 +41,7 @@
 						</select>
 					</div>
 					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+					
 				</form>
 			</div>
 			<table class="table table-striped table-bordered">
@@ -70,6 +71,7 @@
 				userNameCondition = $("#userNameCondition").val();
 				loadUserList(1);
 			});
+			
 		});
 		/*--------------------------------------加载页面-------------------------------------------------------*/
 		loadUserList = function(pageNum){
@@ -110,7 +112,7 @@
 					}
 				}
 			});
-		}
+		};
 	</script>
 </body>
 </html>

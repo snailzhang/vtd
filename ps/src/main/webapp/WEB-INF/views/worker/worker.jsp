@@ -53,6 +53,9 @@
 			   <div class="form-group">
 			      <button type="button" id="doneLoadBtn" class="btn btn-primary">下载任务</button>
 			   </div>
+			   <div class="form-group">
+			      <p class="form-control-static" id="downTaskTip"></p>
+			   </div>
 			</form>
 		</div>
 	</div>
@@ -168,9 +171,8 @@
 						var taskTotal = data.countTaskDoing;
 						var packTotal = data.countPackDoing;
 						$("#downloadPanel h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个");
-						if(taskTotal != 0){
-							if(taskTotal>20)taskTotal = 20;//单次下载最多20个任务
-							for(var i=1;i<taskTotal+1;i++){
+						if(data.downCount != 0){
+							for(var i=1;i<data.downCount+1;i++){
 								$("#downTaskCount").append("<option vale='"+i+"'>"+i+"</option>");
 							}
 						}else{
@@ -339,6 +341,7 @@
 						dataType:'json',
 						success:function(data){
 							if(data.wrongPath != ""){
+								$("#downTaskTip").text("任务打包中。。。");
 								window.open(data.wrongPath);
 								window.location.reload();
 							}

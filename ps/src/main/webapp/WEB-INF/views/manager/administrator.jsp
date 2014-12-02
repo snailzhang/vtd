@@ -31,6 +31,18 @@
 							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
 						</div>
 					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon"> 用户类型：</div>
+							 <select class="form-control" name="userType" id="userType">
+							 	<option value="1">管理员</option>
+							 	<option value="2">发包商</option>
+							 	<option value="3">审核员</option>
+							 	<option value="4">工作者</option>
+							 	<option value="5">超级管理员</option>
+							 </select>
+						</div>
+					</div>
 					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
 				</form>
 			</div>
@@ -96,6 +108,7 @@
 			$("#searchBtn").click(function(){
 				taskUpload = $("#taskUpload").val();
 				userNameCondition = $("#userNameCondition").val();
+				nowUserType = $("#userType").val();
 				chooseUserType(1);
 			});
 			/*--------------------------------------点击更改用户状态-------------------------------------------------------*/

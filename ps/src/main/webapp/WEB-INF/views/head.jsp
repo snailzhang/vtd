@@ -4,14 +4,22 @@
 <%
 int userType = (Integer)session.getAttribute("usertype");
 String ut = "";
-if(userType == 1){
-	ut = "manager";
-}else if(userType == 2){
-	ut = "employer";
-}else if(userType == 3){
-	ut = "inspector";
-}else if(userType == 4){
-	ut = "worker";
+switch(userType){
+	case 1:
+		ut = "manager";
+		break;
+	case 2:
+		ut = "employer";
+		break;
+	case 3:
+		ut = "inspector";
+		break;
+	case 4:
+		ut = "worker";
+		break;
+	case 5:
+		ut = "administrator";
+		break;
 }
 %>
 <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">

@@ -25,7 +25,7 @@
 			<div class="panel-heading">待审核任务信息<span id="taskUlT" class="pull-right text-success"></span></div>
 			<div class="panel-body">
 				<form class="form-inline" role="form">
-					
+					<button type="button" id="downTask" class="btn btn-warning">下载待审核任务</button>
 					<div class="form-group">
 						<p class="form-control-static">审核结果：</p>
 					</div>
@@ -61,6 +61,7 @@
 	</div>
 	<script type="text/javascript">
 		var workerId = '${workerId}';
+		var taskList = {};
 		var firstDate = "";
 		var day = 0;
 		$(document).ready(function(){
@@ -69,6 +70,25 @@
 				$this = $(this);
 				$this.val() == "0"?$("#reTime").show():$("#reTime").hide();
 			});
+			/*--------------------------------------下载待审核任务-------------------------------------------------------*/
+			$("#downTask").click(function(){
+				if(taskList.size == 0){
+					alert("暂无待审核任务！");
+				}else{
+					$.ajax({
+						type:'POST',
+						data:{"list":taskList,"workerId":workerId},
+						url:'${contextPath}/security/downAuditTask',
+						dataType:'json',
+						success:function(data){
+							if(data.wrongPath != ""){
+								window.open(data.wrongPath);
+							}
+						}
+					});
+				}
+			});
+			/*--------------------------------------审核任务-------------------------------------------------------*/
 			$("#submitBtn").click(function(){
 				var sta = $("#statu").val();
 				if(sta == 0){
@@ -112,6 +132,7 @@
 						$("tbody").empty();
 						$("tbody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
 					}else{
+						taskList = data.list;
 						firstDate = data.firstDate;
 						$("#taskUlT").text("最早上传时间："+firstDate+"最后上传时间："+data.lastDate);
 						$.each(data.list,function(i,item){

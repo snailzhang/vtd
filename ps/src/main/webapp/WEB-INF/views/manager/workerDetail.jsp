@@ -36,10 +36,10 @@
 					</div>
 					<div class="form-group">
 						<select class="form-control" id="statu">
-							<option value="3">不限</option>
+							<option value="3">全部</option>
 							<option value="0">未完成</option>
 							<option value="1">完成</option>
-							<option value="2">超时</option>
+							<option value="2">超时/放弃</option>
 						</select>
 					</div>
 					<div class="form-group">
@@ -131,11 +131,11 @@
 					$("tbody").empty();
 					if(data.list == ""){
 						$("tbody").empty();
-						$("#taskMarkTimeMonthTotle").text("本月标注总时长:0");
+						$("#taskMarkTimeMonthTotle").text("本月有效标注时长:0");
 						$("tbody").append("<tr class='text-danger'><td colspan='7'>无内容</td></tr>");
 					}else{
 						pageTotal = data.totlePage;
-						$("#taskMarkTimeMonthTotle").text("本月标注总时长:"+data.taskMarkTimeMonth);
+						$("#taskMarkTimeMonthTotle").text("本月有效标注时长:"+data.taskMarkTimeMonth);
 						$.each(data.list,function(i,item){
 							
 							$("tbody").append(
