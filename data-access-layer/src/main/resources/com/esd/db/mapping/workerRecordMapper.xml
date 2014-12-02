@@ -147,6 +147,23 @@
 			</if>
 		</where>
 	</select>
+	<select id="selectCountByWorkerId" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(record_id) totle
+		from worker_record
+		<where>
+			3 > 2
+			<if test="workerId !=null">
+				and worker_id = #{workerId}
+			</if>
+			<if test="statu == 1">
+				and task_statu = 1
+			</if>
+			<if test="taskEffective == 4">
+				and (task_effective = 0 or task_effective = 2)
+			</if>
+		</where>
+	</select>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />

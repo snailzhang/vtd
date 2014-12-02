@@ -325,4 +325,14 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.updateByGiveUp(map);
 	}
 
+	@Override
+	public int getCountByWorkerId(Integer workerId, Integer statu, int taskEffective) {
+		Map<String,Object> map = new HashMap<>();
+		map.clear();
+		map.put("workerId", workerId);
+		map.put("statu", statu);
+		map.put("taskEffective", taskEffective);
+		return workerRecordMapper.selectCountByWorkerId(map);
+	}
+
 }

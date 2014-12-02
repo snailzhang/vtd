@@ -33,6 +33,8 @@ public interface workerRecordMapper {
 	
 	int selectAllCountByWorkerId(Map<String, Object> map);
 	
+	int selectCountByWorkerId(Map<String, Object> map);
+		
 	String selectDownUrlByTaskName(String taskName);
 	
 	int selectPkIDByTaskName(String taskName);

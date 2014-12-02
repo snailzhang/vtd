@@ -76,5 +76,4 @@ public class ManagerServiceImpl implements ManagerService {
 		
 		return managerMapper.selectCountManagerIdByUserId(userId);
 	}
-
 }

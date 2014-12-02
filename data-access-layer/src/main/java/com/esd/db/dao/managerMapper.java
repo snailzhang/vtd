@@ -29,5 +29,4 @@ public interface managerMapper {
     int updateByPrimaryKeySelective(manager record);
 
     int updateByPrimaryKey(manager record);
-
 }

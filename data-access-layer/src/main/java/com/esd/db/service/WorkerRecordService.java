@@ -33,6 +33,8 @@ public interface WorkerRecordService {
 	
 	int getAllCountByWorkerId(Integer workerId,Integer statu,Integer year,Integer month,String taskNameCondition);
 	
+	int getCountByWorkerId(Integer workerId,Integer statu,int taskEffective);
+	
 	String get1DownUrlByTaskName(String taskName);
 	
 	int get1PkIDByTaskName(String taskName);

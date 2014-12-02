@@ -43,6 +43,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.esd.db.dao.packMapper;
+import com.esd.db.model.manager;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
@@ -50,6 +51,7 @@ import com.esd.ps.model.WorkerDownPackHistoryTrans;
 import com.esd.ps.model.WorkerRecordTrans;
 import com.esd.ps.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
+import com.esd.db.service.ManagerService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
@@ -69,6 +71,8 @@ public class WorkerController {
 	private TaskService taskService;
 	@Autowired
 	private packMapper packMapper;
+	@Autowired
+	private ManagerService managerService;
 	@Autowired
 	private WorkerService workerService;
 	@Autowired
@@ -140,9 +144,25 @@ public class WorkerController {
 			int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
+			//
+			//taskEffective = 4 查询未审核和不合格的
+			int auditingCount = workerRecordService.getCountByWorkerId(workerId,1,4);
+			manager manager = managerService.selectByPrimaryKey(1);
+			//worker可下载任务个数
+			int downCount = 0;
+			if((manager.getDownMaxCount() - auditingCount) > manager.getDownCount()){
+				downCount = manager.getDownCount();
+			}else{
+				downCount = (manager.getDownMaxCount() - auditingCount);
+			}
+			if(downCount > countTaskDoing){
+				downCount = countTaskDoing;
+			}
+			
 			String noteId = packService.getNoteIdByPackId();
 			map.put(Constants.COUNTPACKDOING, countPackDoing);
 			map.put(Constants.COUNTTASKDOING, countTaskDoing);
+			map.put("downCount", downCount);
 			map.put("noteId", noteId);
 			map.put(Constants.WORKERMARK, 0);
 			return map;

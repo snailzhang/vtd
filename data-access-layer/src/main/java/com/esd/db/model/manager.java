@@ -9,6 +9,10 @@ public class manager {
     private Integer userId;
 
     private String managerName;
+    
+    private Integer downCount;
+    
+    private Integer downMaxCount;
 
     private Integer createId;
 
@@ -47,8 +51,24 @@ public class manager {
     public void setManagerName(String managerName) {
         this.managerName = managerName == null ? null : managerName.trim();
     }
+    
+    public Integer getDownCount() {
+		return downCount;
+	}
 
-    public Integer getCreateId() {
+	public void setDownCount(Integer downCount) {
+		this.downCount = downCount;
+	}
+	
+	public Integer getDownMaxCount() {
+		return downMaxCount;
+	}
+
+	public void setDownMaxCount(Integer downMaxCount) {
+		this.downMaxCount = downMaxCount;
+	}
+
+	public Integer getCreateId() {
         return createId;
     }
 

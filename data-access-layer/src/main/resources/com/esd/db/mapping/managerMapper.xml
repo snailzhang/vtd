@@ -5,6 +5,8 @@
     <id column="manager_id" jdbcType="INTEGER" property="managerId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="manager_name" jdbcType="VARCHAR" property="managerName" />
+    <result column="downCount" jdbcType="INTEGER" property="downCount" />
+    <result column="downMaxCount" jdbcType="INTEGER" property="downMaxCount" />
     <result column="create_id" jdbcType="INTEGER" property="createId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_method" jdbcType="VARCHAR" property="createMethod" />
@@ -14,7 +16,7 @@
     <result column="version" jdbcType="INTEGER" property="version" />
   </resultMap>
   <sql id="Base_Column_List">
-    manager_id, user_id, manager_name, create_id, create_time, create_method, update_id, 
+    manager_id, user_id, manager_name,downCount,downMaxCount,create_id, create_time, create_method, update_id, 
     update_time, update_method, version
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
