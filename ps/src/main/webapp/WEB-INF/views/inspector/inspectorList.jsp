@@ -61,7 +61,7 @@
 	</div>
 	<script type="text/javascript">
 		var workerId = '${workerId}';
-		var taskList = new Array();
+		var taskList = "";
 		var firstDate = "";
 		var day = 0;
 		$(document).ready(function(){
@@ -136,7 +136,12 @@
 						firstDate = data.firstDate;
 						$("#taskUlT").text("最早上传时间："+firstDate+"最后上传时间："+data.lastDate);
 						$.each(data.list,function(i,item){
-							taskList.push(item.taskId);
+							if(i == 0){
+								taskList = item.taskId;
+							}else{
+								taskList +="_"+item.taskId;
+							}
+							
 							$("tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
