@@ -119,16 +119,20 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "/quit", method = RequestMethod.GET)
-	public ModelAndView quitGet(HttpSession session,HttpServletRequest request) {
-		ServletContext servletContext=request.getSession().getServletContext();
-		if(servletContext.getAttribute(session.getAttribute(Constants.USER_NAME).toString()) != null){
-			servletContext.removeAttribute(session.getAttribute(Constants.USER_NAME).toString());
-		}
+	public ModelAndView quitGet(HttpSession session, HttpServletRequest request) {
 		session.removeAttribute(Constants.USER_ID);
-		session.removeAttribute(Constants.USER_NAME);
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		
+		try {
+			ServletContext servletContext = request.getSession().getServletContext();
+			if (servletContext.getAttribute(session.getAttribute(Constants.USER_NAME).toString()) != null) {
+				servletContext.removeAttribute(session.getAttribute(Constants.USER_NAME).toString());
+			}
+		} catch (NullPointerException n) {
+			return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
+		}
+		session.removeAttribute(Constants.USER_NAME);
+
 		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
 	}
 
@@ -163,7 +167,7 @@ public class LoginController {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
 		}
 		// 检验用户是否已经登录
-		int m = loginName(username,request);
+		int m = loginName(username, request);
 		if (m == 0) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, "用户已经登录");
 			return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
@@ -311,15 +315,15 @@ public class LoginController {
 	 * @param application
 	 * @return
 	 */
-	public int loginName(String loginName,HttpServletRequest request) {
-		ServletContext servletContext=request.getSession().getServletContext();
-		//WebApplicationContext webApplicationContext = (WebApplicationContext)servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
-		if(servletContext.getAttribute(loginName) == null){
+	public int loginName(String loginName, HttpServletRequest request) {
+		ServletContext servletContext = request.getSession().getServletContext();
+		// WebApplicationContext webApplicationContext =
+		// (WebApplicationContext)servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+		if (servletContext.getAttribute(loginName) == null) {
 			servletContext.setAttribute(loginName, loginName);
 			return 1;
 		}
 		return 0;
 	}
 
-	
 }
