@@ -535,27 +535,30 @@
 	</update>
 	<update id="updateByTaskId" parameterType="com.esd.db.model.task">
 		update task
-		set
-		<if test="workerId != null">
-			worker_id = #{workerId,jdbcType=INTEGER},
-		</if>
-		<if test="taskMarkTime != null">
-			task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
-		</if>
-		<if test="updateTime != null">
-			update_time = #{updateTime,jdbcType=TIMESTAMP},
-		</if>
-		<if test="updateMethod != null">
-			update_method = #{updateMethod,jdbcType=VARCHAR},
-		</if>
-		<if test="version != null">
-			version = #{version,jdbcType=INTEGER}
-		</if>
+		<set>
+			<if test="workerId != null and workerId != 0">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId == 0">
+				worker_id = null,
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=INTEGER},
+			</if>
+		</set>
 		where 3 > 2
 		<if test="taskId != null">
 			and task_id = #{taskId,jdbcType=INTEGER}
 		</if>
-
 	</update>
 	<update id="updateByPackId" parameterType="com.esd.db.model.task">
 		update task
