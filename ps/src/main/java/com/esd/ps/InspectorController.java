@@ -157,9 +157,8 @@ public class InspectorController {
 
 	@RequestMapping(value = "/downAuditTask", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> downAuditTaskPost(Map<String, Object> map1, int workerId, HttpServletRequest request) {
+	public Map<String, Object> downAuditTaskPost(String list, int workerId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
-
 		String url = request.getServletContext().getRealPath(Constants.SLASH);
 		url = url + "auditTemp";
 		File f = new File(url);
@@ -170,12 +169,12 @@ public class InspectorController {
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
 		String packName = sdf.format(new Date()) + "_" + workerRecord.getUserName() + ".zip";
 		List<taskWithBLOBs> list1 = new ArrayList<>();
-//		for (Iterator<WorkerRecordTrans> iterator = list.iterator(); iterator.hasNext();) {
-//			WorkerRecordTrans workerRecordTrans = (WorkerRecordTrans) iterator.next();
-//			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
-//			taskWithBLOBs = taskService.selectByPrimaryKey(workerRecordTrans.getTaskId());
-//			list1.add(taskWithBLOBs);
-//		}
+		String taskId[] = list.split("_");
+		for (int i = 0; i < taskId.length; i++) {
+			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
+			taskWithBLOBs = taskService.selectByPrimaryKey(Integer.parseInt(taskId[i]));
+			list1.add(taskWithBLOBs);
+		}
 
 		EmployerController employc = new EmployerController();
 		employc.downZIP(list1, packName, url);
