@@ -217,7 +217,7 @@
 		select
 		pack_id
 		from worker_record
-		where task_id = #{TaskId,jdbcType=INTEGER}
+		where task_id = #{TaskId,jdbcType=INTEGER} order by record_id desc limit 1
 	</select>
 	<select id="selectWorkerRecordByWorkerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
