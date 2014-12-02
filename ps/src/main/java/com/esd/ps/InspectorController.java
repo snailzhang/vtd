@@ -157,7 +157,7 @@ public class InspectorController {
 
 	@RequestMapping(value = "/downAuditTask", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> downAuditTaskPost(List<WorkerRecordTrans> list, String workerName, HttpServletRequest request) {
+	public Map<String, Object> downAuditTaskPost(List<WorkerRecordTrans> list, int workerId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
 
 		String url = request.getServletContext().getRealPath(Constants.SLASH);
@@ -166,8 +166,9 @@ public class InspectorController {
 		if (!f.exists()) {
 			f.mkdir();
 		}
+		workerRecord workerRecord = workerRecordService.getWorkerRecordByWorkerId(workerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
-		String packName = sdf.format(new Date()) + "_" + workerName;
+		String packName = sdf.format(new Date()) + "_" + workerRecord.getUserName();
 		List<taskWithBLOBs> list1 = new ArrayList<>();
 		for (Iterator<WorkerRecordTrans> iterator = list.iterator(); iterator.hasNext();) {
 			WorkerRecordTrans workerRecordTrans = (WorkerRecordTrans) iterator.next();

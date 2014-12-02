@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -118,11 +119,16 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "/quit", method = RequestMethod.GET)
-	public ModelAndView quitGet(HttpSession session) {
+	public ModelAndView quitGet(HttpSession session,HttpServletRequest request) {
+		ServletContext servletContext=request.getSession().getServletContext();
+		if(servletContext.getAttribute(session.getAttribute(Constants.USER_NAME).toString()) != null){
+			servletContext.removeAttribute(session.getAttribute(Constants.USER_NAME).toString());
+		}
 		session.removeAttribute(Constants.USER_ID);
 		session.removeAttribute(Constants.USER_NAME);
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
+		
 		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
 	}
 
@@ -155,6 +161,12 @@ public class LoginController {
 		}
 		if (StringUtils.isBlank(password)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_PASSWORD_NOT_EMPTY);
+		}
+		// 检验用户是否已经登录
+		int m = loginName(username,request);
+		if (m == 0) {
+			redirectAttributes.addFlashAttribute(Constants.MESSAGE, "用户已经登录");
+			return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.LOGIN);
 		}
 		user user = userService.getAllUsersByUserName(username);
 		if (user == null) {
@@ -291,4 +303,23 @@ public class LoginController {
 		}
 		return map;
 	}
+
+	/**
+	 * 检测用户是否已经登录了
+	 * 
+	 * @param loginName
+	 * @param application
+	 * @return
+	 */
+	public int loginName(String loginName,HttpServletRequest request) {
+		ServletContext servletContext=request.getSession().getServletContext();
+		//WebApplicationContext webApplicationContext = (WebApplicationContext)servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+		if(servletContext.getAttribute(loginName) == null){
+			servletContext.setAttribute(loginName, loginName);
+			return 1;
+		}
+		return 0;
+	}
+
+	
 }
