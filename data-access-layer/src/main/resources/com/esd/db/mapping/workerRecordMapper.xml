@@ -121,7 +121,7 @@
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record
 
-		WHERE pack_id = #{packId,jdbcType=INTEGER}
+		WHERE pack_id = #{packId,jdbcType=INTEGER} and task_effective = 1
 
 	</select>
 	<select id="selectAllCountByWorkerId" resultType="java.lang.Integer" parameterType="java.util.Map">

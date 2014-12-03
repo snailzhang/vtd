@@ -678,7 +678,7 @@ public class EmployerController {
 				taskWithBLOBs.setTaskUpload(false);
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				taskWithBLOBs.setCreateMethod(items[1].toString());
-				taskWithBLOBs.setVersion(Constants.VERSION);
+				taskWithBLOBs.setVersion(1);
 				taskService.insert(taskWithBLOBs);
 			}
 			zip.close();
@@ -764,7 +764,7 @@ public class EmployerController {
 			taskWithBLOBs.setTaskUpload(false);
 			StackTraceElement[] items = Thread.currentThread().getStackTrace();
 			taskWithBLOBs.setCreateMethod(items[1].toString());
-			taskWithBLOBs.setVersion(Constants.VERSION);
+			taskWithBLOBs.setVersion(1);
 			taskService.insert(taskWithBLOBs);
 		}
 		return packId;

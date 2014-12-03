@@ -270,6 +270,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("workerId", workerId);
 		if (taskEffective == 0) {
 			map.put("taskEffective", 2);
+			map.put("taskMarkTime", 0.00);
 		} else if (taskEffective == 1) {
 			map.put("taskEffective", 1);
 		}

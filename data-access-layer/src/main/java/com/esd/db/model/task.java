@@ -42,7 +42,7 @@ public class task {
 
     private String updateMethod;
 
-    private String version;
+    private int version;
 
     public Integer getTaskId() {
         return taskId;
@@ -196,11 +196,11 @@ public class task {
         this.updateMethod = updateMethod == null ? null : updateMethod.trim();
     }
 
-    public String getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version == null ? null : version.trim();
+    public void setVersion(int version) {
+        this.version = version;
     }
 }
