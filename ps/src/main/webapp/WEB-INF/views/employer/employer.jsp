@@ -38,7 +38,7 @@
 			<li><a href="#packComplete" role="tab" data-toggle="tab">已完成任务包列表</a></li>
 			<li><a href="#packAll" role="tab" data-toggle="tab">全部任务包列表</a></li>
 			<li><a href="#packUnzip" role="tab" data-toggle="tab">未上传任务包列表</a></li>
-			<li><a href="#editTaskRole" role="tab" data-toggle="tab">编辑任务规则</a></li>
+			<li><a href="#editTaskRole" role="tab" data-toggle="tab">编辑标注说明</a></li>
 		</ul>
 		<div class="tab-content">
 		<!-- ****************************************未完成任务包列表******************************************************* -->

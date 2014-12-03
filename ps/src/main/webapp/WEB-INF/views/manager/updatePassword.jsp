@@ -45,12 +45,13 @@
 		         <span class="help-block"></span>
 		      </div>
 		   </div>
+		   <div class="form-group">
+		      <div class="col-sm-offset-2 col-sm-10">
+		         <button id="updBtn" type="button" class="btn btn-danger">修改</button>
+		      </div>
+		   </div>
 		</div>
-		<div class="form-group">
-	      <div class="col-sm-offset-2 col-sm-10">
-	         <button id="updBtn" type="button" class="btn btn-default">修改</button>
-	      </div>
-	   </div>
+		
 	</form>
 	
 	<script type="text/javascript">

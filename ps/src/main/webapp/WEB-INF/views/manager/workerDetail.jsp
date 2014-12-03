@@ -19,7 +19,6 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">${model.chooseUserName}的工作信息<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span></div>
