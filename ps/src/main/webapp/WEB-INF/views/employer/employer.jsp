@@ -37,7 +37,7 @@
 			<li class="active"><a href="#packUncomplete" role="tab" data-toggle="tab">未完成任务包列表</a></li>
 			<li><a href="#packComplete" role="tab" data-toggle="tab">已完成任务包列表</a></li>
 			<li><a href="#packAll" role="tab" data-toggle="tab">全部任务包列表</a></li>
-			<li><a href="#packUnzip" role="tab" data-toggle="tab">未解压任务包列表</a></li>
+			<li><a href="#packUnzip" role="tab" data-toggle="tab">未上传任务包列表</a></li>
 			<li><a href="#editTaskRole" role="tab" data-toggle="tab">编辑任务规则</a></li>
 		</ul>
 		<div class="tab-content">
@@ -121,7 +121,7 @@
 							<div class="form-group">
 								<div class="input-group">
 									<div class="input-group-addon">任务包名称：</div>
-									<input class="form-control" id="allPackNameCondition" type="text" placeholder="查询已完成任务包" onkeydown="if(event.keyCode==13){return false;}">
+									<input class="form-control" id="allPackNameCondition" type="text" placeholder="查询任务包" onkeydown="if(event.keyCode==13){return false;}">
 								</div>
 							</div>
 							<button type="button" id="searchAllBtn" class="btn btn-default">查询</button>
@@ -175,7 +175,7 @@
 							<div class="form-group" id="">
 								<p class="form-control-static">任务时间：</p>
 							</div>
-							<div class="form-group" id="">
+							<div class="form-group" id="packLockTimeDiv">
 								<div class="input-group">
 									<input type="text" class="form-control" name="packLockTime" id="packLockTime" placeholder="添加任务时间" onkeydown="if(event.keyCode==13){return false;}">
 									<span class="input-group-addon">小时</span>
@@ -600,12 +600,12 @@
 								"<tr class='unziptr"+i+"'>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td class='packName'>"+item+"</td>"+
-									"<td class='packZipStatus'><a href='javascript:zipOnePack(\""+item+"\",\"unziptr"+i+"\");'>解压</a></td>"+
+									"<td class='packZipStatus'><a href='javascript:zipOnePack(\""+item+"\",\"unziptr"+i+"\");'>上传</a></td>"+
 								"</tr>"
 							);
 						});
 					}else{
-						$("#packUnzip tbody").append("<tr><td colspan='3'>无未解压任务包</td></tr>");
+						$("#packUnzip tbody").append("<tr><td colspan='3'>无未上传任务包</td></tr>");
 					}
 				}
 			});
@@ -615,7 +615,12 @@
 			var taskLvl = $("#taskLvl").val();
 			var noteId = $("#noteId").val();
 			var packLockTimeObj = $("#packLockTime");
-			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) return;
+			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) {
+				$("#packLockTimeDiv").addClass("has-error").focus();
+				return;
+			}else{
+				$(".has-error").removeClass("has-error");
+			}
 			$("."+trClass+" .packZipStatus").text("任务包解压中");
 			$.ajax({
 				type:'POST',

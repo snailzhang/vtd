@@ -170,7 +170,7 @@
 					if(workerMark == 0){//下载
 						var taskTotal = data.countTaskDoing;
 						var packTotal = data.countPackDoing;
-						$("#downloadPanel h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个");
+						$("#downloadPanel h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个。当前下载包标注说明编号为："+data.noteId);
 						if(data.downCount != 0){
 							for(var i=1;i<data.downCount+1;i++){
 								$("#downTaskCount").append("<option vale='"+i+"'>"+i+"</option>");
@@ -341,7 +341,7 @@
 						dataType:'json',
 						success:function(data){
 							if(data.wrongPath != ""){
-								$("#downTaskTip").text("任务打包中。。。");
+								$("#downTaskTip").text("任务下载中。。。");
 								window.open(data.wrongPath);
 								window.location.reload();
 							}
@@ -397,6 +397,7 @@
 				}
 			});
 		}
+		/*-----------------------------------放弃任务----------------------------------------------------*/
 		function giveUpTask(taskId){
 			var conWin = confirm("确定要放弃该任务吗？");
 			if(conWin){

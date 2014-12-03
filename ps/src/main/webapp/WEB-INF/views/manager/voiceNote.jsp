@@ -37,13 +37,14 @@
 			<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
-						<th width='10%'>序号</th>
-						<th width='20%'>名称</th>
-						<th width='20%'>编号</th>
-						<th width='20%'>上传时间</th>
-						<th width='15%'>查看</th>
+						<th>序号</th>
+						<th>名称</th>
+						<th>编号</th>
+						<th>上传时间</th>
+						<th >查看</th>
 						<c:if test="${usertype =='1'||usertype =='2'}">
-							<th width='15%'>编辑</th>
+							<th>编辑</th>
+							<!--  <th>删除</th>-->
 						</c:if>
 					</tr>
 				</thead>
@@ -84,6 +85,7 @@
 						$.each(data.list,function(i,item){
 							if(userType == '1'||userType == '2'){
 								editTd = "<td><a href='${contextPath}/security/voiceNoteContent?id="+item.id+"&type=1' target='_blank'>编辑</a></td>";
+										//+"<td><a href='javascript:deleteVoiceNote("+item.id+")'>删除</a></td>";
 							}
 							$("tbody").append(
 								"<tr>"+
@@ -112,7 +114,24 @@
 				}
 			});
 		};
-		
+		deleteVoiceNote = function(id){
+			var conWin = confirm("确定要删除该说明吗？");
+				if(conWin){
+					$.ajax({
+					type:'POST',
+					url:'${contextPath}/security/deleteVoiceNote',
+					data:{"id":id},
+					dataType:'json',
+					success:function(data){
+						if(data.replay == "1"){
+							alert(data.message);
+							window.location.reload();
+						}
+					}
+				});
+			}
+			
+		};
 	</script>
 </body>
 </html>
