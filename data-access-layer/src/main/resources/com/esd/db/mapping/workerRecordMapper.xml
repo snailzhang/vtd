@@ -83,8 +83,11 @@
 			<if test="month != null">
 				and DATE_FORMAT(task_down_time,"%m") = "${month}" and year(task_down_time) = '${year}'
 			</if>
-			<if test="statu == 0 or statu == 1 or statu == 2">
+			<if test="statu == 0 or statu == 1">
 				and task_statu = #{statu}
+			</if>
+			<if test="statu == 2">
+				and (task_statu = 2 or task_statu = 3)
 			</if>
 			<if test="taskEffective == 0 or taskEffective == 2">
 				and (task_effective = 0 or task_effective = 2)
