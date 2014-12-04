@@ -330,6 +330,7 @@
 			});
 			/*******************************下载任务**************************************************/
 			$("#doneLoadBtn").click(function(){
+				$("#downTaskTip").text("任务下载中。。。");
 				var downTaskCount = $("#downTaskCount").val();
 				if(downTaskCount == 0){
 					return false;
@@ -341,7 +342,7 @@
 						dataType:'json',
 						success:function(data){
 							if(data.wrongPath != ""){
-								$("#downTaskTip").text("任务下载中。。。");
+								
 								window.open(data.wrongPath);
 								window.location.reload();
 							}
