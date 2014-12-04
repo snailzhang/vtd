@@ -55,7 +55,7 @@ public class RegListController {
 	private static final Logger logger = LoggerFactory.getLogger(RegListController.class);
 
 	@RequestMapping(value = "/regList", method = RequestMethod.GET)
-	public ModelAndView regListGET(HttpSession session) {
+	public synchronized ModelAndView regListGET(HttpSession session) {
 		if (session.getAttribute(Constants.ID) == null) {
 			return new ModelAndView(Constants.REDIRECT + ":loginReg");
 		}
@@ -75,7 +75,7 @@ public class RegListController {
 	 */
 	@RequestMapping(value = "/regList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> regListPost(HttpSession session, int page, String beginDate, String endDate) {
+	public synchronized Map<String, Object> regListPost(HttpSession session, int page, String beginDate, String endDate) {
 		logger.debug("beginDateate:{},endDateate:{}", beginDate, endDate);
 		Map<String, Object> map = new HashMap<String, Object>();
 		int districtId = Integer.parseInt(session.getAttribute(Constants.ID).toString());
@@ -134,7 +134,7 @@ public class RegListController {
 	 */
 	@RequestMapping(value = "/export", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> export(String beginDate, String endDate, HttpServletRequest request, HttpSession session) {
+	public synchronized Map<String, Object> export(String beginDate, String endDate, HttpServletRequest request, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		boolean b = true;
 		String FileDownloadPath = "null";

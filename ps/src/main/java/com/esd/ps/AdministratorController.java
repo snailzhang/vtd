@@ -161,7 +161,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/administrator", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> administratorPost(String userNameCondition, int userType, int page) {
+	public synchronized Map<String, Object> administratorPost(String userNameCondition, int userType, int page) {
 		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -207,7 +207,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/userDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> userDetail(int userId, int userType) {
+	public synchronized Map<String, Object> userDetail(int userId, int userType) {
 		Map<String, Object> map = new HashMap<>();
 		if (userType == 1) {
 			manager manager = managerService.getManagerByUserId(userId);
@@ -253,7 +253,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/userStatus", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> userStatus(int userId, int userStatus) {
+	public synchronized Map<String, Object> userStatus(int userId, int userStatus) {
 		logger.debug("userId:{},userStatus:{}", userId, userStatus);
 		Map<String, Object> map = new HashMap<>();
 		user user = new user();
@@ -298,7 +298,7 @@ public class AdministratorController {
 	 * @return RedirectAttributes redirectAttributes
 	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
-	public ModelAndView addUserPost(String username, String password, int usertype, RedirectAttributes redirectAttributes, HttpSession session) {
+	public synchronized ModelAndView addUserPost(String username, String password, int usertype, RedirectAttributes redirectAttributes, HttpSession session) {
 		logger.debug("username:{},password:{},usertype:{}", username, password, usertype);
 		int replay = 0;
 		if (StringUtils.isBlank(username)) {
@@ -358,7 +358,7 @@ public class AdministratorController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addmanager", method = RequestMethod.POST)
-	public ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request, int userRegisted) {
+	public synchronized ModelAndView addmanager(String managerName, HttpSession session, HttpServletRequest request, int userRegisted) {
 		manager manager = new manager();
 		manager.setManagerName(managerName);
 		manager.setCreateTime(new Date());
@@ -386,7 +386,7 @@ public class AdministratorController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addemployer", method = RequestMethod.POST)
-	public ModelAndView addemployer(String employerName, HttpSession session, HttpServletRequest request, int userRegisted) {
+	public synchronized ModelAndView addemployer(String employerName, HttpSession session, HttpServletRequest request, int userRegisted) {
 		employer employer = new employer();
 		employer.setEmployerName(employerName);
 		employer.setCreateTime(new Date());
@@ -417,7 +417,7 @@ public class AdministratorController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addinspector", method = RequestMethod.POST)
-	public ModelAndView addinspector(String inspectorName, HttpSession session, HttpServletRequest request, int userRegisted) {
+	public synchronized ModelAndView addinspector(String inspectorName, HttpSession session, HttpServletRequest request, int userRegisted) {
 		inspector inspector = new inspector();
 		inspector.setInspectorName(inspectorName);
 		inspector.setCreateTime(new Date());
@@ -447,7 +447,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/checkUserName", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> checkUserName(String userName) {
+	public synchronized Map<String, Object> checkUserName(String userName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (userName(userName) == 1) {
 			map.clear();
@@ -467,7 +467,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/checkPassWord", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> checkPassWord(String oldPassWord, HttpSession session) {
+	public synchronized Map<String, Object> checkPassWord(String oldPassWord, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (passWord(oldPassWord, session) == 1) {
 			map.clear();
@@ -489,7 +489,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/checkWorkerDisabilityCard", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> checkWorkerDisabilityCard(String WorkerDisabilityCard) {
+	public synchronized Map<String, Object> checkWorkerDisabilityCard(String WorkerDisabilityCard) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (WorkerDisabilityCard.length() < 20) {
 			map.clear();
@@ -516,7 +516,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/checkWorkerPhone", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> checkWorkerPhone(String workerPhone) {
+	public synchronized Map<String, Object> checkWorkerPhone(String workerPhone) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (workerPhone(workerPhone) == 0) {
 			map.clear();
@@ -547,7 +547,7 @@ public class AdministratorController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerDisabilityCard, String workerPhone,
+	public synchronized ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerDisabilityCard, String workerPhone,
 			String workerBankCard, String workerPaypal, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request, int userRegisted) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerDisabilityCard, workerBankCard, workerPaypal);
 		boolean flag = true;
@@ -625,7 +625,7 @@ public class AdministratorController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerCenter", method = RequestMethod.GET)
-	public ModelAndView workerCenter(HttpSession session) {
+	public synchronized ModelAndView workerCenter(HttpSession session) {
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		worker worker = workerService.getWorkerByUserId(userId);
 		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKERCENTER, Constants.WORKER, worker);
@@ -651,7 +651,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/updatePassWord", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updatePassWordPOST(String oldPassWord, String newPassWord, String username, HttpSession session) {
+	public synchronized Map<String, Object> updatePassWordPOST(String oldPassWord, String newPassWord, String username, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (passWord(oldPassWord, session) == 1) {
 			int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
@@ -686,7 +686,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/updateWorker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateWorkerPOST(String workerPhone, String workerBankCard, String workerPaypal, HttpSession session) {
+	public synchronized Map<String, Object> updateWorkerPOST(String workerPhone, String workerBankCard, String workerPaypal, HttpSession session) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
 		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
@@ -720,39 +720,39 @@ public class AdministratorController {
 		return map;
 	}
 
-	@RequestMapping(value = "/updateWorker2", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> updateWorkerPOST2(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerPhone, String workerBankCard, String workerPaypal,
-			HttpSession session) {
-		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
-		Map<String, Object> map = new HashMap<String, Object>();
-		if (workerPhone(workerPhone) == 1) {
-			map.clear();
-			map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
-			return map;
-		}
-		worker worker = new worker();
-		if (!workerImage.isEmpty()) {
-			try {
-				worker.setWorkerImage(workerImage.getBytes());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		int workerId = workerService.getWorkerIdByUserId(userId);
-		worker.setWorkerId(workerId);
-		worker.setWorkerBankCard(workerBankCard);
-		worker.setWorkerPaypal(workerPaypal);
-		worker.setWorkerPhone(workerPhone);
-
-		worker.setUpdateTime(new Date());
-		workerService.updateByPrimaryKeySelective(worker);
-		map.clear();
-		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
-		map.put(Constants.REPLAY, 1);
-		return map;
-	}
+//	@RequestMapping(value = "/updateWorker2", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Map<String, Object> updateWorkerPOST2(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerPhone, String workerBankCard, String workerPaypal,
+//			HttpSession session) {
+//		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		if (workerPhone(workerPhone) == 1) {
+//			map.clear();
+//			map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
+//			return map;
+//		}
+//		worker worker = new worker();
+//		if (!workerImage.isEmpty()) {
+//			try {
+//				worker.setWorkerImage(workerImage.getBytes());
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+//		int workerId = workerService.getWorkerIdByUserId(userId);
+//		worker.setWorkerId(workerId);
+//		worker.setWorkerBankCard(workerBankCard);
+//		worker.setWorkerPaypal(workerPaypal);
+//		worker.setWorkerPhone(workerPhone);
+//
+//		worker.setUpdateTime(new Date());
+//		workerService.updateByPrimaryKeySelective(worker);
+//		map.clear();
+//		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
+//		map.put(Constants.REPLAY, 1);
+//		return map;
+//	}
 
 	/**
 	 * 检查用户名是否重复

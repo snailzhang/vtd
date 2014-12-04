@@ -45,6 +45,7 @@ public interface Constants {
 	public static final String MESSAGE = "message";//信息
 	public static final String REPLAY = "replay";//查询结果回传
 	public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";//日期时间格式
+	public static final String DATETIME = "yyyyMMdd-HHmmss";//日期时间格式
 	public static final String DATE_FORMAT_HAVE_LINE = "yyyy-MM-dd";//日期时间格式
 	public static final String DATE_FORMAT = "yyyyMMdd";//日期时间格式
 	public static final String MM = "mm";//毫秒

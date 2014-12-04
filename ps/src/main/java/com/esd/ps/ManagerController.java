@@ -115,7 +115,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> managerPost(String userNameCondition, int userType, int page, int year, int month, int taskUpload) {
+	public synchronized Map<String, Object> managerPost(String userNameCondition, int userType, int page, int year, int month, int taskUpload) {
 		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, year, month);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -191,7 +191,7 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public ModelAndView workerDetailGET(int userId, HttpServletRequest request) {
+	public synchronized ModelAndView workerDetailGET(int userId, HttpServletRequest request) {
 		Map<String, Object> model = new HashMap<>();
 		try {
 			String username = new String(request.getParameter("username").getBytes("iso-8859-1"), "utf-8");
@@ -218,7 +218,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, int year, int month, int statu, String taskNameCondition) {
+	public synchronized Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, int year, int month, int statu, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<>();
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
@@ -258,7 +258,10 @@ public class ManagerController {
 					workerRecordTrans.setTaskStatu(MSG_UNUPLOAD);
 				} else if (workerRecord.getTaskStatu() == 2) {
 					workerRecordTrans.setTaskStatu(MSG_TIME_OUT);
+				}else if (workerRecord.getTaskStatu() == 3) {
+					workerRecordTrans.setTaskStatu("已放弃");
 				}
+				
 				if (workerRecord.getTaskUploadTime() == null) {
 					workerRecordTrans.setTaskUploadTime(Constants.EMPTY);
 				} else {

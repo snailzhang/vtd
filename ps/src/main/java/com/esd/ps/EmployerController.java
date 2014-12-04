@@ -283,7 +283,7 @@ public class EmployerController {
 	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		int totle = taskService.getTaskCountByPackIdAndTaskStatus(packId, taskStuts, taskNameCondition);
 		if (totle == 0) {
@@ -314,7 +314,7 @@ public class EmployerController {
 				if (task.getTaskMarkTime() == null) {
 					taskTrans.setTaskUploadTime(MSG_DOING);
 				} else {
-					taskTrans.setTaskUploadTime(sdf.format(task.getTaskUploadTime()));
+					taskTrans.setTaskUploadTime("已上传");
 				}
 			}
 			list.add(taskTrans);
@@ -338,8 +338,9 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> unzip(String packName,String noteId, int taskLvl, int packLockTime, HttpSession session) {
+	public synchronized Map<String, Object> unzip(String packName,String noteId, int taskLvl, int packLockTime, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
 		String url = employerService.getUploadUrlByEmployerId(employerId);
 		File fold = new File(url);
@@ -385,7 +386,7 @@ public class EmployerController {
 				packWithBLOBs.setNoteId(noteId);
 				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(1);
-				packWithBLOBs.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+				packWithBLOBs.setCreateId(userId);
 				packWithBLOBs.setCreateTime(new Date());
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				packWithBLOBs.setCreateMethod(items[1].toString());
@@ -397,9 +398,9 @@ public class EmployerController {
 			}
 			// 从临时文件取出要解压的文件上传TaskService
 			if (file.isDirectory()) {
-				storeDataFold(packName, taskLvl, url);
+				storeDataFold(packName, taskLvl, url,userId);
 			} else {
-				storeDataZIP(packName, taskLvl, url);
+				storeDataZIP(packName, taskLvl, url,userId);
 			}
 
 		} catch (IOException e) {
@@ -420,7 +421,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/downPack", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downPackGET(int packId, HttpServletRequest request) {
+	public synchronized Map<String, Object> downPackGET(int packId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", packId);
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
@@ -625,7 +626,7 @@ public class EmployerController {
 	 * @param packName
 	 * @param taskLvl
 	 */
-	public void storeDataZIP(String packName, int taskLvl, String url) {
+	public void storeDataZIP(String packName, int taskLvl, String url,int userId) {
 		InputStream in = null;
 		String zipEntryName = null;
 		int packId = 0;
@@ -673,6 +674,7 @@ public class EmployerController {
 					taskDir = packName.substring(0, (packName.length() - 4));
 				}
 				taskWithBLOBs.setTaskDir(taskDir);
+				taskWithBLOBs.setCreateId(userId);
 				taskWithBLOBs.setCreateTime(new Date());
 				// 包内任务的上传状态
 				taskWithBLOBs.setTaskUpload(false);
@@ -703,12 +705,12 @@ public class EmployerController {
 	 * @param session
 	 * @param taskLvl
 	 */
-	public void storeDataFold(String packName, int taskLvl, String url) {
+	public void storeDataFold(String packName, int taskLvl, String url,int userId) {
 		File fold = new File(url + Constants.SLASH + packName);
 		File[] list = fold.listFiles();
 		String foldUrl = url + Constants.SLASH + packName;
 		
-		int packId = storeMoreFold(packName, packName, taskLvl, foldUrl, list);
+		int packId = storeMoreFold(packName, packName, taskLvl, foldUrl, list,userId);
 
 		File fd = new File(packName);
 		fd.delete();
@@ -729,7 +731,7 @@ public class EmployerController {
 	 * @param foldUrl
 	 * @param list
 	 */
-	public int storeMoreFold(String packName, String taskDir, int taskLvl, String foldUrl, File[] list) {
+	public int storeMoreFold(String packName, String taskDir, int taskLvl, String foldUrl, File[] list,int userId) {
 		int packId = 0;
 
 		for (int i = 0; i < list.length; i++) {
@@ -738,7 +740,7 @@ public class EmployerController {
 				File fold = new File(foldUrl);
 				File[] list1 = fold.listFiles();
 				taskDir = taskDir + Constants.SLASH + list[i].getName();
-				storeMoreFold(packName, taskDir, taskLvl, foldUrl, list1);
+				storeMoreFold(packName, taskDir, taskLvl, foldUrl, list1,userId);
 				continue;
 			}
 			String fileName = list[i].getName();
@@ -759,6 +761,7 @@ public class EmployerController {
 			// 存入压缩包的层次结构
 
 			taskWithBLOBs.setTaskDir(taskDir);
+			taskWithBLOBs.setCreateId(userId);
 			taskWithBLOBs.setCreateTime(new Date());
 			// 包内任务的上传状态
 			taskWithBLOBs.setTaskUpload(false);

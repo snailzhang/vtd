@@ -152,7 +152,7 @@
 		,
 		<include refid="Blob_Column_List" />
 		from task
-		where worker_id IS NULL and pack_id = #{packId,jdbcType=INTEGER}
+		where (worker_id IS NULL or worker_id = 0) and pack_id = #{packId,jdbcType=INTEGER}
 		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
@@ -473,6 +473,78 @@
 			</if>
 		</set>
 		where task_id = #{taskId,jdbcType=INTEGER}
+	</update>
+	<update id="updateDownTaskByTaskId" parameterType="com.esd.db.model.taskWithBLOBs">
+		update task
+		<set>
+			<if test="packId != null">
+				pack_id = #{packId,jdbcType=INTEGER},
+			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="faultId != null">
+				fault_id = #{faultId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId != null">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="taskDir != null">
+				task_dir = #{taskDir,jdbcType=VARCHAR},
+			</if>
+			<if test="taskName != null">
+				task_name = #{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective,jdbcType=BIT},
+			</if>
+			<if test="taskUpload != null">
+				task_upload = #{taskUpload,jdbcType=BIT},
+			</if>
+			<if test="taskLvl != null">
+				task_lvl = #{taskLvl,jdbcType=INTEGER},
+			</if>
+			<if test="taskDownloadTime != null">
+				task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				create_method = #{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=INTEGER},
+			</if>
+			<if test="taskWav != null">
+				task_wav = #{taskWav,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTag != null">
+				task_tag = #{taskTag,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="taskTextgrid != null">
+				task_textgrid = #{taskTextgrid,jdbcType=LONGVARBINARY},
+			</if>
+		</set>
+		where task_id = #{taskId,jdbcType=INTEGER} and worker_id > 0
 	</update>
 	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.esd.db.model.taskWithBLOBs">
 		update task

@@ -130,7 +130,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerPost(HttpSession session, HttpServletRequest request,int taskEffective) {
+	public synchronized Map<String, Object> workerPost(HttpSession session, HttpServletRequest request,int taskEffective) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("taskTotal:{}", taskService.getUndoTaskCount());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -215,15 +215,27 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/GiveUpTask", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> GiveUpTaskPost(HttpSession session,int taskId) {
+	public synchronized Map<String, Object> GiveUpTaskPost(HttpSession session,int taskId) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString())); 
-		workerRecordService.updateByGiveUp(workerId, 3, taskId, 0);
+		//StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		workerRecordService.updateByGiveUp(workerId, 3, taskId, 0,"method");
+		
 		task task = new task();
 		task.setWorkerId(0);
+		task.setVersion(1);
 		task.setTaskMarkTime(0.00);
+		task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		task.setTaskId(taskId);
 		taskService.updateByTaskId(task);
+		
+		int packId = workerRecordService.getPackIdByTaskId(taskId);
+		if (taskService.getUndoTaskCountByPackId(packId) > 0) {
+			packWithBLOBs pack = new packWithBLOBs();
+			pack.setPackId(packId);
+			pack.setPackStatus(0);
+			packService.updateByPrimaryKeySelective(pack);
+		}
 		map.put(Constants.REPLAY, 1);		
 		return map;
 	}
@@ -248,7 +260,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/workerHistoryPack", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerHistoryPackPOST(HttpSession session, int page, String downPackName) {
+	public synchronized Map<String, Object> workerHistoryPackPOST(HttpSession session, int page, String downPackName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -301,7 +313,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/workerHistoryTask", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerHistoryTaskPOST(String downPackName) {
+	public synchronized Map<String, Object> workerHistoryTaskPOST(String downPackName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downPackName:{}", downPackName);
 
@@ -354,7 +366,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/downOncePack", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downOncePack(String downPackName, HttpServletRequest request, HttpSession session) {
+	public synchronized Map<String, Object> downOncePack(String downPackName, HttpServletRequest request, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String url = WorkerController.url(request);
 		File f = new File(url);
@@ -401,7 +413,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/downOneTask", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downOneTask(HttpServletRequest request, String taskName, int taskId) {
+	public synchronized Map<String, Object> downOneTask(HttpServletRequest request, String taskName, int taskId) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String url = WorkerController.url(request);
 		File f = new File(url);
@@ -436,7 +448,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/downTask", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
+	public synchronized Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", downTaskCount);
 		int countTaskDoing = taskService.getCountTaskDoing();
@@ -446,7 +458,7 @@ public class WorkerController {
 			map.put(Constants.MESSAGE, MSG_TASK_NOT_ENOUGH);
 			return map;
 		}
-		String userId = session.getAttribute(Constants.USER_ID).toString();
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		int packId = packMapper.selectPackIdOrderByPackLvl();
 
@@ -456,7 +468,7 @@ public class WorkerController {
 		}
 		String url = WorkerController.url(request);
 		logger.debug("url:{}", url);
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
 		String downPackName = sdf.format(new Date()) + Constants.UNDERLINE + downTaskCount + Constants.UNDERLINE + userId + Constants.POINT + Constants.ZIP;
 		File f = new File(url);
 		if (f.exists() == false) {
@@ -496,6 +508,7 @@ public class WorkerController {
 				// 更新task表
 				taskWithBLOBs.setTaskDownloadTime(new Date());
 				taskWithBLOBs.setWorkerId(workerId);
+				taskWithBLOBs.setUpdateId(userId);
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				taskWithBLOBs.setUpdateMethod(items[1].toString());
 				taskService.updateByPrimaryKeySelective(taskWithBLOBs);
@@ -533,6 +546,9 @@ public class WorkerController {
 
 			e.printStackTrace();
 		}
+		/**
+		 * 查看包任务情况,如果任务都已下载则更行packStatus
+		 */
 		if (taskService.getUndoTaskCountByPackId(packId) == 0) {
 			packWithBLOBs pack = new packWithBLOBs();
 			pack.setPackId(packId);
@@ -554,7 +570,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/upTagAndTextGrid", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs, HttpServletRequest request) {
+	public synchronized Map<String, Object> upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);
@@ -650,7 +666,7 @@ public class WorkerController {
 			}
 		}
 		/**
-		 * 查看任务包的任务完成情况,当任务数等于完成数时更新pack表的pack_status
+		 * 查看任务包的任务完成情况,当任务数等于已完成时更新pack表的pack_status
 		 */
 		if (task_id > 0) {
 			int packId = workerRecordService.getPackIdByTaskId(task_id);

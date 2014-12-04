@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 发包商
+ * 审核员
  * 
  * @author chen
  * 
@@ -70,7 +70,7 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> inspectorPost(String userName, int timeMark, int page, HttpSession session) {
+	public synchronized Map<String, Object> inspectorPost(String userName, int timeMark, int page, HttpSession session) {
 		logger.debug("userName:{},timeMark:{}", userName, timeMark);
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3, page, Constants.ROW);
@@ -102,7 +102,7 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/inspectorList", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> inspectorListPost(int workerId) {
+	public synchronized Map<String, Object> inspectorListPost(int workerId) {
 		Map<String, Object> map = new HashMap<>();
 		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, 0, 0, "", 0, 0);
 		List<WorkerRecordTrans> list2 = new ArrayList<>();
@@ -122,6 +122,7 @@ public class InspectorController {
 		if (list2 == null || list2.size() == 0) {
 			map.put("firstDate", "");
 			map.put("lastDate", "");
+			map.put("last", "");
 		} else {
 			map.put("firstDate", list2.get(0).getTaskUploadTime());
 			map.put("lastDate", list2.get(list2.size() - 1).getTaskUploadTime());
@@ -157,7 +158,7 @@ public class InspectorController {
 
 	@RequestMapping(value = "/downAuditTask", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> downAuditTaskPost(String list, int workerId, HttpServletRequest request) {
+	public synchronized Map<String, Object> downAuditTaskPost(String list, int workerId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
 		String url = request.getServletContext().getRealPath(Constants.SLASH);
 		url = url + "auditTemp";
@@ -166,7 +167,7 @@ public class InspectorController {
 			f.mkdir();
 		}
 		workerRecord workerRecord = workerRecordService.getWorkerRecordByWorkerId(workerId);
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME);
 		String packName = sdf.format(new Date()) + "_" + workerRecord.getUserName() + ".zip";
 		List<taskWithBLOBs> list1 = new ArrayList<>();
 		String taskId[] = list.split("_");
@@ -190,7 +191,7 @@ public class InspectorController {
 
 	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, HttpSession session) {
+	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 
 		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()));

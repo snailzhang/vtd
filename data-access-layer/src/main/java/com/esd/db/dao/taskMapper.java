@@ -33,6 +33,8 @@ public interface taskMapper {
     List<taskWithBLOBs> selectTaskOrderByTaskLvl(Map<String, Object> map);
 
     int updateByPrimaryKeySelective(taskWithBLOBs record);
+    
+    int updateDownTaskByTaskId(taskWithBLOBs record);
 
     int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record);
 

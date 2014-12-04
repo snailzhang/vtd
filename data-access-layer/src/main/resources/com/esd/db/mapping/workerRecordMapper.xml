@@ -545,6 +545,9 @@
 			<if test="version != null">
 				version = (${version} + 1),
 			</if>
+			<if test="updateMethod != null">
+				update_method = "${updateMethod}"
+			</if>
 		</set>
 		where task_statu = 0 and worker_id = ${workerId} and task_id = ${taskId}
 		<if test="version != null">

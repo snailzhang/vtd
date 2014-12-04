@@ -32,6 +32,8 @@ public interface TaskService {
 	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId);
 
 	int updateByPrimaryKeySelective(taskWithBLOBs record);
+	
+	int updateDownTaskByTaskId(taskWithBLOBs record);
 
 	int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record);
 

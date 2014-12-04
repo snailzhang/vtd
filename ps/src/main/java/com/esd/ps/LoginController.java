@@ -119,7 +119,7 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping(value = "/quit", method = RequestMethod.GET)
-	public ModelAndView quitGet(HttpSession session, HttpServletRequest request) {
+	public synchronized ModelAndView quitGet(HttpSession session, HttpServletRequest request) {
 		session.removeAttribute(Constants.USER_ID);
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
@@ -144,7 +144,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/checkUserName", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> checkUserName(String username) {
+	public synchronized Map<String, Object> checkUserName(String username) {
 
 		return checkLoginName(username);
 	}
@@ -159,7 +159,7 @@ public class LoginController {
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView loginPost(String username, String password, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
+	public synchronized ModelAndView loginPost(String username, String password, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
 		}

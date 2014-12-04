@@ -257,5 +257,11 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.updateByWorkerId(map);
 	}
 
+	@Override
+	public int updateDownTaskByTaskId(taskWithBLOBs record) {
+		
+		return taskMapper.updateDownTaskByTaskId(record);
+	}
+
 
 }

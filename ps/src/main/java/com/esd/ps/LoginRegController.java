@@ -95,7 +95,7 @@ public class LoginRegController {
 	 */
 	@RequestMapping(value = "/regCheckUserName", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> regCheckUserName(String username) {
+	public synchronized Map<String, Object> regCheckUserName(String username) {
 
 		return regCheckLoginName(username);
 	}
@@ -110,7 +110,7 @@ public class LoginRegController {
 	 */
 	@RequestMapping(value = "/loginReg", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView loginRegPost(String username, String password, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
+	public synchronized ModelAndView loginRegPost(String username, String password, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request) {
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
 		}

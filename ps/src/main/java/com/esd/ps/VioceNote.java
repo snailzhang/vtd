@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -71,7 +72,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> VoiceNotePOST(String condition, int page) {
+	public synchronized Map<String, Object> VoiceNotePOST(String condition, int page) {
 		logger.debug("condition:{}", condition);
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<voiceNoteTrans> list = new ArrayList<>();
@@ -102,7 +103,7 @@ public class VioceNote {
 	 * @return
 	 */
 	@RequestMapping(value = "/voiceNoteContent", method = RequestMethod.GET)
-	public ModelAndView VoiceNoteContentGET(int id, int type) {
+	public synchronized ModelAndView VoiceNoteContentGET(int id, int type) {
 		voiceNoteWithBLOBs voiceNote = voiceNoteService.selectByPrimaryKey(id);
 		if (type == 0) {
 			return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.SHOWNOTE, Constants.VOICENOTE, voiceNote);
@@ -119,7 +120,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/addVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> addVoiceNotePOST(String title, String content, HttpSession session) {
+	public synchronized Map<String, Object> addVoiceNotePOST(String title, String content, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
 
@@ -161,7 +162,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/updateVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateVoiceNotePOST(int id, String title, String content, HttpSession session) {
+	public synchronized Map<String, Object> updateVoiceNotePOST(int id, String title, String content, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
 		voiceNote.setId(id);
@@ -185,7 +186,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/deleteVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> deleteVoiceNotePOST(int id) {
+	public synchronized  Map<String, Object> deleteVoiceNotePOST(int id) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteService.deleteByPrimaryKey(id);
 		map.put(Constants.REPLAY, 1);
@@ -202,8 +203,10 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> uploadImagePOST(@RequestParam(value = "upfile", required = false) MultipartFile noteImage, HttpServletRequest request) {
+	public synchronized Map<String, Object> uploadImagePOST(@RequestParam(value = "upfile", required = false) MultipartFile noteImage, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
+		String imageName = null;
+		
 		if (noteImage.isEmpty()) {
 			return map;
 		}
@@ -214,7 +217,12 @@ public class VioceNote {
 			if (!f.exists()) {
 				f.mkdir();
 			}
-			File uploadFile = new File(url, noteImage.getOriginalFilename());
+			String uuid = UUID.randomUUID().toString();
+			imageName = noteImage.getOriginalFilename();
+
+			String str[] = imageName.split("\\.");
+			imageName = uuid + Constants.POINT +str[1];
+			File uploadFile = new File(url, imageName);
 			InputStream is = noteImage.getInputStream();
 			FileOutputStream fos = new FileOutputStream(uploadFile);
 			byte[] tmp = new byte[1024];
@@ -231,15 +239,14 @@ public class VioceNote {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.IMAGE + Constants.SLASH + noteImage.getOriginalFilename();
-		String name = noteImage.getOriginalFilename();
+		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.IMAGE + Constants.SLASH + imageName;
 
 		map.clear();
-		map.put(Constants.ORIGINALNAME, name);
-		map.put(Constants.NAME, name);
+		map.put(Constants.ORIGINALNAME, imageName);
+		map.put(Constants.NAME, imageName);
 		map.put(Constants.URL, wrongPath);
 		map.put(Constants.SIZE, noteImage.getSize());
-		map.put(Constants.TYPE, name.substring(name.indexOf(Constants.POINT) + 1, name.length()));
+		map.put(Constants.TYPE, imageName.substring(imageName.indexOf(Constants.POINT) + 1, imageName.length()));
 		map.put(Constants.STATE, Constants.SUCCESS);
 		return map;
 	}
