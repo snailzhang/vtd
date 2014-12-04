@@ -422,7 +422,7 @@
 									"<tr>"+
 										"<td>"+(i+1)+"</td>"+
 										"<td>"+item.packName+"</td>"+
-										"<td colspan='8'>任务包解压中.......</td>"+
+										"<td colspan='8'>任务包上传中.......</td>"+
 									"</tr>"
 								);
 							}else{

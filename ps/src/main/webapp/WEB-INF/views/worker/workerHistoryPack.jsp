@@ -106,6 +106,8 @@
 									tS = "已上传";
 								}else if(item.taskStatus == 2){
 									tS = "超时";
+								}else if(item.taskStatus == 3){
+									tS = "放弃";
 								}
 								addBodyTr +=
 									"<tr class='success'>"+
