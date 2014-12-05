@@ -32,7 +32,7 @@
 					<div class="form-group">
 						<select class="form-control" id="statu">
 							<option value="0">不合格</option>
-							<option value="1">合格</option>
+							<option value="1" selected="selected">合格</option>
 						</select>
 					</div>
 					<div class="form-group" id="reTime">
@@ -63,8 +63,10 @@
 		var workerId = '${workerId}';
 		var taskList = "";
 		var firstDate = "";
+		var lastDate = "";
 		var day = 0;
 		$(document).ready(function(){
+			$("#reTime").hide();
 			loadTaskList();
 			$("#statu").change(function(){
 				$this = $(this);
@@ -103,7 +105,7 @@
 				}
 				$.ajax({
 					type:'POST',
-					data:{"workerId":workerId,"taskEffective":sta,"day":day,"firstDate":firstDate,},
+					data:{"workerId":workerId,"taskEffective":sta,"day":day,"firstDate":firstDate,"lastDate":lastDate},
 					url:'${contextPath}/security/auditing',
 					dataType:'json',
 					success:function(data){
@@ -120,6 +122,7 @@
 				});
 			});
 		});
+		/*--------------------------------------加载列表-------------------------------------------------------*/
 		loadTaskList = function(){
 			$.ajax({
 				type:'POST',
@@ -134,6 +137,7 @@
 					}else{
 						
 						firstDate = data.firstDate;
+						lastDate = data.lastDate;
 						$("#taskUlT").text("最早上传时间："+firstDate+"最后上传时间："+data.lastDate);
 						$.each(data.list,function(i,item){
 							if(i == 0){

@@ -199,8 +199,11 @@
 								);
 							});
 						}
-						var endTime = todayTime+mm ;
-						window.setInterval(function(){ShowCountDown(endTime,$("#taskLeftTimeInterval span"));}, tltInterval);
+						if(mm !=0){
+							var endTime = todayTime+mm ;
+							window.setInterval(function(){ShowCountDown(endTime,$("#taskLeftTimeInterval span"));}, tltInterval);
+						}
+						
 						$("#downloadPanel").hide();
 						$("#uploadPanel").show();
 					}
