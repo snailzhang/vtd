@@ -19,7 +19,6 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">待审核任务信息<span id="taskUlT" class="pull-right text-success"></span></div>
