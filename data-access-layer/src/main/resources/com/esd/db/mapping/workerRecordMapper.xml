@@ -31,6 +31,13 @@
 		create_method, update_time,
 		update_method, task_effective,inspector_id,version
 	</sql>
+	<select id="selectPackIdByDateTime" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT pack_id as packId FROM worker_record WHERE
+		worker_id = ${workerId}
+		and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
+		and <![CDATA[(task_upload_time < '${endDate}' or task_upload_time = '${endDate}')]]>
+		GROUP BY pack_id
+	</select>
 	<select id="selectWorkerRecordLikeDownPackName" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
@@ -124,7 +131,8 @@
 	<select id="selectSUMTaskMarkTimeByPackId" resultType="java.lang.Double" parameterType="java.lang.Integer">
 		SELECT SUM(task_mark_time) FROM worker_record
 
-		WHERE pack_id = #{packId,jdbcType=INTEGER} and task_effective = 1
+		WHERE pack_id = #{packId,jdbcType=INTEGER} and
+		task_effective = 1
 
 	</select>
 	<select id="selectAllCountByWorkerId" resultType="java.lang.Integer" parameterType="java.util.Map">
@@ -534,7 +542,9 @@
 				version = (#{version,jdbcType=INTEGER} + 1),
 			</if>
 		</set>
-		where task_statu = 1 and worker_id = #{workerId} and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
+		where task_statu = 1 and worker_id = #{workerId}
+		and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
+		and <![CDATA[(task_upload_time < '${endDate}' or task_upload_time = '${endDate}')]]>
 		<if test="version != null">
 			and version = #{version,jdbcType=INTEGER},
 		</if>
@@ -622,9 +632,6 @@
 			</if>
 		</set>
 		where record_id = #{recordId,jdbcType=INTEGER}
-		<if test="version != null">
-			and version = #{version,jdbcType=INTEGER}
-		</if>
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.workerRecord">
 		update worker_record

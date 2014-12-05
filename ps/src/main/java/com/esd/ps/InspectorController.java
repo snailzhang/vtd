@@ -19,8 +19,10 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.model.workerRecord;
+import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.ps.model.WorkerRecordTrans;
@@ -49,6 +51,8 @@ public class InspectorController {
 	private WorkerRecordService workerRecordService;
 	@Autowired
 	private TaskService taskService;
+	@Autowired
+	private PackService packService;
 
 	/**
 	 * 审核列表页
@@ -191,17 +195,33 @@ public class InspectorController {
 
 	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, HttpSession session) {
+	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 
-		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()));
+		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()), lastDate);
 		int userId = Integer.parseInt(session.getAttribute("userId").toString());
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate);
+		taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate, lastDate);
+		/**
+		 * 查看任务包的任务完成情况,当任务数等于已完成时更新pack表的pack_status
+		 */
+		if (taskEffective == 1) {
+			List<Integer> packList = workerRecordService.getPackIdByDateTime(workerId, firstDate, lastDate);
+			for (Iterator<Integer> iterator = packList.iterator(); iterator.hasNext();) {
+				Integer packId = (Integer) iterator.next();
+				if (taskService.getTaskCountByPackId(packId) == workerRecordService.getFinishTaskCountByPackId(packId)) {
+					packWithBLOBs pack = new packWithBLOBs();
+					pack.setPackId(packId);
+					pack.setPackStatus(1);
+					packService.updateByPrimaryKeySelective(pack);
+				}
+
+			}
+		}
+
 		map.clear();
 		map.put(Constants.REPLAY, 1);
 		map.put(Constants.MESSAGE, "审核完成");
 		return map;
 	}
-
 }

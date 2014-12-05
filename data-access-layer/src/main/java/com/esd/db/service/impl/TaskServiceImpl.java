@@ -246,7 +246,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public int updateByWorkerId(int inspector, int taskEffective, int updateId, String updateMethod, int workerId, String firstDate) {
+	public int updateByWorkerId(int inspector, int taskEffective, int updateId, String updateMethod, int workerId, String firstDate,String endDate) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("inspector", inspector);
 		map.put("taskEffective", taskEffective);
@@ -254,6 +254,7 @@ public class TaskServiceImpl implements TaskService {
 		map.put("updateMethod", updateMethod);
 		map.put("workerId", workerId);
 		map.put("firstDate", firstDate);
+		map.put("endDate", endDate);
 		return taskMapper.updateByWorkerId(map);
 	}
 

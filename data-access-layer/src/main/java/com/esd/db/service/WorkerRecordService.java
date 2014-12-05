@@ -25,7 +25,7 @@ public interface WorkerRecordService {
 	
 	int updateByGiveUp(int workerId,int taskStatu,int taskId,int version,String updateMethod);
 	
-	int updateByWorkerId(int taskEffective,int taskLockTime,int workerId,String firstDate,int inspectorId);
+	int updateByWorkerId(int taskEffective,int taskLockTime,int workerId,String firstDate,int inspectorId,String endDate);
 	
 	List<workerRecord> getDoingTask();
 	
@@ -74,4 +74,6 @@ public interface WorkerRecordService {
 	int getWorkerIdCountGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
     
 	List<workerRecord> getByWorkerIdAndEffective(int workerId,int taskEffective,int taskStatu);
+
+	List<Integer> getPackIdByDateTime(int workerId,String firstDate,String endDate);
 }

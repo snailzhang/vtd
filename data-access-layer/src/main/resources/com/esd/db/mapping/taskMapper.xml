@@ -698,7 +698,7 @@
 			<if test="inspectorId != null">
 				inspector_id = #{inspectorId},
 			</if>
-			<if test="taskEffective == 2">
+			<if test="taskEffective == 0">
 				task_mark_time = null,
 				task_upload_time = null,
 				task_effective = false,
@@ -719,6 +719,8 @@
 				version = #{version}
 			</if>
 		</set>
-		where worker_id = #{workerId} and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
+		where worker_id = #{workerId} 
+		and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
+		and <![CDATA[(task_upload_time < '${endDate}' or task_upload_time = '${endDate}')]]>
 	</update>
 </mapper>

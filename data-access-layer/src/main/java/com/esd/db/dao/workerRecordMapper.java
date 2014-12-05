@@ -74,4 +74,6 @@ public interface workerRecordMapper {
 	int selectWorkerIdCountGroupByWorkerId(Map<String, Object> map);
 	
 	List<workerRecord> selectByWorkerIdAndEffective(Map<String, Object> map);
+
+	List<Integer> selectPackIdByDateTime(Map<String, Object> map);
 }

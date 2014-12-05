@@ -41,7 +41,7 @@ public interface TaskService {
 
 	int updateByPackId(task task);
 
-	int updateByWorkerId(int inspector,int taskEffective,int updateId,String updateMethod,int workerId,String firstDate);
+	int updateByWorkerId(int inspector,int taskEffective,int updateId,String updateMethod,int workerId,String firstDate,String endDate);
 	
 	int getUndoTaskCount();
 

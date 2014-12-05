@@ -264,7 +264,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId) {
+	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId,String endDate) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
@@ -277,9 +277,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		if (taskLockTime == 0) {
 			map.put("taskLockTime", null);
 		} else {
-			map.put("taskLockTime", taskLockTime * 3600);
+			map.put("taskLockTime", taskLockTime * 3600*1000);
 		}
 		map.put("firstDate", firstDate);
+		map.put("endDate", endDate);
 		map.put("inspectorId", inspectorId);
 		return workerRecordMapper.updateByWorkerId(map);
 	}
@@ -335,6 +336,17 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("statu", statu);
 		map.put("taskEffective", taskEffective);
 		return workerRecordMapper.selectCountByWorkerId(map);
+	}
+
+	@Override
+	public List<Integer> getPackIdByDateTime(int workerId, String firstDate, String endDate) {
+		Map<String, Object> map = new HashMap<>();
+		map.clear();
+		map.put("workerId", workerId);
+		map.put("firstDate", firstDate);
+		map.put("endDate", endDate);
+		
+		return workerRecordMapper.selectPackIdByDateTime(map);
 	}
 
 }

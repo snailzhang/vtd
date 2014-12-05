@@ -130,12 +130,12 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> workerPost(HttpSession session, HttpServletRequest request,int taskEffective) {
+	public synchronized Map<String, Object> workerPost(HttpSession session, HttpServletRequest request, int taskEffective) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("taskTotal:{}", taskService.getUndoTaskCount());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);
-		List<workerRecord> listAll = workerRecordService.getByWorkerIdAndEffective(workerId, 3,0);
+		List<workerRecord> listAll = workerRecordService.getByWorkerIdAndEffective(workerId, 3, 0);
 		logger.debug("workerId:{},listWorkerRecord:{}", workerId, listAll.isEmpty());
 		// 没有正在进行的任务
 		if (listAll == null || listAll.isEmpty()) {
@@ -145,20 +145,20 @@ public class WorkerController {
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
 			//
-			//taskEffective = 4 查询未审核和不合格的
-			int auditingCount = workerRecordService.getCountByWorkerId(workerId,1,4);
+			// taskEffective = 4 查询未审核和不合格的
+			int auditingCount = workerRecordService.getCountByWorkerId(workerId, 1, 4);
 			manager manager = managerService.selectByPrimaryKey(1);
-			//worker可下载任务个数
+			// worker可下载任务个数
 			int downCount = 0;
-			if((manager.getDownMaxCount() - auditingCount) > manager.getDownCount()){
+			if ((manager.getDownMaxCount() - auditingCount) > manager.getDownCount()) {
 				downCount = manager.getDownCount();
-			}else{
+			} else {
 				downCount = (manager.getDownMaxCount() - auditingCount);
 			}
-			if(downCount > countTaskDoing){
+			if (downCount > countTaskDoing) {
 				downCount = countTaskDoing;
 			}
-			
+
 			String noteId = packService.getNoteIdByPackId();
 			map.put(Constants.COUNTPACKDOING, countPackDoing);
 			map.put(Constants.COUNTTASKDOING, countTaskDoing);
@@ -167,8 +167,8 @@ public class WorkerController {
 			map.put(Constants.WORKERMARK, 0);
 			return map;
 		}
-		List<workerRecord> listWorkerRecord = workerRecordService.getByWorkerIdAndEffective(workerId, taskEffective,0);		
-		logger.debug("listWorkerRecord:{},",listWorkerRecord);
+		List<workerRecord> listWorkerRecord = workerRecordService.getByWorkerIdAndEffective(workerId, taskEffective, 0);
+		logger.debug("listWorkerRecord:{},", listWorkerRecord);
 
 		workerMark = 1;
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -203,24 +203,26 @@ public class WorkerController {
 			map.put("mm", mm);
 		} catch (ParseException e) {
 			e.printStackTrace();
-		}		
+		}
 		session.setAttribute(Constants.WORKER_ID, workerId);
 		return map;
 	}
+
 	/**
 	 * 放弃任务
+	 * 
 	 * @param session
 	 * @param taskId
 	 * @return
 	 */
 	@RequestMapping(value = "/GiveUpTask", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> GiveUpTaskPost(HttpSession session,int taskId) {
+	public synchronized Map<String, Object> GiveUpTaskPost(HttpSession session, int taskId) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString())); 
-		//StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		workerRecordService.updateByGiveUp(workerId, 3, taskId, 0,"method");
-		
+		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		// StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		workerRecordService.updateByGiveUp(workerId, 3, taskId, 0, "method");
+
 		task task = new task();
 		task.setWorkerId(0);
 		task.setVersion(1);
@@ -228,7 +230,7 @@ public class WorkerController {
 		task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		task.setTaskId(taskId);
 		taskService.updateByTaskId(task);
-		
+
 		int packId = workerRecordService.getPackIdByTaskId(taskId);
 		if (taskService.getUndoTaskCountByPackId(packId) > 0) {
 			packWithBLOBs pack = new packWithBLOBs();
@@ -236,7 +238,7 @@ public class WorkerController {
 			pack.setPackStatus(0);
 			packService.updateByPrimaryKeySelective(pack);
 		}
-		map.put(Constants.REPLAY, 1);		
+		map.put(Constants.REPLAY, 1);
 		return map;
 	}
 
@@ -580,7 +582,7 @@ public class WorkerController {
 		}
 		List<String> listMath = new ArrayList<String>();
 		List<String> listAll = new ArrayList<String>();
-		int task_id = Constants.ZERO;
+		// int task_id = Constants.ZERO;
 		for (int i = 0; i < files.length; i++) {
 			listAll.add(files[i].getOriginalFilename());
 		}
@@ -644,13 +646,14 @@ public class WorkerController {
 								workerRecord workerRecord = new workerRecord();
 								workerRecord.setTaskUploadTime(new Date());
 								workerRecord.setTaskStatu(1);
+								workerRecord.setTaskEffective(0);
 								workerRecord.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
 								workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
 								StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
 								workerRecord.setUpdateMethod(items1[1].toString());
 								workerRecordService.updateByPrimaryKeySelective(workerRecord);
 								listMath.add(uploadTaskNameI);
-								task_id = taskId;
+								// task_id = taskId;
 							} else if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
 								taskWithBLOBs.setTaskTextgrid(bytes);
 								taskWithBLOBs.setTaskId(taskId);
@@ -668,15 +671,16 @@ public class WorkerController {
 		/**
 		 * 查看任务包的任务完成情况,当任务数等于已完成时更新pack表的pack_status
 		 */
-		if (task_id > 0) {
-			int packId = workerRecordService.getPackIdByTaskId(task_id);
-			if (taskService.getTaskCountByPackId(packId) == workerRecordService.getFinishTaskCountByPackId(packId)) {
-				packWithBLOBs pack = new packWithBLOBs();
-				pack.setPackId(packId);
-				pack.setPackStatus(1);
-				packService.updateByPrimaryKeySelective(pack);
-			}
-		}
+		// if (task_id > 0) {
+		// int packId = workerRecordService.getPackIdByTaskId(task_id);
+		// if (taskService.getTaskCountByPackId(packId) ==
+		// workerRecordService.getFinishTaskCountByPackId(packId)) {
+		// packWithBLOBs pack = new packWithBLOBs();
+		// pack.setPackId(packId);
+		// pack.setPackStatus(1);
+		// packService.updateByPrimaryKeySelective(pack);
+		// }
+		// }
 
 		int doingTaskCount = workerRecordService.getDoingTaskCountByWorkerId(workerId);
 		if (doingTaskCount == 0) {
