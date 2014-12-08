@@ -41,8 +41,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.esd.db.dao.packMapper;
 import com.esd.db.model.manager;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
@@ -69,8 +67,6 @@ public class WorkerController {
 	private static final Logger logger = LoggerFactory.getLogger(WorkerController.class);
 	@Autowired
 	private TaskService taskService;
-	@Autowired
-	private packMapper packMapper;
 	@Autowired
 	private ManagerService managerService;
 	@Autowired
@@ -159,7 +155,7 @@ public class WorkerController {
 				downCount = countTaskDoing;
 			}
 
-			String noteId = packService.getNoteIdByPackId();
+			String noteId = packService.getNoteIdByPackId(0);
 			map.put(Constants.COUNTPACKDOING, countPackDoing);
 			map.put(Constants.COUNTTASKDOING, countTaskDoing);
 			map.put("downCount", downCount);
@@ -186,6 +182,7 @@ public class WorkerController {
 				taskTrans.setTaskDownloadTime(sdf.format(workerRecord.getTaskDownTime()));
 			}
 			taskTrans.setTaskId(workerRecord.getTaskId());
+			taskTrans.setNoteId(packService.getNoteIdByPackId(workerRecord.getPackId()));
 			taskTrans.setTaskName(workerRecord.getTaskName());
 			logger.debug("TaskName:{}", workerRecord.getTaskName());
 			list.add(taskTrans);
@@ -462,7 +459,7 @@ public class WorkerController {
 		}
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		int packId = packMapper.selectPackIdOrderByPackLvl();
+		int packId = packService.getPackIdOrderByPackLvl();
 
 		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, packId);
 		if (list == null) {

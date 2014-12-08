@@ -233,9 +233,11 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public String getNoteIdByPackId() {
+	public String getNoteIdByPackId(int packId) {
 		try {
-			int packId = packMapper.selectPackIdOrderByPackLvl();
+			if (packId == 0) {
+				packId = packMapper.selectPackIdOrderByPackLvl();
+			}
 			return packMapper.selectNoteIdByPackId(packId);
 		} catch (BindingException b) {
 			return packMapper.selectNoteIdByPackId(0);

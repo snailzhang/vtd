@@ -20,7 +20,7 @@ public class taskTrans {
     
     private int taskTextGrid;
     
-    
+    private String noteId;
 
     public int getTaskId() {
 		return taskId;
@@ -92,5 +92,13 @@ public class taskTrans {
 
 	public void setTaskTextGrid(int taskTextGrid) {
 		this.taskTextGrid = taskTextGrid;
+	}
+
+	public String getNoteId() {
+		return noteId;
+	}
+
+	public void setNoteId(String noteId) {
+		this.noteId = noteId;
 	}
 }

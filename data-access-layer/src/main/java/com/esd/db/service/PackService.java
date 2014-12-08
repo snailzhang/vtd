@@ -60,5 +60,5 @@ public interface PackService {
 
 	int getPackIdOrderByPackLvl();
 
-	String getNoteIdByPackId();
+	String getNoteIdByPackId(int packId);
 }
