@@ -44,7 +44,7 @@ var page = {};
 page.creatPageHTML = function(nowPage,pageCount,pageDom,onClickFn){
 	var nPage = 0;//当前页
 	var pCount = 0;//总页数
-	nPage = nowPage;
+	nPage = parseInt(nowPage);
 	pCount = pageCount;
 	
 	
