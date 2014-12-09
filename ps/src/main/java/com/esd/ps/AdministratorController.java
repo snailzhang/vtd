@@ -364,10 +364,13 @@ public class AdministratorController {
 		manager.setCreateTime(new Date());
 		// int login =
 		// Integer.parseInt(request.getAttribute("login").toString());
+		String address = null;
 		if (userRegisted == 0) {
 			manager.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+			address = Constants.REDIRECT + Constants.COLON + Constants.MANAGER;
 		} else if (userRegisted == 1) {
 			manager.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
+			address = Constants.REDIRECT + Constants.COLON + "administrator";
 		}
 		manager.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
@@ -375,7 +378,7 @@ public class AdministratorController {
 		manager.setVersion(1);
 		managerService.insertSelective(manager);
 		session.removeAttribute(Constants.ADD_USER_ID);
-		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.MANAGER);
+		return new ModelAndView(address);
 	}
 
 	/**
@@ -398,7 +401,7 @@ public class AdministratorController {
 			address = Constants.REDIRECT + Constants.COLON + Constants.EMPLOYER;
 		} else if (userRegisted == 1) {
 			employer.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address = Constants.REDIRECT + Constants.COLON + Constants.MANAGER;
+			address = Constants.REDIRECT + Constants.COLON + "administrator";
 		}
 		employer.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
@@ -425,10 +428,10 @@ public class AdministratorController {
 		String address = null;
 		if (userRegisted == 0) {
 			inspector.setUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-			address = Constants.REDIRECT + Constants.COLON + Constants.EMPLOYER;
+			address = Constants.REDIRECT + Constants.COLON + "inspector";
 		} else if (userRegisted == 1) {
 			inspector.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-			address = Constants.REDIRECT + Constants.COLON + Constants.MANAGER;
+			address = Constants.REDIRECT + Constants.COLON + "administrator";
 		}
 		inspector.setCreateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
@@ -569,7 +572,7 @@ public class AdministratorController {
 				address = Constants.REDIRECT + Constants.COLON + Constants.WORKER;
 			} else if (userRegisted == 1) {
 				worker.setUserId(Integer.parseInt(session.getAttribute(Constants.ADD_USER_ID).toString()));
-				address = Constants.REDIRECT + Constants.COLON + Constants.MANAGER;
+				address = Constants.REDIRECT + Constants.COLON + "administrator";
 			}
 			if (!workerImage.isEmpty()) {
 				try {

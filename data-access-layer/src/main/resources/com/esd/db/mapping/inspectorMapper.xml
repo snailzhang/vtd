@@ -87,7 +87,7 @@
 			<if test="inspectorId != null">
 				#{inspectorId,jdbcType=INTEGER},
 			</if>
-			<if test="inspectorUsername != null">
+			<if test="inspectorName != null">
 				#{inspectorName,jdbcType=VARCHAR},
 			</if>
 			<if test="userId != null">
