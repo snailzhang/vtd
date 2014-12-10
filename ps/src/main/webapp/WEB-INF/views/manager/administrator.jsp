@@ -40,6 +40,7 @@
 							 	<option value="3">审核员</option>
 							 	<option value="4">工作者</option>
 							 	<option value="5">超级管理员</option>
+							 	<option value="0" selected="selected">全部</option>
 							 </select>
 						</div>
 					</div>

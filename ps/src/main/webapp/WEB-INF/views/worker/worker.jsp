@@ -118,8 +118,9 @@
 							<thead>
 								<tr>
 									<th width="10%">序号</th>
-									<th width="40%">任务名称</th>
-									<th width="40%">下载时间</th>
+									<th width="30%">任务名称</th>
+									<th width="30%">下载时间</th>
+									<th width="20%">标注说明</th>
 									<th width="10%">放弃</th>
 								</tr>
 							</thead>
@@ -381,7 +382,7 @@
 					var mm = data.mm;
 					if(data.list == ""){
 						$("#unqualifiedTable").empty();
-						$("#unqualifiedTable").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
+						$("#unqualifiedTable").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
 					}else{
 						$.each(data.list,function(i,item){
 							var giveUpBtn = "<td><a href='javascript:giveUpTask("+item.taskId+")'>放弃</a></td>";
@@ -389,7 +390,8 @@
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.taskName+"</td>"+
-									"<td>"+item.taskDownloadTime+"</td>"+giveUpBtn+
+									"<td>"+item.taskDownloadTime+"</td>"+
+									"<td>"+item.noteId+"</td>"+giveUpBtn+
 								"</tr>"
 							);
 						});
