@@ -41,3 +41,5 @@ ul.pagination > li > a{float:none;}
 	padding:5px;
 }
 .container{padding-left:0;padding-right:0;}
+.navbar-inverse .navbar-brand{color:#fff;}
+.navbar-inverse .navbar-nav > li > a{color:yellow;}

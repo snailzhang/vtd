@@ -167,6 +167,12 @@
 								</select>
 							</div>
 							<div class="form-group" id="">
+								<p class="form-control-static">统计时间：</p>
+							</div>
+							<div class="form-group" id="">
+								<select class="form-control" name="markTimeMethodList" id="markTimeMethodList"></select>
+							</div>
+							<div class="form-group" id="">
 								<p class="form-control-static">任务说明：</p>
 							</div>
 							<div class="form-group" id="">
@@ -593,6 +599,13 @@
 							$("#noteId").append("<option value="+item.noteId+">"+item.noteId+"</option>");
 						});
 					}
+					if(data.markTimeMethodList == ""){
+						$("#markTimeMethodList").html("<option value='0'>无说明文件</option>");
+					}else{
+						$.each(data.markTimeMethodList,function(i,item){
+							$("#markTimeMethodList").append("<option value="+item.id+">"+item.name+"</option>");
+						});
+					}
 					if(data.list != ""){
 						$("#packUnzip tbody").empty();
 						$.each(data.list,function(i,item){
@@ -615,6 +628,7 @@
 			var taskLvl = $("#taskLvl").val();
 			var noteId = $("#noteId").val();
 			var packLockTimeObj = $("#packLockTime");
+			var markTimeMethod = $("markTimeMethod").val();
 			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) {
 				$("#packLockTimeDiv").addClass("has-error").focus();
 				return;
@@ -625,7 +639,7 @@
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/unzip',
-				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val(),"noteId":noteId},
+				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val(),"noteId":noteId,"markTimeMethod":markTimeMethod},
 				dataType:'json',
 				success:function(data){
 					$("."+trClass+" .packZipStatus").text(data.message);
