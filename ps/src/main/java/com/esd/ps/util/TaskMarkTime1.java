@@ -18,7 +18,7 @@ public class TaskMarkTime1 implements TaskMarkTime {
 		return 0;
 	}
 
-	public double textGrid1(InputStream is,String type) {
+	public double textGrid1(InputStream is, String type) {
 		BufferedReader reader = null;
 		double taskMarkTime = 0;
 		Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
@@ -31,10 +31,13 @@ public class TaskMarkTime1 implements TaskMarkTime {
 			while ((tempString = reader.readLine()) != null) {
 				list.add(tempString);
 				m++;
-//				if (tempString.equals("\"CONTENT\""))
-//					n = m + 2;
+				// if (tempString.equals("\"CONTENT\""))
+				// n = m + 2;
 				if (tempString.equals(type))
 					n = m + 2;
+			}
+			if(n == 0){
+				return 10000;
 			}
 			for (int j = n; j < list.size(); j++) {
 				// 要改成正则表达式

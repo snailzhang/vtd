@@ -608,6 +608,12 @@ public class WorkerController {
 							InputStream is = files[i].getInputStream();
 							TaskMarkTime tmt = new TaskMarkTime1();
 							taskMarkTime = tmt.textGrid1(is, keyWords);
+							if (taskMarkTime == 10000) {
+								map.clear();
+								map.put(Constants.REPLAY, 0);
+								map.put(Constants.MESSAGE, "文件与包的时间统计方法不匹配,请联系管理员!");
+								return map;
+							}
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -654,6 +660,7 @@ public class WorkerController {
 				file.delete();
 			}
 		}
+		map.put(Constants.REPLAY, 1);
 		map.put(Constants.LISTMATH, listMath);
 		map.put(Constants.LISTALL, listAll);
 		return map;
