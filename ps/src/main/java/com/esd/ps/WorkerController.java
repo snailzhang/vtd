@@ -7,14 +7,12 @@ package com.esd.ps;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,14 +40,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.manager;
+import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.workerRecord;
 import com.esd.ps.model.WorkerDownPackHistoryTrans;
 import com.esd.ps.model.WorkerRecordTrans;
 import com.esd.ps.model.taskTrans;
+import com.esd.ps.util.TaskMarkTime;
+import com.esd.ps.util.TaskMarkTime1;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.ManagerService;
+import com.esd.db.service.MarkTimeMethodService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
@@ -75,6 +77,8 @@ public class WorkerController {
 	private WorkerRecordService workerRecordService;
 	@Autowired
 	private PackService packService;
+	@Autowired
+	private MarkTimeMethodService markTimeMethodService;
 	/**
 	 * 任务数不足
 	 */
@@ -100,11 +104,6 @@ public class WorkerController {
 	 */
 	@Value("${MSG_GIVEUP}")
 	private String MSG_GIVEUP;
-	/**
-	 * task_mark_time计算的匹配条件 <Chinese-talk>
-	 */
-	@Value("${FILE_MATCH_CONDITION}")
-	private String FILE_MATCH_CONDITION;
 
 	int workerMark = 0;
 
@@ -597,87 +596,54 @@ public class WorkerController {
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();
 					String uploadTaskNameI = files[i].getOriginalFilename();
-					for (int l = 0; l < files.length; l++) {
-						String uploadTaskNameJ = files[l].getOriginalFilename();
-						// 判断文件类型前的名相同的是否有两个,上传必须是两个同名不同类型的文件同时上传
-						if (uploadTaskNameI.substring(0, uploadTaskNameI.indexOf(Constants.POINT)).equals(uploadTaskNameJ.substring(0, uploadTaskNameJ.indexOf(Constants.POINT)))
-								&& uploadTaskNameI.equals(uploadTaskNameJ) == false) {
-							byte[] bytes = files[i].getBytes();
-							String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(Constants.POINT) + 1), files[i].getOriginalFilename().length());
-							if (nameLast.equalsIgnoreCase(Constants.TAG)) {
-								BufferedReader reader = null;
-								double taskMarkTime = 0;
-								String str[] = null;
-								try {
-									reader = new BufferedReader(new InputStreamReader(files[i].getInputStream(), Constants.GBK));
-									String tempString = null;
-									// 按行读取文件的内容
-									while ((tempString = reader.readLine()) != null) {
-										str = tempString.split(" ");
-										if (str.length > 2 && str[2].equals(FILE_MATCH_CONDITION)) {
-											// 统计标注时间
-											taskMarkTime = taskMarkTime + (Double.parseDouble(str[4]) - Double.parseDouble(str[3])) + 0.08;
-										}
-									}
-									reader.close();
-								} catch (IOException e) {
-									e.printStackTrace();
-								} finally {
-									if (reader != null) {
-										try {
-											reader.close();
-										} catch (IOException e1) {
-											e1.printStackTrace();
-										}
-									}
-								}
-								// 更新task表
-								taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
-								taskWithBLOBs.setTaskTag(bytes);
-								taskWithBLOBs.setTaskId(taskId);
-								taskWithBLOBs.setTaskUploadTime(new Date());
-								StackTraceElement[] items = Thread.currentThread().getStackTrace();
-								taskWithBLOBs.setUpdateMethod(items[1].toString());
-								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-								// 更新workerRecord表
-								workerRecord workerRecord = new workerRecord();
-								workerRecord.setTaskUploadTime(new Date());
-								workerRecord.setTaskStatu(1);
-								workerRecord.setTaskEffective(0);
-								workerRecord.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
-								workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
-								StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
-								workerRecord.setUpdateMethod(items1[1].toString());
-								workerRecordService.updateByPrimaryKeySelective(workerRecord);
-								listMath.add(uploadTaskNameI);
-								// task_id = taskId;
-							} else if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
-								taskWithBLOBs.setTaskTextgrid(bytes);
-								taskWithBLOBs.setTaskId(taskId);
-								taskWithBLOBs.setTaskUploadTime(new Date());
-								StackTraceElement[] items = Thread.currentThread().getStackTrace();
-								taskWithBLOBs.setUpdateMethod(items[1].toString());
-								taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-								listMath.add(uploadTaskNameI);
-							}
+
+					byte[] bytes = files[i].getBytes();
+					String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(Constants.POINT) + 1), files[i].getOriginalFilename().length());
+					if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
+						int packId = task.getPackId();
+						markTimeMethod markTimeMethod = markTimeMethodService.getByPrimaryKey(packService.getTaskMarkTimeId(packId));
+						String keyWords = "\"" + markTimeMethod.getKeywords() + "\"";
+						double taskMarkTime = 0;
+						try {
+							InputStream is = files[i].getInputStream();
+							TaskMarkTime tmt = new TaskMarkTime1();
+							taskMarkTime = tmt.textGrid1(is, keyWords);
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
+						// 更新task表
+						taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
+						taskWithBLOBs.setTaskTextgrid(bytes);
+						taskWithBLOBs.setTaskId(taskId);
+						taskWithBLOBs.setTaskUploadTime(new Date());
+						StackTraceElement[] items = Thread.currentThread().getStackTrace();
+						taskWithBLOBs.setUpdateMethod(items[1].toString());
+						taskWithBLOBs.setTaskEffective(null);
+						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+						// 更新workerRecord表
+						workerRecord workerRecord = new workerRecord();
+						workerRecord.setTaskUploadTime(new Date());
+						workerRecord.setTaskStatu(1);
+						workerRecord.setTaskEffective(0);
+						workerRecord.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
+						workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
+						StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+						workerRecord.setUpdateMethod(items1[1].toString());
+						workerRecordService.updateByPrimaryKeySelective(workerRecord);
+						listMath.add(uploadTaskNameI);
+						// task_id = taskId;
+					} else if (nameLast.equalsIgnoreCase(Constants.TAG)) {
+						taskWithBLOBs.setTaskTag(bytes);
+						taskWithBLOBs.setTaskId(taskId);
+						taskWithBLOBs.setTaskUploadTime(new Date());
+						StackTraceElement[] items = Thread.currentThread().getStackTrace();
+						taskWithBLOBs.setUpdateMethod(items[1].toString());
+						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+						listMath.add(uploadTaskNameI);
 					}
 				}
 			}
 		}
-		/**
-		 * 查看任务包的任务完成情况,当任务数等于已完成时更新pack表的pack_status
-		 */
-		// if (task_id > 0) {
-		// int packId = workerRecordService.getPackIdByTaskId(task_id);
-		// if (taskService.getTaskCountByPackId(packId) ==
-		// workerRecordService.getFinishTaskCountByPackId(packId)) {
-		// packWithBLOBs pack = new packWithBLOBs();
-		// pack.setPackId(packId);
-		// pack.setPackStatus(1);
-		// packService.updateByPrimaryKeySelective(pack);
-		// }
-		// }
 
 		int doingTaskCount = workerRecordService.getDoingTaskCountByWorkerId(workerId);
 		if (doingTaskCount == 0) {

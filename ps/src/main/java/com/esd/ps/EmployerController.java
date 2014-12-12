@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.voiceNote;
@@ -45,6 +47,7 @@ import com.esd.db.model.task;
 import com.esd.ps.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.EmployerService;
+import com.esd.db.service.MarkTimeMethodService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
@@ -76,6 +79,8 @@ public class EmployerController {
 	private WorkerRecordService workerRecordService;
 	@Autowired
 	private VoiceNoteService voiceNoteService;
+	@Autowired
+	private MarkTimeMethodService markTimeMethodService;
 	/**
 	 * 文件不存在
 	 */
@@ -248,10 +253,12 @@ public class EmployerController {
 				}
 			}
 		}
-		List<voiceNote> voiceNoteList = voiceNoteService.getAll("",0,0);
+		List<voiceNote> voiceNoteList = voiceNoteService.getAll("", 0, 0);
+		List<markTimeMethod> markTimeMethodList = markTimeMethodService.getAll();
 		map.clear();
 		map.put(Constants.LIST, list);
 		map.put("voiceNoteList", voiceNoteList);
+		map.put("markTimeMethodList", markTimeMethodList);
 		return map;
 	}
 
@@ -283,7 +290,6 @@ public class EmployerController {
 	public Map<String, Object> detailpagePost(int packId, int page, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<taskTrans> list = new ArrayList<taskTrans>();
 		int totle = taskService.getTaskCountByPackIdAndTaskStatus(packId, taskStuts, taskNameCondition);
 		if (totle == 0) {
@@ -338,7 +344,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> unzip(String packName,String noteId, int taskLvl, int packLockTime, HttpSession session) {
+	public synchronized Map<String, Object> unzip(String packName, String noteId, int taskLvl, int packLockTime,int markTimeMethod, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
@@ -384,6 +390,7 @@ public class EmployerController {
 				packWithBLOBs.setPackStatus(0);
 				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setNoteId(noteId);
+				packWithBLOBs.setTaskMarkTimeId(markTimeMethod);
 				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(1);
 				packWithBLOBs.setCreateId(userId);
@@ -398,9 +405,9 @@ public class EmployerController {
 			}
 			// 从临时文件取出要解压的文件上传TaskService
 			if (file.isDirectory()) {
-				storeDataFold(packName, taskLvl, url,userId);
+				storeDataFold(packName, taskLvl, url, userId);
 			} else {
-				storeDataZIP(packName, taskLvl, url,userId);
+				storeDataZIP(packName, taskLvl, url, userId);
 			}
 
 		} catch (IOException e) {
@@ -478,7 +485,7 @@ public class EmployerController {
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
 
-			//writeInZIP(list, zos, Constants.WAV);
+			// writeInZIP(list, zos, Constants.WAV);
 			writeInZIP(list, zos, Constants.TAG);
 			writeInZIP(list, zos, Constants.TEXTGRID);
 
@@ -587,8 +594,8 @@ public class EmployerController {
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
 				fileName = fileName.substring(0, fileName.indexOf(Constants.POINT)) + Constants.POINT + fileType;
-				File f = new File(url+Constants.SLASH+taskWithBLOBs.getTaskDir());
-				if(!f.exists()){
+				File f = new File(url + Constants.SLASH + taskWithBLOBs.getTaskDir());
+				if (!f.exists()) {
 					f.mkdirs();
 				}
 				byte[] data = null;
@@ -602,7 +609,7 @@ public class EmployerController {
 				InputStream is = new ByteArrayInputStream(data);
 				// 读取待压缩的文件并写进压缩包里
 				BufferedInputStream bis = new BufferedInputStream(is, 1024);
-				File outputFile = new File(url+Constants.SLASH+taskWithBLOBs.getTaskDir()+Constants.SLASH+fileName); 
+				File outputFile = new File(url + Constants.SLASH + taskWithBLOBs.getTaskDir() + Constants.SLASH + fileName);
 				FileOutputStream fos = new FileOutputStream(outputFile);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				int read;
@@ -626,7 +633,7 @@ public class EmployerController {
 	 * @param packName
 	 * @param taskLvl
 	 */
-	public void storeDataZIP(String packName, int taskLvl, String url,int userId) {
+	public void storeDataZIP(String packName, int taskLvl, String url, int userId) {
 		InputStream in = null;
 		String zipEntryName = null;
 		int packId = 0;
@@ -705,16 +712,16 @@ public class EmployerController {
 	 * @param session
 	 * @param taskLvl
 	 */
-	public void storeDataFold(String packName, int taskLvl, String url,int userId) {
+	public void storeDataFold(String packName, int taskLvl, String url, int userId) {
 		File fold = new File(url + Constants.SLASH + packName);
 		File[] list = fold.listFiles();
 		String foldUrl = url + Constants.SLASH + packName;
-		
-		int packId = storeMoreFold(packName, packName, taskLvl, foldUrl, list,userId);
+
+		int packId = storeMoreFold(packName, packName, taskLvl, foldUrl, list, userId);
 
 		File fd = new File(packName);
 		fd.delete();
-		
+
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
 		pack.setUnzip(1);
@@ -731,7 +738,7 @@ public class EmployerController {
 	 * @param foldUrl
 	 * @param list
 	 */
-	public int storeMoreFold(String packName, String taskDir, int taskLvl, String foldUrl, File[] list,int userId) {
+	public int storeMoreFold(String packName, String taskDir, int taskLvl, String foldUrl, File[] list, int userId) {
 		int packId = 0;
 
 		for (int i = 0; i < list.length; i++) {
@@ -740,7 +747,7 @@ public class EmployerController {
 				File fold = new File(foldUrl);
 				File[] list1 = fold.listFiles();
 				taskDir = taskDir + Constants.SLASH + list[i].getName();
-				storeMoreFold(packName, taskDir, taskLvl, foldUrl, list1,userId);
+				storeMoreFold(packName, taskDir, taskLvl, foldUrl, list1, userId);
 				continue;
 			}
 			String fileName = list[i].getName();

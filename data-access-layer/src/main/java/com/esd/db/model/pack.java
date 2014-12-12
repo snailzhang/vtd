@@ -9,6 +9,10 @@ public class pack {
 	private Integer employerId;
 	
 	private String noteId;
+	
+	private int taskMarkTimeId;
+	
+	private String taskMarkTimeName;
 
 	private String packName;
 
@@ -58,6 +62,22 @@ public class pack {
 
 	public void setNoteId(String noteId) {
 		this.noteId = noteId;
+	}
+	
+	public int getTaskMarkTimeId() {
+		return taskMarkTimeId;
+	}
+
+	public void setTaskMarkTimeId(int taskMarkTimeId) {
+		this.taskMarkTimeId = taskMarkTimeId;
+	}
+
+	public String getTaskMarkTimeName() {
+		return taskMarkTimeName;
+	}
+
+	public void setTaskMarkTimeName(String taskMarkTimeName) {
+		this.taskMarkTimeName = taskMarkTimeName;
 	}
 
 	public String getPackName() {

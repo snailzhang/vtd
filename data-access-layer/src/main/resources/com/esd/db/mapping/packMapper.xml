@@ -5,6 +5,8 @@
 		<id column="pack_id" property="packId" jdbcType="INTEGER" />
 		<result column="employer_id" property="employerId" jdbcType="INTEGER" />
 		<result column="note_id" property="noteId" jdbcType="VARCHAR" />
+		<result column="taskMarkTimeId" property="taskMarkTimeId" jdbcType="INTEGER" />
+		<result column="taskMarkTimeName" property="taskMarkTimeName" jdbcType="VARCHAR" />
 		<result column="pack_name" property="packName" jdbcType="VARCHAR" />
 		<result column="pack_status" property="packStatus" jdbcType="INTEGER" />
 		<result column="pack_lock_time" property="packLockTime" jdbcType="INTEGER" />
@@ -24,12 +26,16 @@
 		<result column="pack_format" property="packFormat" jdbcType="LONGVARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		pack_id, employer_id,note_id, pack_name, pack_status, pack_lock_time,unzip,pack_lvl, create_id, create_time,
+		pack_id, employer_id,note_id,taskMarkTimeId,taskMarkTimeName, pack_name, pack_status, pack_lock_time,unzip,pack_lvl, create_id, create_time,
 		create_method, update_id, update_time, update_method,down_count, version
 	</sql>
 	<sql id="Blob_Column_List">
 		pack_file, pack_format
 	</sql>
+	<select id="selectTaskMarkTimeId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select taskMarkTimeId from pack 
+		where pack_id = #{packId}
+	</select>
 	<select id="selectLikePackName" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
@@ -220,6 +226,9 @@
 			<if test="noteId != null">
 				note_id,
 			</if>
+			<if test="taskMarkTimeId != null">
+				taskMarkTimeId,
+			</if>
 			<if test="packName != null">
 				pack_name,
 			</if>
@@ -276,6 +285,9 @@
 			<if test="noteId != null">
 				#{noteId,jdbcType=VARCHAR},
 			</if>
+			<if test="taskMarkTimeId != null">
+				#{taskMarkTimeId,jdbcType=INTEGER},
+			</if>
 			<if test="packName != null">
 				#{packName,jdbcType=VARCHAR},
 			</if>
@@ -331,6 +343,9 @@
 			</if>
 			<if test="noteId != null">
 				note_id = #{noteId,jdbcType=VARCHAR},
+			</if>
+			<if test="taskMarkTimeId != null">
+				taskMarkTimeId = #{taskMarkTimeId,jdbcType=INTEGER},
 			</if>
 			<if test="packName != null">
 				pack_name = #{packName,jdbcType=VARCHAR},
