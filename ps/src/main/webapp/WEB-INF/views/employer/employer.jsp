@@ -628,14 +628,14 @@
 			var taskLvl = $("#taskLvl").val();
 			var noteId = $("#noteId").val();
 			var packLockTimeObj = $("#packLockTime");
-			var markTimeMethod = $("markTimeMethod").val();
+			var markTimeMethod = $("#markTimeMethodList").val();
 			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) {
 				$("#packLockTimeDiv").addClass("has-error").focus();
 				return;
 			}else{
 				$(".has-error").removeClass("has-error");
 			}
-			$("."+trClass+" .packZipStatus").text("任务包解压中");
+			$("."+trClass+" .packZipStatus").text("任务上传中");
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/unzip',
