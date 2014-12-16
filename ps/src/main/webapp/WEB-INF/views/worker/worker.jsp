@@ -132,7 +132,7 @@
 		</div>
 	</div>
 	<!-------------------------------- 弹出窗口 -------------------------------------------------->
-	<div class="modal fade">
+	<div id="#taskUpResult" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">

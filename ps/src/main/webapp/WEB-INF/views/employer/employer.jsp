@@ -326,6 +326,33 @@
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
+		<!--------------------------------提示上传内容-------------------------------------------------->
+		<div id="taskUpCon" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">上传信息</h4>
+				</div>
+				<div class="modal-body">
+					<dl class="dl-horizontal">
+						<dt>任务等级：</dt>
+						<dd id="taskLvlCon"></dd>
+						<dt>统计时间：</dt>
+						<dd id="markTimeMethodCon"></dd>
+						<dt>任务说明：</dt>
+						<dd id="noteIdCon"></dd>
+						<dt>任务时间：</dt>
+						<dd id="packLockTimeCon"></dd>
+					</dl>
+				</div>
+				<div class="modal-footer">
+					<button id="comfirmUpload" type="button" class="btn btn-primary">确定提交</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 	<script type="text/javascript">
 		var unpackNameCondition = "";
 		var packNameCondition = "";
@@ -626,25 +653,34 @@
 		zipOnePack = function(pName,trClass){
 			
 			var taskLvl = $("#taskLvl").val();
+			$("#taskLvlCon").text(taskLvl);
 			var noteId = $("#noteId").val();
+			$("#noteIdCon").text(noteId);
 			var packLockTimeObj = $("#packLockTime");
+			$("#packLockTimeCon").text(packLockTimeObj.val()+"小时");
 			var markTimeMethod = $("#markTimeMethodList").val();
+			var markTimeMethodCon = $("#markTimeMethodList option[value="+markTimeMethod+"]").text();
+			$("#markTimeMethodCon").text(markTimeMethodCon);
 			if(checkout.text.isempty(packLockTimeObj,"请填写任务时间！")) {
 				$("#packLockTimeDiv").addClass("has-error").focus();
 				return;
 			}else{
 				$(".has-error").removeClass("has-error");
 			}
-			$("."+trClass+" .packZipStatus").text("任务上传中");
-			$.ajax({
-				type:'POST',
-				url:'${contextPath}/security/unzip',
-				data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val(),"noteId":noteId,"markTimeMethod":markTimeMethod},
-				dataType:'json',
-				success:function(data){
-					$("."+trClass+" .packZipStatus").text(data.message);
-				}
+			$("#taskUpCon").modal('show');
+			$("#comfirmUpload").click(function(){
+				$("."+trClass+" .packZipStatus").text("任务包上传中");
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/security/unzip',
+					data:{"packName":pName,"taskLvl":taskLvl,"packLockTime":packLockTimeObj.val(),"noteId":noteId,"markTimeMethod":markTimeMethod},
+					dataType:'json',
+					success:function(data){
+						$("."+trClass+" .packZipStatus").text(data.message);
+					}
+				});
 			});
+			
 		};
 		/*---------------------------------------下载任务包---------------------------------------------------------------*/
 		downloadPackFn = function(packId){
