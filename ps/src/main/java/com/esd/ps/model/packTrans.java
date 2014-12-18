@@ -23,6 +23,10 @@ public class packTrans {
 	private Integer taskLvl;
 	
 	private Double taskMarkTime;
+	
+	private String markTimeMethodName;
+	
+	private int markTimeMethodId;
 
 	public String getPackName() {
 		return packName;
@@ -112,4 +116,20 @@ public class packTrans {
 		this.taskMarkTime = taskMarkTime;
 	}
 
+	public String getMarkTimeMethodName() {
+		return markTimeMethodName;
+	}
+
+	public void setMarkTimeMethodName(String markTimeMethodName) {
+		this.markTimeMethodName = markTimeMethodName;
+	}
+
+	public int getMarkTimeMethodId() {
+		return markTimeMethodId;
+	}
+
+	public void setMarkTimeMethodId(int markTimeMethodId) {
+		this.markTimeMethodId = markTimeMethodId;
+	}
+	
 }

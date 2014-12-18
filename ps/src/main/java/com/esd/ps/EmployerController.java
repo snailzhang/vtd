@@ -188,6 +188,8 @@ public class EmployerController {
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setUnzip(pack.getUnzip());
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
+			packTrans.setMarkTimeMethodId(pack.getTaskMarkTimeId());
+			packTrans.setMarkTimeMethodName(pack.getTaskMarkTimeName());
 			Double taskMarkTime = workerRecordService.getSUMTaskMarkTimeByPackId(pack.getPackId());
 			if (taskMarkTime == null) {
 				packTrans.setTaskMarkTime(0.00);
@@ -219,6 +221,36 @@ public class EmployerController {
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
 		pack.setPackLvl(taskLvl);
+		packService.updateByPrimaryKeySelective(pack);
+		map.clear();
+		map.put(Constants.REPLAY, 1);
+		return map;
+	}
+
+	/**
+	 * 修改统计方法编号
+	 * 
+	 * @param packId
+	 * @param markTimeMethod
+	 * @return
+	 */
+	@RequestMapping(value = "/updateMarkTimeMethod", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> updateMarkTimeMethodGET() {
+		Map<String, Object> map = new HashMap<>();
+		List<markTimeMethod> markTimeMethodList = markTimeMethodService.getAll();
+		map.clear();
+		map.put("markTimeMethodList", markTimeMethodList);
+		return map;
+	}
+
+	@RequestMapping(value = "/updateMarkTimeMethod", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateMarkTimeMethodPOST(int packId, int markTimeMethodId) {
+		Map<String, Object> map = new HashMap<>();
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setTaskMarkTimeId(markTimeMethodId);
 		packService.updateByPrimaryKeySelective(pack);
 		map.clear();
 		map.put(Constants.REPLAY, 1);
@@ -339,12 +371,13 @@ public class EmployerController {
 	 * @param packName
 	 * @param taskLvl
 	 * @param packLockTime
+	 * @param markTimeMethod
 	 * @param session
 	 * @return
 	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> unzip(String packName, String noteId, int taskLvl, int packLockTime,int markTimeMethod, HttpSession session) {
+	public synchronized Map<String,  Object> unzip(String packName, String noteId, int taskLvl, int packLockTime, int markTimeMethod, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
@@ -391,6 +424,8 @@ public class EmployerController {
 				packWithBLOBs.setUnzip(0);
 				packWithBLOBs.setNoteId(noteId);
 				packWithBLOBs.setTaskMarkTimeId(markTimeMethod);
+				markTimeMethod markTimeMethod1 = markTimeMethodService.getByPrimaryKey(markTimeMethod);
+				packWithBLOBs.setTaskMarkTimeName(markTimeMethod1.getName());
 				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(1);
 				packWithBLOBs.setCreateId(userId);
