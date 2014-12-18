@@ -627,7 +627,7 @@
 						});
 					}
 					if(data.markTimeMethodList == ""){
-						$("#markTimeMethodList").html("<option value='0'>无说明文件</option>");
+						$("#markTimeMethodList").html("<option value='0'>无</option>");
 					}else{
 						$.each(data.markTimeMethodList,function(i,item){
 							$("#markTimeMethodList").append("<option value="+item.id+">"+item.name+"</option>");
