@@ -11,12 +11,12 @@
 <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 <meta http-equiv="description" content="This is my page">
 <meta content="width=device-width, initial-scale=1" name="viewport">
-<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/umeditor.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
-<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/umeditor.config.js"></script>
 <script type="text/javascript" src="${contextPath}/js/umeditor.js"></script>
 <script type="text/javascript" src="${contextPath}/lang/zh-cn/zh-cn.js"></script>

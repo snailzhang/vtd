@@ -11,14 +11,14 @@
 <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 <meta http-equiv="description" content="This is my page">
 <meta content="width=device-width, initial-scale=1" name="viewport">
-<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
-<link href="http://cdn.bootcss.com/jqueryui/1.11.2/jquery-ui.min.css" rel="stylesheet">
-<link href="http://cdn.bootcss.com/jqueryui/1.11.2/jquery-ui.theme.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/bootstrap-theme.min.css" />
+<link href="${contextPath}/css/jquery-ui.min.css" rel="stylesheet">
+<link href="${contextPath}/css/jquery-ui.theme.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
-<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script>
 
-<script type="text/javascript" src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 <script type="text/javascript" src="${contextPath}/js/jquery.ui.core.js"></script>
 <script type="text/javascript" src="${contextPath}/js/jquery.ui.widget.js"></script>
