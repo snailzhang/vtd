@@ -679,6 +679,7 @@
 						$("."+trClass+" .packZipStatus").text(data.message);
 					}
 				});
+				$("#taskUpCon").modal('hide');
 			});
 			
 		};
