@@ -344,7 +344,7 @@
 			<if test="noteId != null">
 				note_id = #{noteId,jdbcType=VARCHAR},
 			</if>
-			<if test="taskMarkTimeId != null">
+			<if test="taskMarkTimeId > 0">
 				taskMarkTimeId = #{taskMarkTimeId,jdbcType=INTEGER},
 			</if>
 			<if test="packName != null">
