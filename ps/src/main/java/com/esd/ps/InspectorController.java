@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.esd.db.model.packWithBLOBs;
+import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.PackService;
@@ -77,7 +78,7 @@ public class InspectorController {
 	public synchronized Map<String, Object> inspectorPost(String userName, int timeMark, int page, HttpSession session) {
 		logger.debug("userName:{},timeMark:{}", userName, timeMark);
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3, page, Constants.ROW);
+		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3, page, Constants.ROW);	
 		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(userName, timeMark, 1, 3);
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
@@ -85,7 +86,42 @@ public class InspectorController {
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
-
+	/**
+	 * 无效任务列表
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "/invalid", method = RequestMethod.POST)
+	@ResponseBody
+	public synchronized Map<String, Object> invalidPost(int page) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<workerRecord> list = workerRecordService.getInvalidTask(page,Constants.ROW);
+		int totle = workerRecordService.getInvalidCountTask();
+		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
+		return map;
+	}
+	@RequestMapping(value = "/checkInvalid", method = RequestMethod.POST)
+	@ResponseBody
+	public synchronized Map<String, Object> checkInvalidPost(int taskId,int result,HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(result == 1){
+			task task = new task();
+			task.setWorkerId(0);
+			task.setTaskId(taskId);
+			taskService.updateByTaskId(task);
+		}else if(result == 0){
+			task task = new task();
+			task.setTaskEffective(true);
+			task.setTaskId(taskId);
+			taskService.updateByTaskId(task);
+		}
+		int inspectorId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		workerRecordService.updateByInvalid(inspectorId, taskId);
+		return map;
+	}
 	/**
 	 * 审核页
 	 * 

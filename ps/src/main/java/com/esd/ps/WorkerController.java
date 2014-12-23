@@ -213,20 +213,21 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/GiveUpTask", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> GiveUpTaskPost(HttpSession session, int taskId) {
+	public synchronized Map<String, Object> GiveUpTaskPost(HttpSession session, int taskId, int taskStatus ) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		// StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		workerRecordService.updateByGiveUp(workerId, 3, taskId, 0, "method");
-
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		//taskStatus:3,放弃   4,无效
+		workerRecordService.updateByGiveUp(workerId, taskStatus, taskId, 0, items[1].toString());
 		task task = new task();
-		task.setWorkerId(0);
+		if(taskStatus == 3){
+			task.setWorkerId(0);	
+		}
 		task.setVersion(1);
 		task.setTaskMarkTime(0.00);
 		task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		task.setTaskId(taskId);
 		taskService.updateByTaskId(task);
-
 		int packId = workerRecordService.getPackIdByTaskId(taskId);
 		if (taskService.getUndoTaskCountByPackId(packId) > 0) {
 			packWithBLOBs pack = new packWithBLOBs();
@@ -571,6 +572,7 @@ public class WorkerController {
 	public synchronized Map<String, Object> upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		boolean flag = false;
 		logger.debug("workerId:{}", workerId);
 		List<task> listTask = taskService.getAllDoingTaskByWorkerId(workerId);
 		if (files.length == 0) {
@@ -595,57 +597,78 @@ public class WorkerController {
 				// nameWav上传的文件名在,taskName工作者正在做的任务名
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();
-					String uploadTaskNameI = files[i].getOriginalFilename();
-
-					byte[] bytes = files[i].getBytes();
-					String nameLast = files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(Constants.POINT) + 1), files[i].getOriginalFilename().length());
-					if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
-						int packId = task.getPackId();
-						markTimeMethod markTimeMethod = markTimeMethodService.getByPrimaryKey(packService.getTaskMarkTimeId(packId));
-						String keyWords = "\"" + markTimeMethod.getKeywords() + "\"";
-						double taskMarkTime = 0;
-						try {
-							InputStream is = files[i].getInputStream();
-							TaskMarkTime tmt = new TaskMarkTime1();
-							taskMarkTime = tmt.textGrid1(is, keyWords);
-							if (taskMarkTime == 10000) {
-								map.clear();
-								map.put(Constants.REPLAY, 0);
-								map.put(Constants.MESSAGE, "文件与包的时间统计方法不匹配,请联系管理员!");
-								return map;
+					String markTimeName = packService.getTaskMarkTimeName(task.getPackId());
+					int uploadFileCount = Integer.parseInt(markTimeName.split("_")[1]);
+					//上传连个文件textgrid和tag
+					if (uploadFileCount == 2) {
+						for (int j = 0; j < files.length; j++) {
+							if (files[i].getOriginalFilename().split("\\.")[0].endsWith(files[j].getOriginalFilename().split("\\.")[0])
+									&& !files[i].getOriginalFilename().endsWith(files[j].getOriginalFilename())) {
+								if (files[i].getOriginalFilename().split("\\.")[1].endsWith(Constants.TEXTGRID) || files[i].getOriginalFilename().split("\\.")[1].endsWith(Constants.TAG)) {
+									flag = true;
+									break;
+								}
 							}
-						} catch (IOException e) {
-							e.printStackTrace();
 						}
-						// 更新task表
-						taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
-						taskWithBLOBs.setTaskTextgrid(bytes);
-						taskWithBLOBs.setTaskId(taskId);
-						taskWithBLOBs.setTaskUploadTime(new Date());
-						StackTraceElement[] items = Thread.currentThread().getStackTrace();
-						taskWithBLOBs.setUpdateMethod(items[1].toString());
-						taskWithBLOBs.setTaskEffective(null);
-						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-						// 更新workerRecord表
-						workerRecord workerRecord = new workerRecord();
-						workerRecord.setTaskUploadTime(new Date());
-						workerRecord.setTaskStatu(1);
-						workerRecord.setTaskEffective(0);
-						workerRecord.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
-						workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
-						StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
-						workerRecord.setUpdateMethod(items1[1].toString());
-						workerRecordService.updateByPrimaryKeySelective(workerRecord);
-						listMath.add(uploadTaskNameI);
-						// task_id = taskId;
-					} else if (nameLast.equalsIgnoreCase(Constants.TAG)) {
-						taskWithBLOBs.setTaskTag(bytes);
-						taskWithBLOBs.setTaskId(taskId);
-						taskWithBLOBs.setTaskUploadTime(new Date());
-						StackTraceElement[] items = Thread.currentThread().getStackTrace();
-						taskWithBLOBs.setUpdateMethod(items[1].toString());
-						taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-						listMath.add(uploadTaskNameI);
+					} else if (uploadFileCount == 1) {
+						flag = true;
+					}
+					if (flag) {
+						String uploadTaskNameI = files[i].getOriginalFilename();
+
+						byte[] bytes = files[i].getBytes();
+						// String nameLast =
+						// files[i].getOriginalFilename().substring((files[i].getOriginalFilename().indexOf(Constants.POINT)
+						// + 1), files[i].getOriginalFilename().length());
+						String nameLast = files[i].getOriginalFilename().split("\\.")[1];
+						if (nameLast.equalsIgnoreCase(Constants.TEXTGRID)) {
+							int packId = task.getPackId();
+							markTimeMethod markTimeMethod = markTimeMethodService.getByPrimaryKey(packService.getTaskMarkTimeId(packId));
+							String keyWords = "\"" + markTimeMethod.getKeywords() + "\"";
+							double taskMarkTime = 0;
+							try {
+								InputStream is = files[i].getInputStream();
+								TaskMarkTime tmt = new TaskMarkTime1();
+								taskMarkTime = tmt.textGrid1(is, keyWords);
+								if (taskMarkTime == 10000) {
+									map.clear();
+									map.put(Constants.REPLAY, 0);
+									map.put(Constants.MESSAGE, "文件与包的时间统计方法不匹配,请联系管理员!");
+									return map;
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							// 更新task表
+							taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
+							taskWithBLOBs.setTaskTextgrid(bytes);
+							taskWithBLOBs.setTaskId(taskId);
+							taskWithBLOBs.setTaskUploadTime(new Date());
+							StackTraceElement[] items = Thread.currentThread().getStackTrace();
+							taskWithBLOBs.setUpdateMethod(items[1].toString());
+							taskWithBLOBs.setTaskEffective(null);
+							taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+							// 更新workerRecord表
+							workerRecord workerRecord = new workerRecord();
+							workerRecord.setTaskUploadTime(new Date());
+							workerRecord.setTaskStatu(1);
+							workerRecord.setTaskEffective(0);
+							workerRecord.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
+							workerRecord.setRecordId(workerRecordService.getPkIDByTaskId(taskId));
+							StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+							workerRecord.setUpdateMethod(items1[1].toString());
+							workerRecordService.updateByPrimaryKeySelective(workerRecord);
+							listMath.add(uploadTaskNameI);
+							// task_id = taskId;
+						} else if (nameLast.equalsIgnoreCase(Constants.TAG)) {
+							taskWithBLOBs.setTaskTag(bytes);
+							taskWithBLOBs.setTaskId(taskId);
+							taskWithBLOBs.setTaskUploadTime(new Date());
+							StackTraceElement[] items = Thread.currentThread().getStackTrace();
+							taskWithBLOBs.setUpdateMethod(items[1].toString());
+							taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+							listMath.add(uploadTaskNameI);
+						}
 					}
 				}
 			}

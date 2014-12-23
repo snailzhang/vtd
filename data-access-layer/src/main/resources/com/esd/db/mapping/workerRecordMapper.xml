@@ -31,6 +31,23 @@
 		create_method, update_time,
 		update_method, task_effective,inspector_id,version
 	</sql>
+	<select id="selectInvalidTask" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record
+		<where>
+			task_statu = 4 and (inspector_id = 0 or inspector_id IS null)
+		</where>
+		limit ${begin},${end}
+	</select>
+	<select id="selectInvalidCountTask" resultType="java.lang.Integer">
+		select
+		count(task_id) totle
+		from worker_record
+		<where>
+			task_statu = 4 and (inspector_id = 0 or inspector_id IS null)
+		</where>
+	</select>
 	<select id="selectPackIdByDateTime" resultType="java.lang.Integer" parameterType="java.util.Map">
 		SELECT pack_id as packId FROM worker_record WHERE
 		worker_id = ${workerId}
@@ -552,7 +569,7 @@
 	<update id="updateByGiveUp" parameterType="java.util.Map">
 		update worker_record
 		<set>
-			<if test="taskStatu == 3">
+			<if test="taskStatu != null">
 				task_statu = 3,
 			</if>
 			<if test="version != null">
@@ -566,6 +583,13 @@
 		<if test="version != null">
 			and version = ${version},
 		</if>
+	</update>
+	<update id="updateByInvalid" parameterType="java.util.Map">
+		update worker_record
+		<set>
+			inspector_id = #{inspectorId,jdbcType=INTEGER},
+		</set>
+		where task_statu = 4 and task_id = ${taskId} and (inspector_id = 0 or inspector_id IS NULL)
 	</update>
 	<update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.workerRecord">
 		update worker_record

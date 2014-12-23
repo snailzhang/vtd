@@ -36,6 +36,10 @@
 		select taskMarkTimeId from pack 
 		where pack_id = #{packId}
 	</select>
+	<select id="selectTaskMarkTimeName" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select taskMarkTimeName from pack 
+		where pack_id = #{packId}
+	</select>
 	<select id="selectLikePackName" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
@@ -229,6 +233,9 @@
 			<if test="taskMarkTimeId != null">
 				taskMarkTimeId,
 			</if>
+			<if test="taskMarkTimeName != null">
+				taskMarkTimeName,
+			</if>
 			<if test="packName != null">
 				pack_name,
 			</if>
@@ -287,6 +294,9 @@
 			</if>
 			<if test="taskMarkTimeId != null">
 				#{taskMarkTimeId,jdbcType=INTEGER},
+			</if>
+			<if test="taskMarkTimeName != null">
+				#{taskMarkTimeName,jdbcType=VARCHAR},
 			</if>
 			<if test="packName != null">
 				#{packName,jdbcType=VARCHAR},

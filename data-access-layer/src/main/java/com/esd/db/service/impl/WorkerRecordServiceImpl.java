@@ -349,4 +349,31 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectPackIdByDateTime(map);
 	}
 
+	@Override
+	public List<workerRecord> getInvalidTask(int page,int row) {
+		Map<String, Object> map = new HashMap<>();
+		if (page == 0) {
+			map.put("begin", null);
+			map.put("end", null);
+		} else {
+			map.put("begin", ((page - 1) * row));
+			map.put("end", row);
+		}
+		return workerRecordMapper.selectInvalidTask(map);
+	}
+
+	@Override
+	public Integer getInvalidCountTask() {
+
+		return workerRecordMapper.selectInvalidCountTask();
+	}
+
+	@Override
+	public int updateByInvalid(int inspectorId, int taskId) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("inspectorId", inspectorId);
+		map.put("taskId", taskId);
+		return workerRecordMapper.updateByInvalid(map);
+	}
+
 }

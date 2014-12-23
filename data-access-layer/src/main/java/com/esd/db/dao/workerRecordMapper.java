@@ -76,4 +76,10 @@ public interface workerRecordMapper {
 	List<workerRecord> selectByWorkerIdAndEffective(Map<String, Object> map);
 
 	List<Integer> selectPackIdByDateTime(Map<String, Object> map);
+	
+	List<workerRecord> selectInvalidTask(Map<String, Object> map);
+	
+	Integer selectInvalidCountTask();
+	
+	int updateByInvalid(Map<String, Object> map);
 }

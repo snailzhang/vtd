@@ -76,4 +76,10 @@ public interface WorkerRecordService {
 	List<workerRecord> getByWorkerIdAndEffective(int workerId,int taskEffective,int taskStatu);
 
 	List<Integer> getPackIdByDateTime(int workerId,String firstDate,String endDate);
+	
+	List<workerRecord> getInvalidTask(int page,int row);
+	
+	Integer getInvalidCountTask();
+	
+	int updateByInvalid(int inspectorId,int taskId);
 }

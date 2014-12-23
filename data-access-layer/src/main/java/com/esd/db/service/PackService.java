@@ -63,4 +63,6 @@ public interface PackService {
 	String getNoteIdByPackId(int packId);
 	
 	int getTaskMarkTimeId(int packId);
+	
+	String getTaskMarkTimeName(int packId);
 }

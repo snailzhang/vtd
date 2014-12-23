@@ -249,4 +249,10 @@ public class PackServiceImpl implements PackService {
 		
 		return packMapper.selectTaskMarkTimeId(packId);
 	}
+
+	@Override
+	public String getTaskMarkTimeName(int packId) {
+		
+		return packMapper.selectTaskMarkTimeName(packId);
+	}
 }
