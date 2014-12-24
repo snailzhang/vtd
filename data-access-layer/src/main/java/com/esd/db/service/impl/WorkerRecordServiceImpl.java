@@ -145,9 +145,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getFinishTaskCountByPackId(Integer packId) {
-
-		return workerRecordMapper.selectFinishTaskCountByPackId(packId);
+	public int getFinishTaskCountByPackId(Integer packId,Integer taskMarkTime) {
+		Map<String, Object> map = new HashMap<>();
+		map.clear();
+		map.put("packId", packId);
+		map.put("taskMarkTime", taskMarkTime);
+		return workerRecordMapper.selectFinishTaskCountByPackId(map);
 	}
 
 	@Override
@@ -373,6 +376,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("inspectorId", inspectorId);
 		map.put("taskId", taskId);
 		return workerRecordMapper.updateByInvalid(map);
+	}
+
+	@Override
+	public int getTaskMarkTimeZeroCountByPackId(Integer packId) {
+		
+		return workerRecordMapper.selectTaskMarkTimeZeroCountByPackId(packId);
 	}
 
 }

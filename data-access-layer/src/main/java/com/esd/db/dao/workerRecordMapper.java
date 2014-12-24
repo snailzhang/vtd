@@ -53,7 +53,9 @@ public interface workerRecordMapper {
 	
 	int selectPkIDByTaskId(Integer taskId);
 	
-	int selectFinishTaskCountByPackId(Integer packId);
+	int selectFinishTaskCountByPackId(Map<String, Object> map);
+	
+	int selectTaskMarkTimeZeroCountByPackId(Integer packId);
 	
 	String selectDownPackNameByTaskName(String taskName);
 	

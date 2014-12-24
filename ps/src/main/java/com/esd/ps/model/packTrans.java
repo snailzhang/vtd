@@ -17,6 +17,10 @@ public class packTrans {
 	private Integer taskCount;
 
 	private Integer finishTaskCount;
+	
+	private Integer invalid;
+	
+	private Integer wavZero;
 
 	private Integer downCount;
 	
@@ -90,6 +94,22 @@ public class packTrans {
 
 	public void setFinishTaskCount(Integer finishTaskCount) {
 		this.finishTaskCount = finishTaskCount;
+	}
+	
+	public Integer getInvalid() {
+		return invalid;
+	}
+
+	public void setInvalid(Integer invalid) {
+		this.invalid = invalid;
+	}
+
+	public Integer getWavZero() {
+		return wavZero;
+	}
+
+	public void setWavZero(Integer wavZero) {
+		this.wavZero = wavZero;
 	}
 
 	public Integer getDownCount() {

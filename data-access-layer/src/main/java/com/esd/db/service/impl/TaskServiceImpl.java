@@ -264,5 +264,11 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.updateDownTaskByTaskId(record);
 	}
 
+	@Override
+	public int getWorkerIdZeroCountByPackId(Integer packId) {
+		
+		return taskMapper.selectWorkerIdZeroCountByPackId(packId);
+	}
+
 
 }

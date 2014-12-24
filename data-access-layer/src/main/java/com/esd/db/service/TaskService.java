@@ -74,4 +74,6 @@ public interface TaskService {
 	int getTaskLvlByPackId(int packId);
 
 	int getUndoTaskCountByPackId(int packId);
+	
+	int getWorkerIdZeroCountByPackId(Integer packId);
 }

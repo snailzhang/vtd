@@ -181,7 +181,7 @@ public class InspectorController {
 		}
 
 		EmployerController employc = new EmployerController();
-		employc.downZIP(list1, packName, url);
+		employc.downZIP(list1, packName, url,0);
 
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
@@ -208,7 +208,8 @@ public class InspectorController {
 			List<Integer> packList = workerRecordService.getPackIdByDateTime(workerId, firstDate, lastDate);
 			for (Iterator<Integer> iterator = packList.iterator(); iterator.hasNext();) {
 				Integer packId = (Integer) iterator.next();
-				if (taskService.getTaskCountByPackId(packId) == workerRecordService.getFinishTaskCountByPackId(packId)) {
+				//pack中的任务数 = (完成的任务数 + 无效任务数 )+ wav.length为0的数
+				if (taskService.getTaskCountByPackId(packId) == (workerRecordService.getFinishTaskCountByPackId(packId,2) + taskService.getWorkerIdZeroCountByPackId(packId))) {
 					packWithBLOBs pack = new packWithBLOBs();
 					pack.setPackId(packId);
 					pack.setPackStatus(1);

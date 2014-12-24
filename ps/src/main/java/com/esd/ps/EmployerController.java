@@ -13,8 +13,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -38,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.druid.pool.DruidDataSource.CreateConnectionThread;
 import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
@@ -180,8 +185,14 @@ public class EmployerController {
 
 			packTrans.setPackId(pack.getPackId());
 			packTrans.setPackName(pack.getPackName());
+
 			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
-			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId()));
+			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId(), 1));
+			// 无效任务数,taskMarkTime == 0
+			packTrans.setInvalid(workerRecordService.getTaskMarkTimeZeroCountByPackId(pack.getPackId()));
+			// wav.length == 0
+			packTrans.setWavZero(taskService.getWorkerIdZeroCountByPackId(pack.getPackId()));
+
 			packTrans.setDownCount(pack.getDownCount());
 			packTrans.setTaskLvl(pack.getPackLvl());
 			packTrans.setPackStatus(pack.getPackStatus());
@@ -366,7 +377,7 @@ public class EmployerController {
 	}
 
 	/**
-	 * 1.解压任务包 2.任务存入数据库
+	 * 1.解压任务包 或是文件夹2.任务存入数据库
 	 * 
 	 * @param packName
 	 * @param taskLvl
@@ -377,7 +388,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String,  Object> unzip(String packName, String noteId, int taskLvl, int packLockTime, int markTimeMethod, HttpSession session) {
+	public synchronized Map<String, Object> unzip(String packName, String noteId, int taskLvl, int packLockTime, int markTimeMethod, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
@@ -478,10 +489,10 @@ public class EmployerController {
 		}
 		logger.debug("url:{}", packName);
 		if (packName.substring((packName.length() - 3), packName.length()).equalsIgnoreCase(Constants.ZIP)) {
-			downZIP(list, packName, url);
+			downZIP(list, packName, url, packId);
 		} else {
 			packName = packName + Constants.POINT + Constants.ZIP;
-			downZIP(list, packName, url);
+			downZIP(list, packName, url, packId);
 		}
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
@@ -509,7 +520,7 @@ public class EmployerController {
 	 * @param url
 	 * @return
 	 */
-	public int downZIP(List<taskWithBLOBs> list, String packName, String url) {
+	public int downZIP(List<taskWithBLOBs> list, String packName, String url, int packId) {
 		logger.debug("url:{}", packName);
 		File zipFile = new File(url + Constants.SLASH + packName);
 		if (zipFile.exists()) {
@@ -520,9 +531,12 @@ public class EmployerController {
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
 
-			// writeInZIP(list, zos, Constants.WAV);
+			// writeInZIP(list, zos, Constants.WAV,url);
 			writeInZIP(list, zos, Constants.TAG);
 			writeInZIP(list, zos, Constants.TEXTGRID);
+			if (packId > 0) {
+				writeTXTInZIP(zos, url, packId);
+			}
 
 			zos.close();// 不关闭,最后一个文件写入为0kb
 			fos.flush();
@@ -616,6 +630,88 @@ public class EmployerController {
 	}
 
 	/**
+	 * txt文件压入zip
+	 * 
+	 * @param zos
+	 * @param url
+	 * @param packId
+	 */
+	public void writeTXTInZIP(ZipOutputStream zos, String url, int packId) {
+		byte[] bufs = new byte[1024 * 10];
+		if (creatTxtFile(url)) {
+			ZipEntry zipEntry = new ZipEntry("readme.txt");
+			try {
+				zos.putNextEntry(zipEntry);
+				writeInTXT(url, packId);
+				InputStream txtIs = new FileInputStream(new File(url + "/readme.txt"));
+				BufferedInputStream txtBis = new BufferedInputStream(txtIs, 1024);
+				int readme;
+				while ((readme = txtBis.read(bufs)) > 0) {
+					zos.write(bufs, 0, readme);//
+				}
+				txtBis.close();
+				txtIs.close();
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 创建txt文件
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public boolean creatTxtFile(String url) {
+		boolean flag = false;
+		String txt = url + "/readme.txt";
+		File file = new File(txt);
+		if (file.exists()) {
+			file.delete();
+		}
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		flag = true;
+		return flag;
+	}
+
+	/**
+	 * 写入txt
+	 * 
+	 * @param url
+	 * @param packId
+	 */
+	public void writeInTXT(String url, int packId) {
+		try {
+			// 总数
+			String totle = "任务总数:" + taskService.getTaskCountByPackId(packId) + "\r\n";
+			// 完成数
+			String finishCount = "完成数:" + workerRecordService.getFinishTaskCountByPackId(packId, 1) + "\r\n";
+			// 无效任务数,taskMarkTime == 0
+			String invalidCount = "无效数:" + workerRecordService.getTaskMarkTimeZeroCountByPackId(packId) + "\r\n";
+			// wav.length == 0
+			String wavZeroKB = "0KB:" + taskService.getWorkerIdZeroCountByPackId(packId) + "\r\n";
+			File f = new File(url + "/readme.txt");
+			FileWriter fw = new FileWriter(f);
+			PrintWriter pw = new PrintWriter(fw);
+			// 任务总数
+			pw.append(totle);
+			pw.append(finishCount);
+			pw.append(invalidCount);
+			pw.append(wavZeroKB);
+			pw.flush();
+			pw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
 	 * 读取数据库文件,存入相应的目录中
 	 * 
 	 * @param list
@@ -702,8 +798,13 @@ public class EmployerController {
 					outStream.write(data, 0, count);
 				data = null;
 				byte[] wav = outStream.toByteArray();
+
 				taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
 				packId = packService.getPackIdByPackName(packName);
+				// wav文件大小为0kb
+				if (outStream.size() == 0) {
+					taskWithBLOBs.setWorkerId(0);
+				}
 				taskWithBLOBs.setTaskWav(wav);
 				taskWithBLOBs.setTaskLvl(taskLvl);
 				// 上传的包的号
@@ -791,10 +892,15 @@ public class EmployerController {
 				continue;
 			}
 			File f = new File(foldUrl + Constants.SLASH + fileName);
+
 			byte[] wav = getBytesFromFile(f);
 
 			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
 			packId = packService.getPackIdByPackName(packName);
+			// wav文件大小为0kb时
+			if (f.length() == 0) {
+				taskWithBLOBs.setWorkerId(0);
+			}
 			taskWithBLOBs.setTaskWav(wav);
 			taskWithBLOBs.setTaskLvl(taskLvl);
 			// 上传的包的号

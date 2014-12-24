@@ -36,6 +36,12 @@
 	<sql id="Blob_Column_List">
 		task_wav, task_tag, task_textgrid
 	</sql>
+	<select id="selectWorkerIdZeroCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select count(task_id) count from task
+		<where>
+			worker_id = 0 and task_mark_time IS NULL
+		</where>
+	</select>
 	<select id="selectTaskLvlByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		task_lvl
@@ -174,7 +180,7 @@
 		select
 		count(task_id) total
 		from task
-		where pack_id = #{packId,jdbcType=INTEGER} and worker_id is null
+		where pack_id = #{packId,jdbcType=INTEGER} and worker_id IS NULL
 	</select>
 	<select id="selectTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
@@ -224,7 +230,7 @@
 	<select id="selectFreePackCount" resultType="java.lang.Integer">
 		SELECT COUNT(pack_id) count1 FROM (SELECT COUNT(pack_id) pack_id FROM
 		(SELECT pack_id FROM task
-		WHERE (worker_id IS NULL OR worker_id = 0)) b GROUP BY
+		WHERE worker_id IS NULL ) b GROUP BY
 		pack_id) a
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -727,7 +733,7 @@
 				version = #{version}
 			</if>
 		</set>
-		where worker_id = #{workerId} 
+		where worker_id = #{workerId}
 		and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
 		and <![CDATA[(task_upload_time < '${endDate}' or task_upload_time = '${endDate}')]]>
 	</update>

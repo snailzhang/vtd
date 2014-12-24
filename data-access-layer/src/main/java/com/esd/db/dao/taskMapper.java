@@ -75,4 +75,6 @@ public interface taskMapper {
     int updateByTaskId(task task);
     
 	int selectTaskLvlByPackId(int packId);
+	
+	int selectWorkerIdZeroCountByPackId(Integer packId);
 }

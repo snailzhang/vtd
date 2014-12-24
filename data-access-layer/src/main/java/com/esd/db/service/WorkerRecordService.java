@@ -51,7 +51,9 @@ public interface WorkerRecordService {
 	
 	List<workerRecord> getAllByDownPackName(String downPackName);
 	
-	int getFinishTaskCountByPackId(Integer packId);
+	int getFinishTaskCountByPackId(Integer packId,Integer taskMarkTime);
+	
+	int getTaskMarkTimeZeroCountByPackId(Integer packId);
 	
 	String get1DownPackNameByTaskName(String taskName);
 	

@@ -288,11 +288,29 @@
 		where down_pack_name = #{downPackName, jdbcType=VARCHAR}
 		and task_statu = 0
 	</select>
-	<select id="selectFinishTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	<select id="selectFinishTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select
+		count(record_id) count1
+		from worker_record
+		<where>
+			pack_id = ${packId} and task_effective = 1
+			<if test="taskMarkTime == 0">
+				and task_mark_time == 0
+			</if>
+			<if test="taskMarkTime == 1">
+				and task_mark_time > 0
+			</if>
+			<if test="taskMarkTime == 2">
+				and (task_mark_time > 0 or task_mark_time = 0)
+			</if>
+		</where>
+	</select>
+	<select id="selectTaskMarkTimeZeroCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		count(record_id) count1
 		from worker_record
 		where pack_id = #{packId, jdbcType=INTEGER} and
+		task_mark_time = 0 and
 		task_effective = 1
 	</select>
 	<select id="selectWorkerIdGroupByWorkerId" resultType="java.util.Map" parameterType="java.util.Map">
