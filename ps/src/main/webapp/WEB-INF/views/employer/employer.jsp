@@ -33,6 +33,7 @@
 	
 	<!-------------------------------- 选项卡区域 -------------------------------------------------->
 	<div class="container">
+		
 		<ul class="nav nav-tabs" role="tablist">
 			<li class="active"><a href="#packUncomplete" role="tab" data-toggle="tab">未完成任务包列表</a></li>
 			<li><a href="#packComplete" role="tab" data-toggle="tab">已完成任务包列表</a></li>
@@ -63,13 +64,13 @@
 								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
 								<th width='6%'>剩余数</th>
+								<th width='6%'>无效数</th>
 								<th width='6%'>完成数</th>
 								<th width='7%'>完成比例</th>
-								<th width='8%'>下载次数</th>
 								<th width='8%'>回传时间</th>
 								<th width='15%'>创建时间</th>
 								<th width='15%'>标注时间</th>
-								<th width='5%'>下载</th>
+								<th width='7%'>下载</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -99,13 +100,13 @@
 								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
 								<th width='6%'>剩余数</th>
+								<th width='6%'>无效数</th>
 								<th width='6%'>完成数</th>
 								<th width='7%'>完成比例</th>
-								<th width='8%'>下载次数</th>
 								<th width='8%'>回传时间</th>
 								<th width='15%'>创建时间</th>
 								<th width='15%'>标注时间</th>
-								<th width='5%'>下载</th>
+								<th width='7%'>下载</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -135,13 +136,13 @@
 								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
 								<th width='6%'>剩余数</th>
+								<th width='6%'>无效数</th>
 								<th width='6%'>完成数</th>
 								<th width='7%'>完成比例</th>
-								<th width='8%'>下载次数</th>
 								<th width='8%'>回传时间</th>
 								<th width='15%'>创建时间</th>
 								<th width='15%'>标注时间</th>
-								<th width='5%'>下载</th>
+								<th width='7%'>下载</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -467,10 +468,11 @@
 								finishTaskRatio = finishTaskRatio.toFixed(2);
 								var downloadPack = "<td></td>";
 								if(item.finishTaskCount != 0){
-									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载 <span class='badge'>"+item.downCount+"</span></a></td>";
 								}else{
-									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载</a></td>";
+									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载 <span class='badge'>0</span></a></td>";
 								}
+								var invalidCount = item.invalid+item.wavZero;//无效数
 								$("#packUncomplete tbody").append(
 									"<tr>"+
 										"<td>"+(i+1)+"</td>"+
@@ -478,9 +480,10 @@
 										"<td><a href='javascript:changeTaskLvl("+item.packId+","+item.taskLvl+");'>"+item.taskLvl+"</a></td>"+
 										"<td>"+item.taskCount+"</td>"+
 										"<td>"+surplusTask+"</td>"+
+										"<td>"+invalidCount+"</td>"+
 										"<td>"+item.finishTaskCount+"</td>"+
 										"<td>"+finishTaskRatio+"%</td>"+
-										"<td>"+item.downCount+"</td>"+
+										
 										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
 										"<td>"+item.taskMarkTime+"</td>"+
@@ -521,7 +524,8 @@
 							if(item.packLockTime == null){
 								item.packLockTime = "";
 							}
-							var downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+							var downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载<span class='badge'>"+item.downCount+"</span></a></td>";
+							var invalidCount = item.invalid+item.wavZero;//无效数
 							$("#packComplete tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
@@ -529,7 +533,7 @@
 										"<td>"+item.taskLvl+"</td>"+
 										"<td>"+item.taskCount+"</td>"+
 										"<td>0</td>"+
-										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>"+invalidCount+"</td>"+
 										"<td>100%</td>"+
 										"<td>"+item.downCount+"</td>"+
 										"<td>"+item.packLockTime+"小时</td>"+
@@ -576,10 +580,11 @@
 							finishTaskRatio = finishTaskRatio.toFixed(2);
 							var downloadPack = "<td></td>";
 							if(item.finishTaskCount != 0){
-								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载</a></td>";
+								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn("+item.packId+")'>下载<span class='badge'>"+item.downCount+"</span></a></td>";
 							}else{
-								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载</a></td>";
+								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载<span class='badge'>0</span></a></td>";
 							}
+							var invalidCount = item.invalid+item.wavZero;//无效数
 							$("#packAll tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
@@ -587,7 +592,7 @@
 										"<td>"+item.taskLvl+"</td>"+
 										"<td>"+item.taskCount+"</td>"+
 										"<td>"+surplusTask+"</td>"+
-										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>"+invalidCount+"</td>"+
 										"<td>"+finishTaskRatio+"%</td>"+
 										"<td>"+item.downCount+"</td>"+
 										"<td>"+item.packLockTime+"小时</td>"+
