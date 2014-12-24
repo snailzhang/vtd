@@ -213,16 +213,13 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/GiveUpTask", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> GiveUpTaskPost(HttpSession session, int taskId, int taskStatus ) {
+	public synchronized Map<String, Object> GiveUpTaskPost(HttpSession session, int taskId) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		//taskStatus:3,放弃   4,无效
-		workerRecordService.updateByGiveUp(workerId, taskStatus, taskId, 0, items[1].toString());
+		workerRecordService.updateByGiveUp(workerId, taskId, 0, items[1].toString());
 		task task = new task();
-		if(taskStatus == 3){
-			task.setWorkerId(0);	
-		}
+		task.setWorkerId(0);
 		task.setVersion(1);
 		task.setTaskMarkTime(0.00);
 		task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -599,19 +596,21 @@ public class WorkerController {
 					int taskId = task.getTaskId();
 					String markTimeName = packService.getTaskMarkTimeName(task.getPackId());
 					int uploadFileCount = Integer.parseInt(markTimeName.split("_")[1]);
-					//上传连个文件textgrid和tag
+					// 上传连个文件textgrid和tag
 					if (uploadFileCount == 2) {
 						for (int j = 0; j < files.length; j++) {
-							if (files[i].getOriginalFilename().split("\\.")[0].endsWith(files[j].getOriginalFilename().split("\\.")[0])
-									&& !files[i].getOriginalFilename().endsWith(files[j].getOriginalFilename())) {
-								if (files[i].getOriginalFilename().split("\\.")[1].endsWith(Constants.TEXTGRID) || files[i].getOriginalFilename().split("\\.")[1].endsWith(Constants.TAG)) {
+							if (files[i].getOriginalFilename().split("\\.")[0].equalsIgnoreCase(files[j].getOriginalFilename().split("\\.")[0])
+									&& !files[i].getOriginalFilename().equalsIgnoreCase(files[j].getOriginalFilename())) {
+								if (files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TEXTGRID) || files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TAG)) {
 									flag = true;
 									break;
 								}
 							}
 						}
 					} else if (uploadFileCount == 1) {
-						flag = true;
+						if(files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TEXTGRID)){
+							flag = true;
+						}		
 					}
 					if (flag) {
 						String uploadTaskNameI = files[i].getOriginalFilename();

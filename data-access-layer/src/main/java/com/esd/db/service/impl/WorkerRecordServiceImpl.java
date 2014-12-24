@@ -312,12 +312,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int updateByGiveUp(int workerId, int taskStatu, int taskId, int version,String updateMethod) {
+	public int updateByGiveUp(int workerId,int taskId, int version,String updateMethod) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("updateMethod", updateMethod);
 		map.put("workerId", workerId);
-		map.put("taskStatu", taskStatu);
 		map.put("taskId", taskId);
 		if (version == 0) {
 			map.put("version", null);

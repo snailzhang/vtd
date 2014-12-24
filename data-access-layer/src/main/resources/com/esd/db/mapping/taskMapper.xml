@@ -162,7 +162,7 @@
 		,
 		<include refid="Blob_Column_List" />
 		from task
-		where pack_id = #{packId,jdbcType=INTEGER} and task_effective = 1
+		where pack_id = #{packId,jdbcType=INTEGER} and task_effective = 1 and task_mark_time > 0
 	</select>
 	<select id="selectFirstPackIdOrderByTaskLvl" resultType="java.lang.Integer">
 		select
@@ -193,7 +193,7 @@
 		select
 		count(task_id) total
 		from task
-		where pack_id = #{packId,jdbcType=INTEGER} and (task_mark_time > 0)
+		where pack_id = #{packId,jdbcType=INTEGER} and task_mark_time > 0
 	</select>
 	<select id="selectUndoTaskCount" resultType="java.lang.Integer">
 		select
