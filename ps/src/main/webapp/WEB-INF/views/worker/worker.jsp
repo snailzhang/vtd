@@ -161,56 +161,7 @@
 		var todayTime = today.valueOf();
 		$(document).ready(function(){
 			/*******************************加载页面**************************************************/
-			$.ajax({
-				type:'POST',
-				url:'${contextPath}/security/worker',
-				data:{"taskEffective":0},
-				dataType:'json',
-				success:function(data){
-					var workerMark = data.workerMark;
-					if(workerMark == 0){//下载
-						var taskTotal = data.countTaskDoing;
-						var packTotal = data.countPackDoing;
-						$("#downloadPanel h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个。当前下载包标注说明编号为："+data.noteId);
-						if(data.downCount != 0){
-							for(var i=1;i<data.downCount+1;i++){
-								$("#downTaskCount").append("<option vale='"+i+"'>"+i+"</option>");
-							}
-						}else{
-							$("#downTaskCount").attr("disabled","disabled");
-						}
-						$("#uploadPanel").hide();
-						$("#downloadPanel").show();
-					}else{//上传
-						loadUnqualified();
-						var mm = data.mm;
-						if(data.list == ""){
-							$("#waitForUpTable").empty();
-							$("#waitForUpTable").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
-						}else{
-							$.each(data.list,function(i,item){
-								var giveUpBtn = "<td><a href='javascript:giveUpTask("+item.taskId+")'>放弃</a></td>";
-								$("#waitForUpTable").append(
-									"<tr>"+
-										"<td>"+(i+1)+"</td>"+
-										"<td>"+item.taskName+"</td>"+
-										"<td>"+item.taskDownloadTime+"</td>"+
-										giveUpBtn+
-									"</tr>"
-								);
-							});
-						}
-						if(mm !=0){
-							var endTime = todayTime+mm ;
-							window.setInterval(function(){ShowCountDown(endTime,$("#taskLeftTimeInterval span"));}, tltInterval);
-						}
-						
-						$("#downloadPanel").hide();
-						$("#uploadPanel").show();
-					}
-					
-				}
-			});
+			loadPage();
 			
 			 /*******************************上传check**************************************************/
 			var textGridReady = false;
@@ -330,7 +281,7 @@
 				});
 			/*******************************modal关闭时刷新页面**************************************************/
 			$(".modal").on('hidden.bs.modal', function (e) {
-				window.location.reload();
+				loadPage();
 			});
 			/*******************************下载任务**************************************************/
 			$("#doneLoadBtn").click(function(){
@@ -347,8 +298,8 @@
 						success:function(data){
 							if(data.wrongPath != ""){
 								
-								window.open(data.wrongPath);
-								window.location.reload();
+								window.open("${contextPath}"+data.wrongPath);
+								loadPage();
 							}
 						}
 					});
@@ -359,18 +310,84 @@
 				window.location.reload();
 			});
 		});
+		/*-----------------------------------加载页面----------------------------------------------------*/
+		loadPage = function(){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/worker',
+				data:{"taskEffective":0},
+				dataType:'json',
+				success:function(data){
+					var workerMark = data.workerMark;
+					if(workerMark == 0){//下载
+						var taskTotal = data.countTaskDoing;
+						var packTotal = data.countPackDoing;
+						$("#downloadPanel h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个。当前下载包标注说明编号为："+data.noteId);
+						
+						if(data.downCount != 0){
+							if(parseInt(data.downCount/10)){
+								$("#downTaskCount").append("<option vale='1'>1</option>");
+								for(var i=1;i<parseInt(data.downCount/10)+1;i++){
+									$("#downTaskCount").append("<option vale='"+(i*10)+"'>"+(i*10)+"</option>");
+								}
+								if(data.downCount%10){
+									$("#downTaskCount").append("<option vale='"+data.downCount+"'>"+data.downCount+"</option>");
+								}
+							}else{
+								for(var i=1;i<data.downCount+1;i++){
+									$("#downTaskCount").append("<option vale='"+i+"'>"+i+"</option>");
+								}
+							}
+							
+						}else{
+							$("#downTaskCount").attr("disabled","disabled");
+						}
+						$("#uploadPanel").hide();
+						$("#downloadPanel").show();
+					}else{//上传
+						loadUnqualified();
+						var mm = data.mm;
+						if(data.list == ""){
+							$("#waitForUpTable").empty();
+							$("#waitForUpTable").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
+						}else{
+							$("#waitForUpTable").empty();
+							$.each(data.list,function(i,item){
+								var giveUpBtn = "<td><a href='javascript:giveUpTask("+item.taskId+")'>放弃</a></td>";
+								$("#waitForUpTable").append(
+									"<tr>"+
+										"<td>"+(i+1)+"</td>"+
+										"<td>"+item.taskName+"</td>"+
+										"<td>"+item.taskDownloadTime+"</td>"+
+										giveUpBtn+
+									"</tr>"
+								);
+							});
+						}
+						if(mm !=0){
+							var endTime = todayTime+mm ;
+							window.setInterval(function(){ShowCountDown(endTime,$("#taskLeftTimeInterval span"));}, tltInterval);
+						}
+						
+						$("#downloadPanel").hide();
+						$("#uploadPanel").show();
+					}
+					
+				}
+			});
+		}
 		/*******************************倒计时**************************************************/
-			function ShowCountDown(endTime,obj){
-				var now = new Date(); 
-				var leftTime=endTime-now.valueOf(); 
-				var leftsecond = parseInt(leftTime/1000); 
-				var day1=Math.floor(leftsecond/(60*60*24)); 
-				var hour=Math.floor((leftsecond-day1*24*60*60)/3600); 
-				var minute=Math.floor((leftsecond-day1*24*60*60-hour*3600)/60); 
-				var second=Math.floor(leftsecond-day1*24*60*60-hour*3600-minute*60); 
-				
-				obj.text(day1+"天"+hour+"小时"+minute+"分"+second+"秒"); 
-			}
+		function ShowCountDown(endTime,obj){
+			var now = new Date(); 
+			var leftTime=endTime-now.valueOf(); 
+			var leftsecond = parseInt(leftTime/1000); 
+			var day1=Math.floor(leftsecond/(60*60*24)); 
+			var hour=Math.floor((leftsecond-day1*24*60*60)/3600); 
+			var minute=Math.floor((leftsecond-day1*24*60*60-hour*3600)/60); 
+			var second=Math.floor(leftsecond-day1*24*60*60-hour*3600-minute*60); 
+			
+			obj.text(day1+"天"+hour+"小时"+minute+"分"+second+"秒"); 
+		}
 		/*-----------------------------------加载不合格任务列表----------------------------------------------------*/
 		function loadUnqualified(){
 			$.ajax({
@@ -415,7 +432,7 @@
 					success:function(data){
 						if(data.replay == "1"){
 							alert("任务已放弃！");
-							window.location.reload();
+							loadPage();
 						}else{
 							alert("放弃任务失败！");
 						}

@@ -535,8 +535,9 @@
 										"<td>"+item.taskCount+"</td>"+
 										"<td>0</td>"+
 										"<td>"+invalidCount+"</td>"+
+										
+										"<td>"+item.finishTaskCount+"</td>"+
 										"<td>100%</td>"+
-										"<td>"+item.downCount+"</td>"+
 										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
 										"<td>"+item.taskMarkTime+"</td>"+
@@ -595,8 +596,9 @@
 										"<td>"+item.taskCount+"</td>"+
 										"<td>"+surplusTask+"</td>"+
 										"<td>"+invalidCount+"</td>"+
+										"<td>"+item.finishTaskCount+"</td>"+
 										"<td>"+finishTaskRatio+"%</td>"+
-										"<td>"+item.downCount+"</td>"+
+										
 										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
 										"<td>"+item.taskMarkTime+"</td>"+
