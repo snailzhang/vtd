@@ -158,7 +158,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition,int push) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
@@ -167,7 +167,7 @@ public class EmployerController {
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId);
+		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId,push);
 		if (totle == 0) {
 			map.clear();
 			map.put(Constants.TOTLE, totle);
@@ -175,7 +175,7 @@ public class EmployerController {
 			map.put(Constants.LIST, list);
 			return map;
 		}
-		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW);
+		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW,push);
 		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
 			packTrans packTrans = new packTrans();
@@ -501,7 +501,8 @@ public class EmployerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH + packName;
+		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH + packName;
+		String wrongPath = Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH + packName;
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
 
@@ -834,7 +835,7 @@ public class EmployerController {
 		fd.delete();
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
-		pack.setUnzip(1);
+		pack.setUnzip(2);//待发布状态
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		pack.setUpdateMethod(items[1].toString());
 		packService.updateByPrimaryKeySelective(pack);

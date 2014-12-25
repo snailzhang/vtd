@@ -230,7 +230,7 @@
 	<select id="selectFreePackCount" resultType="java.lang.Integer">
 		SELECT COUNT(pack_id) count1 FROM (SELECT COUNT(pack_id) pack_id FROM
 		(SELECT pack_id FROM task
-		WHERE worker_id IS NULL ) b GROUP BY
+		WHERE worker_id IS NULL AND pack_id IN (SELECT pack_id FROM pack WHERE unzip = 1)) b GROUP BY
 		pack_id) a
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

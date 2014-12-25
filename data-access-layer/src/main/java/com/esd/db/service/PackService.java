@@ -8,9 +8,9 @@ import com.esd.db.model.packWithBLOBs;
 
 public interface PackService {
 
-	List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row);
+	List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row,int push);
 
-	int getCountLikePackName(int packStuts, String packNameCondition, int employerId);
+	int getCountLikePackName(int packStuts, String packNameCondition, int employerId,int push);
 
 	int deleteByPrimaryKey(Integer packId);
 

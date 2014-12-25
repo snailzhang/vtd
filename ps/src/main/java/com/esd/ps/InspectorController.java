@@ -186,7 +186,8 @@ public class InspectorController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
+		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
+		String wrongPath = Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
 		return map;

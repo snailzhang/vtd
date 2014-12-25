@@ -370,7 +370,8 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		if (f.exists()) {
 			zipFile = new File(url + Constants.SLASH + downPackName);
 			if (zipFile.exists()) {
@@ -418,7 +419,8 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + zipName;
+		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + zipName;
+		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + zipName;
 		if (!f.exists()) {
 			f.mkdir();
 		}
@@ -477,7 +479,8 @@ public class WorkerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		String wrongPath =Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		logger.debug("wrongPath:{}", wrongPath);
 		try {
 			zipFile.createNewFile();

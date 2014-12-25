@@ -202,14 +202,14 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row) {
+	public List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row ,int push) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("begin", (page - 1) * row);
 		map.put("end", row);
 		map.put("employerId", employerId);
 		map.put("packStuts", packStuts);
-
+		map.put("unzip", push);
 		if (packNameCondition.trim().length() > 0)
 			map.put("packNameCondition", packNameCondition);
 
@@ -217,10 +217,11 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public int getCountLikePackName(int packStuts, String packNameCondition, int employerId) {
+	public int getCountLikePackName(int packStuts, String packNameCondition, int employerId,int push) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("employerId", employerId);
 		map.put("packStuts", packStuts);
+		map.put("unzip",push);
 		if (packNameCondition.trim().length() > 0)
 			map.put("packNameCondition", packNameCondition);
 

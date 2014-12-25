@@ -52,6 +52,9 @@
 			<if test="packStuts == 0">
 				<![CDATA[and (pack_status = 0 or pack_status = 2)]]>
 			</if>
+			<if test="unzip != 0">
+				and unzip = #{unzip}
+			</if>
 			<if test="packNameCondition !=null">
 				and pack_name like "%${packNameCondition}%"
 			</if>
@@ -70,6 +73,9 @@
 			</if>
 			<if test="packStuts == 0">
 				<![CDATA[and (pack_status = 0 or pack_status = 2)]]>
+			</if>
+			<if test="unzip != null">
+				and unzip = #{unzip}
 			</if>
 			<if test="packNameCondition !=null">
 				and pack_name like "%${packNameCondition}%"
