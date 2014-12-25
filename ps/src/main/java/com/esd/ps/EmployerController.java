@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -694,8 +694,8 @@ public class EmployerController {
 			// wav.length == 0
 			String wavZeroKB = "任务0KB:" + taskService.getWorkerIdZeroCountByPackId(packId) + "\r\n";
 			File f = new File(url + "/readme.txt");
-			FileWriter fw = new FileWriter(f);
-			
+			//FileWriter fw = new FileWriter(f);
+			//转成utf-8解决乱码
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f), "utf-8"));
 			// 任务总数
 			

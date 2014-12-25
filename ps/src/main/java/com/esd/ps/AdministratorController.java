@@ -172,7 +172,7 @@ public class AdministratorController {
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
-		
+
 			trans.setUserId(user.getUserId());
 			if (user.getUserStatus()) {
 				trans.setUserStatus(1);
@@ -680,6 +680,32 @@ public class AdministratorController {
 		map.put(Constants.REPLAY, 0);
 		return map;
 	}
+	/**
+	 * 管理员更改所有人密码
+	 * @param userId
+	 * @param newPassWord
+	 * @param username
+	 * @return
+	 */
+	@RequestMapping(value = "/updateAllPassWord", method = RequestMethod.POST)
+	@ResponseBody
+	public synchronized Map<String, Object> updateAllPassWordPOST(int userId, String newPassWord, String username) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		user user = new user();
+		
+		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
+		String md5Password = md5.getMd5(username, newPassWord);
+		user.setPassword(md5Password);
+		user.setUserId(userId);
+		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		user.setUpdateMethod(items[1].toString());
+		userService.updateByPrimaryKeySelective(user);
+		
+		map.clear();
+		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
+		map.put(Constants.REPLAY, 1);
+		return map;
+	}
 
 	/**
 	 * 修改工作者信息
@@ -726,44 +752,6 @@ public class AdministratorController {
 		map.put(Constants.REPLAY, 1);
 		return map;
 	}
-
-	// @RequestMapping(value = "/updateWorker2", method = RequestMethod.POST)
-	// @ResponseBody
-	// public Map<String, Object> updateWorkerPOST2(@RequestParam(value =
-	// "workerImage", required = false) MultipartFile workerImage, String
-	// workerPhone, String workerBankCard, String workerPaypal,
-	// HttpSession session) {
-	// logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}",
-	// workerBankCard, workerPaypal);
-	// Map<String, Object> map = new HashMap<String, Object>();
-	// if (workerPhone(workerPhone) == 1) {
-	// map.clear();
-	// map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
-	// return map;
-	// }
-	// worker worker = new worker();
-	// if (!workerImage.isEmpty()) {
-	// try {
-	// worker.setWorkerImage(workerImage.getBytes());
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// int userId =
-	// Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-	// int workerId = workerService.getWorkerIdByUserId(userId);
-	// worker.setWorkerId(workerId);
-	// worker.setWorkerBankCard(workerBankCard);
-	// worker.setWorkerPaypal(workerPaypal);
-	// worker.setWorkerPhone(workerPhone);
-	//
-	// worker.setUpdateTime(new Date());
-	// workerService.updateByPrimaryKeySelective(worker);
-	// map.clear();
-	// map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
-	// map.put(Constants.REPLAY, 1);
-	// return map;
-	// }
 
 	/**
 	 * 检查用户名是否重复
