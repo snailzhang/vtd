@@ -81,13 +81,13 @@
 		<include refid="Base_Column_List" />
 		from user
 		<if test="userNameCondition !=null and userType !=null">
-			where username like "%${userNameCondition}%" and usertype = #{userType}
+			where username like "%${userNameCondition}%" and usertype = #{userType} and <![CDATA[user_id > 3]]>
 		</if>
 		<if test="userNameCondition !=null and userType ==null">
-			where username like "%${userNameCondition}%"
+			where username like "%${userNameCondition}%" and <![CDATA[user_id > 3]]>
 		</if>
 		<if test="userType !=null and userNameCondition ==null">
-			where usertype = #{userType}
+			where usertype = #{userType} and <![CDATA[user_id > 3]]>
 		</if>
 
 		limit #{begin,jdbcType=INTEGER},#{end,jdbcType=INTEGER}

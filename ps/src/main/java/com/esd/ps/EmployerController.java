@@ -158,7 +158,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition,int push) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
@@ -167,7 +167,7 @@ public class EmployerController {
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId,push);
+		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId, 1);
 		if (totle == 0) {
 			map.clear();
 			map.put(Constants.TOTLE, totle);
@@ -175,7 +175,7 @@ public class EmployerController {
 			map.put(Constants.LIST, list);
 			return map;
 		}
-		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW,push);
+		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW, 1);
 		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
 			packTrans packTrans = new packTrans();
@@ -501,7 +501,9 @@ public class EmployerController {
 		// 项目在服务器上的远程绝对地址
 		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH + packName;
+		// String wrongPath = Constants.HTTP + serverAndProjectPath +
+		// Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH +
+		// packName;
 		String wrongPath = Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH + packName;
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
@@ -612,15 +614,18 @@ public class EmployerController {
 				} else if (fileType.equalsIgnoreCase(Constants.TEXTGRID)) {
 					data = taskWithBLOBs.getTaskTextgrid();
 				}
-				InputStream is = new ByteArrayInputStream(data);
-				// 读取待压缩的文件并写进压缩包里
-				BufferedInputStream bis = new BufferedInputStream(is, 1024);
-				int read;
-				while ((read = bis.read(bufs)) > 0) {
-					zos.write(bufs, 0, read);//
+				if (data != null) {
+					InputStream is = new ByteArrayInputStream(data);
+					// 读取待压缩的文件并写进压缩包里
+					BufferedInputStream bis = new BufferedInputStream(is, 1024);
+					int read;
+					while ((read = bis.read(bufs)) > 0) {
+						zos.write(bufs, 0, read);//
+					}
+					bis.close();
+					is.close();
 				}
-				bis.close();
-				is.close();
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -695,11 +700,11 @@ public class EmployerController {
 			// wav.length == 0
 			String wavZeroKB = "任务0KB:" + taskService.getWorkerIdZeroCountByPackId(packId) + "\r\n";
 			File f = new File(url + "/readme.txt");
-			//FileWriter fw = new FileWriter(f);
-			//转成utf-8解决乱码
+			// FileWriter fw = new FileWriter(f);
+			// 转成utf-8解决乱码
 			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f), "utf-8"));
 			// 任务总数
-			
+
 			pw.append(totle);
 			pw.append(finishCount);
 			pw.append(invalidCount);
@@ -835,7 +840,7 @@ public class EmployerController {
 		fd.delete();
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
-		pack.setUnzip(2);//待发布状态
+		pack.setUnzip(2);// 待发布状态
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		pack.setUpdateMethod(items[1].toString());
 		packService.updateByPrimaryKeySelective(pack);
