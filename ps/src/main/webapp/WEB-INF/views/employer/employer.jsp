@@ -463,7 +463,8 @@
 								if(item.packLockTime == null){
 									item.packLockTime = "";
 								}
-								var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
+								var invalidCount = item.invalid+item.wavZero;//无效数
+								var surplusTask = item.taskCount - item.finishTaskCount - invalidCount;//未完成任务数
 								var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
 								finishTaskRatio = finishTaskRatio.toFixed(2);
 								var downloadPack = "<td></td>";
@@ -472,7 +473,7 @@
 								}else{
 									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载 <span class='badge'>0</span></a></td>";
 								}
-								var invalidCount = item.invalid+item.wavZero;//无效数
+								
 								$("#packUncomplete tbody").append(
 									"<tr>"+
 										"<td>"+(i+1)+"</td>"+
@@ -575,7 +576,8 @@
 							if(item.packLockTime == null){
 								item.packLockTime = "";
 							}
-							var surplusTask = item.taskCount - item.finishTaskCount;//未完成任务数
+							var invalidCount = item.invalid+item.wavZero;//无效数
+							var surplusTask = item.taskCount - item.finishTaskCount - invalidCount;//未完成任务数
 							var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
 							finishTaskRatio = finishTaskRatio.toFixed(2);
 							var downloadPack = "<td></td>";
@@ -584,7 +586,7 @@
 							}else{
 								downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载<span class='badge'>0</span></a></td>";
 							}
-							var invalidCount = item.invalid+item.wavZero;//无效数
+							
 							$("#packAll tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
