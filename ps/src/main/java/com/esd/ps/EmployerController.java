@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -41,8 +39,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.alibaba.druid.pool.DruidDataSource.CreateConnectionThread;
 import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
@@ -695,7 +691,7 @@ public class EmployerController {
 			// 无效任务数,taskMarkTime == 0
 			String invalidCount = "无效数:" + workerRecordService.getTaskMarkTimeZeroCountByPackId(packId) + "\r\n";
 			// wav.length == 0
-			String wavZeroKB = "0KB:" + taskService.getWorkerIdZeroCountByPackId(packId) + "\r\n";
+			String wavZeroKB = "任务0KB:" + taskService.getWorkerIdZeroCountByPackId(packId) + "\r\n";
 			File f = new File(url + "/readme.txt");
 			FileWriter fw = new FileWriter(f);
 			PrintWriter pw = new PrintWriter(fw);

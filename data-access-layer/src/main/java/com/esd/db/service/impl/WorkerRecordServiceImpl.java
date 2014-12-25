@@ -318,6 +318,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	public int updateByGiveUp(int workerId,int taskId, int version,String updateMethod) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
+		map.put("taskStatu", 3);
 		map.put("updateMethod", updateMethod);
 		map.put("workerId", workerId);
 		map.put("taskId", taskId);

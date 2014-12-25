@@ -252,6 +252,7 @@ public class LoginController {
 						// 更新task表
 						task task = new task();
 						task.setWorkerId(0);
+						task.setTaskMarkTime(0.00);
 						task.setTaskId(workerRecord.getTaskId());
 						StackTraceElement[] item = Thread.currentThread().getStackTrace();
 						task.setUpdateMethod(item[1].toString());

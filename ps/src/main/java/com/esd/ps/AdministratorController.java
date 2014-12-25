@@ -172,7 +172,7 @@ public class AdministratorController {
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
-
+		
 			trans.setUserId(user.getUserId());
 			if (user.getUserStatus()) {
 				trans.setUserStatus(1);
@@ -181,7 +181,11 @@ public class AdministratorController {
 			}
 			trans.setUsername(user.getUsername());
 			trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
-			trans.setCreateTime(sdf.format(user.getCreateTime()));
+			if (user.getCreateTime() == null) {
+				trans.setCreateTime("");
+			} else {
+				trans.setCreateTime(sdf.format(user.getCreateTime()));
+			}
 			if (user.getUpdateTime() == null) {
 				trans.setUpdateTime("");
 			} else {
@@ -213,32 +217,32 @@ public class AdministratorController {
 			manager manager = managerService.getManagerByUserId(userId);
 			map.clear();
 			map.put("name", manager.getManagerName());
-			map.put("userId",manager.getUserId());
+			map.put("userId", manager.getUserId());
 			map.put(Constants.USER_DETAIL, manager);
 		}
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
 			map.clear();
 			map.put("name", employer.getEmployerName());
-			map.put("userId",employer.getUserId());
+			map.put("userId", employer.getUserId());
 			map.put(Constants.USER_DETAIL, employer);
 		}
 		if (userType == 3) {
 			inspector inspector = inspectorService.getinspectorByUserId(userId);
 			map.clear();
 			map.put("name", inspector.getInspectorName());
-			map.put("userId",inspector.getUserId());
+			map.put("userId", inspector.getUserId());
 			map.put(Constants.USER_DETAIL, inspector);
 		}
 		if (userType == 4) {
 			worker worker = workerService.getWorkerByUserId(userId);
 			map.clear();
 			map.put("name", worker.getWorkerRealName());
-			map.put("userId",worker.getUserId());
-			map.put("bankCard",worker.getWorkerBankCard());
-			map.put("disabilityCard",worker.getWorkerDisabilityCard());
-			map.put("paypal",worker.getWorkerPaypal());
-			map.put("phone",worker.getWorkerPhone());	
+			map.put("userId", worker.getUserId());
+			map.put("bankCard", worker.getWorkerBankCard());
+			map.put("disabilityCard", worker.getWorkerDisabilityCard());
+			map.put("paypal", worker.getWorkerPaypal());
+			map.put("phone", worker.getWorkerPhone());
 			map.put(Constants.USER_DETAIL, worker);
 		}
 		return map;
@@ -550,8 +554,8 @@ public class AdministratorController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/addworker", method = RequestMethod.POST)
-	public synchronized ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerDisabilityCard, String workerPhone,
-			String workerBankCard, String workerPaypal, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request, int userRegisted) {
+	public synchronized ModelAndView addworkerPOST(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerRealName, String workerDisabilityCard,
+			String workerPhone, String workerBankCard, String workerPaypal, RedirectAttributes redirectAttributes, HttpSession session, HttpServletRequest request, int userRegisted) {
 		logger.debug("workerRealName:{},workerIdCard:{},workerDisabilityCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerRealName, workerDisabilityCard, workerBankCard, workerPaypal);
 		boolean flag = true;
 		if (workerDisabilityCard(workerDisabilityCard) == 1) {
@@ -723,39 +727,43 @@ public class AdministratorController {
 		return map;
 	}
 
-//	@RequestMapping(value = "/updateWorker2", method = RequestMethod.POST)
-//	@ResponseBody
-//	public Map<String, Object> updateWorkerPOST2(@RequestParam(value = "workerImage", required = false) MultipartFile workerImage, String workerPhone, String workerBankCard, String workerPaypal,
-//			HttpSession session) {
-//		logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}", workerBankCard, workerPaypal);
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		if (workerPhone(workerPhone) == 1) {
-//			map.clear();
-//			map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
-//			return map;
-//		}
-//		worker worker = new worker();
-//		if (!workerImage.isEmpty()) {
-//			try {
-//				worker.setWorkerImage(workerImage.getBytes());
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-//		int workerId = workerService.getWorkerIdByUserId(userId);
-//		worker.setWorkerId(workerId);
-//		worker.setWorkerBankCard(workerBankCard);
-//		worker.setWorkerPaypal(workerPaypal);
-//		worker.setWorkerPhone(workerPhone);
-//
-//		worker.setUpdateTime(new Date());
-//		workerService.updateByPrimaryKeySelective(worker);
-//		map.clear();
-//		map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
-//		map.put(Constants.REPLAY, 1);
-//		return map;
-//	}
+	// @RequestMapping(value = "/updateWorker2", method = RequestMethod.POST)
+	// @ResponseBody
+	// public Map<String, Object> updateWorkerPOST2(@RequestParam(value =
+	// "workerImage", required = false) MultipartFile workerImage, String
+	// workerPhone, String workerBankCard, String workerPaypal,
+	// HttpSession session) {
+	// logger.debug("workerRealName:{},workerIdCard:{},workerBankCard:{},workerPaypal:{},workerPhone:{}",
+	// workerBankCard, workerPaypal);
+	// Map<String, Object> map = new HashMap<String, Object>();
+	// if (workerPhone(workerPhone) == 1) {
+	// map.clear();
+	// map.put(Constants.MESSAGE, MSG_WORKERPHONE_EXIST);
+	// return map;
+	// }
+	// worker worker = new worker();
+	// if (!workerImage.isEmpty()) {
+	// try {
+	// worker.setWorkerImage(workerImage.getBytes());
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// int userId =
+	// Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+	// int workerId = workerService.getWorkerIdByUserId(userId);
+	// worker.setWorkerId(workerId);
+	// worker.setWorkerBankCard(workerBankCard);
+	// worker.setWorkerPaypal(workerPaypal);
+	// worker.setWorkerPhone(workerPhone);
+	//
+	// worker.setUpdateTime(new Date());
+	// workerService.updateByPrimaryKeySelective(worker);
+	// map.clear();
+	// map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
+	// map.put(Constants.REPLAY, 1);
+	// return map;
+	// }
 
 	/**
 	 * 检查用户名是否重复

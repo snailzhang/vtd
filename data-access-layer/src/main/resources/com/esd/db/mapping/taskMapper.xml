@@ -39,7 +39,7 @@
 	<select id="selectWorkerIdZeroCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select count(task_id) count from task
 		<where>
-			worker_id = 0 and task_mark_time IS NULL
+			worker_id = 0 and task_mark_time IS NULL and pack_id = #{packId}
 		</where>
 	</select>
 	<select id="selectTaskLvlByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
@@ -625,7 +625,10 @@
 				worker_id = null,
 				task_effective = null,
 			</if>
-			<if test="taskMarkTime != null">
+			<if test="taskMarkTime == 0">
+				task_mark_time = null,
+			</if>
+			<if test="taskMarkTime > 0">
 				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
 			</if>
 			<if test="taskEffective != null">
