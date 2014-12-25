@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -694,8 +695,10 @@ public class EmployerController {
 			String wavZeroKB = "任务0KB:" + taskService.getWorkerIdZeroCountByPackId(packId) + "\r\n";
 			File f = new File(url + "/readme.txt");
 			FileWriter fw = new FileWriter(f);
-			PrintWriter pw = new PrintWriter(fw);
+			
+			PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f), "utf-8"));
 			// 任务总数
+			
 			pw.append(totle);
 			pw.append(finishCount);
 			pw.append(invalidCount);
