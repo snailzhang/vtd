@@ -207,7 +207,7 @@
 				dataType:'json',
 				success:function(data){
 					if(data.wrongPath != ""){
-						window.open(data.wrongPath);
+						window.open("${contextPath}"+data.wrongPath);
 					}
 				}
 			});
@@ -221,7 +221,7 @@
 				dataType:'json',
 				success:function(data){
 					if(data.wrongPath != ""){
-						window.open(data.wrongPath);
+						window.open("${contextPath}"+data.wrongPath);
 					}
 				}
 			});
