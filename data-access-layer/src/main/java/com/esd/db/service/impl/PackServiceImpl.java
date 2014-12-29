@@ -217,11 +217,11 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public int getCountLikePackName(int packStuts, String packNameCondition, int employerId,int push) {
+	public int getCountLikePackName(int packStuts, String packNameCondition, int employerId,int unzip) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("employerId", employerId);
 		map.put("packStuts", packStuts);
-		map.put("unzip",push);
+		map.put("unzip",unzip);
 		if (packNameCondition.trim().length() > 0)
 			map.put("packNameCondition", packNameCondition);
 

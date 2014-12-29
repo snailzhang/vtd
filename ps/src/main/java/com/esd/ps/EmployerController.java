@@ -158,7 +158,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition,int unzip) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
@@ -167,7 +167,7 @@ public class EmployerController {
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<packTrans> list = new ArrayList<packTrans>();
-		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId, 1);
+		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId, unzip);
 		if (totle == 0) {
 			map.clear();
 			map.put(Constants.TOTLE, totle);
@@ -175,7 +175,7 @@ public class EmployerController {
 			map.put(Constants.LIST, list);
 			return map;
 		}
-		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW, 1);
+		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW, unzip);
 		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
 			pack pack = (pack) iterator.next();
 			packTrans packTrans = new packTrans();
@@ -212,6 +212,31 @@ public class EmployerController {
 		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
 		map.put(Constants.LIST, list);
 		logger.debug("list:{},totle:{},totlePages", list, totle, Math.ceil((double) totle / (double) Constants.ROW));
+		return map;
+	}
+	/**
+	 * 删除待发布任务包
+	 * @param packId
+	 * @return
+	 */
+	@RequestMapping(value = "/deletePack", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deletePackPOST(int packId) {
+		Map<String, Object> map = new HashMap<>();
+		taskWithBLOBs task = new taskWithBLOBs();
+		task.setPackId(packId);
+		int m = taskService.deleteByPackId(packId);
+		if (m == 1) {
+			packWithBLOBs pack = new packWithBLOBs();
+			pack.setPackId(packId);
+			packService.deleteByPrimaryKey(packId);
+			map.clear();
+			map.put(Constants.REPLAY, 1);
+		}else{
+			map.clear();
+			map.put(Constants.REPLAY,0);
+		}
+
 		return map;
 	}
 
