@@ -245,9 +245,9 @@ public class EmployerController {
 	 * @param unzip
 	 * @return
 	 */
-	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateUnzip", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> unzipPOST(int packId,int unzip) {
+	public Map<String, Object> updateUnzipPOST(int packId,int unzip) {
 		Map<String, Object> map = new HashMap<>();
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
