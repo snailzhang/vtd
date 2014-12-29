@@ -202,14 +202,14 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row ,int push) {
+	public List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row ,int unzip) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("begin", (page - 1) * row);
 		map.put("end", row);
 		map.put("employerId", employerId);
 		map.put("packStuts", packStuts);
-		map.put("unzip", push);
+		map.put("unzip", unzip);
 		if (packNameCondition.trim().length() > 0)
 			map.put("packNameCondition", packNameCondition);
 
