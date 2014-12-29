@@ -157,8 +157,9 @@
 	</div><!-- /.modal -->
 	<script type="text/javascript">
 		var tltInterval = 1000; 
-		var today = new Date();
-		var todayTime = today.valueOf();
+		var todayTime = "";
+		var intervalMainList = null;
+		var intervalUnqList = null;
 		$(document).ready(function(){
 			/*******************************加载页面**************************************************/
 			loadPage();
@@ -312,6 +313,12 @@
 		});
 		/*-----------------------------------加载页面----------------------------------------------------*/
 		loadPage = function(){
+			var today = new Date();
+			todayTime = today.valueOf();
+			if(intervalMainList || intervalUnqList){
+				window.clearInterval(intervalMainList);
+				window.clearInterval(intervalUnqList);
+			}
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/worker',
@@ -366,7 +373,7 @@
 						}
 						if(mm !=0){
 							var endTime = todayTime+mm ;
-							window.setInterval(function(){ShowCountDown(endTime,$("#taskLeftTimeInterval span"));}, tltInterval);
+							intervalMainList = window.setInterval(function(){ShowCountDown(endTime,$("#taskLeftTimeInterval span"));}, tltInterval);
 						}
 						
 						$("#downloadPanel").hide();
@@ -415,7 +422,7 @@
 					}
 					if(mm != 0){
 						var endTime = todayTime+mm ;
-						window.setInterval(function(){ShowCountDown(endTime,$("#taskUnLeftTimeInterval span"));}, tltInterval);
+						intervalUnqList = window.setInterval(function(){ShowCountDown(endTime,$("#taskUnLeftTimeInterval span"));}, tltInterval);
 					}
 				}
 			});

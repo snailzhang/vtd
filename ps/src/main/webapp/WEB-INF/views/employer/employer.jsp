@@ -38,6 +38,7 @@
 			<li class="active"><a href="#packUncomplete" role="tab" data-toggle="tab">未完成任务包列表</a></li>
 			<li><a href="#packComplete" role="tab" data-toggle="tab">已完成任务包列表</a></li>
 			<li><a href="#packAll" role="tab" data-toggle="tab">全部任务包列表</a></li>
+			<li><a href="#publishList" role="tab" data-toggle="tab">待发布任务包列表</a></li>
 			<li><a href="#packUnzip" role="tab" data-toggle="tab">未上传任务包列表</a></li>
 			<li><a href="#editTaskRole" role="tab" data-toggle="tab">编辑标注说明</a></li>
 		</ul>
@@ -53,6 +54,16 @@
 									<input class="form-control" id="unpackNameCondition" type="text" placeholder="查询未完成任务包" onkeydown="if(event.keyCode==13){return false;}">
 								</div>
 							</div>
+							<div class="form-group" id="">
+								<p class="form-control-static">选择任务包状态:</p>
+							</div>
+							<div class="form-group">
+								<select class="form-control" name="upzipCondition" id="upzipCondition">
+									<option value="0">全部</option>
+									<option value="1">已启用</option>
+									<option value="3">已停用</option>
+								</select>
+							</div>
 							<button type="button" id="un_searchBtn" class="btn btn-default">查询</button>
 						</form>
 					</div>
@@ -63,14 +74,13 @@
 								<th width='17%'>名称</th>
 								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
-								<th width='6%'>剩余数</th>
-								<th width='6%'>无效数</th>
-								<th width='6%'>完成数</th>
+								<th width='12%'>剩余/无效/完成</th>
 								<th width='7%'>完成比例</th>
 								<th width='8%'>回传时间</th>
 								<th width='15%'>创建时间</th>
 								<th width='15%'>标注时间</th>
 								<th width='7%'>下载</th>
+								<th width='6%'>停用</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
@@ -99,9 +109,7 @@
 								<th width='17%'>名称</th>
 								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
-								<th width='6%'>剩余数</th>
-								<th width='6%'>无效数</th>
-								<th width='6%'>完成数</th>
+								<th width='18%'>剩余/无效/完成</th>
 								<th width='7%'>完成比例</th>
 								<th width='8%'>回传时间</th>
 								<th width='15%'>创建时间</th>
@@ -135,9 +143,7 @@
 								<th width='17%'>名称</th>
 								<th width='4%'>等级</th>
 								<th width='5%'>总数</th>
-								<th width='6%'>剩余数</th>
-								<th width='6%'>无效数</th>
-								<th width='6%'>完成数</th>
+								<th width='18%'>剩余/无效/完成</th>
 								<th width='7%'>完成比例</th>
 								<th width='8%'>回传时间</th>
 								<th width='15%'>创建时间</th>
@@ -204,6 +210,37 @@
 					</div>
 				</div>
 				
+			</div>
+			<!-- ****************************************发布任务包******************************************************* -->
+			<div class="tab-pane" id="publishList">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<form class="form-inline" role="form">
+							<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon">任务包名称：</div>
+									<input class="form-control" id="publishCondition" type="text" placeholder="查询待发布任务包" onkeydown="if(event.keyCode==13){return false;}">
+								</div>
+							</div>
+							<button type="button" id="searchPublishPackBtn" class="btn btn-default">查询</button>
+						</form>
+					</div>
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th width='10%'>序号</th>
+								<th width='20%'>名称</th>
+								<th width='10%'>总数</th>
+								<th width='20%'>回传时间</th>
+								<th width='20%'>创建时间</th>
+								<th width='10%'>发布</th>
+								<th width='10%'>删除</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
 			</div>
 			<!-- ****************************************编辑任务说明******************************************************* -->
 			<div class="tab-pane" id="editTaskRole">
@@ -359,6 +396,8 @@
 		var packNameCondition = "";
 		var taskNameCondition = "";
 		var allPackNameCondition= "";
+		var publishCondition = "";
+		var upzipCondition = 0;
 		var searchPackId = 0;
 		var pucPageTotle = 0;
 		var pcPageTotle = 0;
@@ -371,13 +410,11 @@
 		
 		var um = UM.getEditor('myEditor');
 		$(document).ready(function(){
-			loadUnCompletePackList(1);
-			loadCompletePackList(1);
-			loadAllPackList(1);
-			loadUnzipPackList();
+			loadPage();
 			/*---------------------------------------查询-------------------------------------------------------------------*/
 			$("#un_searchBtn").click(function(){
 				unpackNameCondition = $("#unpackNameCondition").val();
+				upzipCondition = $("#upzipCondition").val();
 				loadUnCompletePackList(1);
 			});
 			$("#searchBtn").click(function(){
@@ -392,6 +429,10 @@
 				var tnc = $("#taskSearch").val();
 				taskNameCondition = tnc;
 				loadPackDetailList(1);
+			});
+			$("#searchPublishPackBtn").click(function(){
+				publishCondition = $("#publishCondition").val();
+				loadPublishList(1);
 			});
 			$("#changeTaskLvlBtn").click(function(){
 				var lvl = $("#ctLvl").val();
@@ -437,12 +478,19 @@
 				}
 			});
 		});
+		loadPage = function(){
+			loadUnCompletePackList(1);
+			loadCompletePackList(1);
+			loadAllPackList(1);
+			loadPublishList(1);
+			loadUnzipPackList();
+		};
 		/*---------------------------------------请求未完成任务包列表-------------------------------------------------------------------*/
 		loadUnCompletePackList = function(pageNum){
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
-				data:{"packStuts":0,"page":pageNum,"packNameCondition":unpackNameCondition},
+				data:{"packStuts":0,"page":pageNum,"packNameCondition":unpackNameCondition,"unzip":upzipCondition},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -473,6 +521,12 @@
 								}else{
 									downloadPack = "<td><a href='#' id='dp"+item.packId+"' class='downloadPack' onClick='downloadPackFn(0)'>下载 <span class='badge'>0</span></a></td>";
 								}
+								var pausePackBtn = "";
+								if(item.unzip == 3){
+									pausePackBtn = "<td><a href='javascript:changePackStatusFn("+item.packId+",1,1)'>启用</a></td>";
+								}else{
+									pausePackBtn = "<td><a href='javascript:changePackStatusFn("+item.packId+",3,1)'>停用</a></td>";
+								}
 								
 								$("#packUncomplete tbody").append(
 									"<tr>"+
@@ -480,15 +534,13 @@
 										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
 										"<td><a href='javascript:changeTaskLvl("+item.packId+","+item.taskLvl+");'>"+item.taskLvl+"</a></td>"+
 										"<td>"+item.taskCount+"</td>"+
-										"<td>"+surplusTask+"</td>"+
-										"<td>"+invalidCount+"</td>"+
-										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>"+surplusTask+"/"+invalidCount+"/"+item.finishTaskCount+"</td>"+
 										"<td>"+finishTaskRatio+"%</td>"+
 										
 										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
 										"<td>"+item.taskMarkTime+"</td>"+
-										downloadPack+
+										downloadPack+pausePackBtn+
 									"</tr>"
 								);
 							}
@@ -513,7 +565,7 @@
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
-				data:{"packStuts":1,"page":pageNum,"packNameCondition":packNameCondition},
+				data:{"packStuts":1,"page":pageNum,"packNameCondition":packNameCondition,"unzip":1},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -533,10 +585,7 @@
 										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
 										"<td>"+item.taskLvl+"</td>"+
 										"<td>"+item.taskCount+"</td>"+
-										"<td>0</td>"+
-										"<td>"+invalidCount+"</td>"+
-										
-										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>0/"+invalidCount+"/"+item.finishTaskCount+"</td>"+
 										"<td>100%</td>"+
 										"<td>"+item.packLockTime+"小时</td>"+
 										"<td>"+item.createTime+"</td>"+
@@ -565,7 +614,7 @@
 			$.ajax({
 				type:'POST',
 				url:'${contextPath}/security/employer',
-				data:{"packStuts":3,"page":pageNum,"packNameCondition":allPackNameCondition},
+				data:{"packStuts":3,"page":pageNum,"packNameCondition":allPackNameCondition,"unzip":0},
 				dataType:'json',
 				success:function(data){
 					if(data.list == ""){
@@ -594,9 +643,7 @@
 										"<td><a href='#' class='packId' onClick='showPackDetail("+item.packId+")'>"+item.packName+"</a></td>"+
 										"<td>"+item.taskLvl+"</td>"+
 										"<td>"+item.taskCount+"</td>"+
-										"<td>"+surplusTask+"</td>"+
-										"<td>"+invalidCount+"</td>"+
-										"<td>"+item.finishTaskCount+"</td>"+
+										"<td>"+surplusTask+"/"+invalidCount+"/"+item.finishTaskCount+"</td>"+
 										"<td>"+finishTaskRatio+"%</td>"+
 										
 										"<td>"+item.packLockTime+"小时</td>"+
@@ -620,6 +667,101 @@
 					}
 				}
 			});
+		};
+		/*---------------------------------------请求待发布列表-------------------------------------------------------------------*/
+		loadPublishList = function(pageNum){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/employer',
+				data:{"packStuts":0,"page":pageNum,"unzip":2,"packNameCondition":publishCondition},
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("#publishList tbody").html("<tr class='text-danger'><td colspan='12'>无内容</td></tr>");
+					}else{
+						$("#publishList tbody").empty();
+						$.each(data.list,function(i,item){
+							var publishPackBtn = "<td><a href='javascript:changePackStatusFn("+item.packId+",1,0)'>发布</a></td>";
+							var deletePackBtn = "<td><a href='javascript:deletePack("+item.packId+")'>删除</a></td>";
+							$("#publishList tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.packName+"</td>"+
+									"<td>"+item.taskCount+"</td>"+
+									"<td>"+item.packLockTime+"小时</td>"+
+									"<td>"+item.createTime+"</td>"+
+									publishPackBtn + deletePackBtn+
+								"</tr>"
+							);
+						});
+						var pageDom = $("#publishList .pagination");
+						pageDom.empty();
+						pcPageTotle = data.totlePage;
+						page.creatPageHTML(pageNum,pcPageTotle,pageDom,"loadPublishList");
+						$("#publishList .pageGoBtn").click(function(){
+							var pageNum = 0;
+							pageNum = $("#publishList .pageGoText").val();
+							if(pageNum !=0&&0<pageNum&&pageNum<pcPageTotle+1){
+								loadPublishList(pageNum);
+							}
+						});
+					}
+				}
+			});
+		};
+		/*---------------------------------------发布,启用,暂停任务包---------------------------------------------------------------*/
+		changePackStatusFn = function(packId,unzip,published){
+			var comfirmMsg = "";
+			var alertMsg = "";
+			if(unzip == 1){//发布,启用
+				if(published == 1){
+					comfirmMsg = "确定要启用该任务包吗？";
+					alertMsg = "任务包启用";
+				}else{
+					comfirmMsg = "确定要发布该任务包吗？";
+					alertMsg = "任务包发布";
+				}
+			}else if(unzip == 3){//暂停
+				comfirmMsg = "确定要暂停该任务包吗？";
+				alertMsg = "任务包暂停";
+			}
+			var conWin = confirm(comfirmMsg);
+			if(conWin){
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/security/updateUnzip',
+					data:{"packId":packId,"unzip":unzip},
+					dataType:'json',
+					success:function(data){
+						if(data.replay == "1"){
+							alert(alertMsg+"成功！");
+							loadPage();
+						}else{
+							alert(alertMsg+"失败！");
+						}
+					}
+				})
+			}
+		};
+		/*---------------------------------------删除任务包---------------------------------------------------------------*/
+		deletePack = function(packId){
+			var conWin = confirm("确定要删除该任务吗？");
+			if(conWin){
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/security/deletePack',
+					data:{"packId":packId},
+					dataType:'json',
+					success:function(data){
+						if(data.replay == "1"){
+							alert("任务包已删除！");
+							loadPage();
+						}else{
+							alert("任务包删除失败！");
+						}
+					}
+				})
+			}
 		};
 		/*---------------------------------------请求未解压任务包列表-------------------------------------------------------------------*/
 		loadUnzipPackList = function(){
