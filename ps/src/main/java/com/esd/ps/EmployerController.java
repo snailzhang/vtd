@@ -239,7 +239,24 @@ public class EmployerController {
 
 		return map;
 	}
-
+	/**
+	 * 修改包的发布状态
+	 * @param packId
+	 * @param unzip
+	 * @return
+	 */
+	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> unzipPOST(int packId,int unzip) {
+		Map<String, Object> map = new HashMap<>();
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setUnzip(unzip);
+		packService.updateByPrimaryKeySelective(pack);
+		map.clear();
+		map.put(Constants.REPLAY, 1);
+		return map;
+	}
 	/**
 	 * 修改任务等级
 	 * 
@@ -524,7 +541,7 @@ public class EmployerController {
 		packService.updateByPrimaryKeySelective(pack);
 
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		//String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
 		// String wrongPath = Constants.HTTP + serverAndProjectPath +
 		// Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH +
