@@ -13,6 +13,8 @@ public class manager {
     private Integer downCount;
     
     private Integer downMaxCount;
+    
+    private Integer fileSize;
 
     private Integer createId;
 
@@ -66,6 +68,14 @@ public class manager {
 
 	public void setDownMaxCount(Integer downMaxCount) {
 		this.downMaxCount = downMaxCount;
+	}
+	
+	public Integer getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(Integer fileSize) {
+		this.fileSize = fileSize;
 	}
 
 	public Integer getCreateId() {

@@ -1,15 +1,15 @@
 package com.esd.db.model;
 
 public class userTrans {
-	
+
 	private int userStatus;
-	
+
 	private int userId;
-	
+
 	private String username;
 
 	private String usertypeenglish;
-	
+
 	private Double taskMarkTimeMonth;
 
 	private String createTime;
@@ -27,7 +27,7 @@ public class userTrans {
 	public String getUsername() {
 		return username;
 	}
-	
+
 	public int getUserStatus() {
 		return userStatus;
 	}
@@ -47,7 +47,7 @@ public class userTrans {
 	public void setUsertypeenglish(String usertypeenglish) {
 		this.usertypeenglish = usertypeenglish;
 	}
-	
+
 	public Double getTaskMarkTimeMonth() {
 		return taskMarkTimeMonth;
 	}

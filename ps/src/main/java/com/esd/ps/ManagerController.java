@@ -24,10 +24,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.esd.db.model.employer;
+import com.esd.db.model.manager;
 import com.esd.db.model.user;
 import com.esd.db.model.userTrans;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
+import com.esd.db.service.ManagerService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
 import com.esd.db.service.WorkerRecordService;
@@ -57,8 +59,22 @@ public class ManagerController {
 	private WorkerService workerService;
 	@Autowired
 	private WorkerRecordService workerRecordService;
+	@Autowired
+	private ManagerService managerService;
+
 	@Value("${MSG_UNUPLOAD}")
 	private String MSG_UNUPLOAD;
+	
+	/**
+	 * 修改成功
+	 */
+	@Value("${MSG_UPDATE_SUCCESS}")
+	private String MSG_UPDATE_SUCCESS;
+	/**
+	 * 修改失败
+	 */
+	@Value("${MSG_UPDATE_ERROR}")
+	private String MSG_UPDATE_ERROR;
 	/**
 	 * 已超时
 	 */
@@ -89,7 +105,6 @@ public class ManagerController {
 	 */
 	@Value("${MSG_UPLOADED}")
 	private String MSG_UPLOADED;
-
 
 	/**
 	 * 登录管理员页
@@ -132,7 +147,7 @@ public class ManagerController {
 					continue;
 				}
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "",1);
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "", 1);
 				if (taskUpload == 1) {
 					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
 						continue;
@@ -155,12 +170,12 @@ public class ManagerController {
 				}
 				trans.setUsername(user.getUsername());
 				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
-				if(user.getCreateTime() == null){
+				if (user.getCreateTime() == null) {
 					trans.setCreateTime("");
-				}else{
+				} else {
 					trans.setCreateTime(sdf.format(user.getCreateTime()));
 				}
-				
+
 				if (user.getUpdateTime() == null) {
 					trans.setUpdateTime("");
 				} else {
@@ -173,9 +188,11 @@ public class ManagerController {
 		map.clear();
 		Double taskMarkTimeMonthTotle = 0.00;
 		if (taskUpload > 0) {
-			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month, userNameCondition,1);
+			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month, userNameCondition, 1);
 		}
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		manager manager = managerService.selectByPrimaryKey(1);
+		map.put("manager", manager);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
@@ -183,6 +200,36 @@ public class ManagerController {
 			map.put(Constants.TASKMARKTIMEMONTHTOTLE, 0.00);
 		} else {
 			map.put(Constants.TASKMARKTIMEMONTHTOTLE, taskMarkTimeMonthTotle);
+		}
+
+		return map;
+	}
+
+	/**
+	 * 修改累计下载数,单次下载数,有效文件大小
+	 * 
+	 * @param downCount
+	 * @param downMaxCount
+	 * @param fileSize
+	 * @return
+	 */
+	@RequestMapping(value = "/updateCount", method = RequestMethod.POST)
+	@ResponseBody
+	public synchronized Map<String, Object> updateCountPost(int downCount, int downMaxCount, int fileSize) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		manager manager = new manager();
+		manager.setManagerId(1);
+		manager.setDownCount(downCount);
+		manager.setDownMaxCount(downMaxCount);
+		manager.setFileSize(fileSize);
+		int m = managerService.updateByPrimaryKeySelective(manager);
+		map.clear();
+		if (m == 1) {
+			map.put(Constants.REPLAY, 1);
+			map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
+		}else{
+			map.put(Constants.REPLAY, 0);
+			map.put(Constants.MESSAGE, MSG_UPDATE_ERROR);
 		}
 
 		return map;
@@ -233,8 +280,8 @@ public class ManagerController {
 		if (userType == 4) {
 			int workerId = workerService.getWorkerIdByUserId(userId);
 			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, year, month, taskNameCondition);
-			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "",1);
-			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId,1,statu, year, month, taskNameCondition, page, Constants.ROW);
+			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "", 1);
+			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId, 1, statu, year, month, taskNameCondition, page, Constants.ROW);
 			List<WorkerRecordTrans> list = new ArrayList<>();
 			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
@@ -263,10 +310,10 @@ public class ManagerController {
 					workerRecordTrans.setTaskStatu(MSG_UNUPLOAD);
 				} else if (workerRecord.getTaskStatu() == 2) {
 					workerRecordTrans.setTaskStatu(MSG_TIME_OUT);
-				}else if (workerRecord.getTaskStatu() == 3) {
+				} else if (workerRecord.getTaskStatu() == 3) {
 					workerRecordTrans.setTaskStatu("已放弃");
 				}
-				
+
 				if (workerRecord.getTaskUploadTime() == null) {
 					workerRecordTrans.setTaskUploadTime(Constants.EMPTY);
 				} else {

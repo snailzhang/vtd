@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.esd.db.model.manager;
 import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
@@ -49,6 +51,7 @@ import com.esd.db.model.task;
 import com.esd.ps.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.EmployerService;
+import com.esd.db.service.ManagerService;
 import com.esd.db.service.MarkTimeMethodService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
@@ -83,6 +86,8 @@ public class EmployerController {
 	private VoiceNoteService voiceNoteService;
 	@Autowired
 	private MarkTimeMethodService markTimeMethodService;
+	@Autowired
+	private ManagerService ManagerService;
 	/**
 	 * 文件不存在
 	 */
@@ -945,7 +950,8 @@ public class EmployerController {
 			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
 			packId = packService.getPackIdByPackName(packName);
 			// wav文件大小为0kb时
-			if (f.length() == 0) {
+			manager manager = ManagerService.selectByPrimaryKey(1);
+			if (f.length() <= (manager.getFileSize()*1024)) {
 				taskWithBLOBs.setWorkerId(0);
 			}
 			taskWithBLOBs.setTaskWav(wav);

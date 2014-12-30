@@ -1,193 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.esd.db.dao.managerMapper">
-  <resultMap id="BaseResultMap" type="com.esd.db.model.manager">
-    <id column="manager_id" jdbcType="INTEGER" property="managerId" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="manager_name" jdbcType="VARCHAR" property="managerName" />
-    <result column="downCount" jdbcType="INTEGER" property="downCount" />
-    <result column="downMaxCount" jdbcType="INTEGER" property="downMaxCount" />
-    <result column="create_id" jdbcType="INTEGER" property="createId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="create_method" jdbcType="VARCHAR" property="createMethod" />
-    <result column="update_id" jdbcType="INTEGER" property="updateId" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="update_method" jdbcType="VARCHAR" property="updateMethod" />
-    <result column="version" jdbcType="INTEGER" property="version" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    manager_id, user_id, manager_name,downCount,downMaxCount,create_id, create_time, create_method, update_id, 
-    update_time, update_method, version
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from manager
-    where manager_id = #{managerId,jdbcType=INTEGER}
-  </select>
-  <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from manager
-    where user_id = #{userId,jdbcType=INTEGER}
-  </select>
-    <select id="selManagerIdByManagerName" parameterType="java.lang.String" resultType="java.lang.Integer">
-    select 
-    manager_id
-    from manager
-    where manager_name = #{managerName,jdbcType=VARCHAR}
-  </select>
-  <select id="selCountManagerIdByManagerName" parameterType="java.lang.String" resultType="java.lang.Integer">
-    select 
-    count(manager_id) count
-    from manager
-    where manager_name = #{managerName,jdbcType=VARCHAR}
-  </select>
-  <select id="selManagerIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-    select 
-    manager_id
-    from manager
-    where user_id = #{userId,jdbcType=VARCHAR}
-  </select>
-  <select id="selectCountManagerIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-    select 
-    count(manager_id) count
-    from manager
-    where user_id = #{userId,jdbcType=VARCHAR}
-  </select>
-  <select id="selAllManagers"  resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from manager
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from manager
-    where manager_id = #{managerId,jdbcType=INTEGER}
-  </delete>
-  <insert id="insert" parameterType="com.esd.db.model.manager">
-    insert into manager (manager_id, user_id, manager_name, 
-      create_id, create_time, create_method, 
-      update_id, update_time, update_method, 
-      version)
-    values (#{managerId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{managerName,jdbcType=VARCHAR}, 
-      #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR}, 
-      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}, 
-      #{version,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="com.esd.db.model.manager">
-    insert into manager
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="managerId != null">
-        manager_id,
-      </if>
-      <if test="userId != null">
-        user_id,
-      </if>
-      <if test="managerName != null">
-        manager_name,
-        downCount,
-        downMaxCount,
-      </if>
-      <if test="createId != null">
-        create_id,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="createMethod != null">
-        create_method,
-      </if>
-      <if test="updateId != null">
-        update_id,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-      <if test="updateMethod != null">
-        update_method,
-      </if>
-      <if test="version != null">
-        version,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="managerId != null">
-        #{managerId,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null">
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="managerName != null">
-        #{managerName,jdbcType=VARCHAR},
-        100,200,
-      </if>
-      <if test="createId != null">
-        #{createId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createMethod != null">
-        #{createMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="updateId != null">
-        #{updateId,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateMethod != null">
-        #{updateMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null">
-        #{version,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.manager">
-    update manager
-    <set>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="managerName != null">
-        manager_name = #{managerName,jdbcType=VARCHAR},
-      </if>
-      <if test="createId != null">
-        create_id = #{createId,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createMethod != null">
-        create_method = #{createMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="updateId != null">
-        update_id = #{updateId,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateMethod != null">
-        update_method = #{updateMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="version != null">
-        version = #{version,jdbcType=INTEGER},
-      </if>
-    </set>
-    where manager_id = #{managerId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.esd.db.model.manager">
-    update manager
-    set user_id = #{userId,jdbcType=INTEGER},
-      manager_name = #{managerName,jdbcType=VARCHAR},
-      create_id = #{createId,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_method = #{createMethod,jdbcType=VARCHAR},
-      update_id = #{updateId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_method = #{updateMethod,jdbcType=VARCHAR},
-      version = #{version,jdbcType=INTEGER}
-    where manager_id = #{managerId,jdbcType=INTEGER}
-  </update>
+	<resultMap id="BaseResultMap" type="com.esd.db.model.manager">
+		<id column="manager_id" jdbcType="INTEGER" property="managerId" />
+		<result column="user_id" jdbcType="INTEGER" property="userId" />
+		<result column="manager_name" jdbcType="VARCHAR" property="managerName" />
+		<result column="downCount" jdbcType="INTEGER" property="downCount" />
+		<result column="downMaxCount" jdbcType="INTEGER" property="downMaxCount" />
+		<result column="file_size" jdbcType="INTEGER" property="fileSize" />
+		<result column="create_id" jdbcType="INTEGER" property="createId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="create_method" jdbcType="VARCHAR" property="createMethod" />
+		<result column="update_id" jdbcType="INTEGER" property="updateId" />
+		<result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+		<result column="update_method" jdbcType="VARCHAR" property="updateMethod" />
+		<result column="version" jdbcType="INTEGER" property="version" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		manager_id, user_id, manager_name,downCount,downMaxCount,fileSize,create_id, create_time, create_method, update_id,
+		update_time, update_method, version
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from manager
+		where manager_id = #{managerId,jdbcType=INTEGER}
+	</select>
+	<select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from manager
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+	<select id="selManagerIdByManagerName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select
+		manager_id
+		from manager
+		where manager_name = #{managerName,jdbcType=VARCHAR}
+	</select>
+	<select id="selCountManagerIdByManagerName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select
+		count(manager_id) count
+		from manager
+		where manager_name = #{managerName,jdbcType=VARCHAR}
+	</select>
+	<select id="selManagerIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select
+		manager_id
+		from manager
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	<select id="selectCountManagerIdByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select
+		count(manager_id) count
+		from manager
+		where user_id = #{userId,jdbcType=VARCHAR}
+	</select>
+	<select id="selAllManagers" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from manager
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from manager
+		where manager_id = #{managerId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.esd.db.model.manager">
+		insert into manager (manager_id, user_id, manager_name,
+		create_id, create_time, create_method,
+		update_id, update_time, update_method,
+		version)
+		values (#{managerId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{managerName,jdbcType=VARCHAR},
+		#{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR},
+		#{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
+		#{version,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.esd.db.model.manager">
+		insert into manager
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="managerId != null">
+				manager_id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="managerName != null">
+				manager_name,
+				downCount,
+				downMaxCount,
+			</if>
+			<if test="createId != null">
+				create_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createMethod != null">
+				create_method,
+			</if>
+			<if test="updateId != null">
+				update_id,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="updateMethod != null">
+				update_method,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="managerId != null">
+				#{managerId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="managerName != null">
+				#{managerName,jdbcType=VARCHAR},
+				100,200,
+			</if>
+			<if test="createId != null">
+				#{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				#{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				#{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				#{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.manager">
+		update manager
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="managerName != null">
+				manager_name = #{managerName,jdbcType=VARCHAR},
+			</if>
+			<if test="downCount != null">
+				downCount = #{downCount,jdbcType=INTEGER},
+			</if>
+			<if test="downMaxCount != null">
+				downMaxCount = #{downMaxCount,jdbcType=INTEGER},
+			</if>
+			<if test="fileSize != null">
+				file_size = #{fileSize,jdbcType=INTEGER},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				create_method = #{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=INTEGER},
+			</if>
+		</set>
+		where manager_id = #{managerId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.manager">
+		update manager
+		set user_id = #{userId,jdbcType=INTEGER},
+		manager_name = #{managerName,jdbcType=VARCHAR},
+		create_id = #{createId,jdbcType=INTEGER},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		create_method = #{createMethod,jdbcType=VARCHAR},
+		update_id = #{updateId,jdbcType=INTEGER},
+		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_method = #{updateMethod,jdbcType=VARCHAR},
+		version = #{version,jdbcType=INTEGER}
+		where manager_id = #{managerId,jdbcType=INTEGER}
+	</update>
 </mapper>
