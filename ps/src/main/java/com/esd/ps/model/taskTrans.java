@@ -21,6 +21,8 @@ public class taskTrans {
     private int taskTextGrid;
     
     private String noteId;
+    
+    private int inspectorrecordId;
 
     public int getTaskId() {
 		return taskId;
@@ -100,5 +102,13 @@ public class taskTrans {
 
 	public void setNoteId(String noteId) {
 		this.noteId = noteId;
+	}
+
+	public int getInspectorrecordId() {
+		return inspectorrecordId;
+	}
+
+	public void setInspectorrecordId(int inspectorrecordId) {
+		this.inspectorrecordId = inspectorrecordId;
 	}
 }

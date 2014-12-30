@@ -19,9 +19,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.esd.db.model.inspectorrecord;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.model.workerRecord;
+import com.esd.db.service.InspectorRecordService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
@@ -53,7 +55,8 @@ public class InspectorController {
 	private TaskService taskService;
 	@Autowired
 	private PackService packService;
-
+	@Autowired
+	private InspectorRecordService inspectorRecordService;
 	/**
 	 * 审核列表页
 	 * 
@@ -158,7 +161,13 @@ public class InspectorController {
 		}
 		return map;
 	}
-
+	/**
+	 * 下载审核任务
+	 * @param list
+	 * @param workerId
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value = "/downAuditTask", method = RequestMethod.POST)
 	@ResponseBody
 	public synchronized Map<String, Object> downAuditTaskPost(String list, int workerId, HttpServletRequest request) {
@@ -184,7 +193,7 @@ public class InspectorController {
 		employc.downZIP(list1, packName, url,0);
 
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		//String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
 		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
 		String wrongPath = Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
@@ -192,14 +201,30 @@ public class InspectorController {
 		map.put(Constants.WRONGPATH, wrongPath);
 		return map;
 	}
-
+	/**
+	 * 审核
+	 * @param taskEffective
+	 * @param day
+	 * @param workerId
+	 * @param firstDate
+	 * @param lastDate
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session) {
+	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session ,String note) {
 		Map<String, Object> map = new HashMap<>();
-
-		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()), lastDate);
 		int userId = Integer.parseInt(session.getAttribute("userId").toString());
+		int inspectorrecordId = 0;
+		if(taskEffective == 0 && note.length()>0){
+			inspectorrecord inspectorrecord = new inspectorrecord();
+			inspectorrecord.setId(userId);
+			inspectorrecord.setNote(note);
+			inspectorRecordService.insertSelective(inspectorrecord);
+			inspectorrecordId = inspectorRecordService.getMaxIdByInspectorId(userId);
+		}
+		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()), lastDate,inspectorrecordId);	
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate, lastDate);
 		/**

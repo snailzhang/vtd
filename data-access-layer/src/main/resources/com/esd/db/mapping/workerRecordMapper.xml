@@ -22,6 +22,7 @@
 		<result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
 		<result column="task_effective" property="taskEffective" jdbcType="INTEGER" />
 		<result column="inspector_id" property="inspectorId" jdbcType="INTEGER" />
+		<result column="inspectorrecord_id" property="inspectorrecordId" jdbcType="INTEGER" />
 		<result column="version" property="version" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
@@ -29,7 +30,7 @@
 		task_down_time, task_upload_time,
 		task_statu, task_lock_time, task_mark_time, create_time,
 		create_method, update_time,
-		update_method, task_effective,inspector_id,version
+		update_method, task_effective,inspector_id,inspectorrecord_id,version
 	</sql>
 	<select id="selectInvalidTask" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
@@ -391,7 +392,7 @@
 		task_statu,
 		task_lock_time, task_mark_time, create_time,
 		create_method, update_time, update_method,
-		task_effective,inspector_id,version)
+		task_effective,inspector_id,inspectorrecord_id,version)
 		values (#{recordId,jdbcType=INTEGER},
 		#{workerId,jdbcType=INTEGER},
 		#{packId,jdbcType=INTEGER},
@@ -402,7 +403,7 @@
 		#{taskLockTime,jdbcType=INTEGER},
 		#{taskMarkTime,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
 		#{createMethod,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
-		#{taskEffective,jdbcType=INTEGER},#{inspectorId,jdbcType=INTEGER},#{version,jdbcType=INTEGER})
+		#{taskEffective,jdbcType=INTEGER},#{inspectorId,jdbcType=INTEGER},#{inspectorrecordId,jdbcType=INTEGER},#{version,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.workerRecord">
 		insert into worker_record
@@ -466,6 +467,9 @@
 			</if>
 			<if test="inspectorId != null">
 				inspector_id,
+			</if>
+			<if test="inspectorrecordId ! = null">
+				inspectorrecord_id,
 			</if>
 			<if test="version != null">
 				version,
@@ -532,6 +536,9 @@
 			<if test="inspectorId != null">
 				#{inspectorId,jdbcType=INTEGER},
 			</if>
+			<if test="inspectorrecordId != null">
+				#{inspectorrecordId,jdbcType = INTEGER},
+			</if>
 			<if test="version != null">
 				#{version,jdbcType=INTEGER},
 			</if>
@@ -572,6 +579,9 @@
 			</if>
 			<if test="inspectorId != null">
 				inspector_id = #{inspectorId},
+			</if>
+			<if test="inspectorrecordId != null">
+				inspectorrecord_id = #{inspectorrecordId},
 			</if>
 			<if test="version != null">
 				version = (#{version,jdbcType=INTEGER} + 1),
@@ -669,6 +679,9 @@
 			<if test="inspectorId != null">
 				inspector_id = #{inspectorId,jdbcType=INTEGER},
 			</if>
+			<if test="inspectorrecordId != null">
+				inspectorrecord_id = #{inspectorrecordId,jdbcType=INTEGER},
+			</if>
 			<if test="version != null">
 				version = (#{version,jdbcType=INTEGER} + 1),
 			</if>
@@ -700,6 +713,7 @@
 		update_method = #{updateMethod,jdbcType=VARCHAR},
 		task_effective = #{taskEffective,jdbcType=INTEGER},
 		inspector_id = #{inspectorId,jdbcType=INTEGER},
+		inspectorrecord_id = #{inspectorrecordId,jdbcType=INTEGER},
 		where record_id =
 		#{recordId,jdbcType=INTEGER}
 	</update>

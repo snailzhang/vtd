@@ -25,7 +25,7 @@ public interface WorkerRecordService {
 	
 	int updateByGiveUp(int workerId,int taskId,int version,String updateMethod);
 	
-	int updateByWorkerId(int taskEffective,int taskLockTime,int workerId,String firstDate,int inspectorId,String endDate);
+	int updateByWorkerId(int taskEffective,int taskLockTime,int workerId,String firstDate,int inspectorId,String endDate,int inspectorrecordId);
 	
 	List<workerRecord> getDoingTask();
 	

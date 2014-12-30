@@ -39,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.esd.db.model.inspectorrecord;
 import com.esd.db.model.manager;
 import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.packWithBLOBs;
@@ -50,6 +52,7 @@ import com.esd.ps.model.taskTrans;
 import com.esd.ps.util.TaskMarkTime;
 import com.esd.ps.util.TaskMarkTime1;
 import com.esd.db.model.taskWithBLOBs;
+import com.esd.db.service.InspectorRecordService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.MarkTimeMethodService;
 import com.esd.db.service.PackService;
@@ -79,6 +82,8 @@ public class WorkerController {
 	private PackService packService;
 	@Autowired
 	private MarkTimeMethodService markTimeMethodService;
+	@Autowired
+	private InspectorRecordService inspectorRecordService;
 	/**
 	 * 任务数不足
 	 */
@@ -139,7 +144,6 @@ public class WorkerController {
 			int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
-			//
 			// taskEffective = 4 查询未审核和不合格的
 			int auditingCount = workerRecordService.getCountByWorkerId(workerId, 1, 4);
 			manager manager = managerService.selectByPrimaryKey(1);
@@ -183,6 +187,7 @@ public class WorkerController {
 			taskTrans.setTaskId(workerRecord.getTaskId());
 			taskTrans.setNoteId(packService.getNoteIdByPackId(workerRecord.getPackId()));
 			taskTrans.setTaskName(workerRecord.getTaskName());
+			taskTrans.setInspectorrecordId(workerRecord.getInspectorrecordId());
 			logger.debug("TaskName:{}", workerRecord.getTaskName());
 			list.add(taskTrans);
 		}
@@ -201,6 +206,21 @@ public class WorkerController {
 			e.printStackTrace();
 		}
 		session.setAttribute(Constants.WORKER_ID, workerId);
+		return map;
+	}
+	/**
+	 * 获得不合格任务的说明
+	 * @param inspectorrecordId
+	 * @return
+	 */
+	@RequestMapping(value = "/getInspectrecord", method = RequestMethod.POST)
+	@ResponseBody
+	public synchronized Map<String, Object> getInspectrecordPost(int inspectorrecordId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if (inspectorrecordId > 0) {
+			inspectorrecord inspectorrecord=inspectorRecordService.selectByPrimaryKey(inspectorrecordId);
+			map.put("note", inspectorrecord.getNote());
+		}
 		return map;
 	}
 
@@ -368,9 +388,12 @@ public class WorkerController {
 		File f = new File(url);
 		File zipFile = null;
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		// String serverAndProjectPath = request.getLocalAddr() +
+		// Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		// String wrongPath = Constants.HTTP + serverAndProjectPath +
+		// Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH +
+		// downPackName;
 		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		if (f.exists()) {
 			zipFile = new File(url + Constants.SLASH + downPackName);
@@ -417,9 +440,11 @@ public class WorkerController {
 		String zipName = taskName.substring(0, taskName.indexOf(Constants.POINT)) + Constants.POINT + Constants.ZIP;
 		File zipFile = new File(url + Constants.SLASH + zipName);
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		// String serverAndProjectPath = request.getLocalAddr() +
+		// Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + zipName;
+		// String wrongPath = Constants.HTTP + serverAndProjectPath +
+		// Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + zipName;
 		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + zipName;
 		if (!f.exists()) {
 			f.mkdir();
@@ -477,10 +502,13 @@ public class WorkerController {
 			zipFile.delete();
 		}
 		// 项目在服务器上的远程绝对地址
-		String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		// String serverAndProjectPath = request.getLocalAddr() +
+		// Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
-		String wrongPath =Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		// String wrongPath = Constants.HTTP + serverAndProjectPath +
+		// Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH +
+		// downPackName;
+		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		logger.debug("wrongPath:{}", wrongPath);
 		try {
 			zipFile.createNewFile();
@@ -604,16 +632,17 @@ public class WorkerController {
 						for (int j = 0; j < files.length; j++) {
 							if (files[i].getOriginalFilename().split("\\.")[0].equalsIgnoreCase(files[j].getOriginalFilename().split("\\.")[0])
 									&& !files[i].getOriginalFilename().equalsIgnoreCase(files[j].getOriginalFilename())) {
-								if (files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TEXTGRID) || files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TAG)) {
+								if (files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TEXTGRID)
+										|| files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TAG)) {
 									flag = true;
 									break;
 								}
 							}
 						}
 					} else if (uploadFileCount == 1) {
-						if(files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TEXTGRID)){
+						if (files[i].getOriginalFilename().split("\\.")[1].equalsIgnoreCase(Constants.TEXTGRID)) {
 							flag = true;
-						}		
+						}
 					}
 					if (flag) {
 						String uploadTaskNameI = files[i].getOriginalFilename();

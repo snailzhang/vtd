@@ -267,7 +267,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId,String endDate) {
+	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId,String endDate,int inspectorrecordId) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
@@ -281,6 +281,9 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 			map.put("taskLockTime", null);
 		} else {
 			map.put("taskLockTime", taskLockTime * 3600*1000);
+		}
+		if(inspectorrecordId > 0){
+			map.put("inspectorrecordId",inspectorrecordId);
 		}
 		map.put("firstDate", firstDate);
 		map.put("endDate", endDate);
