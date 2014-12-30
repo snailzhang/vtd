@@ -23,27 +23,9 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">待审核任务信息<span id="taskUlT" class="pull-right text-success"></span></div>
 			<div class="panel-body">
-				<form class="form-inline" role="form">
-					<button type="button" id="downTask" class="btn btn-warning">下载待审核任务</button>
-					<div class="form-group">
-						<p class="form-control-static">审核结果：</p>
-					</div>
-					<div class="form-group">
-						<select class="form-control" id="statu">
-							<option value="0">不合格</option>
-							<option value="1" selected="selected">合格</option>
-						</select>
-					</div>
-					<div class="form-group" id="reTime">
-						<div class="input-group">
-							<span class="input-group-addon">修改回传时间：</span>
-							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="day" type="number" min="0" placeholder="填入数字，修改回传时间">
-							<span class="input-group-addon">小时</span>
-						</div>
-					</div>
-					<button type="button" id="submitBtn" class="btn btn-danger">提交审核结果</button>
-				</form>
-				
+				<button type="button" id="downTask" class="btn btn-warning">下载待审核任务</button>
+				<button type="button" id="qualifiedBtn" class="btn btn-success">审核合格</button>
+				<button type="button" id="unqualifiedBtn" class="btn btn-danger">审核不合格</button>
 			</div>
 			<table class="table table-striped table-bordered">
 				<thead>
@@ -58,14 +40,43 @@
 			</table>
 		</div>
 	</div>
+	<!-------------------------------- 弹出窗口 -------------------------------------------------->
+	<div id="unqualifiedModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">审核不合格</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form" role="form">
+						<div class="form-group" id="reTime">
+							<div class="input-group">
+								<span class="input-group-addon">修改回传时间：</span>
+								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="day" type="number" min="0" placeholder="填入数字，修改回传时间">
+								<span class="input-group-addon">小时</span>
+							</div>
+						</div>
+						<div class="form-group" id="">
+							 <label class="control-label" for="unqualifiedReason">添加不合格原因</label>
+							<textarea id="unqualifiedReason" class="form-control" rows="3" maxlength="200"></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="unpualifiedSubmitBtn" class="btn btn-primary">提交</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 	<script type="text/javascript">
 		var workerId = '${workerId}';
 		var taskList = "";
 		var firstDate = "";
 		var lastDate = "";
-		var day = 0;
+		
 		$(document).ready(function(){
-			$("#reTime").hide();
 			loadTaskList();
 			$("#statu").change(function(){
 				$this = $(this);
@@ -90,21 +101,44 @@
 				}
 			});
 			/*--------------------------------------审核任务-------------------------------------------------------*/
-			$("#submitBtn").click(function(){
-				var sta = $("#statu").val();
-				if(sta == 0){
-					day = $("#day").val();
-					if(day == "")day = 0;
-					if(day == 0){
-						$("#day").parent(".input-group").addClass(".has-error").focus();
-						return;
-					}else{
-						$(".has-error").removeClass(".has-error");
-					}
+			
+			$("#qualifiedBtn").click(function(){//成功
+				var conWin = confirm("确定该任务审核合格吗？");
+				if(conWin){
+					var day = 0;
+					var taskEffective = 1;
+					postQualifyFn(taskEffective,day,"");
 				}
+			});
+			$("#unqualifiedBtn").click(function(){
+				$("#unqualifiedModal").modal('show');
+				
+			});
+			$("#unpualifiedSubmitBtn").click(function(){
+				var day = $("#day").val();
+				if(day == "")day = 0;
+				if(day == 0){
+					$("#day").parent(".input-group").addClass("has-error").focus();
+					return;
+				}else{
+					$(".has-error").removeClass("has-error");
+					var resaon = $("#unqualifiedReason").val();
+					if(resaon == ""){
+						var comW = confirm("确定不填写不合格原因吗？");
+						if(comW){
+							resaon = "";
+						}else{
+							return;
+						}
+					}
+					postQualifyFn(0,day,resaon);
+					$("#unqualifiedModal").modal('hide');
+				}
+			});
+			postQualifyFn = function(taskEffective,day,note){
 				$.ajax({
 					type:'POST',
-					data:{"workerId":workerId,"taskEffective":sta,"day":day,"firstDate":firstDate,"lastDate":lastDate},
+					data:{"workerId":workerId,"taskEffective":taskEffective,"day":day,"firstDate":firstDate,"lastDate":lastDate,"note":note},
 					url:'${contextPath}/security/auditing',
 					dataType:'json',
 					success:function(data){
@@ -116,10 +150,11 @@
 						}else{
 							$alertMsg.addClass("alert-danger");
 						}
-						$("form").prepend($alertMsg);
+						$(".panel-body").prepend($alertMsg);
 					}
 				});
-			});
+			}
+			
 		});
 		/*--------------------------------------加载列表-------------------------------------------------------*/
 		loadTaskList = function(){
