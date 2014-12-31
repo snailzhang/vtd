@@ -119,8 +119,9 @@
 								<tr>
 									<th width="10%">序号</th>
 									<th width="30%">任务名称</th>
-									<th width="30%">下载时间</th>
-									<th width="20%">标注说明</th>
+									<th width="20%">下载时间</th>
+									<th width="15%">标注说明</th>
+									<th width="15%">错误说明</th>
 									<th width="10%">放弃</th>
 								</tr>
 							</thead>
@@ -132,7 +133,7 @@
 		</div>
 	</div>
 	<!-------------------------------- 弹出窗口 -------------------------------------------------->
-	<div id="#taskUpResult" class="modal fade">
+	<div id="taskUpResult" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -149,6 +150,21 @@
 						<div class="tab-pane" id="taskListMath"><ul></ul></div>
 					</div>
 				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<!-------------------------------- 显示错误信息-------------------------------------------------->
+	<div id="showUnqualifie" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">审核未通过原因</h4>
+				</div>
+				<div class="modal-body"></div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
@@ -277,11 +293,11 @@
 						}else{
 							taskListMath.html("<li class='text-danger'>无匹配内容</li>");
 						}
-						$(".modal").modal('show');
+						$("#taskUpResult").modal('show');
 					}
 				});
 			/*******************************modal关闭时刷新页面**************************************************/
-			$(".modal").on('hidden.bs.modal', function (e) {
+			$("#taskUpResult").on('hidden.bs.modal', function (e) {
 				loadPage();
 			});
 			/*******************************下载任务**************************************************/
@@ -356,7 +372,7 @@
 						var mm = data.mm;
 						if(data.list == ""){
 							$("#waitForUpTable").empty();
-							$("#waitForUpTable").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
+							$("#waitForUpTable").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
 						}else{
 							$("#waitForUpTable").empty();
 							$.each(data.list,function(i,item){
@@ -410,12 +426,13 @@
 					}else{
 						$.each(data.list,function(i,item){
 							var giveUpBtn = "<td><a href='javascript:giveUpTask("+item.taskId+")'>放弃</a></td>";
+							var showUnqualifiedBtn = "<td><a href='javascript:showUnqualifie("+item.inspectorrecordId+")'>"+item.inspectorrecordId+"</a></td>";
 							$("#unqualifiedTable").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.taskName+"</td>"+
 									"<td>"+item.taskDownloadTime+"</td>"+
-									"<td>"+item.noteId+"</td>"+giveUpBtn+
+									"<td>"+item.noteId+"</td>"+showUnqualifiedBtn+giveUpBtn+
 								"</tr>"
 							);
 						});
@@ -445,6 +462,26 @@
 						}
 					}
 				})
+			}
+		}
+		function showUnqualifie(inspectorrecordId){
+			var inspectorrecordMsg = "";
+			if(inspectorrecordId == 0){
+				inspectorrecordMsg = "暂无不合格原因！"
+				$("#showUnqualifie .modal-body").html(inspectorrecordMsg);
+				$("#showUnqualifie").modal('show');
+			}else{
+				$.ajax({
+					type:'POST',
+					url:'${contextPath}/security/getInspectrecord',
+					data:{"inspectorrecordId":inspectorrecordId},
+					dataType:'json',
+					success:function(data){
+						inspectorrecordMsg = data.note;
+						$("#showUnqualifie .modal-body").html(inspectorrecordMsg);
+						$("#showUnqualifie").modal('show');
+					}
+				});
 			}
 		}
 	</script>
