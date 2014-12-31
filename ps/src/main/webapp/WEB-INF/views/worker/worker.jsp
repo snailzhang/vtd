@@ -241,6 +241,8 @@
 								return false;
 							};
 							data.submit();
+							$(this).attr("disabled","disabled").text("上传中。。");
+							
 						});
 					},
 					done:function(e,result){
@@ -299,6 +301,7 @@
 			/*******************************modal关闭时刷新页面**************************************************/
 			$("#taskUpResult").on('hidden.bs.modal', function (e) {
 				loadPage();
+				
 			});
 			/*******************************下载任务**************************************************/
 			$("#doneLoadBtn").click(function(){
@@ -329,6 +332,7 @@
 		});
 		/*-----------------------------------加载页面----------------------------------------------------*/
 		loadPage = function(){
+			$("#uploadBtn").removeAttr("disabled").text("上传文件");
 			var today = new Date();
 			todayTime = today.valueOf();
 			if(intervalMainList || intervalUnqList){
