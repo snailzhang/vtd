@@ -123,6 +123,9 @@ public class LoginController {
 		session.removeAttribute(Constants.USER_ID);
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
+		session.removeAttribute("aduiting");
+		session.removeAttribute("aduited");
+		session.removeAttribute("salary");
 //		try {
 //			ServletContext servletContext = request.getSession().getServletContext();
 //			if (servletContext.getAttribute(session.getAttribute(Constants.USER_NAME).toString()) != null) {

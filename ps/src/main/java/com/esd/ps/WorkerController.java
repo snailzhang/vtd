@@ -118,7 +118,12 @@ public class WorkerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.GET)
-	public ModelAndView worker() {
+	public ModelAndView worker(HttpSession session) {
+		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		manager manager = managerService.selectByPrimaryKey(1);
+		session.setAttribute("salary", manager.getSalary());
+		session.setAttribute("aduiting",workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 0, 1, 0));
+		session.setAttribute("aduited",workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 1, 1, 0));
 		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKER);
 	}
 

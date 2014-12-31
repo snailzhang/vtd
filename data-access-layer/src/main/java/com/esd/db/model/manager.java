@@ -15,6 +15,8 @@ public class manager {
     private Integer downMaxCount;
     
     private Integer fileSize;
+    
+    private Double salary;
 
     private Integer createId;
 
@@ -133,4 +135,13 @@ public class manager {
     public void setVersion(int version) {
         this.version = version;
     }
+
+	public Double getSalary() {
+		return salary;
+	}
+
+	public void setSalary(Double salary) {
+		this.salary = salary;
+	}
+    
 }
