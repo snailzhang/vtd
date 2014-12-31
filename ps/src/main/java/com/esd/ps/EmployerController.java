@@ -277,6 +277,10 @@ public class EmployerController {
 		pack.setPackId(packId);
 		pack.setPackLvl(taskLvl);
 		packService.updateByPrimaryKeySelective(pack);
+		task task = new task();
+		task.setPackId(packId);
+		task.setTaskLvl(taskLvl);
+		taskService.updateByPackId(task);
 		map.clear();
 		map.put(Constants.REPLAY, 1);
 		return map;

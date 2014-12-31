@@ -57,6 +57,7 @@ public class InspectorController {
 	private PackService packService;
 	@Autowired
 	private InspectorRecordService inspectorRecordService;
+
 	/**
 	 * 审核列表页
 	 * 
@@ -80,7 +81,7 @@ public class InspectorController {
 	public synchronized Map<String, Object> inspectorPost(String userName, int timeMark, int page, HttpSession session) {
 		logger.debug("userName:{},timeMark:{}", userName, timeMark);
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3, page, Constants.ROW);	
+		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3, page, Constants.ROW);
 		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(userName, timeMark, 1, 3);
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
@@ -88,6 +89,7 @@ public class InspectorController {
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
+
 	/**
 	 * 审核页
 	 * 
@@ -139,12 +141,16 @@ public class InspectorController {
 				taskMarkTime = 0.00;
 				boolean panduan = true;
 				while (true) {
-					int z = (int) (Math.random() * 15 + 1);
+					int z = (int) (Math.random() * list2.size() + 1);
 					panduan = set.add(z);// 检验重复数
-					if (!panduan) {
+					if (!panduan || z >= list2.size()) {
 						continue;
 					} else {
+						if (list2.get(z).getTaskMarkTime() == 0) {
+							continue;
+						}
 						list1.add(list2.get(z));
+
 						taskMarkTime = taskMarkTime + list2.get(z).getTaskMarkTime().doubleValue();
 					}
 					if (taskMarkTime > 600) {
@@ -161,8 +167,10 @@ public class InspectorController {
 		}
 		return map;
 	}
+
 	/**
 	 * 下载审核任务
+	 * 
 	 * @param list
 	 * @param workerId
 	 * @param request
@@ -190,19 +198,23 @@ public class InspectorController {
 		}
 
 		EmployerController employc = new EmployerController();
-		employc.downZIP(list1, packName, url,0);
+		employc.downZIP(list1, packName, url, 0);
 
 		// 项目在服务器上的远程绝对地址
-		//String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		// String serverAndProjectPath = request.getLocalAddr() +
+		// Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
-		//String wrongPath = Constants.HTTP + serverAndProjectPath + Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
+		// String wrongPath = Constants.HTTP + serverAndProjectPath +
+		// Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
 		String wrongPath = Constants.SLASH + "auditTemp" + Constants.SLASH + packName;
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
 		return map;
 	}
+
 	/**
 	 * 审核
+	 * 
 	 * @param taskEffective
 	 * @param day
 	 * @param workerId
@@ -213,18 +225,18 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session ,String note) {
+	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session, String note) {
 		Map<String, Object> map = new HashMap<>();
 		int userId = Integer.parseInt(session.getAttribute("userId").toString());
 		int inspectorrecordId = 0;
-		if(taskEffective == 0 && note.length()>0){
+		if (taskEffective == 0 && note.length() > 0) {
 			inspectorrecord inspectorrecord = new inspectorrecord();
 			inspectorrecord.setId(userId);
 			inspectorrecord.setNote(note);
 			inspectorRecordService.insertSelective(inspectorrecord);
 			inspectorrecordId = inspectorRecordService.getMaxIdByInspectorId(userId);
 		}
-		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()), lastDate,inspectorrecordId);	
+		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()), lastDate, inspectorrecordId);
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate, lastDate);
 		/**
@@ -234,8 +246,8 @@ public class InspectorController {
 			List<Integer> packList = workerRecordService.getPackIdByDateTime(workerId, firstDate, lastDate);
 			for (Iterator<Integer> iterator = packList.iterator(); iterator.hasNext();) {
 				Integer packId = (Integer) iterator.next();
-				//pack中的任务数 = (完成的任务数 + 无效任务数 )+ wav.length为0的数
-				if (taskService.getTaskCountByPackId(packId) == (workerRecordService.getFinishTaskCountByPackId(packId,2) + taskService.getWorkerIdZeroCountByPackId(packId))) {
+				// pack中的任务数 = (完成的任务数 + 无效任务数 )+ wav.length为0的数
+				if (taskService.getTaskCountByPackId(packId) == (workerRecordService.getFinishTaskCountByPackId(packId, 2) + taskService.getWorkerIdZeroCountByPackId(packId))) {
 					packWithBLOBs pack = new packWithBLOBs();
 					pack.setPackId(packId);
 					pack.setPackStatus(1);

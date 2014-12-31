@@ -153,13 +153,16 @@
 		from task
 		where pack_id = #{packId} and task_mark_time > 0 order by task_id DESC limit #{begin},#{end}
 	</select>
+	<!-- 工作者下载任务 and pack_id = #{packId,jdbcType=INTEGER} -->
 	<select id="selectTaskOrderByTaskLvl" resultMap="ResultMapWithBLOBs" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
 		,
 		<include refid="Blob_Column_List" />
 		from task
-		where worker_id IS NULL and pack_id = #{packId,jdbcType=INTEGER}
+		where worker_id IS NULL
+		and pack_id IN (select pack_id from pack where pack_status=0 and unzip = 1)
+		order by task_lvl
 		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
@@ -176,11 +179,12 @@
 		from task
 		where worker_id is null order by task_lvl,pack_id limit 1
 	</select>
+	<!-- pack_id = #{packId,jdbcType=INTEGER} and -->
 	<select id="selectUndoTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		count(task_id) total
 		from task
-		where pack_id = #{packId,jdbcType=INTEGER} and worker_id IS NULL
+		where worker_id IS NULL AND pack_id IN (SELECT pack_id FROM pack WHERE pack_status=0 AND unzip = 1)
 	</select>
 	<select id="selectTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
@@ -230,7 +234,8 @@
 	<select id="selectFreePackCount" resultType="java.lang.Integer">
 		SELECT COUNT(pack_id) count1 FROM (SELECT COUNT(pack_id) pack_id FROM
 		(SELECT pack_id FROM task
-		WHERE worker_id IS NULL AND pack_id IN (SELECT pack_id FROM pack WHERE unzip = 1)) b GROUP BY
+		WHERE worker_id IS NULL AND pack_id IN (SELECT pack_id
+		FROM pack WHERE unzip = 1)) b GROUP BY
 		pack_id) a
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

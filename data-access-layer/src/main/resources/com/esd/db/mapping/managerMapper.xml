@@ -17,7 +17,7 @@
 		<result column="version" jdbcType="INTEGER" property="version" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		manager_id, user_id, manager_name,downCount,downMaxCount,fileSize,create_id, create_time, create_method, update_id,
+		manager_id, user_id, manager_name,downCount,downMaxCount,file_size,create_id, create_time, create_method, update_id,
 		update_time, update_method, version
 	</sql>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

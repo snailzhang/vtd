@@ -84,4 +84,9 @@ public interface workerRecordMapper {
 	Integer selectInvalidCountTask();
 	
 	int updateByInvalid(Map<String, Object> map);
+	
+	//下载
+	int selectdownCountByWorkerIdAndDate(Map<String, Object> map);
+	//未上传,未审核,合格,超时,放弃
+	int selectCountByWorkerIdAndDate(Map<String, Object> map);
 }

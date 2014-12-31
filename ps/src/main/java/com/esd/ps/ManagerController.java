@@ -27,6 +27,7 @@ import com.esd.db.model.employer;
 import com.esd.db.model.manager;
 import com.esd.db.model.user;
 import com.esd.db.model.userTrans;
+import com.esd.db.model.worker;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
@@ -169,7 +170,11 @@ public class ManagerController {
 					trans.setUserStatus(0);
 				}
 				trans.setUsername(user.getUsername());
-				trans.setUsertypeenglish(userTypeService.getUserTypeName(user.getUsertype()));
+				worker worker = workerService.getWorkerByUserId(user.getUserId());
+				//真名
+				trans.setRealName(worker.getWorkerRealName());
+				//电话
+				trans.setPhone(worker.getWorkerPhone());
 				if (user.getCreateTime() == null) {
 					trans.setCreateTime("");
 				} else {
@@ -181,6 +186,20 @@ public class ManagerController {
 				} else {
 					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 				}
+				//下载
+//				trans.setDownCount();
+//				//放弃
+//				trans.setGiveUpCount(giveUpCount);
+//				//合格
+//				trans.setFinishCount(finishCount);
+//				//过时
+//				trans.setOldCount(oldCount);
+//				//待上传
+//				trans.setUnUploadCount(unUploadCount);
+//				//待审核
+//				trans.setWaitingCount(waitingCount);
+//				//待审核标注时间
+//				trans.setWaitingMarkTime(waitingMarkTime);
 			}
 
 			list.add(trans);

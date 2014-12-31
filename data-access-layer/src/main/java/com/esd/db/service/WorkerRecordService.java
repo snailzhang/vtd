@@ -84,4 +84,8 @@ public interface WorkerRecordService {
 	Integer getInvalidCountTask();
 	
 	int updateByInvalid(int inspectorId,int taskId);
+	
+	int getdownCountByWorkerIdAndDate(int worker_id,int dateType,int beginDate,int endDate);
+	
+	int getCountByWorkerIdAndDate(int worker_id,int dateType,int beginDate,int endDate,int taskStatu);
 }

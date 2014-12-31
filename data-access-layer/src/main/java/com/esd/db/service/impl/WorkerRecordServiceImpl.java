@@ -388,4 +388,18 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectTaskMarkTimeZeroCountByPackId(packId);
 	}
 
+	@Override
+	public int getdownCountByWorkerIdAndDate(int worker_id, int dateType, int beginDate, int endDate) {
+		Map<String, Object> map = new HashMap<>();
+		
+		return workerRecordMapper.selectdownCountByWorkerIdAndDate(map);
+	}
+
+	@Override
+	public int getCountByWorkerIdAndDate(int worker_id, int dateType, int beginDate, int endDate, int taskStatu) {
+		Map<String, Object> map = new HashMap<>();
+		
+		return workerRecordMapper.selectCountByWorkerIdAndDate(map);
+	}
+
 }

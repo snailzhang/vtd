@@ -519,7 +519,7 @@ public class WorkerController {
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
 				// 创建ZIP实体,并添加进压缩包
-				ZipEntry zipEntry = new ZipEntry(fileName);
+				ZipEntry zipEntry = new ZipEntry(taskWithBLOBs.getTaskDir()+"/"+fileName);
 				zos.putNextEntry(zipEntry);
 				byte[] data = taskWithBLOBs.getTaskWav();
 				InputStream is = new ByteArrayInputStream(data);
