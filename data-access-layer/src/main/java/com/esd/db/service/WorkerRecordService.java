@@ -29,9 +29,9 @@ public interface WorkerRecordService {
 	
 	List<workerRecord> getDoingTask();
 	
-	List<workerRecord> getAllByWorkerId(Integer workerId,Integer taskEffective,Integer statu,Integer year,Integer month,String taskNameCondition,int page,int row);
+	List<workerRecord> getAllByWorkerId(Integer workerId,Integer taskEffective,Integer statu,String beginDate,String endDate,String taskNameCondition,int page,int row,int dateType);
 	
-	int getAllCountByWorkerId(Integer workerId,Integer statu,Integer year,Integer month,String taskNameCondition);
+	int getAllCountByWorkerId(Integer workerId,Integer statu,String beginDate,String endDate,String taskNameCondition,int dateType);
 	
 	int getCountByWorkerId(Integer workerId,Integer statu,int taskEffective);
 	
@@ -65,7 +65,7 @@ public interface WorkerRecordService {
 	
 	int getPkIDByTaskId(Integer taskId);
 	
-	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId,int year,int month,String userNameCondition,int taskEffective);
+	Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, String beginDate, String endDate, String userNameCondition, int taskEffective, int taskStatus,int dateType);
 	
 	Double getSUMTaskMarkTimeByPackId(int packId);
 	
@@ -85,7 +85,7 @@ public interface WorkerRecordService {
 	
 	int updateByInvalid(int inspectorId,int taskId);
 	
-	int getdownCountByWorkerIdAndDate(int worker_id,int dateType,int beginDate,int endDate);
+	int getdownCountByWorkerIdAndDate(int worker_id,int dateType,String beginDate,String endDate);
 	
-	int getCountByWorkerIdAndDate(int worker_id,int dateType,int beginDate,int endDate,int taskStatu);
+	int getCountByWorkerIdAndDate(int worker_id,int dateType,String beginDate,String endDate,int taskStatu,int taskeffective);
 }

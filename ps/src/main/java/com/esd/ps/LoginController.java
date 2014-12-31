@@ -244,6 +244,7 @@ public class LoginController {
 						// 更新worker_record表
 						workerRecord update = new workerRecord();
 						update.setTaskStatu(2);// 2表示任务已过时
+						update.setTaskEffective(0);
 						update.setUpdateTime(new Date());
 						update.setRecordId(workerRecord.getRecordId());
 						StackTraceElement[] items = Thread.currentThread().getStackTrace();

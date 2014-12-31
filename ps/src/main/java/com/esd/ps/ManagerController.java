@@ -131,8 +131,8 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> managerPost(String userNameCondition, int userType, int page, int year, int month, int taskUpload) {
-		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, year, month);
+	public synchronized Map<String, Object> managerPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload,int dateType) {
+		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, beginDate, endDate);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
@@ -148,7 +148,7 @@ public class ManagerController {
 					continue;
 				}
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "", 1);
+				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 1, 1, dateType);
 				if (taskUpload == 1) {
 					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
 						continue;
@@ -187,19 +187,19 @@ public class ManagerController {
 					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 				}
 				//下载
-//				trans.setDownCount();
-//				//放弃
-//				trans.setGiveUpCount(giveUpCount);
-//				//合格
-//				trans.setFinishCount(finishCount);
-//				//过时
-//				trans.setOldCount(oldCount);
-//				//待上传
-//				trans.setUnUploadCount(unUploadCount);
-//				//待审核
-//				trans.setWaitingCount(waitingCount);
-//				//待审核标注时间
-//				trans.setWaitingMarkTime(waitingMarkTime);
+				trans.setDownCount(workerRecordService.getdownCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate));
+				//放弃
+				trans.setGiveUpCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 3,0));
+				//合格
+				trans.setFinishCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 1,1));
+				//过时
+				trans.setOldCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 2,0));
+				//待上传
+				trans.setUnUploadCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 0,0));
+				//待审核
+				trans.setWaitingCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 1,0));
+				//待审核标注时间
+				trans.setWaitingMarkTime(workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 0, 1, dateType));
 			}
 
 			list.add(trans);
@@ -207,7 +207,7 @@ public class ManagerController {
 		map.clear();
 		Double taskMarkTimeMonthTotle = 0.00;
 		if (taskUpload > 0) {
-			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, year, month, userNameCondition, 1);
+			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, beginDate, endDate, userNameCondition, 1, 1, dateType);
 		}
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		manager manager = managerService.selectByPrimaryKey(1);
@@ -289,7 +289,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, int year, int month, int statu, String taskNameCondition) {
+	public synchronized Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, String beginDate, String endDate, int statu, String taskNameCondition,int dateType) {
 		Map<String, Object> map = new HashMap<>();
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
@@ -298,9 +298,9 @@ public class ManagerController {
 		}
 		if (userType == 4) {
 			int workerId = workerService.getWorkerIdByUserId(userId);
-			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, year, month, taskNameCondition);
-			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, year, month, "", 1);
-			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId, 1, statu, year, month, taskNameCondition, page, Constants.ROW);
+			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, beginDate, endDate, taskNameCondition,dateType);
+			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, taskNameCondition, 1, 1, dateType);
+			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId, 1, statu, beginDate, endDate, taskNameCondition, page, Constants.ROW,dateType);
 			List<WorkerRecordTrans> list = new ArrayList<>();
 			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
@@ -345,7 +345,7 @@ public class ManagerController {
 			map.clear();
 			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 			map.put(Constants.LIST, list);
-			map.put(Constants.TOTLE, totle);
+			map.put(Constants.TOTLE, totle);//totleG
 			map.put(Constants.TOTLE_PAGE, totlePage);
 			if (taskMarkTimeMonth == null) {
 				map.put("taskMarkTimeMonth", 0.00);

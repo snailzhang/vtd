@@ -60,7 +60,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer taskEffective, Integer statu, Integer year, Integer month, String taskNameCondition, int page, int row) {
+	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer taskEffective, Integer statu, String beginDate, String endDate, String taskNameCondition, int page, int row, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (page == 0) {
 			map.put("begin", null);
@@ -73,10 +73,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("workerId", workerId);
 		map.put("statu", statu);
 		map.put("taskEffective", taskEffective);
-		if (month > 0) {
-			map.put("month", month);
-			map.put("year", year);
+		if (dateType > 0) {
+			map.put("dateType", dateType);
 		}
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
 		if (taskNameCondition.trim().length() > 0) {
 			map.put("taskNameCondition", taskNameCondition);
 		}
@@ -84,13 +85,13 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getAllCountByWorkerId(Integer workerId, Integer statu, Integer year, Integer month, String taskNameCondition) {
+	public int getAllCountByWorkerId(Integer workerId, Integer statu, String beginDate, String endDate, String taskNameCondition, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("workerId", workerId);
 		map.put("statu", statu);
-		map.put("year", year);
-		map.put("month", month);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
 		if (taskNameCondition.trim().length() > 0) {
 			map.put("taskNameCondition", taskNameCondition);
 		}
@@ -145,7 +146,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getFinishTaskCountByPackId(Integer packId,Integer taskMarkTime) {
+	public int getFinishTaskCountByPackId(Integer packId, Integer taskMarkTime) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("packId", packId);
@@ -204,24 +205,22 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, int year, int month, String userNameCondition, int taskEffective) {
+	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, String beginDate, String endDate, String userNameCondition, int taskEffective, int taskStatus, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		if (workerId > 0) {
 			map.put("workerId", workerId);
 		}
-		if (year > 0) {
-			map.put("year", year);
-		}
-		if (month > 0) {
-			map.put("month", month);
-		}
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
 		if (userNameCondition.trim().length() == 0 || userNameCondition == null) {
 			map.put("userNameCondition", null);
 		} else {
 			map.put("userNameCondition", userNameCondition);
 		}
 		map.put("taskEffective", taskEffective);
+		map.put("taskStatus", taskStatus);
+		map.put("dateType", dateType);
 		return workerRecordMapper.selectTaskMarkTimeMonthByWorkerIdAndMonth(map);
 	}
 
@@ -267,7 +266,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId,String endDate,int inspectorrecordId) {
+	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId, String endDate, int inspectorrecordId) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
@@ -280,10 +279,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		if (taskLockTime == 0) {
 			map.put("taskLockTime", null);
 		} else {
-			map.put("taskLockTime", taskLockTime * 3600*1000);
+			map.put("taskLockTime", taskLockTime * 3600 * 1000);
 		}
-		if(inspectorrecordId > 0){
-			map.put("inspectorrecordId",inspectorrecordId);
+		if (inspectorrecordId > 0) {
+			map.put("inspectorrecordId", inspectorrecordId);
 		}
 		map.put("firstDate", firstDate);
 		map.put("endDate", endDate);
@@ -318,7 +317,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int updateByGiveUp(int workerId,int taskId, int version,String updateMethod) {
+	public int updateByGiveUp(int workerId, int taskId, int version, String updateMethod) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("taskStatu", 3);
@@ -336,7 +335,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 
 	@Override
 	public int getCountByWorkerId(Integer workerId, Integer statu, int taskEffective) {
-		Map<String,Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
 		map.put("statu", statu);
@@ -351,12 +350,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("workerId", workerId);
 		map.put("firstDate", firstDate);
 		map.put("endDate", endDate);
-		
+
 		return workerRecordMapper.selectPackIdByDateTime(map);
 	}
 
 	@Override
-	public List<workerRecord> getInvalidTask(int page,int row) {
+	public List<workerRecord> getInvalidTask(int page, int row) {
 		Map<String, Object> map = new HashMap<>();
 		if (page == 0) {
 			map.put("begin", null);
@@ -384,21 +383,31 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 
 	@Override
 	public int getTaskMarkTimeZeroCountByPackId(Integer packId) {
-		
+
 		return workerRecordMapper.selectTaskMarkTimeZeroCountByPackId(packId);
 	}
 
 	@Override
-	public int getdownCountByWorkerIdAndDate(int worker_id, int dateType, int beginDate, int endDate) {
+	public int getdownCountByWorkerIdAndDate(int worker_id, int dateType, String beginDate, String endDate) {
 		Map<String, Object> map = new HashMap<>();
-		
+		map.clear();
+		map.put("worker_id", worker_id);
+		map.put("dateType", dateType);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
 		return workerRecordMapper.selectdownCountByWorkerIdAndDate(map);
 	}
 
 	@Override
-	public int getCountByWorkerIdAndDate(int worker_id, int dateType, int beginDate, int endDate, int taskStatu) {
+	public int getCountByWorkerIdAndDate(int worker_id, int dateType, String beginDate, String endDate, int taskStatu, int taskEffective) {
 		Map<String, Object> map = new HashMap<>();
-		
+		map.clear();
+		map.put("worker_id", worker_id);
+		map.put("dateType", dateType);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
+		map.put("taskStatu", taskStatu);
+		map.put("taskEffective", taskEffective);
 		return workerRecordMapper.selectCountByWorkerIdAndDate(map);
 	}
 

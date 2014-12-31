@@ -112,7 +112,7 @@ public class InspectorController {
 	@ResponseBody
 	public synchronized Map<String, Object> inspectorListPost(int workerId) {
 		Map<String, Object> map = new HashMap<>();
-		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, 0, 0, "", 0, 0);
+		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, "", "", "", 0, 0,0);
 		List<WorkerRecordTrans> list2 = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		double taskMarkTime = 0.00;
@@ -231,7 +231,7 @@ public class InspectorController {
 		int inspectorrecordId = 0;
 		if (taskEffective == 0 && note.length() > 0) {
 			inspectorrecord inspectorrecord = new inspectorrecord();
-			inspectorrecord.setId(userId);
+			inspectorrecord.setInspectorid(userId);
 			inspectorrecord.setNote(note);
 			inspectorRecordService.insertSelective(inspectorrecord);
 			inspectorrecordId = inspectorRecordService.getMaxIdByInspectorId(userId);
