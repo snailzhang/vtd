@@ -19,7 +19,7 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
+	<jsp:include page="../headWorker.jsp" />
 	<div class="container">
 		<h1 id="" class="page-header">个人中心</h1>
 		<div id=message></div>

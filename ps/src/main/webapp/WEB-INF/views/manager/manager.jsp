@@ -13,10 +13,20 @@
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/bootstrap.min.css" />
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/bootstrap-theme.min.css" />
+<link href="${contextPath}/css/jquery-ui.min.css" rel="stylesheet">
+<link href="${contextPath}/css/jquery-ui.theme.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
+<style type="text/css">
+	.input-group-addon,.form-control{padding:6px;}
+	.ui-datepicker .ui-datepicker-title select{color:#1c94c4};
+</style>
 <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.datepicker.js"></script>
+<script type="text/javascript" src="${contextPath}/js/jquery.ui.datepicker-ch.js"></script>
 </head>
 <body>
 	<jsp:include page="../head.jsp" />
@@ -25,52 +35,53 @@
 			<div class="panel-heading">用户列表<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span></div>
 			<div class="panel-body">
 				<form class="form-inline" role="form">
-					<div class="form-group">
-						<div class="input-group">
-							<div class="input-group-addon"> 用户名：</div>
-							<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
+					<div class="col-sm-3">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon"> 用户名</div>
+								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
+							</div>
 						</div>
 					</div>
-					<div class="form-group">
-						<p class="form-control-static">年份：</p>
+					<div class="col-xs-2">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">起始</div>
+								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id=beginDate type="text" placeholder="起始时间">
+							</div>
+						</div>
 					</div>
-					<div class="form-group">
-						<select class="form-control" id="year">
-							<option value="2014">2014年</option>
-							<option value="2015">2015年</option>
-							<option value="2016">2016年</option>
-							<option value="2017">2017年</option>
-							<option value="2018">2018年</option>
-						</select>
+					<div class="col-xs-2">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">截止</div>
+								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="endDate" type="text" placeholder="截止时间">
+							</div>
+						</div>
 					</div>
-					<div class="form-group">
-						<p class="form-control-static">月份：</p>
+					<div class="col-xs-2">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">类别</div>
+								<select class="form-control" id="dateTypeCheck">
+									<option value="1">日</option>
+									<option value="2">月</option>
+									<option value="3">年</option>
+								</select>
+							</div>
+						</div>
 					</div>
-					<div class="form-group">
-						<select class="form-control" id="month">
-							<option value="1">1月</option>
-							<option value="2">2月</option>
-							<option value="3">3月</option>
-							<option value="4">4月</option>
-							<option value="5">5月</option>
-							<option value="6">6月</option>
-							<option value="7">7月</option>
-							<option value="8">8月</option>
-							<option value="9">9月</option>
-							<option value="10">10月</option>
-							<option value="11">11月</option>
-							<option value="12">12月</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<p class="form-control-static">本月工作状态：</p>
-					</div>
-					<div class="form-group">
-						<select class="form-control" id="taskUpload">
-							<option value="2">全部</option>
-							<option value="1">工作</option>
-							<option value="0">无工作</option>
-						</select>
+					<div class="col-xs-2">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon">状态</div>
+								<select class="form-control" id="taskUpload">
+									<option value="2">全部</option>
+									<option value="1">工作</option>
+									<option value="0">无工作</option>
+								</select>
+							</div>
+						</div>
 					</div>
 					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
 				</form>
@@ -78,12 +89,15 @@
 			<table class="table table-striped table-bordered">
 				<thead>
 					<tr>
-						<th width='10%'>序号</th>
-						<th width='15%'>姓名</th>
-						<th width='20%'>用户组</th>
-						<th width='20%'>创建时间</th>
-						<th width='20%'>标注时间</th>
-						<th width='15%'>用户状态</th>
+						<th width='4%'>序号</th>
+						<th width='12%'>用户名</th>
+						<th width='12%'>姓名</th>
+						<th width='12%'>电话号</th>
+						<th width='15%'>标注时间</th>
+						<th width='15%'>未审时间</th>
+						<th width='12%'>下/进/审</th>
+						<th width='12%'>完/弃/过</th>
+						<th width='8%'>状态</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -127,24 +141,44 @@
 		var nowUserType = 4;
 		var nowPage = 0;
 		var userNameCondition = "";
-		var month = 0;
 		var taskUpload = 2;
-		var year = 0;
 		var userId = 0;
 		var pageTotal = 0;
+		var dateType = 1;
+		var beginDate = "";
+		var endDate = "";
 		$(document).ready(function(){
+			
 			var date = new Date();
-			var nowMonth = date.getMonth()+1;
-			var nowYear = date.getFullYear();
-			month = nowMonth;
-			year = nowYear;
-			$("#month option[value="+month+"]").attr("selected","selected");
-			$("#year option[value="+year+"]").attr("selected","selected");
+			var todayDate = $.datepicker.formatDate( "yy-mm-dd",new Date());
+			beginDate = todayDate;
+			endDate = todayDate;
+			$("#beginDate,#endDate").val(todayDate);
 			chooseUserType(1);
+			/*-------------------------------datepicker-----------------------------------------*/
+			$.datepicker.regional[ "ch" ];
+			$("#beginDate").datepicker({
+				changeMonth:true,
+				changeYear:true,
+				numberOfMonths:1,
+				setDate:todayDate,
+				onClose: function( selectedDate ) {
+					$( "#endDate" ).datepicker( "option", "minDate", selectedDate );
+				}
+			});
+			$("#endDate").datepicker({
+				changeMonth:true,
+				changeYear:true,
+				numberOfMonths:1,
+				onClose: function( selectedDate ) {
+					$( "#beginDate" ).datepicker( "option", "maxDate", selectedDate );
+				}
+			});
 			/*--------------------------------------点击查询按钮-------------------------------------------------------*/
 			$("#searchBtn").click(function(){
-				month = $("#month").val();
-				year = $("#year").val();
+				dateType = $("#dateTypeCheck").val();
+				beginDate = $("#beginDate").val();
+				endDate = $("#endDate").val();
 				taskUpload = $("#taskUpload").val();
 				userNameCondition = $("#userNameCondition").val();
 				chooseUserType(1);
@@ -191,7 +225,7 @@
 		chooseUserType = function(pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"month":month,"taskUpload":taskUpload,"year":year},
+				data:{"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
 				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){
@@ -210,9 +244,12 @@
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td><a target='_blank' href='${contextPath}/security/workerDetail?userId="+item.userId+"&username="+item.username+"'>"+item.username+"</a></td>"+
-									"<td>"+item.usertypeenglish+"</td>"+
-									"<td>"+item.createTime+"</td>"+
+									"<td>"+item.realName+"</td>"+
+									"<td>"+item.phone+"</td>"+
 									"<td>"+item.taskMarkTimeMonth+"</td>"+
+									"<td>"+item.waitingMarkTime+"</td>"+
+									"<td>"+item.downCount+"/"+item.unUploadCount+"/"+item.waitingCount+"</td>"+
+									"<td>"+item.finishCount+"/"+item.giveUpCount+"/"+item.oldCount+"</td>"+
 									"<td class='userStatus'><a id='usta"+item.userId+"' href='#' onClick='changeUserStatus("+item.userId+","+item.userStatus+",\""+item.username+"\")'>"+status+"</a></td>"+
 								"</tr>"
 							);

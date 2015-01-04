@@ -36,7 +36,7 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
+	<jsp:include page="../headWorker.jsp" />
 	<!-------------------------------- 下载任务 -------------------------------------------------->
 	<div class="container" id="downloadPanel">
 		<div class="panel panel-default">
