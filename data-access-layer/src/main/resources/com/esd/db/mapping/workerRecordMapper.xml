@@ -87,13 +87,13 @@
 			and worker_id = ${workerId}
 		</if>
 		<if test="dateType == 1">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m-%d') <= '${endDate}']]>
+			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m-%d') <= '${endDate}')]]>
 		</if>
 		<if test="dateType == 2">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m') <= '${endDate}']]>
+			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m') <= '${endDate}')]]>
 		</if>
 		<if test="dateType == 3">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y') <= '${endDate}']]>
+			and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y') <= '${endDate}')]]>
 		</if>
 		<if test="userNameCondition != null">
 			and user_name like '%${userNameCondition}%'
@@ -115,13 +115,13 @@
 				and task_name like "%${taskNameCondition}%"
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}')]]>
 			</if>
 			<if test="statu == 0 or statu == 1">
 				and task_statu = #{statu}
@@ -178,13 +178,13 @@
 				and task_name like "%${taskNameCondition}%"
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}')]]>
 			</if>
 			<if test="statu == 0">
 				and (task_statu = 0 or (task_statu = 1 and task_effective = 0))
@@ -224,13 +224,13 @@
 				and worker_id = #{worker_id}
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}')]]>
 			</if>
 		</where>
 	</select>
@@ -243,13 +243,13 @@
 				and worker_id = #{worker_id}
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m-%d') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m-%d') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m') <= '${endDate}')]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y') <= '${endDate}']]>
+				and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y') <= '${endDate}')]]>
 			</if>
 			<if test="taskStatu != null">
 				and task_statu = #{taskStatu}
