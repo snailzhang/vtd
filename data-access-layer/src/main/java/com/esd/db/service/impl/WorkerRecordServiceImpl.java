@@ -211,8 +211,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		if (workerId > 0) {
 			map.put("workerId", workerId);
 		}
-		map.put("beginDate", beginDate);
-		map.put("endDate", endDate);
+		if(beginDate.trim().length()>0){
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+		}
+		
 		if (userNameCondition.trim().length() == 0 || userNameCondition == null) {
 			map.put("userNameCondition", null);
 		} else {
