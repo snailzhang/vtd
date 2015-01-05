@@ -403,7 +403,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 
 	@Override
 	public int getCountByWorkerIdAndDate(int worker_id, int dateType, String beginDate, String endDate, int taskStatu, int taskEffective) {
-		Map<String, Object> map = new HashMap<>();
+		Map<String,Object> map = new HashMap<>();
 		map.clear();
 		map.put("worker_id", worker_id);
 		map.put("dateType", dateType);
