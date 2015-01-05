@@ -199,9 +199,13 @@ public class ManagerController {
 				//待审核
 				trans.setWaitingCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 1,0));
 				//待审核标注时间
-				trans.setWaitingMarkTime(workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 0, 1, dateType));
+				try{
+					double a = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 0, 1, dateType);
+					trans.setWaitingMarkTime(a);
+				}catch(NullPointerException n){
+					trans.setWaitingMarkTime(0.00);
+				}
 			}
-
 			list.add(trans);
 		}
 		map.clear();

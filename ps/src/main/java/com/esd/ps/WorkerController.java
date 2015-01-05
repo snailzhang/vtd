@@ -675,15 +675,6 @@ public class WorkerController {
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
-							// 更新task表
-							taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
-							taskWithBLOBs.setTaskTextgrid(bytes);
-							taskWithBLOBs.setTaskId(taskId);
-							taskWithBLOBs.setTaskUploadTime(new Date());
-							StackTraceElement[] items = Thread.currentThread().getStackTrace();
-							taskWithBLOBs.setUpdateMethod(items[1].toString());
-							taskWithBLOBs.setTaskEffective(null);
-							taskService.updateByPrimaryKeySelective(taskWithBLOBs);
 							// 更新workerRecord表
 							workerRecord workerRecord = new workerRecord();
 							workerRecord.setTaskUploadTime(new Date());
@@ -694,6 +685,16 @@ public class WorkerController {
 							StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
 							workerRecord.setUpdateMethod(items1[1].toString());
 							workerRecordService.updateByPrimaryKeySelective(workerRecord);
+							// 更新task表
+							taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
+							taskWithBLOBs.setTaskTextgrid(bytes);
+							taskWithBLOBs.setTaskId(taskId);
+							taskWithBLOBs.setTaskUploadTime(new Date());
+							StackTraceElement[] items = Thread.currentThread().getStackTrace();
+							taskWithBLOBs.setUpdateMethod(items[1].toString());
+							taskWithBLOBs.setTaskEffective(null);
+							taskService.updateByPrimaryKeySelective(taskWithBLOBs);
+							
 							listMath.add(uploadTaskNameI);
 							// task_id = taskId;
 						} else if (nameLast.equalsIgnoreCase(Constants.TAG)) {

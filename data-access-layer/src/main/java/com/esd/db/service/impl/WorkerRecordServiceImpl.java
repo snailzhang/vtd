@@ -211,11 +211,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		if (workerId > 0) {
 			map.put("workerId", workerId);
 		}
-		if(beginDate.trim().length()>0){
+		if (beginDate.trim().length() > 0) {
 			map.put("beginDate", beginDate);
 			map.put("endDate", endDate);
 		}
-		
+
 		if (userNameCondition.trim().length() == 0 || userNameCondition == null) {
 			map.put("userNameCondition", null);
 		} else {
@@ -410,7 +410,11 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);
 		map.put("taskStatu", taskStatu);
-		map.put("taskEffective", taskEffective);
+		if (taskStatu == 3 || taskStatu == 2) {
+			map.put("taskEffective", null);
+		} else {
+			map.put("taskEffective", taskEffective);
+		}
 		return workerRecordMapper.selectCountByWorkerIdAndDate(map);
 	}
 

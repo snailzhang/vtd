@@ -87,13 +87,13 @@
 			and worker_id = ${workerId}
 		</if>
 		<if test="dateType == 1">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m-%d') <= '${endDate}')]]>
+			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(update_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 		</if>
 		<if test="dateType == 2">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m') <= '${endDate}')]]>
+			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(update_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
 		</if>
 		<if test="dateType == 3">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y') <= '${endDate}')]]>
+			and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(update_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
 		</if>
 		<if test="userNameCondition != null">
 			and user_name like '%${userNameCondition}%'
@@ -115,13 +115,13 @@
 				and task_name like "%${taskNameCondition}%"
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(task_down_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(task_down_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(task_down_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
 			</if>
 			<if test="statu == 0 or statu == 1">
 				and task_statu = #{statu}
@@ -178,13 +178,13 @@
 				and task_name like "%${taskNameCondition}%"
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(task_down_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(task_down_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(task_down_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
 			</if>
 			<if test="statu == 0">
 				and (task_statu = 0 or (task_statu = 1 and task_effective = 0))
@@ -224,13 +224,13 @@
 				and worker_id = #{worker_id}
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') or DATE_FORMAT(task_down_time,'%Y-%m-%d') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(task_down_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y-%m') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(task_down_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= '${beginDate}' or DATE_FORMAT(task_down_time,'%Y') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(task_down_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
 			</if>
 		</where>
 	</select>
@@ -243,13 +243,13 @@
 				and worker_id = #{worker_id}
 			</if>
 			<if test="dateType == 1">
-				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m-%d') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(update_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 			</if>
 			<if test="dateType == 2">
-				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y-%m') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(update_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
 			</if>
 			<if test="dateType == 3">
-				and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= '${beginDate}' or DATE_FORMAT(update_time,'%Y') <= '${endDate}')]]>
+				and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(update_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
 			</if>
 			<if test="taskStatu != null">
 				and task_statu = #{taskStatu}
@@ -307,7 +307,7 @@
 		select
 		record_id
 		from worker_record
-		where task_id = #{TaskId,jdbcType=INTEGER} and task_statu = 0
+		where task_id = #{taskId,jdbcType=INTEGER} and task_statu = 0
 	</select>
 	<select id="selectPackIdByTaskId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
