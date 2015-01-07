@@ -163,7 +163,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/employer", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition,int unzip) {// list列表直接转json
+	public Map<String, Object> employerPost(HttpSession session, int page, int packStuts, String packNameCondition, int unzip) {// list列表直接转json
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
@@ -219,8 +219,10 @@ public class EmployerController {
 		logger.debug("list:{},totle:{},totlePages", list, totle, Math.ceil((double) totle / (double) Constants.ROW));
 		return map;
 	}
+
 	/**
 	 * 删除待发布任务包
+	 * 
 	 * @param packId
 	 * @return
 	 */
@@ -230,29 +232,26 @@ public class EmployerController {
 		Map<String, Object> map = new HashMap<>();
 		taskWithBLOBs task = new taskWithBLOBs();
 		task.setPackId(packId);
-		int m = taskService.deleteByPackId(packId);
-		if (m == 1) {
-			packWithBLOBs pack = new packWithBLOBs();
-			pack.setPackId(packId);
-			packService.deleteByPrimaryKey(packId);
-			map.clear();
-			map.put(Constants.REPLAY, 1);
-		}else{
-			map.clear();
-			map.put(Constants.REPLAY,0);
-		}
+		taskService.deleteByPackId(packId);
 
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		packService.deleteByPrimaryKey(packId);
+		map.clear();
+		map.put(Constants.REPLAY, 1);
 		return map;
 	}
+
 	/**
 	 * 修改包的发布状态
+	 * 
 	 * @param packId
 	 * @param unzip
 	 * @return
 	 */
 	@RequestMapping(value = "/updateUnzip", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateUnzipPOST(int packId,int unzip) {
+	public Map<String, Object> updateUnzipPOST(int packId, int unzip) {
 		Map<String, Object> map = new HashMap<>();
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
@@ -262,6 +261,7 @@ public class EmployerController {
 		map.put(Constants.REPLAY, 1);
 		return map;
 	}
+
 	/**
 	 * 修改任务等级
 	 * 
@@ -436,7 +436,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> unzip(String packName, String noteId, int taskLvl, int packLockTime, int markTimeMethod, HttpSession session) {
+	public  Map<String, Object> unzip(String packName, String noteId, int taskLvl, int packLockTime, int markTimeMethod, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
@@ -522,7 +522,7 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/downPack", method = RequestMethod.GET)
 	@ResponseBody
-	public synchronized Map<String, Object> downPackGET(int packId, HttpServletRequest request) {
+	public  Map<String, Object> downPackGET(int packId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", packId);
 		List<taskWithBLOBs> list = taskService.getFinishTaskByPackId(packId);
@@ -550,7 +550,8 @@ public class EmployerController {
 		packService.updateByPrimaryKeySelective(pack);
 
 		// 项目在服务器上的远程绝对地址
-		//String serverAndProjectPath = request.getLocalAddr() + Constants.COLON + request.getLocalPort() + request.getContextPath();
+		// String serverAndProjectPath = request.getLocalAddr() +
+		// Constants.COLON + request.getLocalPort() + request.getContextPath();
 		// 文件所谓的远程绝对路径
 		// String wrongPath = Constants.HTTP + serverAndProjectPath +
 		// Constants.SLASH + Constants.EMPLOYERTEMP + Constants.SLASH +
@@ -955,7 +956,7 @@ public class EmployerController {
 			packId = packService.getPackIdByPackName(packName);
 			// wav文件大小为0kb时
 			manager manager = ManagerService.selectByPrimaryKey(1);
-			if (f.length() <= (manager.getFileSize()*1024)) {
+			if (f.length() <= (manager.getFileSize() * 1024)) {
 				taskWithBLOBs.setWorkerId(0);
 			}
 			taskWithBLOBs.setTaskWav(wav);

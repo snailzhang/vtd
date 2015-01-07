@@ -29,4 +29,6 @@ public interface workerMapper {
     int updateByPrimaryKeyWithBLOBs(worker record);
 
     int updateByPrimaryKey(worker record);
+    
+    String selectWorkerRealNameByWorkerId(int workerId);
 }

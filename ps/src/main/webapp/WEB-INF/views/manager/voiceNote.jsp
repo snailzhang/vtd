@@ -19,7 +19,12 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
+	<c:if test="${usertype == 4}">
+		<jsp:include page="../headWorker.jsp" />
+	</c:if>
+	<c:if test="${usertype != 4}">
+		<jsp:include page="../head.jsp" />
+	</c:if>
 	<div class="container">
 		<div class="panel panel-default">
 			<div class="panel-heading">标注说明列表</div>
@@ -41,7 +46,7 @@
 						<th>名称</th>
 						<th>编号</th>
 						<th>上传时间</th>
-						<th >查看</th>
+						<th>查看</th>
 						<c:if test="${usertype =='1'||usertype =='2'}">
 							<th>编辑</th>
 							<!--  <th>删除</th>-->
@@ -56,81 +61,114 @@
 	<script type="text/javascript">
 		var userType = '${usertype}';
 		var condition = "";
-		$(document).ready(function(){
+		$(document).ready(function() {
 			loadVoiceNoteList(1);
-			$("#searchBtn").click(function(){
+			$("#searchBtn").click(function() {
 				condition = $("#searchTitle").val();
 				loadVoiceNoteList(1);
 			});
 		});
-		loadVoiceNoteList = function(pageNum){
-			$.ajax({
-				type:'POST',
-				url:'${contextPath}/security/voiceNote',
-				data:{"condition":condition,"page":pageNum},
-				dataType:'json',
-				success:function(data){
-					if(data.list == ""){
-						$("tbody").empty();
-						if(userType == '1'||userType == '2'){
-							$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
-						}else{
-							$("tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
+		loadVoiceNoteList = function(pageNum) {
+			$
+					.ajax({
+						type : 'POST',
+						url : '${contextPath}/security/voiceNote',
+						data : {
+							"condition" : condition,
+							"page" : pageNum
+						},
+						dataType : 'json',
+						success : function(data) {
+							if (data.list == "") {
+								$("tbody").empty();
+								if (userType == '1' || userType == '2') {
+									$("tbody")
+											.append(
+													"<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
+								} else {
+									$("tbody")
+											.append(
+													"<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
+								}
+
+							} else {
+								$("tbody").empty();
+								var editTd = "";
+
+								$
+										.each(
+												data.list,
+												function(i, item) {
+													if (userType == '1'
+															|| userType == '2') {
+														editTd = "<td><a href='${contextPath}/security/voiceNoteContent?id="
+																+ item.id
+																+ "&type=1' target='_blank'>编辑</a></td>";
+														//+"<td><a href='javascript:deleteVoiceNote("+item.id+")'>删除</a></td>";
+													}
+													$("tbody")
+															.append(
+																	"<tr>"
+																			+ "<td>"
+																			+ (i + 1)
+																			+ "</td>"
+																			+ "<td>"
+																			+ item.noteTitle
+																			+ "</td>"
+																			+ "<td>"
+																			+ item.noteId
+																			+ "</td>"
+																			+ "<td>"
+																			+ item.createTime
+																			+ "</td>"
+																			+ "<td><a href='${contextPath}/security/voiceNoteContent?id="
+																			+ item.id
+																			+ "&type=0' target='_blank'>查看</a></td>"
+																			+ editTd
+																			+ "</tr>");
+
+												});
+								var pageDom = $(".pagination");
+								pageDom.empty();
+								pucPageTotle = data.totlePage;
+								page.creatPageHTML(pageNum, pucPageTotle,
+										pageDom, "loadVoiceNoteList");
+								$(".pageGoBtn")
+										.click(
+												function() {
+													var pageNum = 0;
+													pageNum = $(
+															"#packUncomplete .pageGoText")
+															.val();
+													if (pageNum != 0
+															&& 0 < pageNum
+															&& pageNum < pucPageTotle + 1) {
+														loadUnCompletePackList(pageNum);
+													}
+												});
+							}
 						}
-						
-					}else{
-						$("tbody").empty();
-						var editTd = "";
-						
-						$.each(data.list,function(i,item){
-							if(userType == '1'||userType == '2'){
-								editTd = "<td><a href='${contextPath}/security/voiceNoteContent?id="+item.id+"&type=1' target='_blank'>编辑</a></td>";
-										//+"<td><a href='javascript:deleteVoiceNote("+item.id+")'>删除</a></td>";
-							}
-							$("tbody").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td>"+item.noteTitle+"</td>"+
-									"<td>"+item.noteId+"</td>"+
-									"<td>"+item.createTime+"</td>"+
-									"<td><a href='${contextPath}/security/voiceNoteContent?id="+item.id+"&type=0' target='_blank'>查看</a></td>"+
-									editTd+
-								"</tr>"
-							);
-							
-						});
-						var pageDom = $(".pagination");
-						pageDom.empty();
-						pucPageTotle = data.totlePage;
-						page.creatPageHTML(pageNum,pucPageTotle,pageDom,"loadVoiceNoteList");
-						$(".pageGoBtn").click(function(){
-							var pageNum = 0;
-							pageNum = $("#packUncomplete .pageGoText").val();
-							if(pageNum !=0&&0<pageNum&&pageNum<pucPageTotle+1){
-								loadUnCompletePackList(pageNum);
-							}
-						});
-					}
-				}
-			});
+					});
 		};
-		deleteVoiceNote = function(id){
+		deleteVoiceNote = function(id) {
 			var conWin = confirm("确定要删除该说明吗？");
-				if(conWin){
-					$.ajax({
-					type:'POST',
-					url:'${contextPath}/security/deleteVoiceNote',
-					data:{"id":id},
-					dataType:'json',
-					success:function(data){
-						if(data.replay == "1"){
+			if (conWin) {
+				$.ajax({
+					type : 'POST',
+					url : '${contextPath}/security/deleteVoiceNote',
+					data : {
+						"id" : id
+					},
+					dataType : 'json',
+					success : function(data) {
+						if (data.replay == "1") {
 							alert(data.message);
 							window.location.reload();
 						}
 					}
 				});
 			}
-			
+
 		};
 	</script>
 </body>

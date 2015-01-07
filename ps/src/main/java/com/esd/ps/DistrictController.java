@@ -49,7 +49,7 @@ public class DistrictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/district", method = RequestMethod.POST)
-	public synchronized Map<String, Object> addDistrictPOST(int page, String userName, String name) {
+	public  Map<String, Object> addDistrictPOST(int page, String userName, String name) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int totle = districtService.getAllCount(userName, name);
 		List<District> list = districtService.getAll(page, userName, name, Constants.ROW);
@@ -66,7 +66,7 @@ public class DistrictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addDistrict", method = RequestMethod.GET)
-	public synchronized ModelAndView addDistrictGET() {
+	public  ModelAndView addDistrictGET() {
 		List<District> districtList = districtService.getAll(0, null, null, 0);
 		List<District> list = new ArrayList<>();
 		if (districtList != null) {
@@ -94,7 +94,7 @@ public class DistrictController {
 	 * @return
 	 */
 	@RequestMapping(value = "/addDistrict", method = RequestMethod.POST)
-	public synchronized ModelAndView addDistrictPOST(String userName, String password, int pId, String name, String pinyin, String phone, String address, String bank) {
+	public  ModelAndView addDistrictPOST(String userName, String password, int pId, String name, String pinyin, String phone, String address, String bank) {
 		logger.debug("userName:{},password:{},pId:{},name:{},phone:{},address:{},bank:{}", userName, password, pId, name, phone, address, bank);
 		UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 		String md5Password = md5.getMd5(userName, password);

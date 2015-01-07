@@ -13,55 +13,55 @@ public class UserTypeServiceImpl implements UserTypeService {
 	@Autowired
 	usertypeMapper usertypeMapper;
 	@Override
-	public int deleteByPrimaryKey(Integer userTypeId) {
+	public synchronized int deleteByPrimaryKey(Integer userTypeId) {
 		
 		return usertypeMapper.deleteByPrimaryKey(userTypeId);
 	}
 
 	@Override
-	public int insert(usertype record) {
+	public synchronized int insert(usertype record) {
 		
 		return usertypeMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(usertype record) {
+	public synchronized int insertSelective(usertype record) {
 		
 		return usertypeMapper.insertSelective(record);
 	}
 
 	@Override
-	public usertype getUserTypeById(Integer userTypeId) {
+	public synchronized usertype getUserTypeById(Integer userTypeId) {
 		
 		return usertypeMapper.selectByPrimaryKey(userTypeId);
 	}
 
 	@Override
-	public List<usertype> selAllUsertypes() {
+	public synchronized List<usertype> selAllUsertypes() {
 		
 		return usertypeMapper.selAllUsertypes();
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(usertype record) {
+	public synchronized int updateByPrimaryKeySelective(usertype record) {
 		
 		return usertypeMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(usertype record) {
+	public synchronized int updateByPrimaryKey(usertype record) {
 		
 		return usertypeMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public String getUserTypeNameEnglish(Integer userTypeId) {
+	public  String getUserTypeNameEnglish(Integer userTypeId) {
 		
 		return usertypeMapper.selectUserTypeNameEnglish(userTypeId);
 	}
 
 	@Override
-	public String getUserTypeName(Integer userTypeId) {
+	public  String getUserTypeName(Integer userTypeId) {
 		
 		return usertypeMapper.selectUserTypeName(userTypeId);
 	}

@@ -220,8 +220,8 @@
 		from worker_record
 		<where>
 			3 > 2
-			<if test="worker_id != null">
-				and worker_id = #{worker_id}
+			<if test="workerId != null">
+				and worker_id = #{workerId}
 			</if>
 			<if test="dateType == 1">
 				and <![CDATA[(DATE_FORMAT(task_down_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(task_down_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
@@ -239,8 +239,8 @@
 		from worker_record
 		<where>
 			3 > 2
-			<if test="worker_id != null">
-				and worker_id = #{worker_id}
+			<if test="workerId != null">
+				and worker_id = #{workerId}
 			</if>
 			<if test="dateType == 1">
 				and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(update_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>

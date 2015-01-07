@@ -75,7 +75,7 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized ModelAndView registrationPost(String name, String card, int district, String phone, String qq, String address, String des, RedirectAttributes redirectAttributes) {
+	public  ModelAndView registrationPost(String name, String card, int district, String phone, String qq, String address, String des, RedirectAttributes redirectAttributes) {
 		logger.debug("name{},card{},district{},phone:{},qq:{},adress:{},des:{}", name, card, district, phone, qq, address, des);
 		if (checkDisabilityCard(name, card)) {
 			Registration registration = new Registration();
@@ -120,7 +120,7 @@ public class RegistrationController {
 	 */
 	@RequestMapping(value = "/rc", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> remoteCheck(String name, String card) {
+	public  Map<String, Object> remoteCheck(String name, String card) {
 		Map<String, Object> map = new HashMap<>();
 		// String name = request.getParameter("name");
 		// String card = request.getParameter("card");

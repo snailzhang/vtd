@@ -10,49 +10,49 @@ public class InspectorServiceImpl implements InspectorService {
 	@Autowired
 	private inspectorMapper inspectorMapper;
 	@Override
-	public int deleteByPrimaryKey(Integer inspectorId) {
+	public synchronized int deleteByPrimaryKey(Integer inspectorId) {
 	
 		return inspectorMapper.deleteByPrimaryKey(inspectorId);
 	}
 
 	@Override
-	public int insert(inspector record) {
+	public synchronized int insert(inspector record) {
 		
 		return inspectorMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(inspector record) {
+	public  int insertSelective(inspector record) {
 		
 		return inspectorMapper.insertSelective(record);
 	}
 
 	@Override
-	public inspector selectByPrimaryKey(Integer inspectorId) {
+	public synchronized inspector selectByPrimaryKey(Integer inspectorId) {
 		
 		return inspectorMapper.selectByPrimaryKey(inspectorId);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(inspector record) {
+	public synchronized int updateByPrimaryKeySelective(inspector record) {
 		
 		return inspectorMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(inspector record) {
+	public synchronized int updateByPrimaryKey(inspector record) {
 		
 		return inspectorMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public int getCountInspectorIdByUserId(Integer userId) {
+	public  int getCountInspectorIdByUserId(Integer userId) {
 
 		return inspectorMapper.selectCountInspectorIdByUserId(userId);
 	}
 
 	@Override
-	public inspector getinspectorByUserId(int userId) {
+	public  inspector getinspectorByUserId(int userId) {
 		
 		return inspectorMapper.selectinspectorByUserId(userId);
 	}

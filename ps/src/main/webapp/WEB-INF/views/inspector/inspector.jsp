@@ -48,6 +48,7 @@
 				<thead>
 					<tr>
 						<th width='10%'>序号</th>
+						<th width='15%'>别名</th>
 						<th width='15%'>姓名</th>
 						<th width='20%'>个数</th>
 						
@@ -94,6 +95,7 @@
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td><a target='_blank' href='${contextPath}/security/inspectorList?workerId="+item.worker_id+"'>"+item.user_name+"</a></td>"+
+									"<td>"+item.workerRealName+"</td>"+
 									"<td>"+item.c+"</td>"+
 								"</tr>"
 							);

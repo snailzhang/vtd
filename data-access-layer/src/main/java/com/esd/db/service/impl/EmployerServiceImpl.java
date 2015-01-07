@@ -11,71 +11,71 @@ public class EmployerServiceImpl implements EmployerService {
 	@Autowired
 	private employerMapper employerMapper;
 	@Override
-	public int deleteByPrimaryKey(Integer employerId) {
+	public synchronized int deleteByPrimaryKey(Integer employerId) {
 		
 		return employerMapper.deleteByPrimaryKey(employerId);
 	}
 
 	@Override
-	public int insert(employer record) {
+	public synchronized int insert(employer record) {
 		
 		return employerMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(employer record) {
+	public  int insertSelective(employer record) {
 		
 		return employerMapper.insertSelective(record);
 	}
 
 	@Override
-	public employer selectByPrimaryKey(Integer employerId) {
+	public synchronized employer selectByPrimaryKey(Integer employerId) {
 		
 		return employerMapper.selectByPrimaryKey(employerId);
 	}
 	
 	@Override
-	public int updateByPrimaryKeySelective(employer record) {
+	public synchronized int updateByPrimaryKeySelective(employer record) {
 		
 		return employerMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(employer record) {
+	public synchronized int updateByPrimaryKey(employer record) {
 		
 		return employerMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public employer getEmployerByUserId(Integer userId) {
+	public  employer getEmployerByUserId(Integer userId) {
 		return employerMapper.selectByUserId(userId);
 	}
 
 	@Override
-	public int getEmployerIdByUserId(Integer userId) {
+	public  int getEmployerIdByUserId(Integer userId) {
 		
 		return employerMapper.selectEmployerIdByUserId(userId);
 	}
 
 	@Override
-	public int getEmployerIdByEmployerName(String employerName) {
+	public synchronized int getEmployerIdByEmployerName(String employerName) {
 		return employerMapper.selEmployerIdByEmployerName(employerName);
 	}
 
 	@Override
-	public int getCountEmployerIdByEmployerName(String employerName) {
+	public synchronized int getCountEmployerIdByEmployerName(String employerName) {
 
 		return employerMapper.selCountEmployerIdByEmployerName(employerName);
 	}
 
 	@Override
-	public int getCountEmployerIdByUserId(Integer userId) {
+	public  int getCountEmployerIdByUserId(Integer userId) {
 		
 		return employerMapper.selectCountEmployerIdByUserId(userId);
 	}
 
 	@Override
-	public String getUploadUrlByEmployerId(Integer employerId) {
+	public  String getUploadUrlByEmployerId(Integer employerId) {
 		return employerMapper.selectUploadUrlByEmployerId(employerId);
 	}
 

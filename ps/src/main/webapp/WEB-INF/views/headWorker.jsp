@@ -13,9 +13,11 @@ String ut = "worker";
 		</div>
 		<nav role="navigation" class="collapse navbar-collapse bs-navbar-collapse">
 			<div class="nav navbar-nav">
-				<p class="navbar-text">待审核时间：<fmt:formatNumber type="number" value="${aduiting/60}" maxFractionDigits="2"/>分</p>
-				<p class="navbar-text">已审核时间：<fmt:formatNumber type="number" value="${aduited/60}" maxFractionDigits="2"/>分</p>
-				<p class="navbar-text">金额：${salary}元</p>
+				<p class="navbar-text">待审核时间：<fmt:formatNumber type="number" value="${aduiting/60}" maxFractionDigits="2"/> 分</p>
+				<p class="navbar-text"><font color="yellow">|</font></p>
+				<p class="navbar-text">已审核时间：<fmt:formatNumber type="number" value="${aduited/60}" maxFractionDigits="2"/> 分</p>
+				<p class="navbar-text"><font color="yellow">|</font></p>
+				<p class="navbar-text">金额：${salary} 元</p>
 			</div>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">

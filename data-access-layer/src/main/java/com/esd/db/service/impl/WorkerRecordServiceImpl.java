@@ -18,49 +18,49 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	workerRecordMapper workerRecordMapper;
 
 	@Override
-	public int deleteByPrimaryKey(Integer recordId) {
+	public synchronized int deleteByPrimaryKey(Integer recordId) {
 
 		return workerRecordMapper.deleteByPrimaryKey(recordId);
 	}
 
 	@Override
-	public int insert(workerRecord record) {
+	public synchronized int insert(workerRecord record) {
 
 		return workerRecordMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(workerRecord record) {
+	public  int insertSelective(workerRecord record) {
 
 		return workerRecordMapper.insertSelective(record);
 	}
 
 	@Override
-	public workerRecord getByPrimaryKey(Integer recordId) {
+	public synchronized workerRecord getByPrimaryKey(Integer recordId) {
 
 		return workerRecordMapper.selectByPrimaryKey(recordId);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(workerRecord record) {
+	public  int updateByPrimaryKeySelective(workerRecord record) {
 
 		return workerRecordMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(workerRecord record) {
+	public synchronized int updateByPrimaryKey(workerRecord record) {
 
 		return workerRecordMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public List<workerRecord> getDoingTask() {
+	public  List<workerRecord> getDoingTask() {
 
 		return workerRecordMapper.selectDoingTask();
 	}
 
 	@Override
-	public List<workerRecord> getAllByWorkerId(Integer workerId, Integer taskEffective, Integer statu, String beginDate, String endDate, String taskNameCondition, int page, int row, int dateType) {
+	public  List<workerRecord> getAllByWorkerId(Integer workerId, Integer taskEffective, Integer statu, String beginDate, String endDate, String taskNameCondition, int page, int row, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (page == 0) {
 			map.put("begin", null);
@@ -85,7 +85,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getAllCountByWorkerId(Integer workerId, Integer statu, String beginDate, String endDate, String taskNameCondition, int dateType) {
+	public  int getAllCountByWorkerId(Integer workerId, Integer statu, String beginDate, String endDate, String taskNameCondition, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("workerId", workerId);
@@ -99,54 +99,54 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public String get1DownUrlByTaskName(String taskName) {
+	public synchronized String get1DownUrlByTaskName(String taskName) {
 
 		return workerRecordMapper.selectDownUrlByTaskName(taskName);
 	}
 
 	@Override
-	public int get1PkIDByTaskName(String taskName) {
+	public synchronized int get1PkIDByTaskName(String taskName) {
 
 		return workerRecordMapper.selectPkIDByTaskName(taskName);
 	}
 
 	@Override
-	public workerRecord getWorkerRecordByWorkerId(Integer workerId) {
+	public  workerRecord getWorkerRecordByWorkerId(Integer workerId) {
 
 		return workerRecordMapper.selectWorkerRecordByWorkerId(workerId);
 	}
 
 	@Override
-	public int getDoingTaskCountByWorkerId(Integer workerId) {
+	public  int getDoingTaskCountByWorkerId(Integer workerId) {
 		return workerRecordMapper.selectDoingTaskCountByWorkerId(workerId);
 	}
 
 	@Override
-	public int getTaskCountByDownPackName(String downPackName) {
+	public  int getTaskCountByDownPackName(String downPackName) {
 
 		return workerRecordMapper.selectTaskCountByDownPackName(downPackName);
 	}
 
 	@Override
-	public int getPackStatuByDownPackName(String downPackName) {
+	public  int getPackStatuByDownPackName(String downPackName) {
 
 		return workerRecordMapper.selectPackStatuByDownPackName(downPackName);
 	}
 
 	@Override
-	public List<workerRecord> getDownNameAndTimeByWorkerIdGroupByDownPackName(Integer workerId) {
+	public synchronized List<workerRecord> getDownNameAndTimeByWorkerIdGroupByDownPackName(Integer workerId) {
 
 		return workerRecordMapper.selectDownNameAndTimeByWorkerIdGroupByDownPackName(workerId);
 	}
 
 	@Override
-	public List<workerRecord> getAllByDownPackName(String downPackName) {
+	public  List<workerRecord> getAllByDownPackName(String downPackName) {
 
 		return workerRecordMapper.selectAllByDownPackName(downPackName);
 	}
 
 	@Override
-	public int getFinishTaskCountByPackId(Integer packId, Integer taskMarkTime) {
+	public  int getFinishTaskCountByPackId(Integer packId, Integer taskMarkTime) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("packId", packId);
@@ -155,24 +155,24 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public String get1DownPackNameByTaskName(String taskName) {
+	public synchronized String get1DownPackNameByTaskName(String taskName) {
 
 		return workerRecordMapper.selectDownPackNameByTaskName(taskName);
 	}
 
 	@Override
-	public String getDownUrlByDownPackName(String downPackName) {
+	public synchronized String getDownUrlByDownPackName(String downPackName) {
 		return workerRecordMapper.selectDownUrlByDownPackName(downPackName);
 	}
 
 	@Override
-	public List<workerRecord> getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map) {
+	public synchronized List<workerRecord> getDownNameAndTimeByWorkerIdPagesGroupByDownPackName(Map<String, Integer> map) {
 
 		return workerRecordMapper.selectDownNameAndTimeByWorkerIdPagesGroupByDownPackName(map);
 	}
 
 	@Override
-	public int getPkIDByTaskId(Integer taskId) {
+	public  int getPkIDByTaskId(Integer taskId) {
 
 		return workerRecordMapper.selectPkIDByTaskId(taskId);
 	}
@@ -180,7 +180,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	/**
 	 * 模糊查询下载包名符合的数量
 	 */
-	public int getDownPackNameCountByworkerIdGroupByDownPackName(int workerId, String downPackName) {
+	public  int getDownPackNameCountByworkerIdGroupByDownPackName(int workerId, String downPackName) {
 		Map<String, Object> pageMap = new HashMap<String, Object>();
 
 		pageMap.put("workerId", workerId);
@@ -193,7 +193,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	/**
 	 * 模糊查询 by downPackName 分页
 	 */
-	public List<workerRecord> getWorkerRecordLikeDownPackName(int workerId, int page, String downPackName, int row) {
+	public  List<workerRecord> getWorkerRecordLikeDownPackName(int workerId, int page, String downPackName, int row) {
 		Map<String, Object> pageMap = new HashMap<String, Object>();
 		pageMap.put("begin", ((page - 1) * row));
 		pageMap.put("end", row);
@@ -205,7 +205,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, String beginDate, String endDate, String userNameCondition, int taskEffective, int taskStatus, int dateType) {
+	public  Double getTaskMarkTimeMonthByWorkerIdAndMonth(int workerId, String beginDate, String endDate, String userNameCondition, int taskEffective, int taskStatus, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		if (workerId > 0) {
@@ -228,25 +228,25 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Double getSUMTaskMarkTimeByPackId(int packId) {
+	public  Double getSUMTaskMarkTimeByPackId(int packId) {
 
 		return workerRecordMapper.selectSUMTaskMarkTimeByPackId(packId);
 	}
 
 	@Override
-	public int getPackIdByTaskId(Integer task_id) {
+	public synchronized int getPackIdByTaskId(Integer task_id) {
 
 		return workerRecordMapper.selectPackIdByTaskId(task_id);
 	}
 
 	@Override
-	public int updateBydownPackName(workerRecord record) {
+	public  int updateBydownPackName(workerRecord record) {
 
 		return workerRecordMapper.updateBydownPackName(record);
 	}
 
 	@Override
-	public List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective, int page, int row) {
+	public  List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective, int page, int row) {
 		Map<String, Object> map = new HashMap<>();
 
 		map.clear();
@@ -269,7 +269,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId, String endDate, int inspectorrecordId) {
+	public  int updateByWorkerId(int taskEffective, int taskLockTime, int workerId, String firstDate, int inspectorId, String endDate, int inspectorrecordId) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
@@ -294,7 +294,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getWorkerIdCountGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective) {
+	public  int getWorkerIdCountGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective) {
 		Map<String, Object> map = new HashMap<>();
 
 		map.clear();
@@ -310,7 +310,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getByWorkerIdAndEffective(int workerId, int taskEffective, int taskStatu) {
+	public  List<workerRecord> getByWorkerIdAndEffective(int workerId, int taskEffective, int taskStatu) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
@@ -320,7 +320,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int updateByGiveUp(int workerId, int taskId, int version, String updateMethod) {
+	public  int updateByGiveUp(int workerId, int taskId, int version, String updateMethod) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("taskStatu", 3);
@@ -337,7 +337,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getCountByWorkerId(Integer workerId, Integer statu, int taskEffective) {
+	public  int getCountByWorkerId(Integer workerId, Integer statu, int taskEffective) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
@@ -347,7 +347,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<Integer> getPackIdByDateTime(int workerId, String firstDate, String endDate) {
+	public  List<Integer> getPackIdByDateTime(int workerId, String firstDate, String endDate) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
 		map.put("workerId", workerId);
@@ -358,7 +358,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public List<workerRecord> getInvalidTask(int page, int row) {
+	public synchronized List<workerRecord> getInvalidTask(int page, int row) {
 		Map<String, Object> map = new HashMap<>();
 		if (page == 0) {
 			map.put("begin", null);
@@ -371,13 +371,13 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public Integer getInvalidCountTask() {
+	public synchronized Integer getInvalidCountTask() {
 
 		return workerRecordMapper.selectInvalidCountTask();
 	}
 
 	@Override
-	public int updateByInvalid(int inspectorId, int taskId) {
+	public synchronized int updateByInvalid(int inspectorId, int taskId) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("inspectorId", inspectorId);
 		map.put("taskId", taskId);
@@ -385,16 +385,16 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getTaskMarkTimeZeroCountByPackId(Integer packId) {
+	public  int getTaskMarkTimeZeroCountByPackId(Integer packId) {
 
 		return workerRecordMapper.selectTaskMarkTimeZeroCountByPackId(packId);
 	}
 
 	@Override
-	public int getdownCountByWorkerIdAndDate(int worker_id, int dateType, String beginDate, String endDate) {
+	public  int getdownCountByWorkerIdAndDate(int workerId, int dateType, String beginDate, String endDate) {
 		Map<String, Object> map = new HashMap<>();
 		map.clear();
-		map.put("worker_id", worker_id);
+		map.put("workerId", workerId);
 		map.put("dateType", dateType);
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);
@@ -402,10 +402,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public int getCountByWorkerIdAndDate(int worker_id, int dateType, String beginDate, String endDate, int taskStatu, int taskEffective) {
+	public  int getCountByWorkerIdAndDate(int workerId, int dateType, String beginDate, String endDate, int taskStatu, int taskEffective) {
 		Map<String,Object> map = new HashMap<>();
 		map.clear();
-		map.put("worker_id", worker_id);
+		map.put("workerId", workerId);
 		map.put("dateType", dateType);
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);

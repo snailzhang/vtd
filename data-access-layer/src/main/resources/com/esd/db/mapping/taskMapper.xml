@@ -745,4 +745,62 @@
 		and <![CDATA[(task_upload_time > '${firstDate}' or task_upload_time = '${firstDate}')]]>
 		and <![CDATA[(task_upload_time < '${endDate}' or task_upload_time = '${endDate}')]]>
 	</update>
+	<update id="updateByLimit" parameterType="java.util.Map">
+		update task 
+		<set>
+			<if test="packId != null">
+					pack_id = #{packId,jdbcType=INTEGER},
+			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="faultId != null">
+				fault_id = #{faultId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId != null">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="taskDir != null">
+				task_dir = #{taskDir,jdbcType=VARCHAR},
+			</if>
+			<if test="taskName != null">
+				task_name = #{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective,jdbcType=BIT},
+			</if>
+			<if test="taskEffective == null">
+				task_effective = null,
+			</if>
+			<if test="taskUpload != null">
+				task_upload = #{taskUpload,jdbcType=BIT},
+			</if>
+			<if test="taskLvl != null">
+				task_lvl = #{taskLvl,jdbcType=INTEGER},
+			</if>
+			<if test="taskDownloadTime != null">
+				task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where> worker_id IS NULL
+			and pack_id IN (select pack_id from pack where pack_status=0 and unzip = 1)
+		</where>
+			order by task_lvl
+			limit #{downTaskCount}
+	</update>
 </mapper>

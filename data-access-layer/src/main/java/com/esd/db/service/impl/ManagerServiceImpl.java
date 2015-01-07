@@ -13,66 +13,66 @@ public class ManagerServiceImpl implements ManagerService {
 	@Autowired
 	managerMapper managerMapper;
 	@Override
-	public int deleteByPrimaryKey(Integer managerId) {
+	public synchronized int deleteByPrimaryKey(Integer managerId) {
 		
 		return managerMapper.deleteByPrimaryKey(managerId);
 	}
 
 	@Override
-	public int insert(manager record) {
+	public synchronized int insert(manager record) {
 		
 		return managerMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(manager record) {
+	public  int insertSelective(manager record) {
 		
 		return managerMapper.insertSelective(record);
 	}
 
 	@Override
-	public manager selectByPrimaryKey(Integer managerId) {
+	public  manager selectByPrimaryKey(Integer managerId) {
 		
 		return managerMapper.selectByPrimaryKey(managerId);
 	}
 
 	@Override
-	public List<manager> selAllManagers() {
+	public synchronized List<manager> selAllManagers() {
 		
 		return  managerMapper.selAllManagers();
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(manager record) {
+	public  int updateByPrimaryKeySelective(manager record) {
 		
 		return managerMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(manager record) {
+	public synchronized int updateByPrimaryKey(manager record) {
 		
 		return managerMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public manager getManagerByUserId(Integer userId) {
+	public  manager getManagerByUserId(Integer userId) {
 		return managerMapper.selectByUserId(userId);
 	}
 
 	@Override
-	public int getManagerIdByManagerName(String managerName) {
+	public synchronized int getManagerIdByManagerName(String managerName) {
 		
 		return managerMapper.selManagerIdByManagerName(managerName);
 	}
 
 	@Override
-	public int getCountManagerIdByManagerName(String managerName) {
+	public synchronized int getCountManagerIdByManagerName(String managerName) {
 		
 		return managerMapper.selCountManagerIdByManagerName(managerName);
 	}
 
 	@Override
-	public int getCountManagerIdByUserId(Integer userId) {
+	public  int getCountManagerIdByUserId(Integer userId) {
 		
 		return managerMapper.selectCountManagerIdByUserId(userId);
 	}

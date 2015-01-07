@@ -22,8 +22,8 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
-	
+	<!--<jsp:include page="../head.jsp" />-->
+	<jsp:include page="../headWorker.jsp" />
 		<div class="container">
 			<div id="uploadFalTable" class="panel panel-default">
 				<div class="panel-heading">

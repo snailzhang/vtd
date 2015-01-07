@@ -19,126 +19,155 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
-	<jsp:include page="../head.jsp" />
+	<c:if test="${usertype == 4}">
+		<jsp:include page="../headWorker.jsp" />
+	</c:if>
+	<c:if test="${usertype != 4}">
+		<jsp:include page="../head.jsp" />
+	</c:if>
 	<form role="form" class="form-horizontal" id="updatePWDForm">
 		<div id="updPWD" class="container">
 			<h1 id="" class="page-header">密码修改</h1>
 			<div id=message></div>
 			<div class="form-group">
-		      <label for="username" class="col-sm-2 control-label">现在的密码：</label>
-		      <div class="col-sm-10">
-		         <input type="password" class="form-control" name="oldPassWord" id="oldPassWord" placeholder="请输入原密码" autocomplete="off">
-		         <span class="help-block"></span>
-		      </div>
-		   </div>
-		   <div class="form-group">
-		      <label for="username" class="col-sm-2 control-label">设置新密码：</label>
-		      <div class="col-sm-10">
-		         <input type="password" class="form-control" name="newPassWord" id="newPassWord" placeholder="请输入新密码" autocomplete="off">
-		         <span class="help-block"></span>
-		      </div>
-		   </div>
-		   <div class="form-group">
-		      <label for="username" class="col-sm-2 control-label">重复新密码：</label>
-		      <div class="col-sm-10">
-		         <input type="password" class="form-control" id="reNewPassword" placeholder="请重复输入新密码" autocomplete="off">
-		         <span class="help-block"></span>
-		      </div>
-		   </div>
-		   <div class="form-group">
-		      <div class="col-sm-offset-2 col-sm-10">
-		         <button id="updBtn" type="button" class="btn btn-danger">修改</button>
-		      </div>
-		   </div>
+				<label for="username" class="col-sm-2 control-label">现在的密码：</label>
+				<div class="col-sm-10">
+					<input type="password" class="form-control" name="oldPassWord" id="oldPassWord" placeholder="请输入原密码" autocomplete="off"> <span class="help-block"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="username" class="col-sm-2 control-label">设置新密码：</label>
+				<div class="col-sm-10">
+					<input type="password" class="form-control" name="newPassWord" id="newPassWord" placeholder="请输入新密码" autocomplete="off"> <span class="help-block"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="username" class="col-sm-2 control-label">重复新密码：</label>
+				<div class="col-sm-10">
+					<input type="password" class="form-control" id="reNewPassword" placeholder="请重复输入新密码" autocomplete="off"> <span class="help-block"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button id="updBtn" type="button" class="btn btn-danger">修改</button>
+				</div>
+			</div>
 		</div>
-		
+
 	</form>
-	
+
 	<script type="text/javascript">
 		var pwdCorrect = false;
-		checkPwdCorrect = function(){
+		checkPwdCorrect = function() {
 			var pwd = $("#oldPassWord").val();
 			$.ajax({
-				type:'post',
-				url:'${contextPath}/security/checkPassWord',
-				data:{"oldPassWord":pwd},
-				dataType:'json',
-				success:function(data){
-					if(!data.replay){
-						$("#oldPassWord").next(".help-block").css("color","red").text(data.message);
+				type : 'post',
+				url : '${contextPath}/security/checkPassWord',
+				data : {
+					"oldPassWord" : pwd
+				},
+				dataType : 'json',
+				success : function(data) {
+					if (!data.replay) {
+						$("#oldPassWord").next(".help-block").css("color",
+								"red").text(data.message);
 						pwdCorrect = false;
-					}else{
-						$("#oldPassWord").next(".help-block").css("color","green").text(data.message);
+					} else {
+						$("#oldPassWord").next(".help-block").css("color",
+								"green").text(data.message);
 						pwdCorrect = true;
 					}
 				}
 			});
 		};
-		checkPwd = function(){
+		checkPwd = function() {
 			var pwd = $("#oldPassWord");
-			if(checkout.text.isempty(pwd,"原密码不能为空！")){
-				return false;	
+			if (checkout.text.isempty(pwd, "原密码不能为空！")) {
+				return false;
 			}
 			checkPwdCorrect();
 			return true;
 		};
-		checkNewPwd = function(){
+		checkNewPwd = function() {
 			var npwd = $("#newPassWord");
 			var rnpwd = $("#reNewPassword");
 			var np = npwd.val();
 			var rnp = rnpwd.val();
-			if(checkout.text.isempty(npwd,"新密码不能为空！")){
-				return false;	
-			}
-			if(np != rnp){
-				rnpwd.next(".help-block").css("color","red").text("与新密码不一致！");
+			if (checkout.text.isempty(npwd, "新密码不能为空！")) {
 				return false;
-			}else{
+			}
+			if (np != rnp) {
+				rnpwd.next(".help-block").css("color", "red").text("与新密码不一致！");
+				return false;
+			} else {
 				rnpwd.next(".help-block").empty();
 			}
 			return true;
 		};
-		
-		$(document).ready(function(){
-			$("#oldPassWord").blur(function(){
-				checkPwd();
-			});
-			$("#newPassWord,#reNewPassword").blur(function(){
-				checkNewPwd();
-			});
-			$("#updBtn").click(function(){
-				var un = "${username}";
-				if(!checkPwd())return;
-				if(!checkNewPwd())return;
-				if(!pwdCorrect)return;
-				var npwd = $("#newPassWord").val();
-				var pwd = $("#oldPassWord").val();
-				$.ajax({
-					type:'post',
-					url:'${contextPath}/security/updatePassWord',
-					data:{"oldPassWord":pwd,"newPassWord":npwd,"username":un},
-					dataType:'json',
-					success:function(data){
-						if(!data.replay){
-							var msgS = '<div class="alert alert-danger alert-dismissable">'
-										+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
-										+ data.message + '</div>';
-							$("#message").html(msgS);
-						}else{
-							var msgS = '<div class="alert alert-success alert-dismissable">'
-										+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
-										+ data.message + '</div>';
-							$("#message").html(msgS);
-						}
-						$("input[type=password]").val("");
-						$(".help-block").empty();
-					}
-				});
-			});
-		});
-			
-		
 
+		$(document)
+				.ready(
+						function() {
+							$("#oldPassWord").blur(function() {
+								checkPwd();
+							});
+							$("#newPassWord,#reNewPassword").blur(function() {
+								checkNewPwd();
+							});
+							$("#updBtn")
+									.click(
+											function() {
+												var un = "${username}";
+												if (!checkPwd())
+													return;
+												if (!checkNewPwd())
+													return;
+												if (!pwdCorrect)
+													return;
+												var npwd = $("#newPassWord")
+														.val();
+												var pwd = $("#oldPassWord")
+														.val();
+												$
+														.ajax({
+															type : 'post',
+															url : '${contextPath}/security/updatePassWord',
+															data : {
+																"oldPassWord" : pwd,
+																"newPassWord" : npwd,
+																"username" : un
+															},
+															dataType : 'json',
+															success : function(
+																	data) {
+																if (!data.replay) {
+																	var msgS = '<div class="alert alert-danger alert-dismissable">'
+																			+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+																			+ data.message
+																			+ '</div>';
+																	$(
+																			"#message")
+																			.html(
+																					msgS);
+																} else {
+																	var msgS = '<div class="alert alert-success alert-dismissable">'
+																			+ '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'
+																			+ data.message
+																			+ '</div>';
+																	$(
+																			"#message")
+																			.html(
+																					msgS);
+																}
+																$(
+																		"input[type=password]")
+																		.val("");
+																$(".help-block")
+																		.empty();
+															}
+														});
+											});
+						});
 	</script>
 </body>
 </html>

@@ -13,12 +13,12 @@ public class MarkTimeMethodServiceImpl implements MarkTimeMethodService {
 	@Autowired
 	private markTimeMethodMapper markTimeMethodMapper;
 
-	public markTimeMethod getByPrimaryKey(int id) {
+	public  markTimeMethod getByPrimaryKey(int id) {
 
 		return markTimeMethodMapper.selectByPrimaryKey(id);
 	}
 
-	public List<markTimeMethod> getAll() {
+	public  List<markTimeMethod> getAll() {
 
 		return markTimeMethodMapper.selectAll();
 	}

@@ -44,6 +44,8 @@ public interface taskMapper {
     
     int updateByWorkerId(Map<String, Object> map);
     
+    int updateByLimit(Map<String, Object> map);
+    
     int selectUndoTaskCount();
     
     int selectFirstPackIdOrderByTaskLvl();
@@ -77,4 +79,5 @@ public interface taskMapper {
 	int selectTaskLvlByPackId(int packId);
 	
 	int selectWorkerIdZeroCountByPackId(Integer packId);
+	
 }

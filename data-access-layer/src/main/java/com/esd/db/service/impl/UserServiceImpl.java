@@ -16,91 +16,91 @@ public class UserServiceImpl implements UserService {
 	userMapper userMapper;
 
 	@Override
-	public int deleteByPrimaryKey(Integer userId) {
+	public synchronized int deleteByPrimaryKey(Integer userId) {
 
 		return userMapper.deleteByPrimaryKey(userId);
 	}
 
 	@Override
-	public int insert(user record) {
+	public synchronized int insert(user record) {
 
 		return userMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(user record) {
+	public  int insertSelective(user record) {
 
 		return userMapper.insertSelective(record);
 	}
 
 	@Override
-	public user getByPrimaryKey(Integer userId) {
+	public  user getByPrimaryKey(Integer userId) {
 
 		return userMapper.selectByPrimaryKey(userId);
 	}
 
 	@Override
-	public List<user> getAllUsers() {
+	public synchronized List<user> getAllUsers() {
 
 		return userMapper.selectAllUsers();
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(user record) {
+	public  int updateByPrimaryKeySelective(user record) {
 
 		return userMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(user record) {
+	public  int updateByPrimaryKey(user record) {
 
 		return userMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public int getMaxUserId() {
+	public  int getMaxUserId() {
 
 		return userMapper.getMaxUserId();
 	}
 
 	@Override
-	public int getUserIdByUserName(String username) {
+	public  int getUserIdByUserName(String username) {
 
 		return userMapper.selectUserIdByUserName(username);
 	}
 
 	@Override
-	public user getAllUsersByUserName(String username) {
+	public  user getAllUsersByUserName(String username) {
 
 		return userMapper.selectAllUsersByUserName(username);
 	}
 
 	@Override
-	public int getAllUserCount() {
+	public synchronized int getAllUserCount() {
 
 		return userMapper.selectAllUserCount();
 	}
 
 	@Override
-	public int getAllUserCountByUserType(Integer userType) {
+	public synchronized int getAllUserCountByUserType(Integer userType) {
 
 		return userMapper.selectAllUserCountByUserType(userType);
 	}
 
 	@Override
-	public int getUserIdCountByUserName(String userName) {
+	public  int getUserIdCountByUserName(String userName) {
 
 		return userMapper.selectUserIdCountByUserName(userName);
 	}
 
 	@Override
-	public user getByUserName(String userName) {
+	public synchronized user getByUserName(String userName) {
 
 		return userMapper.selectByUserName(userName);
 	}
 
 	@Override
-	public List<user> getLikeUsername(String userNameCondition, int userType, int page, int row) {
+	public  List<user> getLikeUsername(String userNameCondition, int userType, int page, int row) {
 		Map<String, Object> userTypeMap = new HashMap<String, Object>();
 		userTypeMap.put("begin", ((page - 1) * row));
 		userTypeMap.put("end", row);
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int getCountLikeUsername(String userNameCondition, int userType) {
+	public  int getCountLikeUsername(String userNameCondition, int userType) {
 		Map<String, Object> userTypeMap = new HashMap<String, Object>();
 		if (userNameCondition.trim().length() > 0)
 			userTypeMap.put("userNameCondition", userNameCondition);

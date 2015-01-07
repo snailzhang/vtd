@@ -72,7 +72,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/voiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> VoiceNotePOST(String condition, int page) {
+	public  Map<String, Object> VoiceNotePOST(String condition, int page) {
 		logger.debug("condition:{}", condition);
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<voiceNoteTrans> list = new ArrayList<>();
@@ -103,7 +103,7 @@ public class VioceNote {
 	 * @return
 	 */
 	@RequestMapping(value = "/voiceNoteContent", method = RequestMethod.GET)
-	public synchronized ModelAndView VoiceNoteContentGET(int id, int type) {
+	public  ModelAndView VoiceNoteContentGET(int id, int type) {
 		voiceNoteWithBLOBs voiceNote = voiceNoteService.selectByPrimaryKey(id);
 		if (type == 0) {
 			return new ModelAndView(Constants.MANAGER + Constants.SLASH + Constants.SHOWNOTE, Constants.VOICENOTE, voiceNote);
@@ -120,7 +120,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/addVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> addVoiceNotePOST(String title, String content, HttpSession session) {
+	public  Map<String, Object> addVoiceNotePOST(String title, String content, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
 
@@ -162,7 +162,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/updateVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> updateVoiceNotePOST(int id, String title, String content, HttpSession session) {
+	public  Map<String, Object> updateVoiceNotePOST(int id, String title, String content, HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteWithBLOBs voiceNote = new voiceNoteWithBLOBs();
 		voiceNote.setId(id);
@@ -186,7 +186,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/deleteVoiceNote", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized  Map<String, Object> deleteVoiceNotePOST(int id) {
+	public   Map<String, Object> deleteVoiceNotePOST(int id) {
 		Map<String, Object> map = new HashMap<>();
 		voiceNoteService.deleteByPrimaryKey(id);
 		map.put(Constants.REPLAY, 1);
@@ -203,7 +203,7 @@ public class VioceNote {
 	 */
 	@RequestMapping(value = "/uploadImage", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> uploadImagePOST(@RequestParam(value = "upfile", required = false) MultipartFile noteImage, HttpServletRequest request) {
+	public  Map<String, Object> uploadImagePOST(@RequestParam(value = "upfile", required = false) MultipartFile noteImage, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
 		String imageName = null;
 		

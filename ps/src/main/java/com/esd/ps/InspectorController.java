@@ -27,6 +27,7 @@ import com.esd.db.service.InspectorRecordService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
+import com.esd.db.service.WorkerService;
 import com.esd.ps.model.WorkerRecordTrans;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,8 @@ public class InspectorController {
 	@Autowired
 	private PackService packService;
 	@Autowired
+	private WorkerService workerService;
+	@Autowired
 	private InspectorRecordService inspectorRecordService;
 
 	/**
@@ -78,13 +81,21 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/inspector", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> inspectorPost(String userName, int timeMark, int page, HttpSession session) {
+	public  Map<String, Object> inspectorPost(String userName, int timeMark, int page, HttpSession session) {
 		logger.debug("userName:{},timeMark:{}", userName, timeMark);
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3, page, Constants.ROW);
+		List<Map<String, Object>> list1 = new ArrayList<>();
+		for (Iterator<Map<String, Object>> iterator = list.iterator(); iterator.hasNext();) {
+			Map<String, Object> map1 = (Map<String, Object>) iterator.next();
+			int workerId = Integer.parseInt(map1.get("worker_id").toString());
+			String workerRealName = workerService.getWorkerRealNameByWorkerId(workerId);
+			map1.put("workerRealName", workerRealName);
+			list1.add(map1);
+		}		
 		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(userName, timeMark, 1, 3);
 		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
-		map.put(Constants.LIST, list);
+		map.put(Constants.LIST, list1);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
@@ -110,7 +121,7 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/inspectorList", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> inspectorListPost(int workerId) {
+	public  Map<String, Object> inspectorListPost(int workerId) {
 		Map<String, Object> map = new HashMap<>();
 		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, "", "", "", 0, 0,0);
 		List<WorkerRecordTrans> list2 = new ArrayList<>();
@@ -178,7 +189,7 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/downAuditTask", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> downAuditTaskPost(String list, int workerId, HttpServletRequest request) {
+	public  Map<String, Object> downAuditTaskPost(String list, int workerId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
 		String url = request.getServletContext().getRealPath(Constants.SLASH);
 		url = url + "auditTemp";
@@ -225,7 +236,7 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session, String note) {
+	public  Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session, String note) {
 		Map<String, Object> map = new HashMap<>();
 		int userId = Integer.parseInt(session.getAttribute("userId").toString());
 		int inspectorrecordId = 0;

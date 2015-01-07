@@ -131,7 +131,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> managerPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload,int dateType) {
+	public  Map<String, Object> managerPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload,int dateType) {
 		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, beginDate, endDate);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
@@ -210,12 +210,14 @@ public class ManagerController {
 		}
 		map.clear();
 		Double taskMarkTimeMonthTotle = 0.00;
+		Double aduitingMarkTimeMonthTotle = 0.00;
 		if (taskUpload > 0) {
 			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, beginDate, endDate, userNameCondition, 1, 1, dateType);
+			aduitingMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, beginDate, endDate, userNameCondition, 0, 1, dateType);
 		}
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
-		manager manager = managerService.selectByPrimaryKey(1);
-		map.put("manager", manager);
+//		manager manager = managerService.selectByPrimaryKey(1);
+//		map.put("manager", manager);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
@@ -224,10 +226,26 @@ public class ManagerController {
 		} else {
 			map.put(Constants.TASKMARKTIMEMONTHTOTLE, taskMarkTimeMonthTotle);
 		}
+		if (aduitingMarkTimeMonthTotle == null) {
+			map.put("aduitingMarkTimeMonthTotle", 0.00);
+		} else {
+			map.put("aduitingMarkTimeMonthTotle", aduitingMarkTimeMonthTotle);
+		}
 
 		return map;
 	}
-
+	/**
+	 * 得到manager
+	 * @return
+	 */
+	@RequestMapping(value = "/getManager", method = RequestMethod.POST)
+	@ResponseBody
+	public  Map<String, Object> getManagerPost() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		manager manager = managerService.selectByPrimaryKey(1);
+		map.put("manager", manager);
+		return map;
+	}
 	/**
 	 * 修改累计下载数,单次下载数,有效文件大小
 	 * 
@@ -238,7 +256,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateCount", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> updateCountPost(int downCount, int downMaxCount, int fileSize) {
+	public  Map<String, Object> updateCountPost(int downCount, int downMaxCount, int fileSize) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		manager manager = new manager();
 		manager.setManagerId(1);
@@ -254,7 +272,6 @@ public class ManagerController {
 			map.put(Constants.REPLAY, 0);
 			map.put(Constants.MESSAGE, MSG_UPDATE_ERROR);
 		}
-
 		return map;
 	}
 
@@ -266,7 +283,7 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public synchronized ModelAndView workerDetailGET(int userId, HttpServletRequest request) {
+	public  ModelAndView workerDetailGET(int userId, HttpServletRequest request) {
 		Map<String, Object> model = new HashMap<>();
 		try {
 			String username = new String(request.getParameter("username").getBytes("iso-8859-1"), "utf-8");
@@ -293,7 +310,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public synchronized Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, String beginDate, String endDate, int statu, String taskNameCondition,int dateType) {
+	public  Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, String beginDate, String endDate, int statu, String taskNameCondition,int dateType) {
 		Map<String, Object> map = new HashMap<>();
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);

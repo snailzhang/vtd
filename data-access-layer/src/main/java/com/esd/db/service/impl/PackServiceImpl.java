@@ -19,36 +19,36 @@ public class PackServiceImpl implements PackService {
 	private packMapper packMapper;
 
 	@Override
-	public int deleteByPrimaryKey(Integer packId) {
+	public  int deleteByPrimaryKey(Integer packId) {
 		return packMapper.deleteByPrimaryKey(packId);
 	}
 
 	@Override
-	public int insert(packWithBLOBs record) {
+	public synchronized int insert(packWithBLOBs record) {
 
 		return packMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(packWithBLOBs record) {
+	public  int insertSelective(packWithBLOBs record) {
 
 		return packMapper.insertSelective(record);
 	}
 
 	@Override
-	public packWithBLOBs selectByPrimaryKey(Integer packId) {
+	public synchronized packWithBLOBs selectByPrimaryKey(Integer packId) {
 
 		return packMapper.selectByPrimaryKey(packId);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(packWithBLOBs record) {
+	public  int updateByPrimaryKeySelective(packWithBLOBs record) {
 
 		return packMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKeyWithBLOBs(packWithBLOBs record) {
+	public  int updateByPrimaryKeyWithBLOBs(packWithBLOBs record) {
 
 		return packMapper.updateByPrimaryKeyWithBLOBs(record);
 	}
@@ -57,7 +57,7 @@ public class PackServiceImpl implements PackService {
 	 * 更新 by pk
 	 */
 	@Override
-	public int updateByPrimaryKey(pack record) {
+	public synchronized int updateByPrimaryKey(pack record) {
 
 		return packMapper.updateByPrimaryKey(record);
 	}
@@ -66,7 +66,7 @@ public class PackServiceImpl implements PackService {
 	 * 最新的包号 by employerId
 	 */
 	@Override
-	public int getNewPackIdByEmployerId(Integer employerId) {
+	public synchronized int getNewPackIdByEmployerId(Integer employerId) {
 
 		return packMapper.selectNewPackIdByEmployerId(employerId);
 	}
@@ -75,7 +75,7 @@ public class PackServiceImpl implements PackService {
 	 * 获得任务包列表 by employerId
 	 */
 	@Override
-	public List<pack> getAllByEmployerId(Integer employerId) {
+	public synchronized List<pack> getAllByEmployerId(Integer employerId) {
 		return packMapper.selAllByEmployerId(employerId);
 	}
 
@@ -83,7 +83,7 @@ public class PackServiceImpl implements PackService {
 	 * 删除包 by packName
 	 */
 	@Override
-	public int deleteByName(String packName) {
+	public synchronized int deleteByName(String packName) {
 		return packMapper.deleteByName(packName);
 	}
 
@@ -91,7 +91,7 @@ public class PackServiceImpl implements PackService {
 	 * 没有完成的包数
 	 */
 	@Override
-	public int getCountPackDoing() {
+	public synchronized int getCountPackDoing() {
 
 		return packMapper.selectCountPackDoing();
 	}
@@ -100,7 +100,7 @@ public class PackServiceImpl implements PackService {
 	 * 获得包的回传时间 by packId
 	 */
 	@Override
-	public int getPackLockTime(Integer packId) {
+	public  int getPackLockTime(Integer packId) {
 
 		return packMapper.selectPackLockTime(packId);
 	}
@@ -109,7 +109,7 @@ public class PackServiceImpl implements PackService {
 	 * 获得一个包信息 by packName
 	 */
 	@Override
-	public pack getPackByPackName(String packName) {
+	public synchronized pack getPackByPackName(String packName) {
 
 		return packMapper.selectPackByPackName(packName);
 	}
@@ -118,7 +118,7 @@ public class PackServiceImpl implements PackService {
 	 * 获得包的下载次数 by packId
 	 */
 	@Override
-	public int getDownCountByPackId(Integer packId) {
+	public  int getDownCountByPackId(Integer packId) {
 
 		return packMapper.selectDownCountByPackId(packId);
 	}
@@ -127,7 +127,7 @@ public class PackServiceImpl implements PackService {
 	 * 获得任务包名 By packId
 	 */
 	@Override
-	public String getPackNameByPackId(Integer packId) {
+	public  String getPackNameByPackId(Integer packId) {
 
 		return packMapper.selectPackNameByPackId(packId);
 	}
@@ -136,7 +136,7 @@ public class PackServiceImpl implements PackService {
 	 * 获得任务包数 By packName
 	 */
 	@Override
-	public int getCountPackByPackName(String packName) {
+	public  int getCountPackByPackName(String packName) {
 
 		return packMapper.selectCountPackByPackName(packName);
 	}
@@ -145,7 +145,7 @@ public class PackServiceImpl implements PackService {
 	 * 所有任务包分页 By EmployerId
 	 */
 	@Override
-	public List<pack> getAllPackPagesByEmployerId(Map<String, Integer> map) {
+	public synchronized List<pack> getAllPackPagesByEmployerId(Map<String, Integer> map) {
 
 		return packMapper.selectAllPackPagesByEmployerId(map);
 	}
@@ -154,7 +154,7 @@ public class PackServiceImpl implements PackService {
 	 * 正在做的任务包分页 By EmployerId
 	 */
 	@Override
-	public List<pack> getDoingPackPagesByEmployerId(Map<String, Integer> map) {
+	public synchronized List<pack> getDoingPackPagesByEmployerId(Map<String, Integer> map) {
 
 		return packMapper.selectDoingPackPagesByEmployerId(map);
 	}
@@ -163,7 +163,7 @@ public class PackServiceImpl implements PackService {
 	 * 已完成的任务包分页 By EmployerId
 	 */
 	@Override
-	public List<pack> getFinishPackPagesByEmployerId(Map<String, Integer> map) {
+	public synchronized List<pack> getFinishPackPagesByEmployerId(Map<String, Integer> map) {
 
 		return packMapper.selectFinishPackPagesByEmployerId(map);
 	}
@@ -172,7 +172,7 @@ public class PackServiceImpl implements PackService {
 	 * 包数 by employerId
 	 */
 	@Override
-	public int getPackCOuntByEmployerId(Integer employerId) {
+	public synchronized int getPackCOuntByEmployerId(Integer employerId) {
 
 		return packMapper.selectPackCOuntByEmployerId(employerId);
 	}
@@ -181,7 +181,7 @@ public class PackServiceImpl implements PackService {
 	 * 未完成的包数 by employerId
 	 */
 	@Override
-	public int getDoingPackCountByEmployerId(Integer employerId) {
+	public synchronized int getDoingPackCountByEmployerId(Integer employerId) {
 
 		return packMapper.selectDoingPackCountByEmployerId(employerId);
 	}
@@ -190,19 +190,19 @@ public class PackServiceImpl implements PackService {
 	 * 完成的包数 by employerId
 	 */
 	@Override
-	public int getFinishPackCountByEmployerId(Integer employerId) {
+	public synchronized int getFinishPackCountByEmployerId(Integer employerId) {
 
 		return packMapper.selectFinishPackCountByEmployerId(employerId);
 	}
 
 	@Override
-	public int getPackIdByPackName(String packName) {
+	public  int getPackIdByPackName(String packName) {
 
 		return packMapper.selectPackIdByPackName(packName);
 	}
 
 	@Override
-	public List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row ,int unzip) {
+	public  List<pack> getLikePackName(int page, int packStuts, String packNameCondition, int employerId, int row ,int unzip) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("begin", (page - 1) * row);
@@ -217,7 +217,7 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public int getCountLikePackName(int packStuts, String packNameCondition, int employerId,int unzip) {
+	public  int getCountLikePackName(int packStuts, String packNameCondition, int employerId,int unzip) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("employerId", employerId);
 		map.put("packStuts", packStuts);
@@ -229,12 +229,12 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public int getPackIdOrderByPackLvl() {
+	public  int getPackIdOrderByPackLvl() {
 		return packMapper.selectPackIdOrderByPackLvl();
 	}
 
 	@Override
-	public String getNoteIdByPackId(int packId) {
+	public  String getNoteIdByPackId(int packId) {
 		try {
 			if (packId == 0) {
 				packId = packMapper.selectPackIdOrderByPackLvl();
@@ -246,13 +246,13 @@ public class PackServiceImpl implements PackService {
 	}
 
 	@Override
-	public int getTaskMarkTimeId(int packId) {
+	public  int getTaskMarkTimeId(int packId) {
 		
 		return packMapper.selectTaskMarkTimeId(packId);
 	}
 
 	@Override
-	public String getTaskMarkTimeName(int packId) {
+	public  String getTaskMarkTimeName(int packId) {
 		
 		return packMapper.selectTaskMarkTimeName(packId);
 	}

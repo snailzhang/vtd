@@ -29,7 +29,7 @@ public interface TaskService {
 
 	List<task> getAllTaskByPackId(Integer packId);
 
-	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId);
+	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId,int userId,int workerId);
 
 	int updateByPrimaryKeySelective(taskWithBLOBs record);
 	
@@ -76,4 +76,6 @@ public interface TaskService {
 	int getUndoTaskCountByPackId(int packId);
 	
 	int getWorkerIdZeroCountByPackId(Integer packId);
+	
+	//int updateByLimit(Map<String, Object> map);
 }

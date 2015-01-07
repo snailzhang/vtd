@@ -1,6 +1,8 @@
 package com.esd.db.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,89 +23,109 @@ public class TaskServiceImpl implements TaskService {
 	@Autowired
 	private packMapper packMapper;
 	@Override
-	public int deleteByPrimaryKey(Integer taskId) {
+	public synchronized int deleteByPrimaryKey(Integer taskId) {
 
 		return taskMapper.deleteByPrimaryKey(taskId);
 	}
 
 	@Override
-	public int insert(taskWithBLOBs record) {
+	public  int insert(taskWithBLOBs record) {
 
 		return taskMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(taskWithBLOBs record) {
+	public synchronized int insertSelective(taskWithBLOBs record) {
 
 		return taskMapper.insertSelective(record);
 	}
 
 	@Override
-	public taskWithBLOBs selectByPrimaryKey(Integer taskId) {
+	public  taskWithBLOBs selectByPrimaryKey(Integer taskId) {
 
 		return taskMapper.selectByPrimaryKey(taskId);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(taskWithBLOBs record) {
+	public  int updateByPrimaryKeySelective(taskWithBLOBs record) {
 
 		return taskMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record) {
+	public synchronized int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record) {
 
 		return taskMapper.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(task record) {
+	public synchronized int updateByPrimaryKey(task record) {
 
 		return taskMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public List<task> selectAllTaskId() {
+	public synchronized List<task> selectAllTaskId() {
 
 		return taskMapper.selectAllTaskId();
 	}
 
 	@Override
-	public List<task> getAllDoingTaskByWorkerId(Integer workerId) {
+	public synchronized List<task> getAllDoingTaskByWorkerId(Integer workerId) {
 
 		return taskMapper.selectAllDoingTaskByWorkerId(workerId);
 	}
 
 	@Override
-	public List<task> getAllTaskByPackId(Integer packId) {
+	public synchronized List<task> getAllTaskByPackId(Integer packId) {
 
 		return taskMapper.selectAllTaskByPackId(packId);
 	}
 
-	@Override
-	public List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId) {
+	/**
+	 * worker下载任务,更新task
+	 */
+	public synchronized List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId,int userId,int workerId) {
 		Map<String, Object> map = new HashMap<>();
  		
  		map.clear();
  		map.put("downTaskCount", downTaskCount);
- 		map.put("packId", packId);
-		return taskMapper.selectTaskOrderByTaskLvl(map);
+ 		List<taskWithBLOBs> list = taskMapper.selectTaskOrderByTaskLvl(map);
+ 		//map.put("packId", packId);
+ 		if(list != null){
+ 			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+				taskWithBLOBs.setTaskDownloadTime(new Date());
+				taskWithBLOBs.setWorkerId(workerId);
+				taskWithBLOBs.setUpdateId(userId);
+				StackTraceElement[] items = Thread.currentThread().getStackTrace();
+				taskWithBLOBs.setUpdateMethod(items[1].toString());
+				taskMapper.updateByPrimaryKeySelective(taskWithBLOBs);
+			}
+// 	 		map.put("taskDownloadTime",new Date());
+// 	 		map.put("workerId", workerId);
+// 	 		map.put("updateId", userId);
+// 			StackTraceElement[] items = Thread.currentThread().getStackTrace();
+// 			map.put("updateMethod", items[1].toString());
+// 			taskMapper.updateByLimit(map);
+ 		}	
+		return list;
 	}
 
 	@Override
-	public int getUndoTaskCount() {
+	public synchronized int getUndoTaskCount() {
 
 		return taskMapper.selectUndoTaskCount();
 	}
 
 	@Override
-	public List<task> getAllHistoryTaskByWorkerId(Integer workerId) {
+	public synchronized List<task> getAllHistoryTaskByWorkerId(Integer workerId) {
 
 		return taskMapper.selectAllHistoryTaskByWorkerId(workerId);
 	}
 
 	@Override
-	public int getCountTaskDoing() {
+	public  int getCountTaskDoing() {
 		try {
 			int packId = packMapper.selectPackIdOrderByPackLvl();
 			return taskMapper.selectUndoTaskCountByPackId(packId);
@@ -113,19 +135,19 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public int getTaskCountByPackId(Integer packId) {
+	public  int getTaskCountByPackId(Integer packId) {
 
 		return taskMapper.selectTaskCountByPackId(packId);
 	}
 
 	@Override
-	public List<taskWithBLOBs> getFinishTaskByPackId(Integer packId) {
+	public  List<taskWithBLOBs> getFinishTaskByPackId(Integer packId) {
 
 		return taskMapper.selectFinishTaskByPackId(packId);
 	}
 
 	@Override
-	public String getTaskDirByTaskId(Integer taskId) {
+	public synchronized String getTaskDirByTaskId(Integer taskId) {
 		return taskMapper.selectTaskDirByTaskId(taskId);
 	}
 
@@ -133,7 +155,7 @@ public class TaskServiceImpl implements TaskService {
 	 * 工作者正在进行的任务 By WorkerId
 	 */
 	@Override
-	public List<taskWithBLOBs> getDoingTaskByWorkerId(Integer workerId) {
+	public  List<taskWithBLOBs> getDoingTaskByWorkerId(Integer workerId) {
 
 		return taskMapper.selectDoingTaskByWorkerId(workerId);
 	}
@@ -142,7 +164,7 @@ public class TaskServiceImpl implements TaskService {
 	 * 全部的任务分页 By PackId
 	 */
 	@Override
-	public List<task> getAllTaskPagesByPackId(Map<String, Integer> map) {
+	public synchronized List<task> getAllTaskPagesByPackId(Map<String, Integer> map) {
 
 		return taskMapper.selectAllTaskPagesByPackId(map);
 	}
@@ -151,7 +173,7 @@ public class TaskServiceImpl implements TaskService {
 	 * 未完成的任务分页 By PackId
 	 */
 	@Override
-	public List<task> getDoingTaskPagesByPackId(Map<String, Integer> map) {
+	public synchronized List<task> getDoingTaskPagesByPackId(Map<String, Integer> map) {
 
 		return taskMapper.selectDoingTaskPagesByPackId(map);
 	}
@@ -160,49 +182,49 @@ public class TaskServiceImpl implements TaskService {
 	 * 已完成的任务分页 By PackId
 	 */
 	@Override
-	public List<task> getFinishTaskPagesByPackId(Map<String, Integer> map) {
+	public synchronized List<task> getFinishTaskPagesByPackId(Map<String, Integer> map) {
 
 		return taskMapper.selectFinishTaskPagesByPackId(map);
 	}
 
 	@Override
-	public int getDoingTaskCountByPackId(Integer packId) {
+	public synchronized int getDoingTaskCountByPackId(Integer packId) {
 
 		return taskMapper.selectDoingTaskCountByPackId(packId);
 	}
 
 	@Override
-	public int getFinishTaskCountByPackId(Integer packId) {
+	public synchronized int getFinishTaskCountByPackId(Integer packId) {
 
 		return taskMapper.selectFinishTaskCountByPackId(packId);
 	}
 
 	@Override
-	public List<taskWithBLOBs> get1TaskByTaskName(String taskName) {
+	public synchronized List<taskWithBLOBs> get1TaskByTaskName(String taskName) {
 		return taskMapper.selectTaskByTaskName(taskName);
 	}
 
 	@Override
-	public int getFreePackCount() {
+	public  int getFreePackCount() {
 
 		return taskMapper.selectFreePackCount();
 	}
 
 	@Override
-	public int deleteByPackId(Integer packId) {
+	public  int deleteByPackId(Integer packId) {
 
 		return taskMapper.deleteByPackId(packId);
 	}
 
 	@Override
-	public int updateByTaskId(task task) {
+	public  int updateByTaskId(task task) {
 
 		return taskMapper.updateByTaskId(task);
 	}
 	/**
 	 * 
 	 */
-	public List<task> getLikeTaskName(int packId, int page, int taskStuts, String taskNameCondition, int row) {
+	public synchronized List<task> getLikeTaskName(int packId, int page, int taskStuts, String taskNameCondition, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("begin", (page - 1) * row);
@@ -216,7 +238,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public int getTaskCountByPackIdAndTaskStatus(int packId, int taskStuts, String taskNameCondition) {
+	public  int getTaskCountByPackIdAndTaskStatus(int packId, int taskStuts, String taskNameCondition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("packId", packId);
@@ -228,25 +250,25 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public int updateByPackId(task task) {
+	public  int updateByPackId(task task) {
 		
 		return taskMapper.updateByPackId(task);
 	}
 
 	@Override
-	public int getTaskLvlByPackId(int packId) {
+	public synchronized int getTaskLvlByPackId(int packId) {
 		
 		return taskMapper.selectTaskLvlByPackId(packId);
 	}
 
 	@Override
-	public int getUndoTaskCountByPackId(int packId) {
+	public  int getUndoTaskCountByPackId(int packId) {
 		
 		return taskMapper.selectUndoTaskCountByPackId(packId);
 	}
 
 	@Override
-	public int updateByWorkerId(int inspector, int taskEffective, int updateId, String updateMethod, int workerId, String firstDate,String endDate) {
+	public  int updateByWorkerId(int inspector, int taskEffective, int updateId, String updateMethod, int workerId, String firstDate,String endDate) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("inspector", inspector);
 		map.put("taskEffective", taskEffective);
@@ -259,13 +281,13 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public int updateDownTaskByTaskId(taskWithBLOBs record) {
+	public synchronized int updateDownTaskByTaskId(taskWithBLOBs record) {
 		
 		return taskMapper.updateDownTaskByTaskId(record);
 	}
 
 	@Override
-	public int getWorkerIdZeroCountByPackId(Integer packId) {
+	public  int getWorkerIdZeroCountByPackId(Integer packId) {
 		
 		return taskMapper.selectWorkerIdZeroCountByPackId(packId);
 	}

@@ -19,6 +19,7 @@
 <style type="text/css">
 	.input-group-addon,.form-control{padding:6px;}
 	.ui-datepicker .ui-datepicker-title select{color:#1c94c4};
+	.col-xs-2{padding: 0px 0px;};
 </style>
 <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/bootstrap.min.js"></script>
@@ -32,18 +33,21 @@
 	<jsp:include page="../head.jsp" />
 	<div class="container">
 		<div class="panel panel-default">
-			<div class="panel-heading">用户列表<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span></div>
+			<div class="panel-heading">用户列表	
+				<span id="aduitingMarkTimeMonthTotle" class="pull-right text-success" style="padding-left: 20px;"></span>
+				<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span>
+			</div>
 			<div class="panel-body">
 				<form class="form-inline" role="form">
-					<div class="col-sm-3">
+					<div class="col-sm-3" >
 						<div class="form-group">
-							<div class="input-group">
+							<div class="input-group"> 
 								<div class="input-group-addon"> 用户名</div>
 								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-2">
+					<div class="col-xs-2" >
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">起始</div>
@@ -51,7 +55,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-2">
+					<div class="col-xs-2" >
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">截止</div>
@@ -59,11 +63,11 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-2">
+					<div class="col-xs-2" style="width:130px;">
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">类别</div>
-								<select class="form-control" id="dateTypeCheck">
+								<select class="form-control" id="dateTypeCheck" style="padding-right: 3px;">
 									<option value="1">日</option>
 									<option value="2">月</option>
 									<option value="3">年</option>
@@ -71,19 +75,22 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-2">
+					<div class="col-xs-2" style="width:130px;">
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-addon">状态</div>
 								<select class="form-control" id="taskUpload">
-									<option value="2">全部</option>
-									<option value="1">工作</option>
-									<option value="0">无工作</option>
+									<option value="2">全</option>
+									<option value="1">有</option>
+									<option value="0">无</option>
 								</select>
 							</div>
 						</div>
+						
 					</div>
-					<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+						<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+					<!-- cx20150105 -->
+						<button type="button" id="changeBtn" class="btn btn-default" >修改</button>			
 				</form>
 			</div>
 			<table class="table table-striped table-bordered">
@@ -106,7 +113,7 @@
 		</div>
 		
 		
-		<div class="modal fade">
+		<div class="modal fade" id="changeUserStatusModal">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -131,6 +138,47 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="button" id="changeUserStatusBtn" class="btn btn-primary">修改</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		
+		<!-- cx20150106 changeManagerInform -->
+		<div class="modal fade" id="changeManagerInform">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title"></h4>
+					</div>
+					<div class="modal-body">
+						<span id="updateStatus"></span>
+						<div style="padding:10px 30px 10px;">
+							<form class="form-inline" role="form">
+								<div class="input-group" style="padding:3px 3px;">
+	        					 	<span class="input-group-addon">最大下载数</span>
+	         						<input type="text" class="form-control" id="downMaxCountInput" placeholder="请输入">
+	      						</div>
+	      						<div class="input-group" style="padding:3px 3px;">
+	        					 	<span class="input-group-addon">单次下载数</span>
+	         						<input type="text" class="form-control" id="downCountInput" placeholder="请输入">
+	      						</div>
+	      						<br>
+	      						<div class="input-group" style="padding:3px 3px;">
+	        					 	<span class="input-group-addon">文件过滤数</span>
+	         						<input type="text" class="form-control" id="fileSizeInput" placeholder="请输入">
+	      						</div>
+	      						<!--  <div class="input-group" style="padding:3px 3px;">
+	        					 	<span class="input-group-addon">每小时薪金</span>
+	         						<input type="text" class="form-control" id="salaryInput" placeholder="请输入">
+	      						</div> -->
+						   </form>
+					   </div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" id="changeManagerInformBtn" class="btn btn-primary">修改</button>
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -183,6 +231,21 @@
 				userNameCondition = $("#userNameCondition").val();
 				chooseUserType(1);
 			});
+			/*--------------------------------------cx点击确定按钮-------------------------------------------------------*/
+			$("#changeBtn").click(function(){
+				$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/getManager',
+				dataType:'json',
+				success:function(data){
+					$("#downMaxCountInput").attr("value",data.manager.downMaxCount);
+					$("#downCountInput").attr("value",data.manager.downCount);
+					$("#fileSizeInput").attr("value",data.manager.fileSize);
+				}
+			});
+				$(".modal-title").text("修改下载数值,文件尺寸,金额等");
+				$("#changeManagerInform").modal('show');
+			});
 			/*--------------------------------------点击更改用户状态-------------------------------------------------------*/
 			$("#changeUserStatusBtn").click(function(){
 				var ust = $(".changeust:checked").val();
@@ -203,7 +266,7 @@
 					}
 				});
 			});
-			$(".modal").on('hidden.bs.modal', function (e) {
+			$("#changeUserStatusModal").on('hidden.bs.modal', function (e) {
 				$("#updateStatus,.modal-title").empty();
 				$(".radio-inline input").attr("checked"," ");
 			});
@@ -218,9 +281,26 @@
 			}else{
 				$(".radio-inline input[value=0]").attr("checked","checked");
 			}
-			$(".modal").modal('show');
+			$("#changeUserStatusModal").modal('show');
 			
 		};
+		/*--------------------------------------cx更改下载数值,文件尺寸,金额等--------------------------------------------*/
+		$("#changeManagerInformBtn").click(function(){
+			var downMaxCount = $("#downMaxCountInput").val();
+			var downCount = $("#downCountInput").val();
+			var fileSize = $("#fileSizeInput").val();
+			$.ajax({
+				type:'POST',
+				data:{"downMaxCount":downMaxCount,"downCount":downCount,"fileSize":fileSize},
+				url:'${contextPath}/security/updateCount',
+				dataType:'json',
+				success:function(data){
+					if(data.replay == 1){
+						alert("修改成功");
+					}
+				}
+			});
+		});
 		/*--------------------------------------加载页面-------------------------------------------------------*/
 		chooseUserType = function(pageNum){
 			$.ajax({
@@ -235,7 +315,10 @@
 						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
 						var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
-						$("#taskMarkTimeMonthTotle").text("本月有效标注时长："+taskMarkTimeMonthTotle);
+						var aduitingMarkTimeMonthTotle = data.aduitingMarkTimeMonthTotle			
+						$("#aduitingMarkTimeMonthTotle").text("待审标注："+aduitingMarkTimeMonthTotle);
+						$("#taskMarkTimeMonthTotle").text("有效标注："+taskMarkTimeMonthTotle);
+						
 						pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";

@@ -30,4 +30,6 @@ public interface WorkerService {
     worker getWorkerByWorkerIdCard(String workerIdCard);
     
     worker getWorkerByWorkerDisabilityCard(String workerDisabilityCard);
+    
+    String getWorkerRealNameByWorkerId(int workerId);
 }

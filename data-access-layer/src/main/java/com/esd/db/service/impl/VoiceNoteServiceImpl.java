@@ -18,49 +18,49 @@ public class VoiceNoteServiceImpl implements VoiceNoteService {
 	private voiceNoteMapper voiceNoteMapper;
 
 	@Override
-	public int deleteByPrimaryKey(Integer id) {
+	public  int deleteByPrimaryKey(Integer id) {
 
 		return voiceNoteMapper.deleteByPrimaryKey(id);
 	}
 
 	@Override
-	public int insert(voiceNote record) {
+	public synchronized int insert(voiceNote record) {
 
 		return voiceNoteMapper.insert(record);
 	}
 
 	@Override
-	public int insertSelective(voiceNote record) {
+	public  int insertSelective(voiceNote record) {
 
 		return voiceNoteMapper.insertSelective(record);
 	}
 
 	@Override
-	public voiceNoteWithBLOBs selectByPrimaryKey(Integer id) {
+	public  voiceNoteWithBLOBs selectByPrimaryKey(Integer id) {
 
 		return voiceNoteMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(voiceNote record) {
+	public  int updateByPrimaryKeySelective(voiceNote record) {
 
 		return voiceNoteMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
-	public int updateByPrimaryKeyWithBLOBs(voiceNote record) {
+	public synchronized int updateByPrimaryKeyWithBLOBs(voiceNote record) {
 
 		return voiceNoteMapper.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
-	public int updateByPrimaryKey(voiceNote record) {
+	public synchronized int updateByPrimaryKey(voiceNote record) {
 
 		return voiceNoteMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public List<voiceNote> getAll(String condition, int page, int row) {
+	public  List<voiceNote> getAll(String condition, int page, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (condition.trim().length() > 0) {
 			map.put("condition", condition);
@@ -78,7 +78,7 @@ public class VoiceNoteServiceImpl implements VoiceNoteService {
 	}
 
 	@Override
-	public int getAllCount(String condition) {
+	public  int getAllCount(String condition) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (condition.trim().length() > 0) {
 			map.put("condition", condition);

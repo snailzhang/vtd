@@ -16,49 +16,49 @@ public class DistrictServiceImpl implements DistrictService {
 	private districtMapper districtMapper;
 
 	@Override
-	public int insert(District district) {
+	public synchronized int insert(District district) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int insertSelective(District district) {
+	public synchronized int insertSelective(District district) {
 		
 		return districtMapper.insertSelective(district);
 	}
 
 	@Override
-	public int deleteByPrimaryKey(int id) {
+	public synchronized int deleteByPrimaryKey(int id) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(District district) {
+	public synchronized int updateByPrimaryKeySelective(District district) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int updateByPrimaryKey(District district) {
+	public synchronized int updateByPrimaryKey(District district) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public District selectByPrimaryKey(int id) {
+	public synchronized District selectByPrimaryKey(int id) {
 		// TODO Auto-generated method stub
 		return districtMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public List<District> selectByPid(int pid) {
+	public synchronized List<District> selectByPid(int pid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<District> getAll(int page, String userName, String name, int row) {
+	public synchronized List<District> getAll(int page, String userName, String name, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("begin", ((page - 1) * row));
 		map.put("end", row);
@@ -69,13 +69,13 @@ public class DistrictServiceImpl implements DistrictService {
 	}
 
 	@Override
-	public District getByUserName(String userName) {
+	public synchronized District getByUserName(String userName) {
 
 		return districtMapper.selectByUserName(userName);
 	}
 
 	@Override
-	public int getAllCount(String userName, String name) {
+	public synchronized int getAllCount(String userName, String name) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userName", userName);
 		map.put("name", name);

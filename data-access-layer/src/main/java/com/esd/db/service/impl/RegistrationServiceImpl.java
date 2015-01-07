@@ -18,59 +18,59 @@ public class RegistrationServiceImpl implements RegistrationService {
 	private RegistrationMapper registrationMapper;
 
 	@Override
-	public int insert(Registration registration) {
+	public synchronized int insert(Registration registration) {
 		return registrationMapper.insert(registration);
 	}
 
 	@Override
-	public int insertSelective(Registration registration) {
-		// TODO Auto-generated method stub
+	public synchronized int insertSelective(Registration registration) {
+
 		return registrationMapper.insertSelective(registration);
 	}
 
 	@Override
-	public int deleteByPrimaryKey(int id) {
+	public synchronized int deleteByPrimaryKey(int id) {
 		return registrationMapper.deleteByPrimaryKey(id);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(Registration registration) {
+	public synchronized int updateByPrimaryKeySelective(Registration registration) {
 		return registrationMapper.updateByPrimaryKeySelective(registration);
 	}
 
 	@Override
-	public int updateByPrimaryKey(Registration registration) {
+	public synchronized int updateByPrimaryKey(Registration registration) {
 		return registrationMapper.updateByPrimaryKey(registration);
 	}
 
 	@Override
-	public Registration selectByPrimaryKey(int id) {
+	public synchronized Registration selectByPrimaryKey(int id) {
 		return registrationMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public Registration selectByCard(String card) {
+	public synchronized Registration selectByCard(String card) {
 		return registrationMapper.selectByCard(card);
 	}
 
 	@Override
-	public Registration selectByName(String name) {
+	public synchronized Registration selectByName(String name) {
 		return registrationMapper.selectByName(name);
 	}
 
 	@Override
-	public List<Registration> selectBySelective(Registration record) {
+	public synchronized List<Registration> selectBySelective(Registration record) {
 		return registrationMapper.selectBySelective(record);
 	}
 
 	@Override
-	public List<Registration> getByDistrictId(Integer districtId) {
+	public synchronized List<Registration> getByDistrictId(Integer districtId) {
 
 		return registrationMapper.selectByDistrictId(districtId);
 	}
 
 	@Override
-	public int getCountByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
+	public synchronized int getCountByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		map.put("districtId", districtId);
@@ -82,7 +82,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 
 	@Override
-	public List<Registration> getByTimeAndDistrictId(int districtId, String beginDate, String endDate, int page, int row) {
+	public synchronized List<Registration> getByTimeAndDistrictId(int districtId, String beginDate, String endDate, int page, int row) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("begin", ((page - 1) * row));
 		map.put("end", row);
@@ -95,7 +95,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 
 	@Override
-	public List<Registration> getAllByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
+	public synchronized List<Registration> getAllByTimeAndDistrictId(int districtId, String beginDate, String endDate) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.clear();
 		map.put("districtId", districtId);
