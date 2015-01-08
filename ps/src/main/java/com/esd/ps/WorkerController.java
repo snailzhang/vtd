@@ -130,6 +130,8 @@ public class WorkerController {
 		session.setAttribute("salary", df.format(aduited*manager.getSalary()/3600));
 		session.setAttribute("aduiting",workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 0, 1, 0));
 		session.setAttribute("aduited",aduited);
+		//控制下载
+		session.setAttribute("uploading", 0);
 		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKER);
 	}
 	//NullPointerException
@@ -483,6 +485,7 @@ public class WorkerController {
 	@RequestMapping(value = "/downTask", method = RequestMethod.GET)
 	@ResponseBody
 	public  Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
+		session.setAttribute("uploading", 1);
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", downTaskCount);
 		int countTaskDoing = taskService.getCountTaskDoing();
@@ -490,6 +493,7 @@ public class WorkerController {
 		if (countTaskDoing < downTaskCount) {
 			// String nowCountTaskDoing=countTaskDoing + "";
 			map.put(Constants.MESSAGE, MSG_TASK_NOT_ENOUGH);
+			session.setAttribute("uploading", 0);
 			return map;
 		}
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
@@ -498,6 +502,7 @@ public class WorkerController {
 
 		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0,userId,workerId);
 		if (list == null) {
+			session.setAttribute("uploading", 0);
 			return null;
 		}
 		String url = WorkerController.url(request);
@@ -589,6 +594,7 @@ public class WorkerController {
 //		}
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
+		session.setAttribute("uploading", 0);
 		return map;
 	}
 

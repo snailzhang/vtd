@@ -51,10 +51,7 @@
 			      <select class="form-control" name="downTaskCount" id="downTaskCount"></select>
 			   </div>
 			   <div class="form-group">
-			      <button type="button" id="doneLoadBtn" class="btn btn-primary">下载任务</button>
-			   </div>
-			   <div class="form-group">
-			      <p class="form-control-static" id="downTaskTip"></p>
+			      <button type="button" id="doneLoadBtn" class="btn btn-primary" >下载任务</button>
 			   </div>
 			</form>
 		</div>
@@ -305,7 +302,11 @@
 			});
 			/*******************************下载任务**************************************************/
 			$("#doneLoadBtn").click(function(){
-				$("#downTaskTip").text("任务下载中。。。");
+			var uploading =<%=session.getAttribute("uploading")%>
+			if(uploading == 1){
+				alert("下载中,请等待!!!");
+			}else{
+				$(this).attr("disabled","disabled").text("下载中。。");
 				var downTaskCount = $("#downTaskCount").val();
 				if(downTaskCount == 0){
 					return false;
@@ -324,6 +325,7 @@
 						}
 					});
 				}
+			}		
 			});
 			/*******************************刷新按钮**************************************************/
 			$("#refreshPage").click(function(){
@@ -370,6 +372,7 @@
 							$("#downTaskCount").attr("disabled","disabled");
 						}
 						$("#uploadPanel").hide();
+						$("#doneLoadBtn").removeAttr("disabled").text("下载任务");
 						$("#downloadPanel").show();
 					}else{//上传
 						loadUnqualified();
