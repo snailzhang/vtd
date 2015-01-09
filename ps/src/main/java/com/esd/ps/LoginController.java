@@ -8,7 +8,9 @@ package com.esd.ps;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.esd.common.util.UsernameAndPasswordMd5;
+import com.esd.db.model.manager;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.user;
@@ -190,7 +193,7 @@ public class LoginController {
 			logger.debug("md5Password:{}", md5Password);
 			// 密码比较
 			if (md5Password.equals(user.getPassword())) {
-				this.checkOldTask(request);
+				//this.checkOldTask(request);
 				session.setAttribute(Constants.USER_NAME, user.getUsername());
 				session.setAttribute(Constants.USER_ID, user.getUserId());
 				session.setAttribute(Constants.USER_TYPE, user.getUsertype());
@@ -231,7 +234,9 @@ public class LoginController {
 	 * 
 	 * @param request
 	 */
-	public void checkOldTask(HttpServletRequest request) {
+	@RequestMapping(value = "/checkOldTask", method = RequestMethod.POST)
+	@ResponseBody
+	public void checkOldTaskPOST(HttpServletRequest request) {
 		List<workerRecord> workerRecordList = workerRecordService.getDoingTask();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		if (workerRecordList.isEmpty() == false || workerRecordList != null) {
@@ -326,6 +331,43 @@ public class LoginController {
 			return 1;
 		}
 		return 0;
+	}
+	/**
+	 * 周榜,月榜
+	 * @return
+	 */
+	@RequestMapping(value = "/moneyList", method = RequestMethod.POST)
+	@ResponseBody
+	public  Map<String, Object> moneyListPost() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		//得到今天星期
+		Calendar cal = Calendar.getInstance();
+	    cal.setTime(new Date());  
+	    int week = cal.get(Calendar.DAY_OF_WEEK) - 2;
+	    //得到月份
+	    int month = cal.get(Calendar.MONTH) + 1;
+	    if(week == -1){
+	    	week = 6;
+	    }
+	    //日期范围计算
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		  // 创建(日历)格式化
+	    GregorianCalendar gc = new GregorianCalendar();
+	    // 格式化当前日期
+	    gc.setTime(new Date());
+	    // 在当前日期上减3个月
+	    gc.add(5, -3);
+	    // 获得三个月后的日期
+	    String beginDate = sdf.format(gc.getTime());
+	    String endDate = sdf.format(new Date());
+	    manager manager = managerService.selectByPrimaryKey(1);
+	    List<Map<String, Object>> monthList = workerRecordService.getMoneyList("","", month);
+	    List<Map<String, Object>> weekList = workerRecordService.getMoneyList(beginDate,endDate,0);
+		
+	    map.put("salary", manager.getSalary());
+	    map.put("monthList", monthList);
+	    map.put("weekList", weekList);
+	    return map;
 	}
 
 }

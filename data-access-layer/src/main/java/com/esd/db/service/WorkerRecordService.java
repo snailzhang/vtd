@@ -88,4 +88,6 @@ public interface WorkerRecordService {
 	int getdownCountByWorkerIdAndDate(int worker_id,int dateType,String beginDate,String endDate);
 	
 	int getCountByWorkerIdAndDate(int worker_id,int dateType,String beginDate,String endDate,int taskStatu,int taskeffective);
+
+	List<Map<String, Object>> getMoneyList(String beginDate,String endDate,int month);
 }

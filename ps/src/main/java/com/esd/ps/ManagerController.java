@@ -8,6 +8,9 @@ package com.esd.ps;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,8 +55,6 @@ public class ManagerController {
 	private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private UserTypeService userTypeService;
 	@Autowired
 	private EmployerService employerService;
 	@Autowired
@@ -376,5 +377,5 @@ public class ManagerController {
 		}
 		return map;
 	}
-
+	
 }

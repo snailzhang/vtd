@@ -89,4 +89,6 @@ public interface workerRecordMapper {
 	int selectdownCountByWorkerIdAndDate(Map<String, Object> map);
 	//未上传,未审核,合格,超时,放弃
 	int selectCountByWorkerIdAndDate(Map<String, Object> map);
+	
+	List<Map<String, Object>> selectMoneyList(Map<String, Object> map);
 }

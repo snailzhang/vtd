@@ -680,6 +680,24 @@ public class AdministratorController {
 		map.put(Constants.REPLAY, 0);
 		return map;
 	}
+	@RequestMapping(value = "/updatePW", method = RequestMethod.POST)
+	@ResponseBody
+	public  Map<String, Object> updatePWPOST(String newPW, int userId,String userName, HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+			user user = new user();
+			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
+			String md5Password = md5.getMd5(userName, newPW);
+			user.setPassword(md5Password);
+			user.setUserId(userId);
+			StackTraceElement[] items = Thread.currentThread().getStackTrace();
+			user.setUpdateMethod(items[1].toString());
+			userService.updateByPrimaryKeySelective(user);
+			map.clear();
+			map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
+			map.put(Constants.REPLAY, 1);
+
+		return map;
+	}
 	/**
 	 * 管理员更改所有人密码
 	 * @param userId

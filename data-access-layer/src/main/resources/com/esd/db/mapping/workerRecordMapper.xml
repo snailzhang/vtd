@@ -32,6 +32,22 @@
 		create_method, update_time,
 		update_method, task_effective,inspector_id,inspectorrecord_id,version
 	</sql>
+	<!-- 榜单查询 -->
+	<select id="selectMoneyList" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT w.worker_real_name realName,a.s sumMarkTime FROM 
+		(SELECT worker_id ,SUM(task_mark_time) s FROM 
+		worker_record  WHERE
+            task_effective = 1 
+            <if test="month != null">
+            	and	<![CDATA[(DATE_FORMAT(update_time,'%m') =${month})]]>
+            </if>
+            <if test="beginDate != null">
+            	and	<![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(update_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+            </if>
+            GROUP BY worker_id ORDER BY s DESC LIMIT 10) a, 
+            worker w WHERE w.worker_id = a.worker_id
+	</select>
+
 	<select id="selectInvalidTask" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />

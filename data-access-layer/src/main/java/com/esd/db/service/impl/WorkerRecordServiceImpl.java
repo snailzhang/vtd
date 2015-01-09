@@ -418,4 +418,16 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectCountByWorkerIdAndDate(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> getMoneyList(String beginDate, String endDate, int month) {
+		Map<String,Object> map = new HashMap<>();
+		if(month>0){
+			map.put("month",month);
+		}else{
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+		}
+		return workerRecordMapper.selectMoneyList(map);
+	}
+
 }

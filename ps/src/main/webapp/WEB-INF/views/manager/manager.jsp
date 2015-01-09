@@ -18,8 +18,7 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/public.css">
 <style type="text/css">
 	.input-group-addon,.form-control{padding:6px;}
-	.ui-datepicker .ui-datepicker-title select{color:#1c94c4};
-	.col-xs-2{padding: 0px 0px;};
+	.ui-datepicker .ui-datepicker-title select{color:#1c94c4}
 </style>
 <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/bootstrap.min.js"></script>
@@ -38,36 +37,37 @@
 				<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span>
 			</div>
 			<div class="panel-body">
-				<form class="form-inline" role="form">
-					<div class="col-sm-3" >
+				<form class="form-inline" role="form">					
+					<div class="col-sm-3" style="width: 225px;">
 						<div class="form-group">
-							<div class="input-group"> 
+							<div class="input-group" style="width: 220px;"> 
 								<div class="input-group-addon"> 用户名</div>
 								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
 							</div>
 						</div>
-					</div>
-					<div class="col-xs-2" >
+					
+					</div>					
+					<div class="col-xs-2" style="width: 140px;">
 						<div class="form-group">
-							<div class="input-group">
+							<div class="input-group" style="width: 135px;">
 								<div class="input-group-addon">起始</div>
 								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id=beginDate type="text" placeholder="起始时间">
 							</div>
 						</div>
-					</div>
-					<div class="col-xs-2" >
+					</div>					
+					<div class="col-xs-2" style="width: 140px;">
 						<div class="form-group">
-							<div class="input-group">
+							<div class="input-group" style="width: 135px;">
 								<div class="input-group-addon">截止</div>
 								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="endDate" type="text" placeholder="截止时间">
 							</div>
 						</div>
-					</div>
-					<div class="col-xs-2" style="width:130px;">
+					</div>			
+					<div class="col-xs-2" style="width: 101px;">
 						<div class="form-group">
-							<div class="input-group">
+							<div class="input-group" style="width: 96px;">	
 								<div class="input-group-addon">类别</div>
-								<select class="form-control" id="dateTypeCheck" style="padding-right: 3px;">
+								<select class="form-control" id="dateTypeCheck">
 									<option value="1">日</option>
 									<option value="2">月</option>
 									<option value="3">年</option>
@@ -75,9 +75,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-2" style="width:130px;">
+					<div class="col-xs-2" style="width: 101px;">
 						<div class="form-group">
-							<div class="input-group">
+							<div class="input-group" style="width: 96px;">
 								<div class="input-group-addon">状态</div>
 								<select class="form-control" id="taskUpload">
 									<option value="2">全</option>
@@ -85,13 +85,15 @@
 									<option value="0">无</option>
 								</select>
 							</div>
-						</div>
-						
+						</div>				
 					</div>
-						<button type="button" id="searchBtn" class="btn btn-default">查询</button>
+					<div class="btn2" style="float: right;">
+						<button type="button" id="searchBtn" class="btn btn-default" >查询</button>
 					<!-- cx20150105 -->
-						<button type="button" id="changeBtn" class="btn btn-default" >修改</button>			
+						<button type="button" id="changeBtn" class="btn btn-default" >设置</button>
+					</div>			
 				</form>
+				<div style="clear: both;"></div>
 			</div>
 			<table class="table table-striped table-bordered">
 				<thead>
@@ -231,7 +233,7 @@
 				userNameCondition = $("#userNameCondition").val();
 				chooseUserType(1);
 			});
-			/*--------------------------------------cx点击确定按钮-------------------------------------------------------*/
+			/*--------------------------------------cx点击设置按钮-------------------------------------------------------*/
 			$("#changeBtn").click(function(){
 				$.ajax({
 				type:'POST',

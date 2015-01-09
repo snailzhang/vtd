@@ -468,7 +468,7 @@
 							alert("放弃任务失败！");
 						}
 					}
-				})
+				});
 			}
 		}
 		function showUnqualifie(inspectorrecordId){
