@@ -30,5 +30,7 @@ public interface workerMapper {
 
     int updateByPrimaryKey(worker record);
     
+    int updateByUserId(worker worker);
+    
     String selectWorkerRealNameByWorkerId(int workerId);
 }

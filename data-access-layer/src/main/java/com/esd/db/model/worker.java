@@ -21,6 +21,8 @@ public class worker {
     private String workerBankCard;
 
     private String workerPaypal;
+    
+    private Integer downing;
 
     private Integer createId;
 
@@ -108,6 +110,14 @@ public class worker {
 
 	public void setWorkerPaypal(String workerPaypal) {
 		this.workerPaypal = workerPaypal;
+	}
+	
+	public Integer getDowning() {
+		return downing;
+	}
+
+	public void setDowning(Integer downing) {
+		this.downing = downing;
 	}
 
 	public Integer getCreateId() {

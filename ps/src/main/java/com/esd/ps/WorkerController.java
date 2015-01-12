@@ -46,6 +46,7 @@ import com.esd.db.model.manager;
 import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
+import com.esd.db.model.worker;
 import com.esd.db.model.workerRecord;
 import com.esd.ps.model.WorkerDownPackHistoryTrans;
 import com.esd.ps.model.WorkerRecordTrans;
@@ -122,19 +123,20 @@ public class WorkerController {
 	public ModelAndView worker(HttpSession session) {
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		manager manager = managerService.selectByPrimaryKey(1);
-		Double aduited = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 1, 1, 0); 
-		if(aduited == null){
+		Double aduited = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 1, 1, 0);
+		if (aduited == null) {
 			aduited = 0.00;
 		}
 		DecimalFormat df = new DecimalFormat("#.00");
-		session.setAttribute("salary", df.format(aduited*manager.getSalary()/3600));
-		session.setAttribute("aduiting",workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 0, 1, 0));
-		session.setAttribute("aduited",aduited);
-		//控制下载
-		session.setAttribute("uploading", 0);
+		session.setAttribute("salary", df.format(aduited * manager.getSalary() / 3600));
+		session.setAttribute("aduiting", workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 0, 1, 0));
+		session.setAttribute("aduited", aduited);
+		worker worker = workerService.selectByPrimaryKey(workerId);
+		session.setAttribute("downing", worker.getDowning());
 		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKER);
 	}
-	//NullPointerException
+
+	// NullPointerException
 	/**
 	 * 检查并释放过时任务 返回此工作者的任务list
 	 * 
@@ -143,9 +145,10 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> workerPost(HttpSession session, HttpServletRequest request, int taskEffective) {
+	public Map<String, Object> workerPost(HttpSession session, HttpServletRequest request, int taskEffective) {
+
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		logger.debug("workerId:{}", workerId);
 		List<workerRecord> listAll = workerRecordService.getByWorkerIdAndEffective(workerId, 3, 0);
@@ -154,7 +157,7 @@ public class WorkerController {
 		if (listAll == null || listAll.isEmpty()) {
 			workerMark = 0;
 			// 可做任务的包数
-			int countPackDoing = taskService.getFreePackCount();
+			// int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
 			// taskEffective = 4 查询未审核和不合格的
@@ -172,7 +175,7 @@ public class WorkerController {
 			}
 
 			String noteId = packService.getNoteIdByPackId(0);
-			map.put(Constants.COUNTPACKDOING, countPackDoing);
+			// map.put(Constants.COUNTPACKDOING, countPackDoing);
 			map.put(Constants.COUNTTASKDOING, countTaskDoing);
 			map.put("downCount", downCount);
 			map.put("noteId", noteId);
@@ -221,17 +224,19 @@ public class WorkerController {
 		session.setAttribute(Constants.WORKER_ID, workerId);
 		return map;
 	}
+
 	/**
 	 * 获得不合格任务的说明
+	 * 
 	 * @param inspectorrecordId
 	 * @return
 	 */
 	@RequestMapping(value = "/getInspectrecord", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> getInspectrecordPost(int inspectorrecordId) {
+	public Map<String, Object> getInspectrecordPost(int inspectorrecordId) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (inspectorrecordId > 0) {
-			inspectorrecord inspectorrecord=inspectorRecordService.selectByPrimaryKey(inspectorrecordId);
+			inspectorrecord inspectorrecord = inspectorRecordService.selectByPrimaryKey(inspectorrecordId);
 			map.put("note", inspectorrecord.getNote());
 		}
 		return map;
@@ -246,7 +251,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/GiveUpTask", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> GiveUpTaskPost(HttpSession session, int taskId) {
+	public Map<String, Object> GiveUpTaskPost(HttpSession session, int taskId) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
@@ -289,7 +294,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/workerHistoryPack", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> workerHistoryPackPOST(HttpSession session, int page, String downPackName) {
+	public Map<String, Object> workerHistoryPackPOST(HttpSession session, int page, String downPackName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
@@ -342,7 +347,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/workerHistoryTask", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> workerHistoryTaskPOST(String downPackName) {
+	public Map<String, Object> workerHistoryTaskPOST(String downPackName) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downPackName:{}", downPackName);
 
@@ -395,7 +400,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/downOncePack", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map<String, Object> downOncePack(String downPackName, HttpServletRequest request, HttpSession session) {
+	public Map<String, Object> downOncePack(String downPackName, HttpServletRequest request, HttpSession session) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String url = WorkerController.url(request);
 		File f = new File(url);
@@ -446,7 +451,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/downOneTask", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map<String, Object> downOneTask(HttpServletRequest request, String taskName, int taskId) {
+	public Map<String, Object> downOneTask(HttpServletRequest request, String taskName, int taskId) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String url = WorkerController.url(request);
 		File f = new File(url);
@@ -484,8 +489,9 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/downTask", method = RequestMethod.GET)
 	@ResponseBody
-	public  Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
-		session.setAttribute("uploading", 1);
+	public Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
+		session.setAttribute("downing", 1);
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", downTaskCount);
 		int countTaskDoing = taskService.getCountTaskDoing();
@@ -493,16 +499,21 @@ public class WorkerController {
 		if (countTaskDoing < downTaskCount) {
 			// String nowCountTaskDoing=countTaskDoing + "";
 			map.put(Constants.MESSAGE, MSG_TASK_NOT_ENOUGH);
-			session.setAttribute("uploading", 0);
+			session.setAttribute("downing", 0);
 			return map;
 		}
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		//int packId = packService.getPackIdOrderByPackLvl();
+		// int packId = packService.getPackIdOrderByPackLvl();
+		// 更新工作者下载状态
+		worker worker = new worker();
+		worker.setWorkerId(workerId);
+		worker.setDowning(1);
+		workerService.updateByPrimaryKeySelective(worker);
 
-		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0,userId,workerId);
+		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0, userId, workerId);
 		if (list == null) {
-			session.setAttribute("uploading", 0);
+			session.setAttribute("downing", 0);
 			return null;
 		}
 		String url = WorkerController.url(request);
@@ -586,15 +597,18 @@ public class WorkerController {
 		/**
 		 * 查看包任务情况,如果任务都已下载则更行packStatus
 		 */
-//		if (taskService.getUndoTaskCountByPackId(packId) == 0) {
-//			packWithBLOBs pack = new packWithBLOBs();
-//			pack.setPackId(packId);
-//			pack.setPackStatus(2);
-//			packService.updateByPrimaryKeySelective(pack);
-//		}
+		// if (taskService.getUndoTaskCountByPackId(packId) == 0) {
+		// packWithBLOBs pack = new packWithBLOBs();
+		// pack.setPackId(packId);
+		// pack.setPackStatus(2);
+		// packService.updateByPrimaryKeySelective(pack);
+		// }
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
-		session.setAttribute("uploading", 0);
+		session.setAttribute("downing", 0);
+		// 更新工作者下载状态
+		worker.setDowning(0);
+		workerService.updateByPrimaryKeySelective(worker);
 		return map;
 	}
 
@@ -607,7 +621,7 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/upTagAndTextGrid", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs, HttpServletRequest request) {
+	public Map<String, Object> upTagAndTextGrid(@RequestParam("file") CommonsMultipartFile[] files, HttpSession session, taskWithBLOBs taskWithBLOBs, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		boolean flag = false;
@@ -699,7 +713,7 @@ public class WorkerController {
 							taskWithBLOBs.setUpdateMethod(items[1].toString());
 							taskWithBLOBs.setTaskEffective(null);
 							taskService.updateByPrimaryKeySelective(taskWithBLOBs);
-							
+
 							listMath.add(uploadTaskNameI);
 							// task_id = taskId;
 						} else if (nameLast.equalsIgnoreCase(Constants.TAG)) {

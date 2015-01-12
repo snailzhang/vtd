@@ -302,9 +302,10 @@
 			});
 			/*******************************下载任务**************************************************/
 			$("#doneLoadBtn").click(function(){
-			var uploading =<%=session.getAttribute("uploading")%>
-			if(uploading == 1){
-				alert("下载中,请等待!!!");
+			var downing =<%=session.getAttribute("downing")%>
+			if(downing == 1){
+				alert("下载中,请耐心等待!!!");
+				$(this).attr("disabled","disabled").text("下载中。。");
 			}else{
 				$(this).attr("disabled","disabled").text("下载中。。");
 				var downTaskCount = $("#downTaskCount").val();
@@ -350,8 +351,8 @@
 					var workerMark = data.workerMark;
 					if(workerMark == 0){//下载
 						var taskTotal = data.countTaskDoing;
-						var packTotal = data.countPackDoing;
-						$("#downloadPanel h3").text("共"+packTotal+"任务包，当前包可下载任务数为"+taskTotal+"个。当前下载包标注说明编号为："+data.noteId);
+						//var packTotal = data.countPackDoing;
+						$("#downloadPanel h3").text("可下载任务数:"+taskTotal+"个。下载标注说明编号："+data.noteId);
 						
 						if(data.downCount != 0){
 							if(parseInt(data.downCount/10)){
@@ -372,7 +373,13 @@
 							$("#downTaskCount").attr("disabled","disabled");
 						}
 						$("#uploadPanel").hide();
-						$("#doneLoadBtn").removeAttr("disabled").text("下载任务");
+						var downing =<%=session.getAttribute("downing")%>
+						alert(downing);
+						if(downing == 0){
+							$("#doneLoadBtn").removeAttr("disabled").text("下载任务");
+						}else if(downing == 1){
+							$("#doneLoadBtn").attr("disabled","disabled").text("下载中。。");
+						}
 						$("#downloadPanel").show();
 					}else{//上传
 						loadUnqualified();
