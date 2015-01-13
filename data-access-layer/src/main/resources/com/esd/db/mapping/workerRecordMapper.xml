@@ -635,16 +635,12 @@
 				down_url = #{downUrl,jdbcType=VARCHAR},
 			</if>
 			<if test="updateTime != null">
-				update_time = #{updateTime,jdbcType=TIMESTAMP},
+				update_time = #{updateTime,jdbcType=TIMESTAMP}
 			</if>
-			<if test="version != null">
-				version = (#{version,jdbcType=INTEGER} + 1),
-			</if>
+
 		</set>
 		where down_pack_name = #{downPackName,jdbcType=VARCHAR}
-		<if test="version != null">
-			and version = #{version,jdbcType=INTEGER},
-		</if>
+
 	</update>
 	<update id="updateByWorkerId" parameterType="java.util.Map">
 		update worker_record
