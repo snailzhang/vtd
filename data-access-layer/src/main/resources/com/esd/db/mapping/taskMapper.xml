@@ -121,7 +121,7 @@
 		,
 		<include refid="Blob_Column_List" />
 		from task
-		where worker_id = #{workerId,jdbcType=INTEGER} and (task_mark_time = 0 or task_mark_time IS NULL)
+		where worker_id = #{workerId,jdbcType=INTEGER} and task_mark_time IS NULL
 	</select>
 	<select id="selectAllHistoryTaskByWorkerId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
