@@ -373,8 +373,7 @@
 							$("#downTaskCount").attr("disabled","disabled");
 						}
 						$("#uploadPanel").hide();
-						var downing =<%=session.getAttribute("downing")%>
-						alert(downing);
+						var downing =<%=session.getAttribute("downing")%>;
 						if(downing == 0){
 							$("#doneLoadBtn").removeAttr("disabled").text("下载任务");
 						}else if(downing == 1){
