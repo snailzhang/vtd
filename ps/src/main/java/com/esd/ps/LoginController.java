@@ -343,23 +343,25 @@ public class LoginController {
 		//得到今天星期
 		Calendar cal = Calendar.getInstance();
 	    cal.setTime(new Date());  
-	    int week = cal.get(Calendar.DAY_OF_WEEK) - 2;
+	    int week = cal.get(Calendar.DAY_OF_WEEK);
 	    //得到月份
 	    int month = cal.get(Calendar.MONTH) + 1;
-	    if(week == -1){
-	    	week = 6;
+	    if(week == 7){
+	    	week = 0;
 	    }
+	    logger.debug("week:{},month:{}",week,month);
 	    //日期范围计算
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		  // 创建(日历)格式化
 	    GregorianCalendar gc = new GregorianCalendar();
 	    // 格式化当前日期
 	    gc.setTime(new Date());
-	    // 在当前日期上减3个月
-	    gc.add(5, -3);
+	    // 在当前日期上减
+	    gc.add(5, -week);
 	    // 获得三个月后的日期
 	    String beginDate = sdf.format(gc.getTime());
 	    String endDate = sdf.format(new Date());
+	    logger.debug("beginDate:{},endDate:{}",beginDate,endDate);
 	    manager manager = managerService.selectByPrimaryKey(1);
 	    List<Map<String, Object>> monthList = workerRecordService.getMoneyList("","", month);
 	    List<Map<String, Object>> weekList = workerRecordService.getMoneyList(beginDate,endDate,0);
