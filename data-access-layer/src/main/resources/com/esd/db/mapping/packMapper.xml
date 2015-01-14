@@ -369,6 +369,9 @@
 			<if test="taskMarkTimeId > 0">
 				taskMarkTimeId = #{taskMarkTimeId,jdbcType=INTEGER},
 			</if>
+			<if test="taskMarkTimeName != null">
+				taskMarkTimeName = #{taskMarkTimeName,jdbcType=VARCHAR},
+			</if>
 			<if test="packName != null">
 				pack_name = #{packName,jdbcType=VARCHAR},
 			</if>

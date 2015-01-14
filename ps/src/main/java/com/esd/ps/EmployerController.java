@@ -201,6 +201,7 @@ public class EmployerController {
 			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
 			packTrans.setUnzip(pack.getUnzip());
 			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
+			
 			packTrans.setMarkTimeMethodId(pack.getTaskMarkTimeId());
 			packTrans.setMarkTimeMethodName(pack.getTaskMarkTimeName());
 			Double taskMarkTime = workerRecordService.getSUMTaskMarkTimeByPackId(pack.getPackId());
@@ -209,7 +210,6 @@ public class EmployerController {
 			} else {
 				packTrans.setTaskMarkTime(taskMarkTime);
 			}
-
 			list.add(packTrans);
 		}
 		map.clear();
@@ -219,7 +219,36 @@ public class EmployerController {
 		logger.debug("list:{},totle:{},totlePages", list, totle, Math.ceil((double) totle / (double) Constants.ROW));
 		return map;
 	}
+	/**
+	 * 获得统计方法列表
+	 * @return
+	 */
+	@RequestMapping(value = "/getMarkTimeMethod", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getMarkTimeMethodPOST() {
+		Map<String, Object> map = new HashMap<>();
+		List<markTimeMethod> list=markTimeMethodService.getAll();
+		map.clear();
+		map.put("list", list);
+		return map;
+	}
 
+	@RequestMapping(value = "/updateMarkTimeMethodpackId", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateMarkTimeMethodpackIdPOST(int packId,int markTimeMethodId,String markTimeMethodName) {
+		logger.debug("packId:{},markTimeMethodId:{},markTimeMethodName:{}",packId,markTimeMethodId,markTimeMethodName);
+		Map<String, Object> map = new HashMap<>();
+		markTimeMethod markTimeMethod= markTimeMethodService.getByPrimaryKey(markTimeMethodId);
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setTaskMarkTimeId(markTimeMethodId);
+		pack.setTaskMarkTimeName(markTimeMethod.getName());
+
+		packService.updateByPrimaryKeySelective( pack);
+		map.clear();
+		map.put(Constants.REPLAY, 1);
+		return map;
+	}
 	/**
 	 * 删除待发布任务包
 	 * 

@@ -228,9 +228,10 @@
 					<table class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th width='10%'>序号</th>
+								<th width='7%'>序号</th>
 								<th width='20%'>名称</th>
-								<th width='10%'>总数</th>
+								<th width='10%'>统计方法</th>
+								<th width='7%'>总数</th>
 								<th width='20%'>回传时间</th>
 								<th width='20%'>创建时间</th>
 								<th width='10%'>发布</th>
@@ -364,6 +365,32 @@
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
+		<!-------------------------------- 修改统计方法-------------------------------------------------->
+	<div id="changeMarkTimeMethodModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="updateMarkTimeMethod-title"></h4>
+					</div>
+					<div class="modal-body">
+						<span id="updateStatus" class="text-center"></span>
+						<form class="form-horizontal" role="form">
+							<div class="form-group" id="">
+								<label for="ctLvl" class="col-sm-3 control-label">统计方法：</label>
+								<div class="col-sm-9" style="width: 200px;">
+									<select class="form-control" name="markTimeMehtodName-selected" id="markTimeMehtodName-selected" style="width: 150px;"></select>
+								</div>
+							</div>
+					   </form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" id="changeMarkTimeMethodBtn" class="btn btn-primary">修改</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 		<!--------------------------------提示上传内容-------------------------------------------------->
 		<div id="taskUpCon" class="modal fade">
 		<div class="modal-dialog">
@@ -397,6 +424,7 @@
 		var taskNameCondition = "";
 		var allPackNameCondition= "";
 		var publishCondition = "";
+		var markTimeMethodpackId = 0;
 		var upzipCondition = 0;
 		var searchPackId = 0;
 		var pucPageTotle = 0;
@@ -683,10 +711,12 @@
 						$.each(data.list,function(i,item){
 							var publishPackBtn = "<td><a href='javascript:changePackStatusFn("+item.packId+",1,0)'>发布</a></td>";
 							var deletePackBtn = "<td><a href='javascript:deletePack("+item.packId+")'>删除</a></td>";
+							/*<a href='javascript:changeTaskLvl("+item.packId+","+item.taskLvl+");'>"+item.taskLvl+"</a>*/
 							$("#publishList tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.packName+"</td>"+
+									"<td><a href='javascript:changeMarkTimeMethod("+item.packId+",\""+item.markTimeMethodName+"\",\""+item.packName+"\");'>"+item.markTimeMethodName+"</a></td>"+
 									"<td>"+item.taskCount+"</td>"+
 									"<td>"+item.packLockTime+"小时</td>"+
 									"<td>"+item.createTime+"</td>"+
@@ -777,6 +807,7 @@
 							$("#noteId").append("<option value="+item.noteId+">"+item.noteId+"</option>");
 						});
 					}
+					$("#markTimeMethodList").empty();
 					if(data.markTimeMethodList == ""){
 						$("#markTimeMethodList").html("<option value='0'>无</option>");
 					}else{
@@ -964,6 +995,48 @@
 			changePackLvlPackId = packId;
 			
 		};
+		/*---------------------------------------修改统计方法---------------------------------------------------------------*/
+		changeMarkTimeMethod = function(packId,markTimeMethodName,packName){
+			$("#updateMarkTimeMethod-title").text("修改"+packName+"统计方法");
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/security/getMarkTimeMethod',
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("#markTimeMehtodName").append("<option>无说明文件</option>");
+					}else{
+						$("#markTimeMehtodName-selected").empty();
+						$.each(data.list,function(i,item){
+							$("#markTimeMehtodName-selected").append("<option value="+item.id+">"+item.name+"</option>");
+							if(markTimeMethodName == item.name){
+								$("#markTimeMehtodName-selected option:selected").removeAttr("selected");
+								$("#markTimeMehtodName-selected option[value="+item.id+"]").attr("selected","selected");
+							};
+						});
+					}
+				}
+			});
+			$("#updateStatus").empty();
+			$("#changeMarkTimeMethodModal").modal('show');
+			markTimeMethodpackId = packId;
+		};
+		/*--------------------------------------cx更改统计方法--------------------------------------------*/
+		$("#changeMarkTimeMethodBtn").click(function(){
+			var id = $("#markTimeMehtodName-selected").val();
+			$.ajax({
+				type:'POST',
+				data:{"packId":markTimeMethodpackId,"markTimeMethodId":id},
+				url:'${contextPath}/security/updateMarkTimeMethodpackId',
+				dataType:'json',
+				success:function(data){
+					if(data.replay == 1){
+						alert("修改成功");
+						loadPublishList(1);
+					}
+				}
+			});
+		});
 	</script>
 </body>
 </html>
