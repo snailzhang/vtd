@@ -156,19 +156,32 @@ public class WorkerController {
 		// 没有正在进行的任务
 		if (listAll == null || listAll.isEmpty()) {
 			workerMark = 0;
+			int downMaxCount = 0;
+			int downOneCount = 0;
 			// 可做任务的包数
 			// int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
 			// taskEffective = 4 查询未审核和不合格的
 			int auditingCount = workerRecordService.getCountByWorkerId(workerId, 1, 4);
-			manager manager = managerService.selectByPrimaryKey(1);
+			
+			worker worker = workerService.selectByPrimaryKey(workerId);
+			if(worker.getDownCount() != null){
+				String downc = worker.getDownCount();
+				String str[] = downc.split("/");
+				downMaxCount = Integer.parseInt(str[0]);
+				downOneCount = Integer.parseInt(str[1]);
+			}else{
+				manager manager = managerService.selectByPrimaryKey(1);
+				downMaxCount = manager.getDownMaxCount();
+				downOneCount = manager.getDownCount();
+			}
 			// worker可下载任务个数
 			int downCount = 0;
-			if ((manager.getDownMaxCount() - auditingCount) > manager.getDownCount()) {
-				downCount = manager.getDownCount();
+			if ((downMaxCount - auditingCount) > downOneCount) {
+				downCount = downOneCount;
 			} else {
-				downCount = (manager.getDownMaxCount() - auditingCount);
+				downCount = (downMaxCount - auditingCount);
 			}
 			if (downCount > countTaskDoing) {
 				downCount = countTaskDoing;
@@ -416,6 +429,7 @@ public class WorkerController {
 		if (f.exists()) {
 			zipFile = new File(url + Constants.SLASH + downPackName);
 			if (zipFile.exists()) {
+				System.out.println(url + Constants.SLASH + downPackName);
 				map.put(Constants.WRONGPATH, wrongPath);
 				return map;
 			}
@@ -635,6 +649,7 @@ public class WorkerController {
 		// int task_id = Constants.ZERO;
 		for (int i = 0; i < files.length; i++) {
 			listAll.add(files[i].getOriginalFilename());
+			logger.debug(files[i].getOriginalFilename());
 		}
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
@@ -646,6 +661,8 @@ public class WorkerController {
 					e2.printStackTrace();
 				}
 				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(Constants.POINT)) + Constants.POINT + Constants.WAV;
+				logger.debug("上传的:"+nameWav);
+				logger.debug("数据的:"+taskName);
 				// nameWav上传的文件名在,taskName工作者正在做的任务名
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();

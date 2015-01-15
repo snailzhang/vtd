@@ -23,6 +23,8 @@ public class worker {
     private String workerPaypal;
     
     private Integer downing;
+    
+    private String downCount;
 
     private Integer createId;
 
@@ -118,6 +120,14 @@ public class worker {
 
 	public void setDowning(Integer downing) {
 		this.downing = downing;
+	}
+	
+	public String getDownCount() {
+		return downCount;
+	}
+
+	public void setDownCount(String downCount) {
+		this.downCount = downCount;
 	}
 
 	public Integer getCreateId() {

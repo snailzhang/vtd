@@ -32,4 +32,6 @@ public interface WorkerService {
     worker getWorkerByWorkerDisabilityCard(String workerDisabilityCard);
     
     String getWorkerRealNameByWorkerId(int workerId);
+    
+    String getDownCOuntByWorkerId(int workerId);
 }

@@ -316,11 +316,6 @@
 						$("tbody").empty();
 						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
-						var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
-						var aduitingMarkTimeMonthTotle = data.aduitingMarkTimeMonthTotle			
-						$("#aduitingMarkTimeMonthTotle").text("待审标注："+aduitingMarkTimeMonthTotle);
-						$("#taskMarkTimeMonthTotle").text("有效标注："+taskMarkTimeMonthTotle);
-						
 						pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";
@@ -331,10 +326,10 @@
 									"<td><a target='_blank' href='${contextPath}/security/workerDetail?userId="+item.userId+"&username="+item.username+"'>"+item.username+"</a></td>"+
 									"<td>"+item.realName+"</td>"+
 									"<td>"+item.phone+"</td>"+
-									"<td>"+item.taskMarkTimeMonth+"</td>"+
-									"<td>"+item.waitingMarkTime+"</td>"+
-									"<td>"+item.downCount+"/"+item.unUploadCount+"/"+item.waitingCount+"</td>"+
-									"<td>"+item.finishCount+"/"+item.giveUpCount+"/"+item.oldCount+"</td>"+
+									"<td id = markTime"+i+">"+ "-" +"</td>"+
+									"<td id = waitingMarkTime"+i+">"+ "-" +"</td>"+
+									"<td id = downCount"+i+">"+ "-" +"</td>"+
+									"<td id = finishCount"+i+">"+ "-" +"</td>"+
 									"<td class='userStatus'><a id='usta"+item.userId+"' href='#' onClick='changeUserStatus("+item.userId+","+item.userStatus+",\""+item.username+"\")'>"+status+"</a></td>"+
 								"</tr>"
 							);
@@ -349,11 +344,48 @@
 									chooseUserType(pageNum);
 								}
 							});
+							/*-------------------------------------异步获取数据--------------------------------------------*/
+							getMarkTimeTotle(item.userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate);
+							getMarkTime(item.userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate);
 						});
 					}
 				}
 			});
-		}
+		};
+		/*--------------------------------------获得语音标注总和-------------------------------------------*/
+		getMarkTimeTotle = function(userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate){
+			$.ajax({
+				type:'POST',
+				data:{"userId":userId,"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				url:'${contextPath}/security/getMarkTimeTotle',
+				dataType:'json',
+				success:function(data){
+					var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
+					var aduitingMarkTimeMonthTotle = data.aduitingMarkTimeMonthTotle;			
+					$("#aduitingMarkTimeMonthTotle").text("待审标注："+aduitingMarkTimeMonthTotle);
+					$("#taskMarkTimeMonthTotle").text("有效标注："+taskMarkTimeMonthTotle);
+				}
+			});
+		};
+		/*
+		数据显示顺序
+		downCount+"/"+unUploadCount+"/"+waitingCount
+		finishCount+"/"+giveUpCount+"/"+oldCount
+		*/
+		getMarkTime = function(userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate){
+			$.ajax({
+				type:'POST',
+				data:{"userId":userId,"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				url:'${contextPath}/security/getMarkTime',
+				dataType:'json',
+				success:function(data){
+					$("#markTime"+i).text(data.markTime);
+					$("#waitingMarkTime"+i).text(data.waitMarkTime);
+					$("#downCount"+i).text(data.downCount+"/"+data.unUpLoadCount+"/"+data.waitingEffectiveCount);
+					$("#finishCount"+i).text(data.finishCount+"/"+data.giveUpCount+"/"+data.oldCount);
+				}
+			});
+		};
 	</script>
 </body>
 </html>

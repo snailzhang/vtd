@@ -12,6 +12,7 @@
 		<result column="worker_bank_card" property="workerBankCard" jdbcType="VARCHAR" />
 		<result column="worker_paypal" property="workerPaypal" jdbcType="VARCHAR" />
 		<result column="downing" property="downing" jdbcType="INTEGER" />
+		<result column="downCount" property="downCount" jdbcType="VARCHAR" />
 		<result column="create_id" property="createId" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
 		<result column="create_method" property="createMethod" jdbcType="VARCHAR" />
@@ -25,7 +26,7 @@
 	</resultMap>
 	<sql id="Base_Column_List">
 		worker_id, user_id, worker_real_name, worker_id_card, worker_disability_card, worker_phone,
-		worker_mac, worker_bank_card, worker_paypal,downing, create_id, create_time, create_method,
+		worker_mac, worker_bank_card, worker_paypal,downing,downCount, create_id, create_time, create_method,
 		update_id, update_time, update_method, version
 	</sql>
 	<sql id="Blob_Column_List">
@@ -33,6 +34,9 @@
 	</sql>
 	<select id="selectWorkerRealNameByWorkerId" resultType="java.lang.String" parameterType="java.lang.Integer">
 		select worker_real_name from worker where worker_id = #{workerId}
+	</select>
+	<select id="selectDownCountByWorkerId" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select downCount from worker where worker_id = #{workerId}
 	</select>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select

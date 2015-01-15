@@ -97,4 +97,10 @@ public class WorkerServiceImpl implements WorkerService {
 		return workerMapper.selectWorkerRealNameByWorkerId(workerId);
 	}
 
+	@Override
+	public String getDownCOuntByWorkerId(int workerId) {
+
+		return workerMapper.selectDownCountByWorkerId(workerId);
+	}
+
 }

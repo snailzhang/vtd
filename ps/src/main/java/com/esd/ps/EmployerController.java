@@ -41,16 +41,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.esd.db.model.inspector;
 import com.esd.db.model.manager;
 import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.pack;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.voiceNote;
+import com.esd.db.model.workerRecord;
+import com.esd.ps.model.TaskRoadTrans;
 import com.esd.ps.model.packTrans;
 import com.esd.db.model.task;
 import com.esd.ps.model.taskTrans;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.service.EmployerService;
+import com.esd.db.service.InspectorService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.MarkTimeMethodService;
 import com.esd.db.service.PackService;
@@ -58,6 +62,7 @@ import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.VoiceNoteService;
 import com.esd.db.service.WorkerRecordService;
+import com.esd.db.service.WorkerService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +82,11 @@ public class EmployerController {
 	@Autowired
 	private UserService userService;
 	@Autowired
+	private WorkerService workerService;
+	@Autowired
 	private EmployerService employerService;
+	@Autowired
+	private InspectorService inspectorService;
 	@Autowired
 	private TaskService taskService;
 	@Autowired
@@ -331,7 +340,12 @@ public class EmployerController {
 		map.put("markTimeMethodList", markTimeMethodList);
 		return map;
 	}
-
+	/**
+	 * 更新统计方法
+	 * @param packId
+	 * @param markTimeMethodId
+	 * @return
+	 */
 	@RequestMapping(value = "/updateMarkTimeMethod", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updateMarkTimeMethodPOST(int packId, int markTimeMethodId) {
@@ -425,7 +439,8 @@ public class EmployerController {
 		for (Iterator<task> iterator = listTask.iterator(); iterator.hasNext();) {
 			task task = (task) iterator.next();
 			taskTrans taskTrans = new taskTrans();
-
+			
+			taskTrans.setTaskId(task.getTaskId());
 			taskTrans.setTaskName(task.getTaskName());
 			if (task.getTaskEffective() == null) {
 				taskTrans.setTaskEffective(MSG_UNAUDIT);
@@ -454,7 +469,58 @@ public class EmployerController {
 		map.put(Constants.LIST, list);
 		return map;
 	}
-
+	/**
+	 * 获得任务路径
+	 * @param taskId
+	 * @return
+	 */
+	@RequestMapping(value = "/getTaskRoad", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getTaskRoadPOST(int taskId) {
+		logger.debug("taskId:{}",taskId);
+		Map<String, Object> map = new HashMap<>();
+		List<workerRecord> list = workerRecordService.getAllRowByTaskId(taskId);
+		List<TaskRoadTrans> listTRT = new ArrayList<>();
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		String status = "",effective = "";
+		for (Iterator<workerRecord> iterator = list.iterator(); iterator.hasNext();) {
+			workerRecord workerRecord = (workerRecord) iterator.next();
+			TaskRoadTrans trt = new TaskRoadTrans();
+			String realName = workerService.getWorkerRealNameByWorkerId(workerRecord.getWorkerId());
+			trt.setRealName(realName);
+			trt.setUserName(workerRecord.getUserName());
+			if(workerRecord.getTaskStatu() == 0){
+				status = "进行中";
+			}else if(workerRecord.getTaskStatu() == 1){
+				status = "已上传";
+			}else if(workerRecord.getTaskStatu() == 2){
+				status = "已超时";
+			}else if(workerRecord.getTaskStatu() == 3){
+				status = "已放弃";
+			}
+			trt.setTaskStatus(status);
+			trt.setDownTime(sdf.format(workerRecord.getTaskDownTime()));
+			trt.setUploadTime(sdf.format(workerRecord.getUpdateTime()));
+			if(workerRecord.getInspectorId() == 0){
+				trt.setInspector("");
+			}else if(workerRecord.getInspectorId() > 0){
+				inspector inspector = inspectorService.getinspectorByUserId(workerRecord.getInspectorId()); 
+				trt.setInspector(inspector.getInspectorName());
+			}
+			if(workerRecord.getTaskEffective() == 0){
+				effective = "未审";
+			}else if(workerRecord.getTaskEffective() == 1){
+				effective = "合格";
+			}else if(workerRecord.getTaskEffective() == 2){
+				effective = "不合格";
+			}
+			trt.setTaskEffective(effective);
+			listTRT.add(trt);
+		}
+		map.clear();
+		map.put("list", listTRT);
+		return map;
+	}
 	/**
 	 * 1.解压任务包 或是文件夹2.任务存入数据库
 	 * 

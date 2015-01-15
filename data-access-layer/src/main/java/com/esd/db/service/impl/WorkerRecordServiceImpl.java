@@ -430,4 +430,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectMoneyList(map);
 	}
 
+	@Override
+	public List<workerRecord> getAllRowByTaskId(int taskId) {
+		
+		return workerRecordMapper.selectAllRowByTaskId(taskId);
+	}
+
 }

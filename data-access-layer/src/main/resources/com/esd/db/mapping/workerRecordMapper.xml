@@ -32,6 +32,16 @@
 		create_method, update_time,
 		update_method, task_effective,inspector_id,inspectorrecord_id,version
 	</sql>
+	<!-- 查询任务bytaskId -->
+	<select id="selectAllRowByTaskId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from worker_record 
+		<where>
+		task_id = #{taskId,jdbcType=INTEGER}
+		</where>
+		order by update_time desc
+	</select>
 	<!-- 榜单查询 -->
 	<select id="selectMoneyList" resultType="java.util.Map" parameterType="java.util.Map">
 		SELECT w.worker_real_name realName,a.s sumMarkTime FROM 

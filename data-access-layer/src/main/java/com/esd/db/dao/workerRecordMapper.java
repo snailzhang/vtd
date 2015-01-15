@@ -91,4 +91,6 @@ public interface workerRecordMapper {
 	int selectCountByWorkerIdAndDate(Map<String, Object> map);
 	
 	List<Map<String, Object>> selectMoneyList(Map<String, Object> map);
+	
+	List<workerRecord> selectAllRowByTaskId(int taskId);
 }

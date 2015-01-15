@@ -66,7 +66,7 @@ public class ManagerController {
 
 	@Value("${MSG_UNUPLOAD}")
 	private String MSG_UNUPLOAD;
-	
+
 	/**
 	 * 修改成功
 	 */
@@ -132,14 +132,14 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/manager", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> managerPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload,int dateType) {
+	public Map<String, Object> managerPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
 		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, beginDate, endDate);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
 		int totlePage = Constants.ZERO;
 		List<user> userList = userService.getLikeUsername(userNameCondition, userType, page, Constants.ROW);
-		int totle = userService.getCountLikeUsername(userNameCondition, userType);
+		
 		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
 			user user = (user) iterator.next();
 			userTrans trans = new userTrans();
@@ -149,21 +149,21 @@ public class ManagerController {
 					continue;
 				}
 				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 1, 1, dateType);
-				if (taskUpload == 1) {
-					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
-						continue;
-					}
-				} else if (taskUpload == 0) {
-					if (taskMarkTimeMonth != null && taskMarkTimeMonth > 0) {
-						continue;
-					}
-				}
-				if (taskMarkTimeMonth == null) {
-					trans.setTaskMarkTimeMonth(0.00);
-				} else {
-					trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
-				}
+//				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 1, 1, dateType);
+//				if (taskUpload == 1) {
+//					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
+//						continue;
+//					}
+//				} else if (taskUpload == 0) {
+//					if (taskMarkTimeMonth != null && taskMarkTimeMonth > 0) {
+//						continue;
+//					}
+//				}
+//				if (taskMarkTimeMonth == null) {
+//					trans.setTaskMarkTimeMonth(0.00);
+//				} else {
+//					trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
+//				}
 				trans.setUserId(user.getUserId());
 				if (user.getUserStatus()) {
 					trans.setUserStatus(1);
@@ -172,81 +172,135 @@ public class ManagerController {
 				}
 				trans.setUsername(user.getUsername());
 				worker worker = workerService.getWorkerByUserId(user.getUserId());
-				//真名
+				// 真名
 				trans.setRealName(worker.getWorkerRealName());
-				//电话
+				// 电话
 				trans.setPhone(worker.getWorkerPhone());
 				if (user.getCreateTime() == null) {
 					trans.setCreateTime("");
 				} else {
 					trans.setCreateTime(sdf.format(user.getCreateTime()));
 				}
-
 				if (user.getUpdateTime() == null) {
 					trans.setUpdateTime("");
 				} else {
 					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
 				}
-				//下载
-				trans.setDownCount(workerRecordService.getdownCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate));
-				//放弃
-				trans.setGiveUpCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 3,0));
-				//合格
-				trans.setFinishCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 1,1));
-				//过时
-				trans.setOldCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 2,0));
-				//待上传
-				trans.setUnUploadCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 0,0));
-				//待审核
-				trans.setWaitingCount(workerRecordService.getCountByWorkerIdAndDate(worker.getWorkerId(), dateType, beginDate, endDate, 1,0));
-				//待审核标注时间
-				try{
-					double a = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 0, 1, dateType);
-					trans.setWaitingMarkTime(a);
-				}catch(NullPointerException n){
-					trans.setWaitingMarkTime(0.00);
-				}
 			}
 			list.add(trans);
 		}
 		map.clear();
+		int totle = userService.getCountLikeUsername(userNameCondition, userType);
+		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		// manager manager = managerService.selectByPrimaryKey(1);
+		// map.put("manager", manager);
+		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
+
+		return map;
+	}
+	/**
+	 * 获得语音标注总和
+	 * @param userId
+	 * @param userNameCondition
+	 * @param userType
+	 * @param page
+	 * @param beginDate
+	 * @param endDate
+	 * @param taskUpload
+	 * @param dateType
+	 * @return
+	 */
+	@RequestMapping(value = "/getMarkTimeTotle", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getMarkTimeTotlePost(int userId, String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		Double taskMarkTimeMonthTotle = 0.00;
 		Double aduitingMarkTimeMonthTotle = 0.00;
 		if (taskUpload > 0) {
 			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, beginDate, endDate, userNameCondition, 1, 1, dateType);
 			aduitingMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, beginDate, endDate, userNameCondition, 0, 1, dateType);
 		}
-		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
-//		manager manager = managerService.selectByPrimaryKey(1);
-//		map.put("manager", manager);
-		map.put(Constants.LIST, list);
-		map.put(Constants.TOTLE, totle);
-		map.put(Constants.TOTLE_PAGE, totlePage);
-		if (taskMarkTimeMonthTotle == null) {
-			map.put(Constants.TASKMARKTIMEMONTHTOTLE, 0.00);
-		} else {
-			map.put(Constants.TASKMARKTIMEMONTHTOTLE, taskMarkTimeMonthTotle);
+		if(taskMarkTimeMonthTotle == null){
+			map.put("taskMarkTimeMonthTotle", 0);
+		}else{
+			map.put("taskMarkTimeMonthTotle", taskMarkTimeMonthTotle);
 		}
-		if (aduitingMarkTimeMonthTotle == null) {
-			map.put("aduitingMarkTimeMonthTotle", 0.00);
-		} else {
+		if(aduitingMarkTimeMonthTotle == null){
+			map.put("aduitingMarkTimeMonthTotle", 0);
+		}else{
 			map.put("aduitingMarkTimeMonthTotle", aduitingMarkTimeMonthTotle);
-		}
-
+		}		
 		return map;
 	}
 	/**
+	 * 获得标注时间通过userId
+	 * @param userId
+	 * @param userNameCondition
+	 * @param userType
+	 * @param page
+	 * @param beginDate
+	 * @param endDate
+	 * @param taskUpload
+	 * @param dateType
+	 * @return
+	 */
+	@RequestMapping(value = "/getMarkTime", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getMarkTimePost(int userId, String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		double waitMarkTime = 0.00;
+		int workerId = workerService.getWorkerIdByUserId(userId);
+		Double markTime = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 1, 1, dateType);
+		if (markTime == null) {
+			map.put("markTime", 0);
+		} else {
+			map.put("markTime", markTime);
+		}
+		// 下载
+		int  downCount = workerRecordService.getdownCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate);
+		// 放弃
+		int giveUpCount = workerRecordService.getCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate, 3, 0);
+		// 合格
+		int finishCount = workerRecordService.getCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate, 1, 1);
+		// 过时
+		int oldCount = workerRecordService.getCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate, 2, 0);
+		// 待上传
+		int waitingUpLoadCount = workerRecordService.getCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate, 0, 0);
+		// 待审核
+		int waitingEffective = workerRecordService.getCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate, 1, 0);
+		// 待审核标注时间
+		try {
+			waitMarkTime = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 0, 1, dateType);
+		} catch (NullPointerException n) {
+			waitMarkTime = 0.00;
+		}
+		map.put("downCount", downCount);
+		map.put("giveUpCount", giveUpCount);
+		map.put("finishCount", finishCount);
+		map.put("oldCount", oldCount);
+		map.put("unUpLoadCount", waitingUpLoadCount);
+		map.put("waitingEffectiveCount", waitingEffective);
+		map.put("waitMarkTime", waitMarkTime);
+		
+		return map;
+	}
+
+	/**
 	 * 得到manager
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/getManager", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> getManagerPost() {
+	public Map<String, Object> getManagerPost() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		manager manager = managerService.selectByPrimaryKey(1);
 		map.put("manager", manager);
 		return map;
 	}
+
 	/**
 	 * 修改累计下载数,单次下载数,有效文件大小
 	 * 
@@ -257,7 +311,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/updateCount", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> updateCountPost(int downCount, int downMaxCount, int fileSize) {
+	public Map<String, Object> updateCountPost(int downCount, int downMaxCount, int fileSize) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		manager manager = new manager();
 		manager.setManagerId(1);
@@ -269,7 +323,7 @@ public class ManagerController {
 		if (m == 1) {
 			map.put(Constants.REPLAY, 1);
 			map.put(Constants.MESSAGE, MSG_UPDATE_SUCCESS);
-		}else{
+		} else {
 			map.put(Constants.REPLAY, 0);
 			map.put(Constants.MESSAGE, MSG_UPDATE_ERROR);
 		}
@@ -284,7 +338,7 @@ public class ManagerController {
 	 * @return
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.GET)
-	public  ModelAndView workerDetailGET(int userId, HttpServletRequest request) {
+	public ModelAndView workerDetailGET(int userId, HttpServletRequest request) {
 		Map<String, Object> model = new HashMap<>();
 		try {
 			String username = new String(request.getParameter("username").getBytes("iso-8859-1"), "utf-8");
@@ -311,7 +365,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerDetail", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, String beginDate, String endDate, int statu, String taskNameCondition,int dateType) {
+	public Map<String, Object> workerDetailPOST(HttpSession session, int userId, int userType, int page, String beginDate, String endDate, int statu, String taskNameCondition, int dateType) {
 		Map<String, Object> map = new HashMap<>();
 		if (userType == 2) {
 			employer employer = employerService.getEmployerByUserId(userId);
@@ -320,9 +374,9 @@ public class ManagerController {
 		}
 		if (userType == 4) {
 			int workerId = workerService.getWorkerIdByUserId(userId);
-			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, beginDate, endDate, taskNameCondition,dateType);
+			int totle = workerRecordService.getAllCountByWorkerId(workerId, statu, beginDate, endDate, taskNameCondition, dateType);
 			Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, taskNameCondition, 1, 1, dateType);
-			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId, 1, statu, beginDate, endDate, taskNameCondition, page, Constants.ROW,dateType);
+			List<workerRecord> workerRecordList = workerRecordService.getAllByWorkerId(workerId, 1, statu, beginDate, endDate, taskNameCondition, page, Constants.ROW, dateType);
 			List<WorkerRecordTrans> list = new ArrayList<>();
 			SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
@@ -367,7 +421,7 @@ public class ManagerController {
 			map.clear();
 			int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 			map.put(Constants.LIST, list);
-			map.put(Constants.TOTLE, totle);//totleG
+			map.put(Constants.TOTLE, totle);// totleG
 			map.put(Constants.TOTLE_PAGE, totlePage);
 			if (taskMarkTimeMonth == null) {
 				map.put("taskMarkTimeMonth", 0.00);
@@ -377,5 +431,5 @@ public class ManagerController {
 		}
 		return map;
 	}
-	
+
 }

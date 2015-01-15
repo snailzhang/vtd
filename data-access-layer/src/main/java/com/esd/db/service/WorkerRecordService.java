@@ -90,4 +90,6 @@ public interface WorkerRecordService {
 	int getCountByWorkerIdAndDate(int worker_id,int dateType,String beginDate,String endDate,int taskStatu,int taskeffective);
 
 	List<Map<String, Object>> getMoneyList(String beginDate,String endDate,int month);
+
+	List<workerRecord> getAllRowByTaskId(int taskId);
 }

@@ -21,6 +21,9 @@
 <script type="text/javascript" src="${contextPath}/js/umeditor.js"></script>
 <script type="text/javascript" src="${contextPath}/lang/zh-cn/zh-cn.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
+<style type="text/css">
+	.modal-content{font-family: Microsoft YaHei;}
+</style>
 </head>
 <body>
 	<jsp:include page="../head.jsp" />
@@ -366,7 +369,7 @@
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 		<!-------------------------------- 修改统计方法-------------------------------------------------->
-	<div id="changeMarkTimeMethodModal" class="modal fade">
+		<div id="changeMarkTimeMethodModal" class="modal fade">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -387,6 +390,40 @@
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 						<button type="button" id="changeMarkTimeMethodBtn" class="btn btn-primary">修改</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		<!--------------------------------查询任务路径-------------------------------------------------->
+		<div id="selectTaskModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="selectTask-title"></h4>
+					</div>
+					<div class="modal-body">
+						<div class="panel panel-default">
+							<table class="table table-striped table-bordered">
+								<thead>
+									<tr>
+										<th >序号</th>
+										<th >姓名</th>
+										<th >用户名</th>
+										<th >下载时间</th>
+										<th >操作时间</th>
+										<th >任务状态</th>
+										<th >审核状态</th>
+										<th >审核人</th>
+									</tr>
+								</thead>
+								<tbody id="selectTaskTBody"></tbody>
+							</table>
+							<ul class="pagination"></ul>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -913,7 +950,7 @@
 							$("#packDetailTBody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
-									"<td>"+item.taskName+"</td>"+
+									"<td><a href='javascript:selectTask("+item.taskId+",\""+item.taskName+"\");'>"+item.taskName+"</a></td>"+
 									"<td>"+item.taskUploadTime+"</td>"+
 									"<td>"+item.taskEffective+"</td>"+
 								"</tr>"
@@ -1039,6 +1076,40 @@
 				}
 			});
 		});
+		/*---------------------------------------查询任务路径---------------------------------------------------------------*/
+		selectTask = function(taskId,taskName){
+			$("#selectTask-title").text("查询:"+taskName);
+			$.ajax({
+				type:'POST',
+				data:{"taskId":taskId},
+				url:'${contextPath}/security/getTaskRoad',
+				dataType:'json',
+				success:function(data){
+					if(data.list == ""){
+						$("#selectTaskTBody").empty();
+						$("#selectTaskTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
+					}else{
+						$("#selectTaskTBody").empty();
+						$.each(data.list,function(i,item){
+							$("#selectTaskTBody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.realName+"</td>"+
+									"<td>"+item.userName+"</td>"+
+									"<td>"+item.downTime+"</td>"+
+									"<td>"+item.uploadTime+"</td>"+
+									"<td>"+item.taskStatus+"</td>"+
+									"<td>"+item.taskEffective+"</td>"+
+									"<td>"+item.inspector+"</td>"+
+								"</tr>"
+							);
+						});
+					}
+				}
+			});
+			$("#updateStatus").empty();
+			$("#selectTaskModal").modal('show');
+		};
 	</script>
 </body>
 </html>

@@ -80,31 +80,36 @@
 		select
 		<include refid="Base_Column_List" />
 		from user
-		<if test="userNameCondition !=null and userType !=null">
-			where username like "%${userNameCondition}%" and usertype = #{userType} and <![CDATA[user_id > 3]]>
-		</if>
-		<if test="userNameCondition !=null and userType ==null">
-			where username like "%${userNameCondition}%" and <![CDATA[user_id > 3]]>
-		</if>
-		<if test="userType !=null and userNameCondition ==null">
-			where usertype = #{userType} and <![CDATA[user_id > 3]]>
-		</if>
-
+		<where>
+			user_id > 3
+			<if test="userNameCondition != null">
+				and username like "%${userNameCondition}%"
+			</if>
+			<if test="userType != null">
+				and usertype = #{userType}
+			</if>
+			<if test="userType == 4">
+				and user_id in (select user_id from worker where user_id > 3)
+			</if>
+		</where>
 		limit #{begin,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
 	</select>
 	<select id="selectCountLikeUsername" resultType="java.lang.Integer" parameterType="java.util.Map">
 		select
 		count(user_id) totle
 		from user
-		<if test="userNameCondition !=null and userType !=null">
-			where username like "%${userNameCondition}%" and usertype = #{userType}
-		</if>
-		<if test="userNameCondition !=null and userType ==null">
-			where username like "%${userNameCondition}%"
-		</if>
-		<if test="userType !=null and userNameCondition ==null">
-			where usertype = #{userType}
-		</if>
+		<where>
+			3 > 2
+			<if test="userNameCondition != null">
+				and username like "%${userNameCondition}%"
+			</if>
+			<if test="userType != null">
+				and usertype = #{userType}
+			</if>
+			<if test="userType == 4">
+				and user_id in (select user_id from worker where user_id > 3)
+			</if>
+		</where>
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from user

@@ -33,4 +33,6 @@ public interface workerMapper {
     int updateByUserId(worker worker);
     
     String selectWorkerRealNameByWorkerId(int workerId);
+    
+    String selectDownCountByWorkerId(int workerId);
 }
