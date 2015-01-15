@@ -436,7 +436,9 @@ public class EmployerController {
 			}
 			if (task.getWorkerId() == null) {
 				taskTrans.setTaskUploadTime(MSG_UNDO);
-			} else {
+			}else if(task.getWorkerId() == 0){
+				taskTrans.setTaskUploadTime("被过滤");
+			}else if(task.getWorkerId() > 0){
 				if (task.getTaskMarkTime() == null) {
 					taskTrans.setTaskUploadTime(MSG_DOING);
 				} else {

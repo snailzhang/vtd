@@ -541,7 +541,8 @@
 								}
 								var invalidCount = item.invalid+item.wavZero;//无效数
 								var surplusTask = item.taskCount - item.finishTaskCount - invalidCount;//未完成任务数
-								var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
+								
+								var finishTaskRatio = item.finishTaskCount/(item.taskCount - invalidCount)*100;//完成任务比例
 								finishTaskRatio = finishTaskRatio.toFixed(2);
 								var downloadPack = "<td></td>";
 								if(item.finishTaskCount != 0){
@@ -656,7 +657,8 @@
 							}
 							var invalidCount = item.invalid+item.wavZero;//无效数
 							var surplusTask = item.taskCount - item.finishTaskCount - invalidCount;//未完成任务数
-							var finishTaskRatio = item.finishTaskCount/item.taskCount*100;//完成任务比例
+							var taskCountTotle = item.taskCount - item.invalid - item.wavZero;
+							var finishTaskRatio = item.finishTaskCount/taskCountTotle*100;//完成任务比例
 							finishTaskRatio = finishTaskRatio.toFixed(2);
 							var downloadPack = "<td></td>";
 							if(item.finishTaskCount != 0){

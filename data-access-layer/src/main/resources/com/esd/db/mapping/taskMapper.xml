@@ -162,7 +162,7 @@
 		from task
 		where worker_id IS NULL
 		and pack_id IN (select pack_id from pack where pack_status=0 and unzip = 1)
-		order by task_lvl
+		order by task_lvl,create_time
 		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
