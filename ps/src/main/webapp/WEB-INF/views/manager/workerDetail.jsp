@@ -18,7 +18,8 @@
 <link href="${contextPath}/css/jquery-ui.theme.min.css" rel="stylesheet">
 <style type="text/css">
 	.input-group-addon,.form-control{padding:6px;}
-	.ui-datepicker .ui-datepicker-title select{color:#1c94c4};
+	.ui-datepicker .ui-datepicker-title select{color:#1c94c4}
+	.form-btn1{height: 50px;float: left;}
 </style>
 <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/bootstrap.min.js"></script>
@@ -81,7 +82,7 @@
 					</div>
 					<div style="float: right;">	
 						<button type="button" id="searchBtn" class="btn btn-default">查询</button>
-						<button type="button" id="changeBtn" class="btn btn-default">修改密码</button>
+						<button type="button" id="changeBtn" class="btn btn-default">设置</button>
 					</div>	
 				</form>
 			</div>
@@ -111,18 +112,29 @@
 					</div>
 					<div class="modal-body">
 						<span id="updateStatus"></span>
-						<div style="padding:10px 30px 10px;">
+						<div  style="padding:10px 30px 10px;">							
 							<form class="form-inline" role="form">
 								<div class="input-group" style="padding:3px 3px;">
-	        					 	<span class="input-group-addon">输入新密码</span>
+	        					 	<span class="input-group-addon">新密码</span>
 	         						<input type="text" class="form-control" id="newPW" placeholder="请输入">
 	      						</div>
-						   </form>
+	      						<button type="button" id="changePWBtn" class="btn btn-primary">修改</button>
+						    </form>				 		   		
+					   </div>
+					   <div  style="padding:10px 30px 10px;">							
+							<form class="form-inline" role="form">
+								<div class="input-group" style="padding:3px 3px;">
+	        					 	<span class="input-group-addon">下载量</span>
+	         						<input type="text" class="form-control" id="downCount" placeholder="最大下载数/单次下载数">
+	      						</div>
+	      						<button type="button" id="changeDownCountBtn" class="btn btn-primary">修改</button>
+	      						<span>(输入格式:200/100)</span>
+						    </form>				 		   		
 					   </div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" id="changePWBtn" class="btn btn-primary">修改</button>
+						
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>						
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -245,6 +257,25 @@
 						type:'POST',
 						data:{"newPW":newPW,"userId":userId,"userName":userName},
 						url:'${contextPath}/security/updatePW',
+						dataType:'json',
+						success:function(data){
+							if(data.replay == 1){
+								alert("修改成功");
+							}
+						}
+					});
+				}						
+			});
+			/*--------------------------------------cx 修改单独下载量---------------------------------------------------*/
+			$("#changeDownCountBtn").click(function(){
+				var downCount = $("#downCount").val();
+				var userId = "${model.userId}";
+				var conWin = confirm("确定要修改下载量!");
+				if(conWin){
+					$.ajax({
+						type:'POST',
+						data:{"downCount":downCount,"userId":userId},
+						url:'${contextPath}/security/updateDownCount',
 						dataType:'json',
 						success:function(data){
 							if(data.replay == 1){

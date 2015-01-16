@@ -329,7 +329,28 @@ public class ManagerController {
 		}
 		return map;
 	}
-
+	/**
+	 * 更新个人的下载量
+	 * @param downCount
+	 * @param userId
+	 * @return
+	 */
+	@RequestMapping(value = "/updateDownCount", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateDownCountPost(String downCount,int userId) {
+		Map<String, Object> map = new HashMap<String, Object>();
+			int workerId = workerService.getWorkerIdByUserId(userId);
+			worker worker = new worker();
+			worker.setWorkerId(workerId);
+			if(downCount.equals("0")){
+				worker.setDownCount(null);
+			}else{
+				worker.setDownCount(downCount);
+			}			
+			workerService.updateByPrimaryKeySelective(worker);
+			map.put(Constants.REPLAY,1);
+		return map;
+	}
 	/**
 	 * 工作者工作信息
 	 * 

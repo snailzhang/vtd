@@ -395,9 +395,9 @@
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 		<!--------------------------------查询任务路径-------------------------------------------------->
-		<div id="selectTaskModal" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
+		<div id="selectTaskModal" class="modal fade" >
+			<div class="modal-dialog" style="width: 700px;" align="center">
+				<div class="modal-content" >
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 						<h4 class="modal-title" id="selectTask-title"></h4>
@@ -1087,7 +1087,7 @@
 				success:function(data){
 					if(data.list == ""){
 						$("#selectTaskTBody").empty();
-						$("#selectTaskTBody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
+						$("#selectTaskTBody").append("<tr class='text-danger'><td colspan='8'>无内容</td></tr>");
 					}else{
 						$("#selectTaskTBody").empty();
 						$.each(data.list,function(i,item){
@@ -1107,7 +1107,6 @@
 					}
 				}
 			});
-			$("#updateStatus").empty();
 			$("#selectTaskModal").modal('show');
 		};
 	</script>
