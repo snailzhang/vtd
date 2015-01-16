@@ -33,5 +33,5 @@ public interface WorkerService {
     
     String getWorkerRealNameByWorkerId(int workerId);
     
-    String getDownCOuntByWorkerId(int workerId);
+    String getDownCOuntByWorkerId(int workerId);    
 }

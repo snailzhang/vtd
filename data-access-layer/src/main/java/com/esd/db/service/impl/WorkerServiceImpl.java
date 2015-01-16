@@ -102,5 +102,5 @@ public class WorkerServiceImpl implements WorkerService {
 
 		return workerMapper.selectDownCountByWorkerId(workerId);
 	}
-
+	
 }
