@@ -23,7 +23,7 @@ public class TaskServiceImpl implements TaskService {
 	@Autowired
 	private packMapper packMapper;
 	@Override
-	public synchronized int deleteByPrimaryKey(Integer taskId) {
+	public  int deleteByPrimaryKey(Integer taskId) {
 
 		return taskMapper.deleteByPrimaryKey(taskId);
 	}
@@ -35,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public synchronized int insertSelective(taskWithBLOBs record) {
+	public  int insertSelective(taskWithBLOBs record) {
 
 		return taskMapper.insertSelective(record);
 	}
@@ -53,31 +53,31 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public synchronized int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record) {
+	public  int updateByPrimaryKeyWithBLOBs(taskWithBLOBs record) {
 
 		return taskMapper.updateByPrimaryKeyWithBLOBs(record);
 	}
 
 	@Override
-	public synchronized int updateByPrimaryKey(task record) {
+	public  int updateByPrimaryKey(task record) {
 
 		return taskMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
-	public synchronized List<task> selectAllTaskId() {
+	public  List<task> selectAllTaskId() {
 
 		return taskMapper.selectAllTaskId();
 	}
 
 	@Override
-	public synchronized List<task> getAllDoingTaskByWorkerId(Integer workerId) {
+	public  List<task> getAllDoingTaskByWorkerId(Integer workerId) {
 
 		return taskMapper.selectAllDoingTaskByWorkerId(workerId);
 	}
 
 	@Override
-	public synchronized List<task> getAllTaskByPackId(Integer packId) {
+	public  List<task> getAllTaskByPackId(Integer packId) {
 
 		return taskMapper.selectAllTaskByPackId(packId);
 	}
@@ -113,13 +113,13 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	@Override
-	public synchronized int getUndoTaskCount() {
+	public  int getUndoTaskCount() {
 
 		return taskMapper.selectUndoTaskCount();
 	}
 
 	@Override
-	public synchronized List<task> getAllHistoryTaskByWorkerId(Integer workerId) {
+	public  List<task> getAllHistoryTaskByWorkerId(Integer workerId) {
 
 		return taskMapper.selectAllHistoryTaskByWorkerId(workerId);
 	}
