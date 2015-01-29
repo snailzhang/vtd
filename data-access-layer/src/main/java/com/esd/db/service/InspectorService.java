@@ -1,5 +1,7 @@
 package com.esd.db.service;
 
+import java.util.List;
+
 import com.esd.db.model.inspector;
 
 public interface InspectorService {
@@ -18,4 +20,10 @@ public interface InspectorService {
 	int updateByPrimaryKey(inspector record);
 	
 	int getCountInspectorIdByUserId(Integer userId);
+	
+	int getCount();
+	
+	List<inspector> getAll();
+	
+	int getInspectorIdByUserId(Integer userId);
 }

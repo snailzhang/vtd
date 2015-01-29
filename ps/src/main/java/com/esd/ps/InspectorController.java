@@ -19,21 +19,25 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.esd.db.model.inspector;
 import com.esd.db.model.inspectorrecord;
 import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.taskWithBLOBs;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.InspectorRecordService;
+import com.esd.db.service.InspectorService;
 import com.esd.db.service.PackService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
 import com.esd.ps.model.WorkerRecordTrans;
 
+import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.slf4j.Logger;
@@ -60,9 +64,74 @@ public class InspectorController {
 	private WorkerService workerService;
 	@Autowired
 	private InspectorRecordService inspectorRecordService;
+	@Autowired
+	private InspectorService inspectorService;
+	
+	/**
+	 * 审核管理员
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/inspectorManager", method = RequestMethod.GET)
+	public ModelAndView inspectorManagerGet(HttpSession session) {
+	
+		return new ModelAndView("inspector/inspectorM");
+	}
+	/**
+	 * 审核管理员
+	 * @param userName
+	 * @param timeMark
+	 * @param page
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/inspectorManager", method = RequestMethod.POST)
+	@ResponseBody
+	public  Map<String, Object> inspectorManagerPost(String userName, int timeMark, int page, HttpSession session) {
+		logger.debug("userName:{},timeMark:{}", userName, timeMark);
+		Map<String, Object> map = new HashMap<String, Object>();
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int inspectorId = 0;
+		try{
+			inspectorId = inspectorService.getInspectorIdByUserId(userId);
+		}catch(BindingException n){
+			inspectorId = -1;
+		}	
+		int insCount = inspectorService.getCount();
+		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(inspectorId,userName, timeMark, 1, 3,Constants.LIMIT_MIN);
+		int count = 0;
+		if(totle == 0){
+			return null;
+		}
+		count = totle/insCount;
+		if(count == 0){
+			count = 1;
+		}
+		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(inspectorId,userName, timeMark, 1, 3, page, Constants.ROW,Constants.LIMIT_MIN);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		List<Map<String, Object>> list1 = new ArrayList<>();
+		for (Iterator<Map<String, Object>> iterator = list.iterator(); iterator.hasNext();) {
+			Map<String, Object> map1 = (Map<String, Object>) iterator.next();
+			logger.debug("map1:{}",map1);
+			int workerId = Integer.parseInt(map1.get("worker_id").toString());
+
+			String workerRealName = workerService.getWorkerRealNameByWorkerId(workerId);
+			map1.put("workerRealName", workerRealName);
+
+			list1.add(map1);
+		}		
+		
+		int totlePage = (int) Math.ceil((double) count / (double) Constants.ROW);
+		List<inspector> insList= inspectorService.getAll();
+		map.put("inspectorIds", insList);
+		map.put(Constants.LIST, list1);
+		map.put(Constants.TOTLE, count);
+		map.put(Constants.TOTLE_PAGE, totlePage);
+		return map;
+	}
 
 	/**
-	 * 审核列表页
+	 * 审核员列表页
 	 * 
 	 * @param session
 	 * @return
@@ -74,7 +143,7 @@ public class InspectorController {
 	}
 
 	/**
-	 * 审核列表页
+	 * 审核员列表页
 	 * 
 	 * @param session
 	 * @return
@@ -84,23 +153,68 @@ public class InspectorController {
 	public  Map<String, Object> inspectorPost(String userName, int timeMark, int page, HttpSession session) {
 		logger.debug("userName:{},timeMark:{}", userName, timeMark);
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(userName, timeMark, 1, 3, page, Constants.ROW);
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int inspectorId = 0;
+		try{
+			inspectorId = inspectorService.getInspectorIdByUserId(userId);
+		}catch(BindingException n){
+			inspectorId = -1;
+		}
+		int insCount = inspectorService.getCount();
+		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(inspectorId,userName, timeMark, 1, 3,Constants.LIMIT_MIN);
+		int count = 0;
+		if(totle == 0){
+			return null;
+		}
+		count = totle/insCount;
+		if(count == 0){
+			count = 1;
+		}
+		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(inspectorId,userName, timeMark, 1, 3, page, Constants.ROW,Constants.LIMIT_MIN);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String, Object>> list1 = new ArrayList<>();
 		for (Iterator<Map<String, Object>> iterator = list.iterator(); iterator.hasNext();) {
 			Map<String, Object> map1 = (Map<String, Object>) iterator.next();
+			logger.debug("map1:{}",map1);
 			int workerId = Integer.parseInt(map1.get("worker_id").toString());
 			String workerRealName = workerService.getWorkerRealNameByWorkerId(workerId);
 			map1.put("workerRealName", workerRealName);
+
 			list1.add(map1);
 		}		
-		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(userName, timeMark, 1, 3);
-		int totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		
+		int totlePage = (int) Math.ceil((double) count / (double) Constants.ROW);
 		map.put(Constants.LIST, list1);
-		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE, count);
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
-
+	/**
+	 * 分配任务
+	 * @param arr
+	 * @param inspectorId
+	 * @return
+	 */
+	@RequestMapping(value = "/assignT", method = RequestMethod.POST)
+	@ResponseBody
+	public  Map<String, Object> assignTPost(String workerIds,int inspectorId) {
+		logger.debug("workerIds:{},inspectorId:{}", workerIds, inspectorId);
+		Map<String, Object> map = new HashMap<String, Object>();
+		String[] workerId = workerIds.split("/");
+		int l = workerId.length;
+		if(l < 1){
+			map.clear();
+			map.put(Constants.REPLAY, 0);
+			return map;
+		}
+		for(int i=0;i < l;i++){
+			int id = Integer.parseInt(workerId[i]);
+			workerRecordService.updateByWorkerId(5, -1, id, "", inspectorId, null, -1);
+		}
+		map.clear();
+		map.put(Constants.REPLAY, 1);
+		return map;
+	}
 	/**
 	 * 审核页
 	 * 
@@ -121,14 +235,24 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/inspectorList", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> inspectorListPost(int workerId) {
+	public  Map<String, Object> inspectorListPost(int workerId,HttpSession session) {
 		Map<String, Object> map = new HashMap<>();
-		List<workerRecord> list = workerRecordService.getAllByWorkerId(workerId, 0, 1, "", "", "", 0, 0,0);
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int inspectorId = 0;
+		try{
+			inspectorId = inspectorService.getInspectorIdByUserId(userId);
+		}catch(NullPointerException n){
+			inspectorId = -1;
+		}
+		List<workerRecord> list = workerRecordService.getTaskByWorkerId(inspectorId, workerId, 3, 1);
 		List<WorkerRecordTrans> list2 = new ArrayList<>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		double taskMarkTime = 0.00;
 		for (Iterator<workerRecord> iterator = list.iterator(); iterator.hasNext();) {
 			workerRecord workerRecord = (workerRecord) iterator.next();
+			if(workerRecord.getTaskMarkTime() == 0){
+				continue;
+			}
 			WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskId(workerRecord.getTaskId());
@@ -204,7 +328,7 @@ public class InspectorController {
 		String taskId[] = list.split("_");
 		for (int i = 0; i < taskId.length; i++) {
 			taskWithBLOBs taskWithBLOBs = new taskWithBLOBs();
-			taskWithBLOBs = taskService.selectByPrimaryKey(Integer.parseInt(taskId[i]));
+			taskWithBLOBs = taskService.selectByPrimaryKey(Integer.parseInt(taskId[i]));	
 			list1.add(taskWithBLOBs);
 		}
 
@@ -240,16 +364,27 @@ public class InspectorController {
 		Map<String, Object> map = new HashMap<>();
 		int userId = Integer.parseInt(session.getAttribute("userId").toString());
 		int inspectorrecordId = 0;
-		if (taskEffective == 0 && note.length() > 0) {
-			inspectorrecord inspectorrecord = new inspectorrecord();
-			inspectorrecord.setInspectorid(userId);
-			inspectorrecord.setNote(note);
-			inspectorRecordService.insertSelective(inspectorrecord);
-			inspectorrecordId = inspectorRecordService.getMaxIdByInspectorId(userId);
-		}
-		workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate, Integer.parseInt(session.getAttribute("userId").toString()), lastDate, inspectorrecordId);
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate, lastDate);
+		int m = taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate, lastDate);
+		if(m == 1){
+			if (taskEffective == 0 && note.length() > 0) {
+				inspectorrecord inspectorrecord = new inspectorrecord();
+				inspectorrecord.setInspectorid(userId);
+				inspectorrecord.setNote(note);
+				inspectorRecordService.insertSelective(inspectorrecord);
+				inspectorrecordId = inspectorRecordService.getMaxIdByInspectorId(userId);
+			}
+			inspector ins = inspectorService.getinspectorByUserId(userId);
+			workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate,ins.getInspectorId(), lastDate, inspectorrecordId);
+		}else{
+			map.clear();
+			map.put(Constants.REPLAY, 0);
+			map.put(Constants.MESSAGE, "审核失败!");
+			return map;
+		}
+		
+		
+		
 		/**
 		 * 查看任务包的任务完成情况,当任务数等于已完成时更新pack表的pack_status
 		 */

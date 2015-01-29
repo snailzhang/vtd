@@ -1,5 +1,7 @@
 package com.esd.db.dao;
 
+import java.util.List;
+
 import com.esd.db.model.inspector;
 
 public interface inspectorMapper {
@@ -19,4 +21,10 @@ public interface inspectorMapper {
     int updateByPrimaryKey(inspector record);
     
     int selectCountInspectorIdByUserId(Integer userId);
+    
+    int selectCount();
+    
+    List<inspector> selectAll();
+    
+    int selectInspectorIdByUserId(Integer userId);
 }

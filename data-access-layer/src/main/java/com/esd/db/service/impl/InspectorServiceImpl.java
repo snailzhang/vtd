@@ -1,5 +1,7 @@
 package com.esd.db.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.esd.db.dao.inspectorMapper;
@@ -55,6 +57,24 @@ public class InspectorServiceImpl implements InspectorService {
 	public  inspector getinspectorByUserId(int userId) {
 		
 		return inspectorMapper.selectinspectorByUserId(userId);
+	}
+
+	@Override
+	public int getCount() {
+		
+		return inspectorMapper.selectCount();
+	}
+
+	@Override
+	public List<inspector> getAll() {
+		
+		return inspectorMapper.selectAll();
+	}
+
+	@Override
+	public int getInspectorIdByUserId(Integer userId) {
+		
+		return inspectorMapper.selectInspectorIdByUserId(userId);
 	}
 
 }

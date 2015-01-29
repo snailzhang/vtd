@@ -17,6 +17,18 @@
 		inspector_id, inspector_name, user_id, create_id,
 		create_time, create_method, update_id, update_time, update_method, version
 	</sql>
+	<select id="selectInspectorIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+			inspector_id
+		from inspector
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from inspector
+	</select>
+	<select id="selectCount" resultType="java.lang.Integer">
+		select count(user_id) from inspector
+	</select>
 	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />
@@ -44,9 +56,11 @@
 		create_id, create_time,
 		create_method, update_id, update_time,
 		update_method, version)
-		values (#{inspectorId,jdbcType=INTEGER}, #{inspectorName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+		values
+		(#{inspectorId,jdbcType=INTEGER}, #{inspectorName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
 		#{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
-		#{createMethod,jdbcType=VARCHAR}, #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
+		#{createMethod,jdbcType=VARCHAR},
+		#{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP},
 		#{updateMethod,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.inspector">
@@ -153,11 +167,13 @@
 		update inspector
 		set inspector_name = #{inspectorName,jdbcType=VARCHAR},
 		user_id = #{userId,jdbcType=INTEGER},
-		create_id = #{createId,jdbcType=INTEGER},
+		create_id =
+		#{createId,jdbcType=INTEGER},
 		create_time = #{createTime,jdbcType=TIMESTAMP},
 		create_method = #{createMethod,jdbcType=VARCHAR},
 		update_id = #{updateId,jdbcType=INTEGER},
-		update_time = #{updateTime,jdbcType=TIMESTAMP},
+		update_time =
+		#{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
 		version = #{version,jdbcType=INTEGER}
 		where inspector_id = #{inspectorId,jdbcType=INTEGER}
