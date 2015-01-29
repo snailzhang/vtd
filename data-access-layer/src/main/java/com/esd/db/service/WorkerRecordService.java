@@ -1,5 +1,6 @@
 package com.esd.db.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -71,9 +72,9 @@ public interface WorkerRecordService {
 	
 	int getPackIdByTaskId(Integer task_id);
 	
-	List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective,int page,int row);
+	List<Map<String, Object>> getWorkerIdGroupByWorkerId(int inspectorId,String userName,int timeMark,int taskStatu,int taskEffective,int page,int row,int limitMin);
 
-	int getWorkerIdCountGroupByWorkerId(String userName,int timeMark,int taskStatu,int taskEffective);
+	int getWorkerIdCountGroupByWorkerId(int inspectorId,String userName,int timeMark,int taskStatu,int taskEffective,int limitMin);
     
 	List<workerRecord> getByWorkerIdAndEffective(int workerId,int taskEffective,int taskStatu);
 
@@ -92,4 +93,8 @@ public interface WorkerRecordService {
 	List<Map<String, Object>> getMoneyList(String beginDate,String endDate,int month);
 
 	List<workerRecord> getAllRowByTaskId(int taskId);
+	
+	Date getTaskUploadTimeByWorkerId(int workerId);
+	
+	List<workerRecord> getTaskByWorkerId(int inspectorId,int workerId,int taskEffective,int taskStatus);
 }

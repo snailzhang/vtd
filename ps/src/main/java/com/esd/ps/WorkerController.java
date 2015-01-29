@@ -38,7 +38,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.esd.db.model.inspectorrecord;
@@ -146,13 +149,16 @@ public class WorkerController {
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> workerPost(HttpSession session, HttpServletRequest request, int taskEffective) {
-
+		int pre = (int) System.currentTimeMillis();  
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		int pre1 = (int) System.currentTimeMillis();
+		logger.debug("workerId:{}",(pre1 - pre));
 		logger.debug("workerId:{}", workerId);
 		List<workerRecord> listAll = workerRecordService.getByWorkerIdAndEffective(workerId, 3, 0);
-		logger.debug("workerId:{},listWorkerRecord:{}", workerId, listAll.isEmpty());
+		int pre2 = (int) System.currentTimeMillis();
+		logger.debug("listAll:{}",(pre2 - pre1));
 		// 没有正在进行的任务
 		if (listAll == null || listAll.isEmpty()) {
 			workerMark = 0;
@@ -162,10 +168,15 @@ public class WorkerController {
 			// int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
 			int countTaskDoing = taskService.getCountTaskDoing();
+			int pre3 = (int) System.currentTimeMillis();
+			logger.debug("countTaskDoing:{}",(pre3 - pre2));
 			// taskEffective = 4 查询未审核和不合格的
 			int auditingCount = workerRecordService.getCountByWorkerId(workerId, 1, 4);
-			
+			int pre4 = (int) System.currentTimeMillis();
+			logger.debug("countTaskDoing:{}",(pre4 - pre3));
 			worker worker = workerService.selectByPrimaryKey(workerId);
+			int pre5 = (int) System.currentTimeMillis();
+			logger.debug("countTaskDoing:{}",(pre5 - pre4));
 			if(worker.getDownCount() != null){
 				String downc = worker.getDownCount();
 				String str[] = downc.split("/");
@@ -429,7 +440,7 @@ public class WorkerController {
 		if (f.exists()) {
 			zipFile = new File(url + Constants.SLASH + downPackName);
 			if (zipFile.exists()) {
-				System.out.println(url + Constants.SLASH + downPackName);
+				//System.out.println(url + Constants.SLASH + downPackName);
 				map.put(Constants.WRONGPATH, wrongPath);
 				return map;
 			}
@@ -661,8 +672,6 @@ public class WorkerController {
 					e2.printStackTrace();
 				}
 				String nameWav = files[i].getOriginalFilename().substring(0, files[i].getOriginalFilename().indexOf(Constants.POINT)) + Constants.POINT + Constants.WAV;
-				logger.debug("上传的:"+nameWav);
-				logger.debug("数据的:"+taskName);
 				// nameWav上传的文件名在,taskName工作者正在做的任务名
 				if (taskName.equals(nameWav)) {
 					int taskId = task.getTaskId();
@@ -761,7 +770,6 @@ public class WorkerController {
 		map.put(Constants.LISTALL, listAll);
 		return map;
 	}
-
 	/**
 	 * 取得项目根目录
 	 * 

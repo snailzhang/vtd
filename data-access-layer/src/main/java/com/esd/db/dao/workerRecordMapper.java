@@ -1,5 +1,6 @@
 package com.esd.db.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -93,4 +94,8 @@ public interface workerRecordMapper {
 	List<Map<String, Object>> selectMoneyList(Map<String, Object> map);
 	
 	List<workerRecord> selectAllRowByTaskId(int taskId);
+	
+	Date selectTaskUploadTimeByWorkerId(int workerId);
+	
+	List<workerRecord> selectTaskByWorkerId(Map<String, Object> map);
 }

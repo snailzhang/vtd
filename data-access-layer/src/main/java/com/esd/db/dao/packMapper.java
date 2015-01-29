@@ -65,4 +65,6 @@ public interface packMapper {
     int selectTaskMarkTimeId(int packId);
     
     String selectTaskMarkTimeName(int packId);
+    
+    List<Map<String,Object>> selectEmployerPage(Map<String, Object> map);
 }

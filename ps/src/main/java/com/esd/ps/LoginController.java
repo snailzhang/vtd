@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.annotation.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,8 +236,7 @@ public class LoginController {
 	 * @param request
 	 */
 	@RequestMapping(value = "/checkOldTask", method = RequestMethod.POST)
-	@ResponseBody
-	public void checkOldTaskPOST(HttpServletRequest request) {
+	public void  checkOldTaskPOST(HttpServletRequest request) {
 		List<workerRecord> workerRecordList = workerRecordService.getDoingTask();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		if (workerRecordList.isEmpty() == false || workerRecordList != null) {
@@ -286,7 +286,6 @@ public class LoginController {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-
 			}
 		}
 	}

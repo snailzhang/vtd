@@ -256,4 +256,18 @@ public class PackServiceImpl implements PackService {
 		
 		return packMapper.selectTaskMarkTimeName(packId);
 	}
+
+	@Override
+	public List<Map<String, Object>> getEmployerPage(int page, int packStuts, String packNameCondition, int employerId, int row, int unzip) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.clear();
+		map.put("begin", (page - 1) * row);
+		map.put("end", row);
+		map.put("employerId", employerId);
+		map.put("packStuts", packStuts);
+		map.put("unzip", unzip);
+		if (packNameCondition.trim().length() > 0)
+			map.put("packNameCondition", packNameCondition);
+		return packMapper.selectEmployerPage(map);
+	}
 }

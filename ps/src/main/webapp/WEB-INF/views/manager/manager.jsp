@@ -31,89 +31,179 @@
 <body>
 	<jsp:include page="../head.jsp" />
 	<div class="container">
-		<div class="panel panel-default">
-			<div class="panel-heading">用户列表	
-				<span id="aduitingMarkTimeMonthTotle" class="pull-right text-success" style="padding-left: 20px;"></span>
-				<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span>
-			</div>
-			<div class="panel-body">
-				<form class="form-inline" role="form">					
-					<div class="col-sm-3" style="width: 225px;">
-						<div class="form-group">
-							<div class="input-group" style="width: 220px;"> 
-								<div class="input-group-addon"> 用户名</div>
-								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
-							</div>
-						</div>
-					
-					</div>					
-					<div class="col-xs-2" style="width: 140px;">
-						<div class="form-group">
-							<div class="input-group" style="width: 135px;">
-								<div class="input-group-addon">起始</div>
-								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id=beginDate type="text" placeholder="起始时间">
-							</div>
-						</div>
-					</div>					
-					<div class="col-xs-2" style="width: 140px;">
-						<div class="form-group">
-							<div class="input-group" style="width: 135px;">
-								<div class="input-group-addon">截止</div>
-								<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="endDate" type="text" placeholder="截止时间">
-							</div>
-						</div>
-					</div>			
-					<div class="col-xs-2" style="width: 101px;">
-						<div class="form-group">
-							<div class="input-group" style="width: 96px;">	
-								<div class="input-group-addon">类别</div>
-								<select class="form-control" id="dateTypeCheck">
-									<option value="1">日</option>
-									<option value="2">月</option>
-									<option value="3">年</option>
-								</select>
-							</div>
-						</div>
+	<!-----------------------------------------------------选项卡 ----------------------------->
+		<ul class="nav nav-tabs" role="tablist">
+			<li class="active"><a href="#workerList" role="tab" data-toggle="tab">用户列表</a></li>
+			<li><a href="#workerSalarList" role="tab" data-toggle="tab">工资列表</a></li>
+		</ul>
+	<!--------------------------------------------------------------------------------------->
+		<div class="tab-content">
+		<!-- -----------------------------------------------用户列表------------------------------------------------ -->
+			<div class="tab-pane active" id="workerList">
+				<div class="panel panel-default">
+					<div class="panel-heading" style="height: 38px;">	
+						<span id="aduitingMarkTimeMonthTotle" class="pull-right text-success" style="padding-left: 20px;"></span>
+						<span id="taskMarkTimeMonthTotle" class="pull-right text-success"></span>
 					</div>
-					<div class="col-xs-2" style="width: 101px;">
-						<div class="form-group">
-							<div class="input-group" style="width: 96px;">
-								<div class="input-group-addon">状态</div>
-								<select class="form-control" id="taskUpload">
-									<option value="2">全</option>
-									<option value="1">有</option>
-									<option value="0">无</option>
-								</select>
+					<div class="panel-body">
+						<form class="form-inline" role="form">					
+							<div class="col-sm-3" style="width: 225px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 220px;"> 
+										<div class="input-group-addon"> 用户名</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition" type="text" placeholder="查询用户">
+									</div>
+								</div>
+							
+							</div>					
+							<div class="col-xs-2" style="width: 140px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 135px;">
+										<div class="input-group-addon">起始</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="beginDate" type="text" placeholder="起始时间">
+									</div>
+								</div>
+							</div>					
+							<div class="col-xs-2" style="width: 140px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 135px;">
+										<div class="input-group-addon">截止</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="endDate" type="text" placeholder="截止时间">
+									</div>
+								</div>
+							</div>			
+							<div class="col-xs-2" style="width: 101px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 96px;">	
+										<div class="input-group-addon">类别</div>
+										<select class="form-control" id="dateTypeCheck">
+											<option value="1">日</option>
+											<option value="2">月</option>
+											<option value="3">年</option>
+										</select>
+									</div>
+								</div>
 							</div>
-						</div>				
+							<div class="col-xs-2" style="width: 101px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 96px;">
+										<div class="input-group-addon">状态</div>
+										<select class="form-control" id="taskUpload">
+											<option value="2">全</option>
+											<option value="1">有</option>
+											<option value="0">无</option>
+										</select>
+									</div>
+								</div>				
+							</div>
+							<div class="btn2" style="float: right;">
+								<button type="button" id="searchBtn" class="btn btn-default" >查询</button>
+							<!-- cx20150105 -->
+								<button type="button" id="changeBtn" class="btn btn-default" >设置</button>
+							</div>			
+						</form>
+						<div style="clear: both;"></div>
 					</div>
-					<div class="btn2" style="float: right;">
-						<button type="button" id="searchBtn" class="btn btn-default" >查询</button>
-					<!-- cx20150105 -->
-						<button type="button" id="changeBtn" class="btn btn-default" >设置</button>
-					</div>			
-				</form>
-				<div style="clear: both;"></div>
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th width='4%'>序号</th>
+								<th width='12%'>用户名</th>
+								<th width='12%'>姓名</th>
+								<th width='12%'>电话号</th>
+								<th width='15%'>标注时间</th>
+								<th width='15%'>未审时间</th>
+								<th width='12%'>下/进/审</th>
+								<th width='12%'>完/弃/过</th>
+								<th width='8%'>状态</th>
+							</tr>
+						</thead>
+						<tbody id = "user-tbody"></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
 			</div>
-			<table class="table table-striped table-bordered">
-				<thead>
-					<tr>
-						<th width='4%'>序号</th>
-						<th width='12%'>用户名</th>
-						<th width='12%'>姓名</th>
-						<th width='12%'>电话号</th>
-						<th width='15%'>标注时间</th>
-						<th width='15%'>未审时间</th>
-						<th width='12%'>下/进/审</th>
-						<th width='12%'>完/弃/过</th>
-						<th width='8%'>状态</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
-			<ul class="pagination"></ul>
+			<!-- ----------------------------------------------工资列表--------------------------------------------------- -->
+			<div class="tab-pane" id="workerSalarList">
+				<div class="panel panel-default">
+					<div class="panel-heading" style="height: 38px;">
+						<span id="aduitingMarkTimeMonthTotle1" class="pull-right text-success" style="padding-left: 20px;"></span>
+						<span id="taskMarkTimeMonthTotle1" class="pull-right text-success"></span>
+					</div>
+					<div class="panel-body">
+						<form class="form-inline" role="form">					
+							<div class="col-sm-3" style="width: 225px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 220px;"> 
+										<div class="input-group-addon"> 用户名</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition1" type="text" placeholder="查询用户">
+									</div>
+								</div>
+							
+							</div>					
+							<div class="col-xs-2" style="width: 140px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 135px;">
+										<div class="input-group-addon">起始</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="beginDate1" type="text" placeholder="起始时间">
+									</div>
+								</div>
+							</div>					
+							<div class="col-xs-2" style="width: 140px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 135px;">
+										<div class="input-group-addon">截止</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="endDate1" type="text" placeholder="截止时间">
+									</div>
+								</div>
+							</div>			
+							<div class="col-xs-2" style="width: 101px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 96px;">	
+										<div class="input-group-addon">类别</div>
+										<select class="form-control" id="dateTypeCheck1">
+											<option value="1">日</option>
+											<option value="2">月</option>
+											<option value="3">年</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-2" style="width: 101px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 96px;">
+										<div class="input-group-addon">状态</div>
+										<select class="form-control" id="taskUpload1">
+											<option value="2">全</option>
+											<option value="1">有</option>
+											<option value="0">无</option>
+										</select>
+									</div>
+								</div>				
+							</div>
+							<div class="btn2" style="float: right;">
+								<button type="button" id="searchSalaryBtn" class="btn btn-default" >查询</button>
+							</div>			
+						</form>
+						<div style="clear: both;"></div>
+					</div>
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th width='4%'>序号</th>
+								<th width='12%'>姓名</th>
+								<th width='12%'>银行卡号</th>
+								<th width='15%'>标注时间</th>
+								<th width='15%'>金额</th>
+							</tr>
+						</thead>
+						<tbody id = "workerSalary-tbody"></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
+			</div>
+			<!-- ------------------------------------------------------------------------------------------------- -->
 		</div>
-		
 		
 		<div class="modal fade" id="changeUserStatusModal">
 			<div class="modal-dialog">
@@ -203,8 +293,12 @@
 			var todayDate = $.datepicker.formatDate( "yy-mm-dd",new Date());
 			beginDate = todayDate;
 			endDate = todayDate;
+			beginDate1 = todayDate;
+			endDate1 = todayDate;
 			$("#beginDate,#endDate").val(todayDate);
+			$("#beginDate1,#endDate1").val(todayDate);
 			chooseUserType(1);
+			workerSalaryList(1);
 			/*-------------------------------datepicker-----------------------------------------*/
 			$.datepicker.regional[ "ch" ];
 			$("#beginDate").datepicker({
@@ -232,6 +326,14 @@
 				taskUpload = $("#taskUpload").val();
 				userNameCondition = $("#userNameCondition").val();
 				chooseUserType(1);
+			});
+			$("#searchSalaryBtn").click(function(){
+				dateType = $("#dateTypeCheck1").val();
+				beginDate = $("#beginDate1").val();
+				endDate = $("#endDate1").val();
+				taskUpload = $("#taskUpload1").val();
+				userNameCondition = $("#userNameCondition1").val();
+				workerSalaryList(1);
 			});
 			/*--------------------------------------cx点击设置按钮-------------------------------------------------------*/
 			$("#changeBtn").click(function(){
@@ -303,7 +405,7 @@
 				}
 			});
 		});
-		/*--------------------------------------加载页面-------------------------------------------------------*/
+		/*--------------------------------------用户列表页-------------------------------------------------------*/
 		chooseUserType = function(pageNum){
 			$.ajax({
 				type:'POST',
@@ -311,16 +413,16 @@
 				url:'${contextPath}/security/manager',
 				dataType:'json',
 				success:function(data){
-					$("tbody").empty();
+					$("#user-tbody").empty();
 					if(data.list == ""){
-						$("tbody").empty();
-						$("tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
+						$("#user-tbody").empty();
+						$("#user-tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
 						pageTotal = data.totlePage;
 						$.each(data.list,function(i,item){
 							var status = "不可用";
 							if(item.userStatus == "1")status = "可用";
-							$("tbody").append(
+							$("#user-tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td><a target='_blank' href='${contextPath}/security/workerDetail?userId="+item.userId+"&username="+item.username+"'>"+item.username+"</a></td>"+
@@ -333,30 +435,71 @@
 									"<td class='userStatus'><a id='usta"+item.userId+"' href='#' onClick='changeUserStatus("+item.userId+","+item.userStatus+",\""+item.username+"\")'>"+status+"</a></td>"+
 								"</tr>"
 							);
-							var pageDom = $(".pagination");
+							var pageDom = $("#workerList .pagination");
 							pageDom.empty();
 							page.creatPageHTML(pageNum,pageTotal,pageDom,"chooseUserType");
 							/*--------------------------------------跳转页-------------------------------------------------------*/
-							$(".pageGoBtn").click(function(){
+							$("#workerList .pageGoBtn").click(function(){
 								var pageNum = 0;
-								pageNum = $(".pageGoText").val();
+								pageNum = $("#workerList .pageGoText").val();
 								if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
 									chooseUserType(pageNum);
 								}
 							});
-							/*-------------------------------------异步获取数据--------------------------------------------*/
-							getMarkTimeTotle(item.userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate);
-							getMarkTime(item.userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate);
+							/*-------------------------------------异步获取数据--------------------------------------------*/			
+							getMarkTime(item.userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate);			
 						});
+						getMarkTimeTotle(userNameCondition,taskUpload,dateType,beginDate,endDate);
+					}
+				}
+			});
+		};
+		/*----------------------------------------------用户薪金页----------------------------------------------------------------*/
+		workerSalaryList = function(pageNum){
+			$.ajax({
+				type:'POST',
+				data:{"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				url:'${contextPath}/security/workerSalary',
+				dataType:'json',
+				success:function(data){
+					$("#workerSalary-tbody").empty();			
+					if(data.list == ""){
+						$("#workerSalary-tbody").empty();
+						$("#workerSalary-tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
+					}else{
+						pageTotal = data.totlePage;
+						$.each(data.list,function(i,item){
+							$("#workerSalary-tbody").append(
+								"<tr>"+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.realName+"</td>"+
+									"<td>"+item.bankCard+"</td>"+
+									"<td>"+item.taskMarkTimeMonth  +"</td>"+
+									"<td>"+item.salary+"</td>"+
+								"</tr>"
+							);
+						});
+						getMarkTimeTotle1(userNameCondition,taskUpload,dateType,beginDate,endDate);
+						var pageDom = $("#workerSalarList .pagination");
+							pageDom.empty();
+							page.creatPageHTML(pageNum,pageTotal,pageDom,"workerSalaryList");
+							/*--------------------------------------跳转页-------------------------------------------------------*/
+							$("#workerSalarList .pageGoBtn").click(function(){
+								var pageNum = 0;
+								pageNum = $("#workerSalarList .pageGoText").val();
+								if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+									workerSalaryList(pageNum);
+								}
+							});					
 					}
 				}
 			});
 		};
 		/*--------------------------------------获得语音标注总和-------------------------------------------*/
-		getMarkTimeTotle = function(userId,i,nowUserType,pageNum,userNameCondition,taskUpload,dateType,beginDate,endDate){
+		getMarkTimeTotle = function(userNameCondition,taskUpload,dateType,beginDate,endDate){
 			$.ajax({
 				type:'POST',
-				data:{"userId":userId,"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				data:{"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
 				url:'${contextPath}/security/getMarkTimeTotle',
 				dataType:'json',
 				success:function(data){
@@ -364,6 +507,20 @@
 					var aduitingMarkTimeMonthTotle = data.aduitingMarkTimeMonthTotle;			
 					$("#aduitingMarkTimeMonthTotle").text("待审标注："+aduitingMarkTimeMonthTotle);
 					$("#taskMarkTimeMonthTotle").text("有效标注："+taskMarkTimeMonthTotle);
+				}
+			});
+		};
+		getMarkTimeTotle1 = function(userNameCondition,taskUpload,dateType,beginDate,endDate){
+			$.ajax({
+				type:'POST',
+				data:{"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				url:'${contextPath}/security/getMarkTimeTotle',
+				dataType:'json',
+				success:function(data){
+					var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
+					var aduitingMarkTimeMonthTotle = data.aduitingMarkTimeMonthTotle;			
+					$("#taskMarkTimeMonthTotle1").text("有效标注："+taskMarkTimeMonthTotle);
+					$("#aduitingMarkTimeMonthTotle1").text("总金额："+(taskMarkTimeMonthTotle*data.salary/3600).toFixed(2)+" 元");
 				}
 			});
 		};

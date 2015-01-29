@@ -1,6 +1,7 @@
 package com.esd.db.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.esd.db.model.user;
 
@@ -36,4 +37,6 @@ public interface UserService {
 	List<user> getLikeUsername(String userNameCondition, int userType, int page,int row);
 	
 	int getCountLikeUsername(String userNameCondition, int userType);
+	
+	List<Map<String,Object>> getWorkerSalary(String beginDate, String endDate, String userNameCondition, int taskEffective, int taskStatus, int dateType,int page,int row);
 }

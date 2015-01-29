@@ -83,6 +83,8 @@ public interface Constants {
 	public static final int ROW=20;//分页行数
 	public static final int ONE=1;//常量1
 	public static final int ZERO=0;//常量0
+	//审核文件有效大小限制
+	public static final int LIMIT_MIN=600;
 	public static final String ZEROS="0000000";//
 	public static final String SPILT_TWELVE="%.12f";//
 	public static final String EMPTY="";//空字符串 

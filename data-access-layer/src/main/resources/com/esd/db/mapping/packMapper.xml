@@ -11,6 +11,7 @@
 		<result column="pack_status" property="packStatus" jdbcType="INTEGER" />
 		<result column="pack_lock_time" property="packLockTime" jdbcType="INTEGER" />
 		<result column="unzip" property="unzip" jdbcType="INTEGER" />
+		<result column="unzip_time" property="unzipTime" jdbcType="TIMESTAMP" />
 		<result column="pack_lvl" property="packLvl" jdbcType="INTEGER" />
 		<result column="create_id" property="createId" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -26,12 +27,43 @@
 		<result column="pack_format" property="packFormat" jdbcType="LONGVARCHAR" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		pack_id, employer_id,note_id,taskMarkTimeId,taskMarkTimeName, pack_name, pack_status, pack_lock_time,unzip,pack_lvl, create_id, create_time,
+		pack_id, employer_id,note_id,taskMarkTimeId,taskMarkTimeName, pack_name, pack_status, pack_lock_time,unzip,unzip_time,pack_lvl, create_id, create_time,
 		create_method, update_id, update_time, update_method,down_count, version
 	</sql>
 	<sql id="Blob_Column_List">
 		pack_file, pack_format
 	</sql>
+	<!-- pack查询 -->
+		<select id="selectEmployerPage" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT	p.pack_id packId,p.pack_name packName,p.down_count downCount,p.pack_lvl taskLvl,p.pack_status packStatus,p.pack_lock_time packLockTime,p.unzip,p.unzip_time createTime,p.taskMarkTimeId,p.taskMarkTimeName, 
+				a.taskCount,b.finishTaskCount,c.invalid,d.wavZero,e.taskMarkTime
+				FROM pack p
+				LEFT JOIN (SELECT COUNT(task_id) taskCount,pack_id FROM task GROUP BY pack_id) a ON p.pack_id = a.pack_id
+				LEFT JOIN (SELECT COUNT(record_id) finishTaskCount,pack_id FROM worker_record WHERE task_effective = 1 AND task_mark_time > 0 GROUP BY pack_id) b ON p.pack_id = b.pack_id 
+				LEFT JOIN (SELECT COUNT(record_id) invalid,pack_id FROM worker_record WHERE task_mark_time = 0 AND task_effective = 1 GROUP BY pack_id) c ON p.pack_id = c.pack_id 
+				LEFT JOIN (SELECT COUNT(task_id) wavZero,pack_id FROM task WHERE worker_id = 0 AND task_mark_time IS NULL GROUP BY pack_id) d ON p.pack_id = d.pack_id 
+				LEFT JOIN (SELECT SUM(task_mark_time) taskMarkTime,pack_id FROM worker_record WHERE task_effective = 1 GROUP BY pack_id) e ON p.pack_id = e.pack_id
+						where
+								p.employer_id = ${employerId}
+							<if test="packStuts == 1">
+								and pack_status = 1
+							</if>
+							<if test="packStuts == 0">
+								<![CDATA[and (pack_status = 0 or pack_status = 2)]]>
+							</if>
+							<if test="unzip != 0">
+								and unzip = ${unzip}
+							</if>
+							<if test="unzip == 0">
+							    and (unzip = 1 or unzip = 3)
+							</if>
+							<if test="packNameCondition !=null">
+								and pack_name like "%${packNameCondition}%"
+							</if>
+						ORDER BY p.down_count,p.unzip_time
+						LIMIT ${begin},${end}
+	</select>
+	<!-- ********************************************************* -->
 	<select id="selectTaskMarkTimeId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select taskMarkTimeId from pack 
 		where pack_id = #{packId}
@@ -47,7 +79,7 @@
 		<where>
 			employer_id = #{employerId}
 			<if test="packStuts == 1">
-				and pack_status = #{packStuts}
+				and pack_status = 1
 			</if>
 			<if test="packStuts == 0">
 				<![CDATA[and (pack_status = 0 or pack_status = 2)]]>
@@ -62,8 +94,8 @@
 				and pack_name like "%${packNameCondition}%"
 			</if>
 		</where>
-		order by pack_lvl
-		limit #{begin},#{end}
+		order by down_count,unzip_time
+		limit ${begin},${end}
 	</select>
 	<select id="selectCountLikePackName" resultType="java.lang.Integer" parameterType="java.util.Map">
 		select
@@ -383,6 +415,9 @@
 			</if>
 			<if test="unzip != null">
 				unzip = #{unzip,jdbcType=INTEGER},
+			</if>
+			<if test="unzipTime != null">
+				unzip_time = #{unzipTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="packLvl != null">
 				pack_lvl = #{packLvl,jdbcType=INTEGER},

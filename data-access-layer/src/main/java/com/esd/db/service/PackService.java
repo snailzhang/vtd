@@ -65,4 +65,6 @@ public interface PackService {
 	int getTaskMarkTimeId(int packId);
 	
 	String getTaskMarkTimeName(int packId);
+	
+	List<Map<String,Object>> getEmployerPage(int page,int packStuts,String packNameCondition,int employerId,int row,int unzip);
 }

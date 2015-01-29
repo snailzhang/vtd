@@ -1,5 +1,6 @@
 package com.esd.db.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -246,7 +247,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	}
 
 	@Override
-	public  List<Map<String, Object>> getWorkerIdGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective, int page, int row) {
+	public  List<Map<String, Object>> getWorkerIdGroupByWorkerId(int inspectorId,String userName, int timeMark, int taskStatu, int taskEffective, int page, int row,int limitMin) {
 		Map<String, Object> map = new HashMap<>();
 
 		map.clear();
@@ -262,6 +263,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		} else {
 			map.put("userName", userName);
 		}
+		if(inspectorId == -1){
+			map.put("inspectorId", null);
+		}else if(inspectorId >= 0){
+			map.put("inspectorId", inspectorId);
+		}
+		map.put("limitMin",limitMin);
 		map.put("timeMark", timeMark);
 		map.put("taskStatu", taskStatu);
 		map.put("taskEffective", taskEffective);
@@ -281,20 +288,24 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		}
 		if (taskLockTime == 0) {
 			map.put("taskLockTime", null);
-		} else {
+		} else if(taskLockTime > 0){
 			map.put("taskLockTime", taskLockTime * 3600 * 1000);
 		}
 		if (inspectorrecordId > 0) {
 			map.put("inspectorrecordId", inspectorrecordId);
 		}
-		map.put("firstDate", firstDate);
-		map.put("endDate", endDate);
-		map.put("inspectorId", inspectorId);
+		if (firstDate.trim().length() > 0){
+			map.put("firstDate", firstDate);
+			map.put("endDate", endDate);
+		}
+		if(inspectorId > 0){
+			map.put("inspectorId", inspectorId);
+		}	
 		return workerRecordMapper.updateByWorkerId(map);
 	}
 
 	@Override
-	public  int getWorkerIdCountGroupByWorkerId(String userName, int timeMark, int taskStatu, int taskEffective) {
+	public  int getWorkerIdCountGroupByWorkerId(int inspectorId,String userName, int timeMark, int taskStatu, int taskEffective,int limitMin) {
 		Map<String, Object> map = new HashMap<>();
 
 		map.clear();
@@ -303,6 +314,12 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		} else {
 			map.put("userName", userName);
 		}
+		if(inspectorId == -1){
+			map.put("inspectorId", null);
+		}else if(inspectorId >= 0){
+			map.put("inspectorId", inspectorId);
+		}
+		map.put("limitMin", limitMin);
 		map.put("timeMark", timeMark);
 		map.put("taskStatu", taskStatu);
 		map.put("taskEffective", taskEffective);
@@ -434,6 +451,26 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 	public List<workerRecord> getAllRowByTaskId(int taskId) {
 		
 		return workerRecordMapper.selectAllRowByTaskId(taskId);
+	}
+
+	@Override
+	public Date getTaskUploadTimeByWorkerId(int workerId) {
+		
+		return workerRecordMapper.selectTaskUploadTimeByWorkerId(workerId);
+	}
+
+	@Override
+	public List<workerRecord> getTaskByWorkerId(int inspectorId, int workerId, int taskEffective, int taskStatus) {
+		Map<String, Object> map = new HashMap<>();
+		if(inspectorId == -1){
+			map.put("inspectorId", null);
+		}else if(inspectorId > 0){
+			map.put("inspectorId", inspectorId);
+		}		
+		map.put("workerId", workerId);
+		map.put("taskEffective", taskEffective);
+		map.put("taskStatus", taskStatus);
+		return workerRecordMapper.selectTaskByWorkerId(map);
 	}
 
 }

@@ -6,11 +6,9 @@
 package com.esd.ps;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +33,6 @@ import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.UserService;
-import com.esd.db.service.UserTypeService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
 import com.esd.ps.model.WorkerRecordTrans;
@@ -148,7 +145,7 @@ public class ManagerController {
 				if (count == 0) {
 					continue;
 				}
-				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
+//				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
 //				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 1, 1, dateType);
 //				if (taskUpload == 1) {
 //					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
@@ -201,8 +198,7 @@ public class ManagerController {
 		return map;
 	}
 	/**
-	 * 获得语音标注总和
-	 * @param userId
+	 * 工资列表
 	 * @param userNameCondition
 	 * @param userType
 	 * @param page
@@ -212,9 +208,60 @@ public class ManagerController {
 	 * @param dateType
 	 * @return
 	 */
+	@RequestMapping(value = "/workerSalary", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> workerSalaryPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
+		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, beginDate, endDate);
+		int pre = (int) System.currentTimeMillis();
+		Map<String, Object> map = new HashMap<String, Object>();
+		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		int totlePage = Constants.ZERO;
+		List<Map<String,Object>> userList = userService.getWorkerSalary(beginDate, endDate, userNameCondition, 1, 1, dateType, page, Constants.ROW);
+		int pre1 = (int) System.currentTimeMillis();
+		logger.debug("userList:{}",(pre1 - pre));
+		manager manager = managerService.selectByPrimaryKey(1);
+		DecimalFormat df = new DecimalFormat("#.00");
+		Double d = 0.00;
+		for (Iterator<Map<String, Object>> iterator = userList.iterator(); iterator.hasNext();) {
+			Map<String, Object> map2 = (Map<String, Object>) iterator.next();
+			if (map2.get("markTime") == null) {
+				map2.put("taskMarkTimeMonth", 0.00);
+				map2.put("salary", 0.00);
+			} else {
+				d = Double.parseDouble(map2.get("markTime").toString());
+				map2.put("taskMarkTimeMonth", d);
+				map2.put("salary", Double.parseDouble(df.format(d * manager.getSalary() / 3600)));								
+			}
+			list.add(map2);
+		}
+		map.clear();
+		int pre11 = (int) System.currentTimeMillis();
+		int totle = userService.getCountLikeUsername(userNameCondition, userType);
+		int pre12 = (int) System.currentTimeMillis();
+		logger.debug("totle:{}",(pre12 - pre11));
+		
+		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
+		return map;
+	}
+	/**
+	 * 获得语音标注总和
+	 * 
+	 * @param userNameCondition
+	 * 
+	 * 
+	 * @param beginDate
+	 * @param endDate
+	 * @param taskUpload
+	 * @param dateType
+	 * @return
+	 */
 	@RequestMapping(value = "/getMarkTimeTotle", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getMarkTimeTotlePost(int userId, String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
+	public Map<String, Object> getMarkTimeTotlePost(String userNameCondition, String beginDate, String endDate, int taskUpload, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Double taskMarkTimeMonthTotle = 0.00;
 		Double aduitingMarkTimeMonthTotle = 0.00;
@@ -231,6 +278,12 @@ public class ManagerController {
 			map.put("aduitingMarkTimeMonthTotle", 0);
 		}else{
 			map.put("aduitingMarkTimeMonthTotle", aduitingMarkTimeMonthTotle);
+		}
+		manager manager = managerService.selectByPrimaryKey(1);
+		if(manager.getSalary()>0){
+			map.put("salary", manager.getSalary());
+		}else{
+			map.put("salary", 0.00);
 		}		
 		return map;
 	}

@@ -80,7 +80,7 @@
 								<th width='12%'>剩余/无效/完成</th>
 								<th width='7%'>完成比例</th>
 								<th width='8%'>回传时间</th>
-								<th width='15%'>创建时间</th>
+								<th width='15%'>发布时间</th>
 								<th width='15%'>标注时间</th>
 								<th width='7%'>下载</th>
 								<th width='6%'>停用</th>
@@ -115,7 +115,7 @@
 								<th width='18%'>剩余/无效/完成</th>
 								<th width='7%'>完成比例</th>
 								<th width='8%'>回传时间</th>
-								<th width='15%'>创建时间</th>
+								<th width='15%'>发布时间</th>
 								<th width='15%'>标注时间</th>
 								<th width='7%'>下载</th>
 							</tr>
@@ -149,7 +149,7 @@
 								<th width='18%'>剩余/无效/完成</th>
 								<th width='7%'>完成比例</th>
 								<th width='8%'>回传时间</th>
-								<th width='15%'>创建时间</th>
+								<th width='15%'>发布时间</th>
 								<th width='15%'>标注时间</th>
 								<th width='7%'>下载</th>
 							</tr>
@@ -236,7 +236,7 @@
 								<th width='10%'>统计方法</th>
 								<th width='7%'>总数</th>
 								<th width='20%'>回传时间</th>
-								<th width='20%'>创建时间</th>
+								<th width='20%'>上传时间</th>
 								<th width='10%'>发布</th>
 								<th width='10%'>删除</th>
 							</tr>
@@ -917,7 +917,10 @@
 					success:function(data){
 						if(data.wrongPath != ""){
 							window.open("${contextPath}"+data.wrongPath);
-							window.location.reload();
+							//window.location.reload();
+							loadUnCompletePackList(1);
+							loadCompletePackList(1);
+							loadAllPackList(1);
 						}
 					}
 				});

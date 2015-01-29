@@ -123,4 +123,26 @@ public class UserServiceImpl implements UserService {
 		return userMapper.selectCountLikeUsername(userTypeMap);
 	}
 
+	@Override
+	public List<Map<String, Object>> getWorkerSalary(String beginDate, String endDate, String userNameCondition, int taskEffective, int taskStatus, int dateType, int page, int row) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.clear();
+		map.put("begin", ((page - 1) * row));
+		map.put("end", row);
+		if (beginDate.trim().length() > 0) {
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+		}
+		if (userNameCondition.trim().length() == 0 || userNameCondition == null) {
+			map.put("userNameCondition", null);
+		} else {
+			map.put("userNameCondition", userNameCondition);
+		}
+		map.put("taskEffective", taskEffective);
+		map.put("taskStatus", taskStatus);
+		map.put("dateType", dateType);
+		
+		return userMapper.selectWorkerSalary(map);
+	}
+
 }

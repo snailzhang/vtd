@@ -16,6 +16,8 @@ public class userTrans {
 
 	private Double taskMarkTimeMonth;
 	
+	private Double salary;
+	
 	private Double waitingMarkTime;
 
 	private String createTime;
@@ -72,6 +74,14 @@ public class userTrans {
 
 	public void setTaskMarkTimeMonth(Double taskMarkTimeMonth) {
 		this.taskMarkTimeMonth = taskMarkTimeMonth;
+	}
+	
+	public Double getSalary() {
+		return salary;
+	}
+
+	public void setSalary(Double salary) {
+		this.salary = salary;
 	}
 
 	public String getCreateTime() {

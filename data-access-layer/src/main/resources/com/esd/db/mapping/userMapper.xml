@@ -19,6 +19,38 @@
 		user_id,user_status, username, password, usertype, create_id, create_time, create_method, update_id,
 		update_time, update_method, version
 	</sql>
+	<!-- 工资列表 -->
+	<select id="selectWorkerSalary" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT u.user_id userId,w.worker_real_name realName,w.worker_bank_card bankCard,s.month markTime		
+		FROM USER u 
+		LEFT JOIN worker w ON  u.user_id = w.user_id
+		LEFT JOIN (SELECT SUM(task_mark_time) MONTH,user_name
+				FROM worker_record WHERE task_effective = ${taskEffective}
+				<if test="dateType == 1">
+					and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') AND DATE_FORMAT(update_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+				</if>
+				<if test="dateType == 2">
+					and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') AND DATE_FORMAT(update_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
+				</if>
+				<if test="dateType == 3">
+					and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') AND DATE_FORMAT(update_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
+				</if>
+				<if test="taskStatus != null">
+					AND task_statu = ${taskStatus}
+				</if> 			
+					GROUP BY worker_id
+		) s  ON  u.username = s.user_name 
+		WHERE
+		u.user_id > 3 
+	 	<if test="userNameCondition != null">
+			and u.user_name LIKE '%${userNameCondition}%'
+		</if>
+		and u.user_id IN (SELECT user_id FROM worker WHERE user_id > 3) 
+		
+		LIMIT  #{begin},#{end}
+		
+	</select>
+	<!-- ************************************************************************* -->
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />

@@ -22,6 +22,8 @@ public class pack {
 
 	private Integer unzip;
 	
+	private Date unzipTime;
+	
 	private Integer packLvl;
 
 	private Integer createId;
@@ -108,6 +110,14 @@ public class pack {
 		this.unzip = unzip;
 	}
 	
+	public Date getUnzipTime() {
+		return unzipTime;
+	}
+
+	public void setUnzipTime(Date unzipTime) {
+		this.unzipTime = unzipTime;
+	}
+
 	public Integer getPackLvl() {
 		return packLvl;
 	}

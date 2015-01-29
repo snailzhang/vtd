@@ -180,7 +180,7 @@ public class EmployerController {
 		logger.debug("employerId:{}", employerId);
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		List<packTrans> list = new ArrayList<packTrans>();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		int totle = packService.getCountLikePackName(packStuts, packNameCondition, employerId, unzip);
 		if (totle == 0) {
 			map.clear();
@@ -189,38 +189,40 @@ public class EmployerController {
 			map.put(Constants.LIST, list);
 			return map;
 		}
-		List<pack> listPack = packService.getLikePackName(page, packStuts, packNameCondition, employerId, Constants.ROW, unzip);
-		for (Iterator<pack> iterator = listPack.iterator(); iterator.hasNext();) {
-			pack pack = (pack) iterator.next();
-			packTrans packTrans = new packTrans();
+		int pre = (int) System.currentTimeMillis();
+		List<Map<String, Object>> listPack = packService.getEmployerPage(page, packStuts, packNameCondition, employerId, Constants.ROW, unzip);
+		int pre1 = (int) System.currentTimeMillis();
+		System.out.println("listPack:"+ (pre1 - pre));
 
-			packTrans.setPackId(pack.getPackId());
-			packTrans.setPackName(pack.getPackName());
-
-			packTrans.setTaskCount(taskService.getTaskCountByPackId(pack.getPackId()));
-			packTrans.setFinishTaskCount(workerRecordService.getFinishTaskCountByPackId(pack.getPackId(), 1));
-			// 无效任务数,taskMarkTime == 0
-			packTrans.setInvalid(workerRecordService.getTaskMarkTimeZeroCountByPackId(pack.getPackId()));
-			// wav.length == 0
-			packTrans.setWavZero(taskService.getWorkerIdZeroCountByPackId(pack.getPackId()));
-
-			packTrans.setDownCount(pack.getDownCount());
-			packTrans.setTaskLvl(pack.getPackLvl());
-			packTrans.setPackStatus(pack.getPackStatus());
-			packTrans.setPackLockTime(pack.getPackLockTime() / 3600000);
-			packTrans.setUnzip(pack.getUnzip());
-			packTrans.setCreateTime(sdf.format(pack.getCreateTime()));
-			
-			packTrans.setMarkTimeMethodId(pack.getTaskMarkTimeId());
-			packTrans.setMarkTimeMethodName(pack.getTaskMarkTimeName());
-			Double taskMarkTime = workerRecordService.getSUMTaskMarkTimeByPackId(pack.getPackId());
-			if (taskMarkTime == null) {
-				packTrans.setTaskMarkTime(0.00);
-			} else {
-				packTrans.setTaskMarkTime(taskMarkTime);
+		for (Iterator<Map<String, Object>> iterator = listPack.iterator(); iterator.hasNext();) {
+			Map<String, Object> map2 = (Map<String, Object>) iterator.next();
+			if(map2.get("createTime") == null){
+				map2.put("createTime","");
+			}else{
+				map2.put("createTime",sdf.format((Date) map2.get("createTime")));
 			}
-			list.add(packTrans);
+			if(map2.get("invalid") == null){
+				map2.put("invalid",0);
+			}
+			if(map2.get("wavZero") == null){
+				map2.put("wavZero",0);
+			}
+			if(map2.get("finishTaskCount") == null){
+				map2.put("finishTaskCount",0);
+			}
+			if(map2.get("taskMarkTime") == null){
+				map2.put("taskMarkTime",0);
+			}
+			if(map2.get("packLockTime") == null){
+				map2.put("packLockTime",0);
+			}else{
+				int m = Integer.parseInt(map2.get("packLockTime").toString())/3600000;
+				map2.put("packLockTime",m);
+			}
+			list.add(map2);
 		}
+		int pre2 = (int) System.currentTimeMillis();
+		System.out.println("for:"+ (pre2 - pre1));
 		map.clear();
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
@@ -241,7 +243,13 @@ public class EmployerController {
 		map.put("list", list);
 		return map;
 	}
-
+	/**
+	 * 修改语音标注方法说明
+	 * @param packId
+	 * @param markTimeMethodId
+	 * @param markTimeMethodName
+	 * @return
+	 */
 	@RequestMapping(value = "/updateMarkTimeMethodpackId", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> updateMarkTimeMethodpackIdPOST(int packId,int markTimeMethodId,String markTimeMethodName) {
@@ -294,6 +302,7 @@ public class EmployerController {
 		packWithBLOBs pack = new packWithBLOBs();
 		pack.setPackId(packId);
 		pack.setUnzip(unzip);
+		pack.setUnzipTime(new Date());
 		packService.updateByPrimaryKeySelective(pack);
 		map.clear();
 		map.put(Constants.REPLAY, 1);
