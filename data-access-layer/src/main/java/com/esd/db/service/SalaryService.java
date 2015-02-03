@@ -23,5 +23,7 @@ public interface SalaryService {
     List<Map<String,Object>> getSalary(int dateType,int page,int row,String beginDate,String endDate,String realName);
     
     int getSalary100Count(int dateType,String beginDate,String endDate,String realName);
+    
+    Double getSUMSalary(int dateType,String beginDate,String endDate,String realName);
 }
 

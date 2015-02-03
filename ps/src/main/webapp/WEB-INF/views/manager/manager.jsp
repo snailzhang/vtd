@@ -500,7 +500,7 @@
 							"</tr>"
 							);			
 						});
-						getMarkTimeTotle1(userNameCondition1,1,dateType1,beginDate1,endDate1);
+						getSumSalary(userNameCondition1,dateType1,beginDate1,endDate1);
 						var pageDom = $("#workerSalarList .pagination");
 							pageDom.empty();
 							page.creatPageHTML(pageNum,pageTotal,pageDom,"workerSalaryList");
@@ -531,17 +531,16 @@
 				}
 			});
 		};
-		getMarkTimeTotle1 = function(userNameCondition,taskUpload,dateType,beginDate,endDate){
+		getSumSalary = function(userNameCondition,dateType,beginDate,endDate){
 			$.ajax({
 				type:'POST',
-				data:{"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
-				url:'${contextPath}/security/getMarkTimeTotle',
+				data:{"userNameCondition":userNameCondition,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				url:'${contextPath}/security/getSumSalary',
 				dataType:'json',
 				success:function(data){
-					var taskMarkTimeMonthTotle = data.taskMarkTimeMonthTotle;
-					var aduitingMarkTimeMonthTotle = data.aduitingMarkTimeMonthTotle;			
-					$("#taskMarkTimeMonthTotle1").text("有效标注："+taskMarkTimeMonthTotle);
-					$("#aduitingMarkTimeMonthTotle1").text("总金额："+(taskMarkTimeMonthTotle*data.salary/3600).toFixed(2)+" 元");
+					var sumSalary = data.sumSalary;			
+					$("#taskMarkTimeMonthTotle1").text("有效标注："+sumSalary);
+					$("#aduitingMarkTimeMonthTotle1").text("总金额："+(sumSalary*data.salary/3600).toFixed(2)+" 元");
 				}
 			});
 		};

@@ -20,7 +20,8 @@
   </sql>
   <!-- 工资单(大于100元) -->
   <select id="selectSalary" resultType="java.util.Map" parameterType="java.util.Map" >
-    SELECT s.worker_id workerId,s.mark_time_totle markTime,w.realName,w.bankCard FROM salary s 
+    select workerId,markTime,realName,bankCard from 
+    (SELECT s.worker_id workerId,sum(s.mark_time_totle) markTime,w.realName,w.bankCard FROM salary s 
 	LEFT JOIN (SELECT worker_real_name realName,worker_disability_card bankCard,worker_id FROM worker) w 
 	ON s.worker_id = w.worker_id
 	<where>
@@ -38,15 +39,15 @@
 			and w.realName like '%${realName}%'
 		</if>
 	</where>
+	group by s.worker_id) m where markTime>1800
 	limit ${begin},${end} 
   </select>
-  <select id="selectSalary100Count" resultType="java.lang.Integer" parameterType="java.util.Map" >
-    select count(workerId) count from
-    (SELECT s.worker_id workerId FROM salary s 
+  <select id="selectSUMSalary" resultType="java.lang.Double" parameterType="java.util.Map" >
+     select sum(markTime) from
+    (SELECT s.worker_id workerId,sum(s.mark_time_totle) markTime FROM salary s 
 	LEFT JOIN (SELECT worker_real_name realName,worker_id FROM worker) w 
 	ON s.worker_id = w.worker_id
 	<where>
-		s.mark_time_totle >= 1800
 		<if test="dateType == 1">
 			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 		</if>
@@ -59,7 +60,31 @@
 		<if test="userNameCondition != null">
 			and w.realName like '%${realName}%'
 		</if>
-	</where>) m
+	</where>
+	group by s.worker_id 
+	) m where markTime >= 1800
+  </select>
+  <select id="selectSalary100Count" resultType="java.lang.Integer" parameterType="java.util.Map" >
+    select count(workerId) count from
+    (SELECT s.worker_id workerId,sum(s.mark_time_totle) markTime FROM salary s 
+	LEFT JOIN (SELECT worker_real_name realName,worker_id FROM worker) w 
+	ON s.worker_id = w.worker_id
+	<where>
+		<if test="dateType == 1">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+		</if>
+		<if test="dateType == 2">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(s.timer,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
+		</if>
+		<if test="dateType == 3">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(s.timer,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
+		</if>
+		<if test="userNameCondition != null">
+			and w.realName like '%${realName}%'
+		</if>
+	</where>
+	group by s.worker_id 
+	) m where markTime >= 1800
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from salary

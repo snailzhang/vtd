@@ -252,6 +252,7 @@ public class ManagerController {
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
+	
 	/**
 	 * 获得语音标注总和
 	 * 
@@ -266,7 +267,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/getMarkTimeTotle", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getMarkTimeTotlePost(String userNameCondition, String beginDate, String endDate, int taskUpload, int dateType,int salary) {
+	public Map<String, Object> getMarkTimeTotlePost(String userNameCondition, String beginDate, String endDate, int taskUpload, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Double taskMarkTimeMonthTotle = 0.00;
 		Double aduitingMarkTimeMonthTotle = 0.00;
@@ -283,6 +284,33 @@ public class ManagerController {
 			map.put("aduitingMarkTimeMonthTotle", 0);
 		}else{
 			map.put("aduitingMarkTimeMonthTotle", aduitingMarkTimeMonthTotle);
+		}
+		manager manager = managerService.selectByPrimaryKey(1);
+		if(manager.getSalary()>0){
+			map.put("salary", manager.getSalary());
+		}else{
+			map.put("salary", 0.00);
+		}		
+		return map;
+	}
+	/**
+	 * 工资单合计
+	 * @param userNameCondition
+	 * @param beginDate
+	 * @param endDate
+	 * @param dateType
+	 * @return
+	 */
+	@RequestMapping(value = "/getSumSalary", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> getSumSalaryPost(String userNameCondition, String beginDate, String endDate,int dateType) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		Double sumSalary = salaryService.getSUMSalary(dateType, beginDate, endDate, userNameCondition);	
+		if(sumSalary == null){
+			map.put("sumSalary", 0);
+		}else{
+			map.put("sumSalary", sumSalary);
 		}
 		manager manager = managerService.selectByPrimaryKey(1);
 		if(manager.getSalary()>0){

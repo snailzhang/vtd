@@ -91,4 +91,18 @@ public class SalaryServiceImpl implements SalaryService {
 		return salaryMapper.selectSalary100Count(map);
 	}
 
+	@Override
+	public Double getSUMSalary(int dateType, String beginDate, String endDate, String realName) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("dateType", dateType);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
+		if(realName.trim().length()>0){
+			map.put("realName", realName);
+		}else{
+			map.put("realName", null);
+		}
+		return salaryMapper.selectSUMSalary(map);
+	}
+
 }
