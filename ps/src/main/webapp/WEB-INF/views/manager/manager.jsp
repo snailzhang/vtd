@@ -78,7 +78,7 @@
 										<div class="input-group-addon">类别</div>
 										<select class="form-control" id="dateTypeCheck">
 											<option value="1">日</option>
-											<option value="2">月</option>
+											<option value="2" selected="selected">月</option>
 											<option value="3">年</option>
 										</select>
 									</div>
@@ -162,7 +162,7 @@
 										<div class="input-group-addon">类别</div>
 										<select class="form-control" id="dateTypeCheck1">
 											<option value="1">日</option>
-											<option value="2">月</option>
+											<option value="2" selected="selected">月</option>
 											<option value="3">年</option>
 										</select>
 									</div>
@@ -288,7 +288,7 @@
 		var endDate = "";
 		
 		var userNameCondition1 = "";	
-		var dateType1 = 1;
+		var dateType1 = 2;
 		var beginDate1 = "";
 		var endDate1 = "";
 		$(document).ready(function(){

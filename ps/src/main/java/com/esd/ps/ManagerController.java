@@ -219,7 +219,7 @@ public class ManagerController {
 		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		int totlePage = Constants.ZERO;
-		List<Map<String,Object>> salaryList = salaryService.getSalary100(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition);
+		List<Map<String,Object>> salaryList = salaryService.getSalary(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition);
 		if(salaryList == null){
 			map.put(Constants.LIST, "");
 			return map;
@@ -266,7 +266,7 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/getMarkTimeTotle", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getMarkTimeTotlePost(String userNameCondition, String beginDate, String endDate, int taskUpload, int dateType) {
+	public Map<String, Object> getMarkTimeTotlePost(String userNameCondition, String beginDate, String endDate, int taskUpload, int dateType,int salary) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Double taskMarkTimeMonthTotle = 0.00;
 		Double aduitingMarkTimeMonthTotle = 0.00;
