@@ -57,7 +57,7 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalary100(int dateType, int page, int row, String beginDate, String endDate, String realName) {
+	public List<Map<String, Object>> getSalary(int dateType, int page, int row, String beginDate, String endDate, String realName) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("dateType", dateType);
 		if (page == 0) {
