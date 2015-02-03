@@ -367,7 +367,8 @@ public class InspectorController {
 		int inspectorrecordId = 0;
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		int m = taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate, lastDate);
-		if(m == 1){
+		System.out.println(m);
+		if(m > 0){
 			if (taskEffective == 0 && note.length() > 0) {
 				inspectorrecord inspectorrecord = new inspectorrecord();
 				inspectorrecord.setInspectorid(userId);
@@ -376,7 +377,13 @@ public class InspectorController {
 				inspectorrecordId = inspectorRecordService.getMaxIdByInspectorId(userId);
 			}
 			inspector ins = inspectorService.getinspectorByUserId(userId);
-			workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate,ins.getInspectorId(), lastDate, inspectorrecordId);
+			int insId = 0;
+			if(ins != null){
+				insId = ins.getInspectorId();
+			}else{
+				insId = 0;
+			}
+			workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate,insId, lastDate, inspectorrecordId);
 		}else{
 			map.clear();
 			map.put(Constants.REPLAY, 0);
