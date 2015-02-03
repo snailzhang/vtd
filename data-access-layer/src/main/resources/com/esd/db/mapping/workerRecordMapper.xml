@@ -55,6 +55,7 @@
 				and worker_id = ${workerId}
 			</if>
 		</where>
+		order by task_upload_time
 	</select>
 	<!-- 查最后上传时间By workerId -->
 	<select id="selectTaskUploadTimeByWorkerId" resultType="java.util.Date" parameterType="java.lang.Integer">
