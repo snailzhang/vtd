@@ -24,7 +24,7 @@
 		SELECT u.user_id userId,w.worker_real_name realName,w.worker_bank_card bankCard,s.month markTime		
 		FROM USER u 
 		LEFT JOIN worker w ON  u.user_id = w.user_id
-		LEFT JOIN (SELECT SUM(task_mark_time) MONTH,user_name
+		LEFT JOIN (SELECT SUM(task_mark_time) month,user_name
 				FROM worker_record WHERE task_effective = ${taskEffective}
 				<if test="dateType == 1">
 					and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') AND DATE_FORMAT(update_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>

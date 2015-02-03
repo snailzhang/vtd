@@ -138,8 +138,7 @@
 										<div class="input-group-addon"> 用户名</div>
 										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition1" type="text" placeholder="查询用户">
 									</div>
-								</div>
-							
+								</div>							
 							</div>					
 							<div class="col-xs-2" style="width: 140px;">
 								<div class="form-group">
@@ -169,7 +168,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-xs-2" style="width: 101px;">
+					<!--  <div class="col-xs-2" style="width: 101px;">
 								<div class="form-group">
 									<div class="input-group" style="width: 96px;">
 										<div class="input-group-addon">状态</div>
@@ -180,7 +179,7 @@
 										</select>
 									</div>
 								</div>				
-							</div>
+							</div>-->
 							<div class="btn2" style="float: right;">
 								<button type="button" id="searchSalaryBtn" class="btn btn-default" >查询</button>
 							</div>			
@@ -287,6 +286,11 @@
 		var dateType = 1;
 		var beginDate = "";
 		var endDate = "";
+		
+		var userNameCondition1 = "";	
+		var dateType1 = 1;
+		var beginDate1 = "";
+		var endDate1 = "";
 		$(document).ready(function(){
 			
 			var date = new Date();
@@ -318,6 +322,23 @@
 					$( "#beginDate" ).datepicker( "option", "maxDate", selectedDate );
 				}
 			});
+			$("#beginDate1").datepicker({
+				changeMonth:true,
+				changeYear:true,
+				numberOfMonths:1,
+				setDate:todayDate,
+				onClose: function( selectedDate ) {
+					$( "#endDate1" ).datepicker( "option", "minDate", selectedDate );
+				}
+			});
+			$("#endDate1").datepicker({
+				changeMonth:true,
+				changeYear:true,
+				numberOfMonths:1,
+				onClose: function( selectedDate ) {
+					$( "#beginDate1" ).datepicker( "option", "maxDate", selectedDate );
+				}
+			});
 			/*--------------------------------------点击查询按钮-------------------------------------------------------*/
 			$("#searchBtn").click(function(){
 				dateType = $("#dateTypeCheck").val();
@@ -328,11 +349,11 @@
 				chooseUserType(1);
 			});
 			$("#searchSalaryBtn").click(function(){
-				dateType = $("#dateTypeCheck1").val();
-				beginDate = $("#beginDate1").val();
-				endDate = $("#endDate1").val();
-				taskUpload = $("#taskUpload1").val();
-				userNameCondition = $("#userNameCondition1").val();
+				dateType1 = $("#dateTypeCheck1").val();
+				beginDate1 = $("#beginDate1").val();
+				endDate1 = $("#endDate1").val();
+				//taskUpload1 = $("#taskUpload1").val();
+				userNameCondition1 = $("#userNameCondition1").val();
 				workerSalaryList(1);
 			});
 			/*--------------------------------------cx点击设置按钮-------------------------------------------------------*/
@@ -458,7 +479,7 @@
 		workerSalaryList = function(pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"userType":nowUserType,"page":pageNum,"userNameCondition":userNameCondition,"taskUpload":taskUpload,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				data:{"page":pageNum,"userNameCondition":userNameCondition1,"dateType":dateType1,"beginDate":beginDate1,"endDate":endDate1},
 				url:'${contextPath}/security/workerSalary',
 				dataType:'json',
 				success:function(data){
@@ -467,19 +488,19 @@
 						$("#workerSalary-tbody").empty();
 						$("#workerSalary-tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
 					}else{
-						pageTotal = data.totlePage;
+						pageTotal = data.totlePage; 
 						$.each(data.list,function(i,item){
 							$("#workerSalary-tbody").append(
-								"<tr>"+
-									"<td>"+(i+1)+"</td>"+
-									"<td>"+item.realName+"</td>"+
-									"<td>"+item.bankCard+"</td>"+
-									"<td>"+item.taskMarkTimeMonth  +"</td>"+
-									"<td>"+item.salary+"</td>"+
-								"</tr>"
-							);
+							"<tr>"+
+								"<td>"+(i + 1)+"</td>"+
+								"<td>"+item.realName+"</td>"+
+								"<td>"+item.bankCard+"</td>"+
+								"<td>"+item.taskMarkTimeMonth  +"</td>"+
+								"<td>"+item.salary+"</td>"+
+							"</tr>"
+							);			
 						});
-						getMarkTimeTotle1(userNameCondition,taskUpload,dateType,beginDate,endDate);
+						getMarkTimeTotle1(userNameCondition1,1,dateType1,beginDate1,endDate1);
 						var pageDom = $("#workerSalarList .pagination");
 							pageDom.empty();
 							page.creatPageHTML(pageNum,pageTotal,pageDom,"workerSalaryList");

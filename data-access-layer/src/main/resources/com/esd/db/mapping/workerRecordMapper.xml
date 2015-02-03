@@ -43,7 +43,7 @@
 				and inspector_id = ${inspectorId}
 			</if>
 			<if test="taskEffective != null and taskEffective != 3">
-				and task_effective = ${inspectorId}
+				and task_effective = ${taskEffective}
 			</if>
 			<if test="taskEffective == 3">
 				and (task_effective = 0 or task_effective = 2)
@@ -449,9 +449,9 @@
 		<if test="taskStatu == 1">
 			and task_statu = 1
 		</if>
-		<if test="inspectorId != null">
+		<!--  <if test="inspectorId != null">
 			and inspector_id = ${inspectorId}
-		</if>
+		</if>-->
 		<if test="taskEffective == 3">
 			<![CDATA[and (task_effective = 0 or task_effective = 2)]]>
 		</if>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esd.db.dao.salaryMapper" >
+  <resultMap id="BaseResultMap" type="com.esd.db.model.salary" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="worker_id" property="workerId" jdbcType="INTEGER" />
+    <result column="mark_time_totle" property="markTimeTotle" jdbcType="DOUBLE" />
+    <result column="timer" property="timer" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_method" property="createMethod" jdbcType="VARCHAR" />
+    <result column="update_id" property="updateId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, worker_id, mark_time_totle, timer, create_id, create_time, create_method, 
+    update_id, update_time, update_method
+  </sql>
+  <!-- 工资单(大于100元) -->
+  <select id="selectSalary" resultType="java.util.Map" parameterType="java.util.Map" >
+    SELECT s.worker_id workerId,s.mark_time_totle markTime,w.realName,w.bankCard FROM salary s 
+	LEFT JOIN (SELECT worker_real_name realName,worker_disability_card bankCard,worker_id FROM worker) w 
+	ON s.worker_id = w.worker_id
+	<where>
+		s.mark_time_totle >= 1800
+		<if test="dateType == 1">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+		</if>
+		<if test="dateType == 2">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(s.timer,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
+		</if>
+		<if test="dateType == 3">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(s.timer,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
+		</if>
+		<if test="realName != null">
+			and w.realName like '%${realName}%'
+		</if>
+	</where>
+	limit ${begin},${end} 
+  </select>
+  <select id="selectSalary100Count" resultType="java.lang.Integer" parameterType="java.util.Map" >
+    select count(workerId) count from
+    (SELECT s.worker_id workerId FROM salary s 
+	LEFT JOIN (SELECT worker_real_name realName,worker_id FROM worker) w 
+	ON s.worker_id = w.worker_id
+	<where>
+		s.mark_time_totle >= 1800
+		<if test="dateType == 1">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+		</if>
+		<if test="dateType == 2">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(s.timer,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
+		</if>
+		<if test="dateType == 3">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(s.timer,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
+		</if>
+		<if test="userNameCondition != null">
+			and w.realName like '%${realName}%'
+		</if>
+	</where>) m
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from salary
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <!-- 定时insert数据 -->
+  <insert id="insertTimer" >
+    INSERT INTO salary (worker_id,mark_time_totle,timer)
+	(SELECT worker_id,SUM(task_mark_time) markTime,now() 
+	FROM worker_record WHERE task_effective = 1 AND 
+	DATE_FORMAT(update_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d') 
+	GROUP BY worker_id)
+  </insert>
+  <insert id="insert" parameterType="com.esd.db.model.salary" >
+    insert into salary (id, user_id, worker_id, 
+      mark_time_totle, timer, create_id, 
+      create_time, create_method, update_id, 
+      update_time, update_method)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER}, 
+      #{markTimeTotle,jdbcType=DOUBLE}, #{timer,jdbcType=TIMESTAMP}, #{createId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR}, #{updateId,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.esd.db.model.salary" >
+    insert into salary
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="workerId != null" >
+        worker_id,
+      </if>
+      <if test="markTimeTotle != null" >
+        mark_time_totle,
+      </if>
+      <if test="timer != null" >
+        timer,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createMethod != null" >
+        create_method,
+      </if>
+      <if test="updateId != null" >
+        update_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateMethod != null" >
+        update_method,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="workerId != null" >
+        #{workerId,jdbcType=INTEGER},
+      </if>
+      <if test="markTimeTotle != null" >
+        #{markTimeTotle,jdbcType=DOUBLE},
+      </if>
+      <if test="timer != null" >
+        #{timer,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createMethod != null" >
+        #{createMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="updateId != null" >
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateMethod != null" >
+        #{updateMethod,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.salary" >
+    update salary
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="workerId != null" >
+        worker_id = #{workerId,jdbcType=INTEGER},
+      </if>
+      <if test="markTimeTotle != null" >
+        mark_time_totle = #{markTimeTotle,jdbcType=DOUBLE},
+      </if>
+      <if test="timer != null" >
+        timer = #{timer,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createMethod != null" >
+        create_method = #{createMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateMethod != null" >
+        update_method = #{updateMethod,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esd.db.model.salary" >
+    update salary
+    set user_id = #{userId,jdbcType=INTEGER},
+      worker_id = #{workerId,jdbcType=INTEGER},
+      mark_time_totle = #{markTimeTotle,jdbcType=DOUBLE},
+      timer = #{timer,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_method = #{createMethod,jdbcType=VARCHAR},
+      update_id = #{updateId,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_method = #{updateMethod,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

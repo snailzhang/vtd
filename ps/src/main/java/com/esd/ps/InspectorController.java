@@ -241,7 +241,7 @@ public class InspectorController {
 		int inspectorId = 0;
 		try{
 			inspectorId = inspectorService.getInspectorIdByUserId(userId);
-		}catch(NullPointerException n){
+		}catch(BindingException n){
 			inspectorId = -1;
 		}
 		List<workerRecord> list = workerRecordService.getTaskByWorkerId(inspectorId, workerId, 3, 1);
@@ -250,10 +250,10 @@ public class InspectorController {
 		double taskMarkTime = 0.00;
 		for (Iterator<workerRecord> iterator = list.iterator(); iterator.hasNext();) {
 			workerRecord workerRecord = (workerRecord) iterator.next();
+			WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();			
 			if(workerRecord.getTaskMarkTime() == 0){
 				continue;
 			}
-			WorkerRecordTrans workerRecordTrans = new WorkerRecordTrans();
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskId(workerRecord.getTaskId());
 			workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
@@ -276,7 +276,7 @@ public class InspectorController {
 				taskMarkTime = 0.00;
 				boolean panduan = true;
 				while (true) {
-					int z = (int) (Math.random() * list2.size() + 1);
+					int z = (int) (Math.random() * (list2.size()+1) + 1);
 					panduan = set.add(z);// 检验重复数
 					if (!panduan || z >= list2.size()) {
 						continue;
@@ -286,9 +286,10 @@ public class InspectorController {
 						}
 						list1.add(list2.get(z));
 
-						taskMarkTime = taskMarkTime + list2.get(z).getTaskMarkTime().doubleValue();
+						taskMarkTime = taskMarkTime + Double.parseDouble(list2.get(z).getTaskMarkTime().toString());
 					}
-					if (taskMarkTime > 600) {
+					
+					if (taskMarkTime > 599) {
 						break;
 					}
 					// if (set.size() >= 10) {

@@ -32,6 +32,7 @@ import com.esd.db.model.worker;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
+import com.esd.db.service.SalaryService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
@@ -60,7 +61,8 @@ public class ManagerController {
 	private WorkerRecordService workerRecordService;
 	@Autowired
 	private ManagerService managerService;
-
+	@Autowired
+	private SalaryService salaryService;
 	@Value("${MSG_UNUPLOAD}")
 	private String MSG_UNUPLOAD;
 
@@ -210,20 +212,24 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerSalary", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerSalaryPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
-		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, beginDate, endDate);
+	public Map<String, Object> workerSalaryPost(String userNameCondition, int page, String beginDate, String endDate, int dateType) {
+		logger.debug("page:{},userNameCondition:{},year:{},month:{},dateType:{}", page, userNameCondition, beginDate, endDate,dateType);
 		int pre = (int) System.currentTimeMillis();
 		Map<String, Object> map = new HashMap<String, Object>();
 		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		int totlePage = Constants.ZERO;
-		List<Map<String,Object>> userList = userService.getWorkerSalary(beginDate, endDate, userNameCondition, 1, 1, dateType, page, Constants.ROW);
+		List<Map<String,Object>> salaryList = salaryService.getSalary100(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition);
+		if(salaryList == null){
+			map.put(Constants.LIST, "");
+			return map;
+		}
 		int pre1 = (int) System.currentTimeMillis();
 		logger.debug("userList:{}",(pre1 - pre));
 		manager manager = managerService.selectByPrimaryKey(1);
 		DecimalFormat df = new DecimalFormat("#.00");
 		Double d = 0.00;
-		for (Iterator<Map<String, Object>> iterator = userList.iterator(); iterator.hasNext();) {
+		for (Iterator<Map<String, Object>> iterator = salaryList.iterator(); iterator.hasNext();) {
 			Map<String, Object> map2 = (Map<String, Object>) iterator.next();
 			if (map2.get("markTime") == null) {
 				map2.put("taskMarkTimeMonth", 0.00);
@@ -237,10 +243,9 @@ public class ManagerController {
 		}
 		map.clear();
 		int pre11 = (int) System.currentTimeMillis();
-		int totle = userService.getCountLikeUsername(userNameCondition, userType);
+		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition);
 		int pre12 = (int) System.currentTimeMillis();
 		logger.debug("totle:{}",(pre12 - pre11));
-		
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);

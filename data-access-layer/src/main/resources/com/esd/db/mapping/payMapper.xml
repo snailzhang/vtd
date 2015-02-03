@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.esd.db.dao.payMapper" >
+  <resultMap id="BaseResultMap" type="com.esd.db.model.pay" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="worker_id" property="workerId" jdbcType="INTEGER" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="bank_card" property="bankCard" jdbcType="VARCHAR" />
+    <result column="salary" property="salary" jdbcType="DOUBLE" />
+    <result column="taxes" property="taxes" jdbcType="DOUBLE" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="mark" property="mark" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_id" property="createId" jdbcType="INTEGER" />
+    <result column="create_method" property="createMethod" jdbcType="VARCHAR" />
+    <result column="update_id" property="updateId" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, worker_id, real_name, bank_card, salary, taxes, pay_time, mark, user_id, create_time, 
+    create_id, create_method, update_id, update_time, update_method
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from pay
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from pay
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <!-- 发工资 -->
+  <insert id="insertPay" parameterType="java.util.Map">
+    
+  </insert>
+  <insert id="insert" parameterType="com.esd.db.model.pay" >
+    insert into pay (id, worker_id, real_name, 
+      bank_card, salary, taxes, 
+      pay_time, mark, user_id, 
+      create_time, create_id, create_method, 
+      update_id, update_time, update_method
+      )
+    values (#{id,jdbcType=INTEGER}, #{workerId,jdbcType=INTEGER}, #{realName,jdbcType=VARCHAR}, 
+      #{bankCard,jdbcType=VARCHAR}, #{salary,jdbcType=DOUBLE}, #{taxes,jdbcType=DOUBLE}, 
+      #{payTime,jdbcType=TIMESTAMP}, #{mark,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=INTEGER}, #{createMethod,jdbcType=VARCHAR}, 
+      #{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.esd.db.model.pay" >
+    insert into pay
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="workerId != null" >
+        worker_id,
+      </if>
+      <if test="realName != null" >
+        real_name,
+      </if>
+      <if test="bankCard != null" >
+        bank_card,
+      </if>
+      <if test="salary != null" >
+        salary,
+      </if>
+      <if test="taxes != null" >
+        taxes,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="mark != null" >
+        mark,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createId != null" >
+        create_id,
+      </if>
+      <if test="createMethod != null" >
+        create_method,
+      </if>
+      <if test="updateId != null" >
+        update_id,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateMethod != null" >
+        update_method,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="workerId != null" >
+        #{workerId,jdbcType=INTEGER},
+      </if>
+      <if test="realName != null" >
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCard != null" >
+        #{bankCard,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null" >
+        #{salary,jdbcType=DOUBLE},
+      </if>
+      <if test="taxes != null" >
+        #{taxes,jdbcType=DOUBLE},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="mark != null" >
+        #{mark,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createMethod != null" >
+        #{createMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="updateId != null" >
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateMethod != null" >
+        #{updateMethod,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.esd.db.model.pay" >
+    update pay
+    <set >
+      <if test="workerId != null" >
+        worker_id = #{workerId,jdbcType=INTEGER},
+      </if>
+      <if test="realName != null" >
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="bankCard != null" >
+        bank_card = #{bankCard,jdbcType=VARCHAR},
+      </if>
+      <if test="salary != null" >
+        salary = #{salary,jdbcType=DOUBLE},
+      </if>
+      <if test="taxes != null" >
+        taxes = #{taxes,jdbcType=DOUBLE},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="mark != null" >
+        mark = #{mark,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null" >
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createMethod != null" >
+        create_method = #{createMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateMethod != null" >
+        update_method = #{updateMethod,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.esd.db.model.pay" >
+    update pay
+    set worker_id = #{workerId,jdbcType=INTEGER},
+      real_name = #{realName,jdbcType=VARCHAR},
+      bank_card = #{bankCard,jdbcType=VARCHAR},
+      salary = #{salary,jdbcType=DOUBLE},
+      taxes = #{taxes,jdbcType=DOUBLE},
+      pay_time = #{payTime,jdbcType=TIMESTAMP},
+      mark = #{mark,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_id = #{createId,jdbcType=INTEGER},
+      create_method = #{createMethod,jdbcType=VARCHAR},
+      update_id = #{updateId,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_method = #{updateMethod,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

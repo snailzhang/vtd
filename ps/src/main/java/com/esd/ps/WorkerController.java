@@ -126,7 +126,9 @@ public class WorkerController {
 	public ModelAndView worker(HttpSession session) {
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		manager manager = managerService.selectByPrimaryKey(1);
-		Double aduited = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 1, 1, 0);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		String nowMonth = sdf.format(new Date());
+		Double aduited = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, nowMonth, nowMonth, "", 1, 1, 2);
 		if (aduited == null) {
 			aduited = 0.00;
 		}
