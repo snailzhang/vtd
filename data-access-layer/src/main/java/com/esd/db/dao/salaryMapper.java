@@ -26,4 +26,6 @@ public interface salaryMapper {
     int selectSalary100Count(Map<String,Object> map);
     
     Double selectSUMSalary(Map<String,Object> map);
+    
+    List<Map<String,Object>>selectWorkerSalaryByWorkerId(Map<String,Object> map);
 }

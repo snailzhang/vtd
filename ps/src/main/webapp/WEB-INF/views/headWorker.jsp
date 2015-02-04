@@ -28,6 +28,7 @@ String ut = "worker";
 						<li><a href="${contextPath}/security/voiceNote">标注说明</a></li>
 						<li id="headJSPWorkerCenter"><a href="${contextPath}/security/workerCenter">个人中心</a></li>
 						<li id="headJSPWorkerHistoryPack"><a href="${contextPath}/security/workerHistoryPack">工作历史</a></li>
+						<li><a href="${contextPath}/security/workerSalary">工资单</a></li>
 						<li class="divider"></li>
 						<li><a href="${contextPath}/quit">退出</a></li>
 					</ul>

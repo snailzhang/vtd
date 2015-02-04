@@ -105,4 +105,11 @@ public class SalaryServiceImpl implements SalaryService {
 		return salaryMapper.selectSUMSalary(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> getWorkerSalaryByWorkerId(int workerId) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		return salaryMapper.selectWorkerSalaryByWorkerId(map);
+	}
+
 }

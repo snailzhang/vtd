@@ -22,7 +22,7 @@
   <select id="selectSalary" resultType="java.util.Map" parameterType="java.util.Map" >
     select workerId,markTime,realName,bankCard from 
     (SELECT s.worker_id workerId,sum(s.mark_time_totle) markTime,w.realName,w.bankCard FROM salary s 
-	LEFT JOIN (SELECT worker_real_name realName,worker_disability_card bankCard,worker_id FROM worker) w 
+	LEFT JOIN (SELECT worker_real_name realName,worker_bank_card bankCard,worker_id FROM worker) w 
 	ON s.worker_id = w.worker_id
 	<where>
 		s.mark_time_totle >= 1800
@@ -40,7 +40,19 @@
 		</if>
 	</where>
 	group by s.worker_id) m where markTime>1800
+	order by markTime desc 
 	limit ${begin},${end} 
+  </select>
+  <!-- 指定工作者工资单 -->
+  <select id="selectWorkerSalaryByWorkerId" resultType="java.util.Map" parameterType="java.util.Map">
+  	SELECT SUM(mark_time_totle) totle,DATE_FORMAT(timer,"%Y-%m") timer FROM salary 
+  	<where>
+  		<if test="workerId != null">
+  			worker_id = ${workerId}
+  		</if>
+  	</where>  
+  	GROUP BY timer
+  	order by timer
   </select>
   <select id="selectSUMSalary" resultType="java.lang.Double" parameterType="java.util.Map" >
      select sum(markTime) from

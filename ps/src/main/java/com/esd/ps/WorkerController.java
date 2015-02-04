@@ -38,10 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.esd.db.model.inspectorrecord;
@@ -61,6 +58,7 @@ import com.esd.db.service.InspectorRecordService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.MarkTimeMethodService;
 import com.esd.db.service.PackService;
+import com.esd.db.service.SalaryService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
@@ -85,6 +83,8 @@ public class WorkerController {
 	private WorkerRecordService workerRecordService;
 	@Autowired
 	private PackService packService;
+	@Autowired
+	private SalaryService salaryService;
 	@Autowired
 	private MarkTimeMethodService markTimeMethodService;
 	@Autowired
@@ -299,7 +299,37 @@ public class WorkerController {
 		map.put(Constants.REPLAY, 1);
 		return map;
 	}
-
+	/**
+	 * 工资单
+	 * @return
+	 */
+	@RequestMapping(value = "/workerSalary", method = RequestMethod.GET)
+	public ModelAndView workerSalaryGET() {
+		return new ModelAndView(Constants.WORKER + Constants.SLASH + "workerSalary");
+	}
+	/**
+	 * 
+	 * @param session
+	 * @param page
+	 * @param downPackName
+	 * @return
+	 */
+	@RequestMapping(value = "/workerMonthSalary", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> workerMonthSalaryPOST(HttpSession session) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int workerId = workerService.getWorkerIdByUserId(userId);
+		manager m = managerService.selectByPrimaryKey(1);
+		List<Map<String,Object>> workerSalaryList = salaryService.getWorkerSalaryByWorkerId(workerId);
+		map.put("list", workerSalaryList);
+		if(m.getSalary()>0){
+			map.put("salary",m.getSalary());
+		}else{
+			map.put("salary",0);
+		}	
+		return map;
+	}
 	/**
 	 * worker的down pack完成历史页
 	 * 
