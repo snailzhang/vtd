@@ -27,6 +27,7 @@
 		margin-right:10px;
 	}
 	form{padding:10px;}
+	#warning{border: solid thin yellow;background-color: pink;color: red;font-size: 16px;}
 </style>
 <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/jquery.ui.widget.js"></script>
@@ -36,6 +37,14 @@
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 </head>
 <body>
+	<div align="center">
+	    <div class="alert alert-warning" align="center" style="width: 1000px;" >
+	    	<p>
+		    	严重警告：工作者在标注过程中接触到的所有语料(.wav文件),必须在标注完成后全部销毁，禁止拷贝复制到U盘或其他存储介质中。<br>
+		    	一经发现取消标注资格没收所有标注所得金额。并保留追究保密协议中所承担的法律责任。望所有工作者悉知!
+	    	</p>
+	    </div>
+    </div>
 	<jsp:include page="../headWorker.jsp" />
 	<!-------------------------------- 下载任务 -------------------------------------------------->
 	<div class="container" id="downloadPanel">
