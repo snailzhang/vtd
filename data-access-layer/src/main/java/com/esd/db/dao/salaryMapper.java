@@ -19,7 +19,7 @@ public interface salaryMapper {
 
     int updateByPrimaryKey(salary record);
     
-    int insertTimer();
+    int insertTimer(Map<String,Object> map);
     
     List<Map<String,Object>> selectSalary(Map<String,Object> map);
     
@@ -27,5 +27,9 @@ public interface salaryMapper {
     
     Double selectSUMSalary(Map<String,Object> map);
     
-    List<Map<String,Object>>selectWorkerSalaryByWorkerId(Map<String,Object> map);
+    List<Map<String,Object>> selectWorkerSalaryByWorkerId(Map<String,Object> map);
+    
+    List<Map<String, Object>> selectMoneyList2(Map<String, Object> map);
+    
+    Double selectSumMarkTime2(Map<String, Object> map);
 }

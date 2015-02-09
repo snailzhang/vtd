@@ -1,5 +1,8 @@
 package com.esd.db.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.esd.db.model.worker;
 
 public interface workerMapper {
@@ -35,4 +38,8 @@ public interface workerMapper {
     String selectWorkerRealNameByWorkerId(int workerId);
     
     String selectDownCountByWorkerId(int workerId);
+    
+    List<Map<String,Object>> selectLikeRealName(Map<String,Object> map);
+    
+    int  selectCountLikeRealname(Map<String,Object> map);
 }

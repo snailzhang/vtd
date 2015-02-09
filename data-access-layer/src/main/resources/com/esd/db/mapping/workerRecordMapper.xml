@@ -8,11 +8,13 @@
 		<result column="task_id" property="taskId" jdbcType="INTEGER" />
 		<result column="user_name" property="userName" jdbcType="VARCHAR" />
 		<result column="task_name" property="taskName" jdbcType="VARCHAR" />
+		<result column="real_name" property="realName" jdbcType="VARCHAR" />
 		<result column="pack_name" property="packName" jdbcType="VARCHAR" />
 		<result column="down_pack_name" property="downPackName" jdbcType="VARCHAR" />
 		<result column="down_url" property="downUrl" jdbcType="VARCHAR" />
 		<result column="task_down_time" property="taskDownTime" jdbcType="TIMESTAMP" />
 		<result column="task_upload_time" property="taskUploadTime" jdbcType="TIMESTAMP" />
+		<result column="task_over_time" property="taskOverTime" jdbcType="TIMESTAMP" />
 		<result column="task_statu" property="taskStatu" jdbcType="INTEGER" />
 		<result column="task_lock_time" property="taskLockTime" jdbcType="INTEGER" />
 		<result column="task_mark_time" property="taskMarkTime" jdbcType="DOUBLE" />
@@ -26,8 +28,8 @@
 		<result column="version" property="version" jdbcType="INTEGER" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		record_id, worker_id, pack_id, task_id, user_name,task_name, pack_name,down_pack_name,down_url,
-		task_down_time, task_upload_time,
+		record_id, worker_id, pack_id, task_id, user_name,task_name,real_name pack_name,down_pack_name,down_url,
+		task_down_time, task_upload_time,task_over_time,
 		task_statu, task_lock_time, task_mark_time, create_time,
 		create_method, update_time,
 		update_method, task_effective,inspector_id,inspectorrecord_id,version
@@ -75,7 +77,7 @@
 		<where>
 		task_id = #{taskId,jdbcType=INTEGER}
 		</where>
-		order by update_time desc
+		order by create_time desc
 	</select>
 	<!-- 榜单查询 -->
 	<select id="selectMoneyList" resultType="java.util.Map" parameterType="java.util.Map">
@@ -117,6 +119,14 @@
 		and <![CDATA[task_upload_time <= '${endDate}']]>
 		GROUP BY pack_id
 	</select>
+	<select id="selectPackIdByDateTime2" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT pack_id as packId FROM worker_record 
+		WHERE
+		worker_id = ${workerId}
+		and task_statu = 1
+		and (task_effective = 0 or task_effective = 2)
+		GROUP BY pack_id
+	</select>
 	<select id="selectWorkerRecordLikeDownPackName" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select
 		<include refid="Base_Column_List" />
@@ -148,16 +158,16 @@
 			and worker_id = ${workerId}
 		</if>
 		<if test="dateType == 1">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(update_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+			and <![CDATA[(DATE_FORMAT(task_over_time,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(task_over_time,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 		</if>
 		<if test="dateType == 2">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(update_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
+			and <![CDATA[(DATE_FORMAT(task_over_time,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(task_over_time,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
 		</if>
 		<if test="dateType == 3">
-			and <![CDATA[(DATE_FORMAT(update_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(update_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
+			and <![CDATA[(DATE_FORMAT(task_over_time,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(task_over_time,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
 		</if>
 		<if test="userNameCondition != null">
-			and user_name like '%${userNameCondition}%'
+			and (user_name like '%${userNameCondition}%' or real_name like '%${userNameCondition}%')
 		</if>
 		<if test="taskEffective != null">
 			and task_effective = ${taskEffective}
@@ -556,6 +566,9 @@
 			<if test="userName != null">
 				user_name,
 			</if>
+			<if test="realName != null">
+				real_name,
+			</if>
 			<if test="taskName != null">
 				task_name,
 			</if>
@@ -582,6 +595,9 @@
 			</if>
 			<if test="taskMarkTime != null">
 				task_mark_time,
+			</if>
+			<if test="taskOverTime != null">
+				task_over_time,
 			</if>
 			<if test="createTime != null">
 				create_time,
@@ -624,6 +640,9 @@
 			<if test="userName != null">
 				#{userName,jdbcType=VARCHAR},
 			</if>
+			<if test="realName != null">
+				#{realName,jdbcType=VARCHAR},
+			</if>
 			<if test="taskName != null">
 				#{taskName,jdbcType=VARCHAR},
 			</if>
@@ -650,6 +669,9 @@
 			</if>
 			<if test="taskMarkTime != null">
 				#{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskOverTime != null">
+				#{taskOverTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="createTime != null">
 				#{createTime,jdbcType=TIMESTAMP},
@@ -692,6 +714,36 @@
 		where down_pack_name = #{downPackName,jdbcType=VARCHAR}
 
 	</update>
+	<!-- 更新审核结果 -->
+	<update id="updateAduitByWorkerId2" parameterType="java.util.Map">
+		update worker_record
+		<set>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective},
+			</if>
+			<if test="taskEffective == 1">
+				task_over_time = now(),
+			</if>
+			<if test="taskEffective == 2">
+				task_statu = 0,
+				task_mark_time = null,
+				task_down_time = NOW(),
+			</if>
+			<if test="taskLockTime != null">
+				task_lock_time = #{taskLockTime},
+			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId},
+			</if>
+			<if test="inspectorrecordId != null">
+				inspectorrecord_id = #{inspectorrecordId}
+			</if>
+		</set>
+		where 
+		task_statu = 1 
+		and worker_id = #{workerId} 
+		and (task_effective = 0 or task_effective = 2)
+	</update>
 	<update id="updateByWorkerId" parameterType="java.util.Map">
 		update worker_record
 		<set>
@@ -729,9 +781,7 @@
 			<if test="taskStatu != null">
 				task_statu = 3,
 				task_effective = 0,
-			</if>
-			<if test="version != null">
-				version = (${version} + 1),
+				task_over_time = now(),
 			</if>
 			<if test="updateMethod != null">
 				update_method = "${updateMethod}"
@@ -781,6 +831,9 @@
 			</if>
 			<if test="taskUploadTime != null">
 				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskOverTime != null">
+				task_over_time = #{taskOverTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="taskStatu != null">
 				task_statu = #{taskStatu,jdbcType=INTEGER},

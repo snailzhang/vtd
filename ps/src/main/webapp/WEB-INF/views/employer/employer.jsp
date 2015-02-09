@@ -755,7 +755,7 @@
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.packName+"</td>"+
-									"<td><a href='javascript:changeMarkTimeMethod("+item.packId+",\""+item.markTimeMethodName+"\",\""+item.packName+"\");'>"+item.markTimeMethodName+"</a></td>"+
+									"<td><a href='javascript:changeMarkTimeMethod("+item.packId+",\""+item.markTimeMethodName+"\",\""+item.packName+"\");'>"+item.taskMarkTimeName+"</a></td>"+
 									"<td>"+item.taskCount+"</td>"+
 									"<td>"+item.packLockTime+"小时</td>"+
 									"<td>"+item.createTime+"</td>"+

@@ -80,4 +80,6 @@ public interface taskMapper {
 	
 	int selectWorkerIdZeroCountByPackId(Integer packId);
 	
+	int updateAduitByWorkerId(Map<String, Object> map);
+	
 }

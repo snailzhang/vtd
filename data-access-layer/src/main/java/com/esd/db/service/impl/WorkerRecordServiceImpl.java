@@ -473,4 +473,35 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectTaskByWorkerId(map);
 	}
 
+	//更新审核结果
+	public int updateAduitByWorkerId2(int workerId, int taskEffective, int taskLockTime, int inspectorId, int inspectorrecordId) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		if(taskEffective == 0){
+			map.put("taskEffective",2);
+		}else{
+			map.put("taskEffective",1);
+		}
+		
+		if(taskLockTime>0){
+			map.put("taskLockTime", taskLockTime);
+		}else{
+			map.put("taskLockTime", null);
+		}
+		map.put("inspectorId", inspectorId);
+		if(inspectorrecordId>0){
+			map.put("inspectorrecordId", inspectorrecordId);
+		}else{
+			map.put("inspectorrecordId", null);
+		}
+		return workerRecordMapper.updateAduitByWorkerId2(map);
+	}
+
+	@Override
+	public List<Integer> getPackIdByDateTime2(int workerId) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		return workerRecordMapper.selectPackIdByDateTime2(map);
+	}
+
 }

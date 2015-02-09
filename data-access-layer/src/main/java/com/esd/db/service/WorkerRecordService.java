@@ -97,4 +97,8 @@ public interface WorkerRecordService {
 	Date getTaskUploadTimeByWorkerId(int workerId);
 	
 	List<workerRecord> getTaskByWorkerId(int inspectorId,int workerId,int taskEffective,int taskStatus);
+	
+	int updateAduitByWorkerId2(int workerId,int taskEffective,int taskLockTime,int inspectorId,int inspectorrecordId);
+
+	List<Integer> getPackIdByDateTime2(int workerId);
 }

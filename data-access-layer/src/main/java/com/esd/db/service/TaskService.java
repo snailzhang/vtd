@@ -78,4 +78,6 @@ public interface TaskService {
 	int getWorkerIdZeroCountByPackId(Integer packId);
 	
 	//int updateByLimit(Map<String, Object> map);
+	
+	int updateAduitByWorkerId(int workerId,int taskEffective);
 }

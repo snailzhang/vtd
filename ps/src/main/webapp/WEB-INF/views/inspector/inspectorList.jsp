@@ -138,7 +138,7 @@
 			postQualifyFn = function(taskEffective,day,note){
 				$.ajax({
 					type:'POST',
-					data:{"workerId":workerId,"taskEffective":taskEffective,"day":day,"firstDate":firstDate,"lastDate":lastDate,"note":note},
+					data:{"workerId":workerId,"taskEffective":taskEffective,"day":day,"note":note},
 					url:'${contextPath}/security/auditing',
 					dataType:'json',
 					success:function(data){

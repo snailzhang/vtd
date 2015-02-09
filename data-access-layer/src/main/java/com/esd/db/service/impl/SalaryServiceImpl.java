@@ -51,13 +51,14 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public int insertTimer() {
-		
-		return salaryMapper.insertTimer();
+	public int insertTimer(int workerId) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		return salaryMapper.insertTimer(map);
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalary(int dateType, int page, int row, String beginDate, String endDate, String realName) {
+	public List<Map<String, Object>> getSalary(int dateType, int page, int row, String beginDate, String endDate, String realName,int salaryLine) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("dateType", dateType);
 		if (page == 0) {
@@ -69,6 +70,11 @@ public class SalaryServiceImpl implements SalaryService {
 		}
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);
+		if(salaryLine >= 0){
+			map.put("salaryLine", salaryLine*18);
+		}else{
+			map.put("salaryLine", null);
+		}	
 		if(realName.trim().length()>0){
 			map.put("realName", realName);
 		}else{
@@ -78,11 +84,16 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public int getSalary100Count(int dateType, String beginDate, String endDate, String realName) {
+	public int getSalary100Count(int dateType, String beginDate, String endDate, String realName,int salaryLine) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("dateType", dateType);
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);
+		if(salaryLine >= 0){
+			map.put("salaryLine", salaryLine*18);
+		}else{
+			map.put("salaryLine", null);
+		}		
 		if(realName.trim().length()>0){
 			map.put("realName", realName);
 		}else{
@@ -92,11 +103,16 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public Double getSUMSalary(int dateType, String beginDate, String endDate, String realName) {
+	public Double getSUMSalary(int dateType, String beginDate, String endDate, String realName,int salaryLine) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("dateType", dateType);
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);
+		if(salaryLine >= 0){
+			map.put("salaryLine", salaryLine*18);
+		}else{
+			map.put("salaryLine", null);
+		}	
 		if(realName.trim().length()>0){
 			map.put("realName", realName);
 		}else{
@@ -110,6 +126,26 @@ public class SalaryServiceImpl implements SalaryService {
 		Map<String,Object> map = new HashMap<>();
 		map.put("workerId", workerId);
 		return salaryMapper.selectWorkerSalaryByWorkerId(map);
+	}
+
+	//榜单
+	public List<Map<String, Object>> getMoneyList(String beginDate, String endDate, String month) {
+		Map<String,Object> map = new HashMap<>();
+		if(month.trim().length()>0){
+			map.put("month",month);
+		}else{
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+		}
+		return salaryMapper.selectMoneyList2(map);
+	}
+
+	@Override
+	public Double getSumMarkTime2(int workerId, String nowMonth) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		map.put("nowMonth", nowMonth);
+		return salaryMapper.selectSumMarkTime2(map);
 	}
 
 }

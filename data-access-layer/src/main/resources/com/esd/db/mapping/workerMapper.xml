@@ -32,6 +32,37 @@
 	<sql id="Blob_Column_List">
 		worker_image
 	</sql>
+	<!-- 工作者管理员 -->
+	<select id="selectLikeRealName" resultType = "java.util.Map" parameterType="java.util.Map">
+		SELECT
+			u.username,u.user_id userId,u.user_status userStatus,w.worker_id workerId,w.worker_real_name realName,w.worker_phone phone
+		FROM worker w
+		LEFT JOIN 
+		(SELECT 
+			username,user_id,user_status
+		FROM USER ) u 
+		ON  w.user_id = u.user_id
+		<where>
+			worker_id > 3
+			<if test="userNameCondition != null">
+				and (username like "%${userNameCondition}%" or worker_real_name like "%${userNameCondition}%")
+			</if>
+		</where>
+		limit ${begin},${end}
+	</select>
+	<select id="selectCountLikeRealname" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT
+			COUNT(worker_id)
+		FROM worker w
+		LEFT JOIN 
+		(SELECT 
+			username,user_id
+		FROM USER ) u 
+		ON  w.user_id = u.user_id
+		WHERE
+			worker_id > 3
+			AND (username LIKE "%${userNameCondition}%" OR worker_real_name LIKE "%${userNameCondition}%")
+	</select>
 	<select id="selectWorkerRealNameByWorkerId" resultType="java.lang.String" parameterType="java.lang.Integer">
 		select worker_real_name from worker where worker_id = #{workerId}
 	</select>

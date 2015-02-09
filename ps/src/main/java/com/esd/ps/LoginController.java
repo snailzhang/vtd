@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.annotation.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +43,7 @@ import com.esd.db.service.EmployerService;
 import com.esd.db.service.InspectorService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.PackService;
+import com.esd.db.service.SalaryService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.UserService;
 import com.esd.db.service.UserTypeService;
@@ -77,6 +77,8 @@ public class LoginController {
 	private TaskService taskService;
 	@Autowired
 	private PackService packService;
+	@Autowired
+	private SalaryService salaryService;
 
 	/**
 	 * 用户名不存在
@@ -254,7 +256,7 @@ public class LoginController {
 						workerRecord update = new workerRecord();
 						update.setTaskStatu(2);// 2表示任务已过时
 						update.setTaskEffective(0);
-						update.setUpdateTime(new Date());
+						update.setTaskOverTime(new Date());//
 						update.setRecordId(workerRecord.getRecordId());
 						StackTraceElement[] items = Thread.currentThread().getStackTrace();
 						update.setUpdateMethod(items[1].toString());
@@ -344,11 +346,10 @@ public class LoginController {
 	    cal.setTime(new Date());  
 	    int week = cal.get(Calendar.DAY_OF_WEEK);
 	    //得到月份
-	    int month = cal.get(Calendar.MONTH) + 1;
 	    if(week == 7){
 	    	week = 0;
 	    }
-	    logger.debug("week:{},month:{}",week,month);
+	    logger.debug("week:{}",week);
 	    //日期范围计算
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		  // 创建(日历)格式化
@@ -362,8 +363,8 @@ public class LoginController {
 	    String endDate = sdf.format(new Date());
 	    logger.debug("beginDate:{},endDate:{}",beginDate,endDate);
 	    manager manager = managerService.selectByPrimaryKey(1);
-	    List<Map<String, Object>> monthList = workerRecordService.getMoneyList("","", month);
-	    List<Map<String, Object>> weekList = workerRecordService.getMoneyList(beginDate,endDate,0);
+	    List<Map<String, Object>> monthList = salaryService.getMoneyList("","", endDate);
+	    List<Map<String, Object>> weekList = salaryService.getMoneyList(beginDate,endDate,"");
 		
 	    map.put("salary", manager.getSalary());
 	    map.put("monthList", monthList);

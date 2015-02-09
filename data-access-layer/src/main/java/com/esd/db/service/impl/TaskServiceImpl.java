@@ -292,5 +292,13 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.selectWorkerIdZeroCountByPackId(packId);
 	}
 
+	//更新审核结果
+	public int updateAduitByWorkerId(int workerId, int taskEffective) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		map.put("taskEffective", taskEffective);
+		return taskMapper.updateAduitByWorkerId(map);
+	}
+
 
 }

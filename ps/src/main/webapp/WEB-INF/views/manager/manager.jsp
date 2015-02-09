@@ -168,6 +168,14 @@
 									</div>
 								</div>
 							</div>
+							<div class="col-sm-3" style="width: 121px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 116px;"> 
+										<div class="input-group-addon"> 金额</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="salaryLine" type="text" placeholder="输入金额" value="100">
+									</div>
+								</div>							
+							</div>
 					<!--  <div class="col-xs-2" style="width: 101px;">
 								<div class="form-group">
 									<div class="input-group" style="width: 96px;">
@@ -291,6 +299,7 @@
 		var dateType1 = 2;
 		var beginDate1 = "";
 		var endDate1 = "";
+		var salaryLine = 100;
 		$(document).ready(function(){
 			
 			var date = new Date();
@@ -352,6 +361,10 @@
 				dateType1 = $("#dateTypeCheck1").val();
 				beginDate1 = $("#beginDate1").val();
 				endDate1 = $("#endDate1").val();
+				salaryLine = $("#salaryLine").val();
+				if(salaryLine.length == 0){
+					salaryLine = 0;
+				}
 				//taskUpload1 = $("#taskUpload1").val();
 				userNameCondition1 = $("#userNameCondition1").val();
 				workerSalaryList(1);
@@ -479,7 +492,7 @@
 		workerSalaryList = function(pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"page":pageNum,"userNameCondition":userNameCondition1,"dateType":dateType1,"beginDate":beginDate1,"endDate":endDate1},
+				data:{"page":pageNum,"userNameCondition":userNameCondition1,"dateType":dateType1,"beginDate":beginDate1,"endDate":endDate1,"salaryLine":salaryLine},
 				url:'${contextPath}/security/workerSalary',
 				dataType:'json',
 				success:function(data){
@@ -500,7 +513,7 @@
 							"</tr>"
 							);			
 						});
-						getSumSalary(userNameCondition1,dateType1,beginDate1,endDate1);
+						getSumSalary(userNameCondition1,dateType1,beginDate1,endDate1,salaryLine);
 						var pageDom = $("#workerSalarList .pagination");
 							pageDom.empty();
 							page.creatPageHTML(pageNum,pageTotal,pageDom,"workerSalaryList");
@@ -531,15 +544,15 @@
 				}
 			});
 		};
-		getSumSalary = function(userNameCondition,dateType,beginDate,endDate){
+		getSumSalary = function(userNameCondition,dateType,beginDate,endDate,salaryLine){
 			$.ajax({
 				type:'POST',
-				data:{"userNameCondition":userNameCondition,"dateType":dateType,"beginDate":beginDate,"endDate":endDate},
+				data:{"userNameCondition":userNameCondition,"dateType":dateType,"beginDate":beginDate,"endDate":endDate,"salaryLine":salaryLine},
 				url:'${contextPath}/security/getSumSalary',
 				dataType:'json',
 				success:function(data){
 					var sumSalary = data.sumSalary;			
-					$("#taskMarkTimeMonthTotle1").text("有效标注："+sumSalary);
+					$("#taskMarkTimeMonthTotle1").text("有效标注："+(sumSalary/3600).toFixed(2)+" 小时");
 					$("#aduitingMarkTimeMonthTotle1").text("总金额："+(sumSalary*data.salary/3600).toFixed(2)+" 元");
 				}
 			});

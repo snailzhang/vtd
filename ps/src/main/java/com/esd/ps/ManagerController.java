@@ -26,14 +26,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.esd.db.model.employer;
 import com.esd.db.model.manager;
-import com.esd.db.model.user;
-import com.esd.db.model.userTrans;
 import com.esd.db.model.worker;
 import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.SalaryService;
-import com.esd.db.service.UserService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
 import com.esd.ps.model.WorkerRecordTrans;
@@ -51,8 +48,6 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/security")
 public class ManagerController {
 	private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
-	@Autowired
-	private UserService userService;
 	@Autowired
 	private EmployerService employerService;
 	@Autowired
@@ -134,65 +129,13 @@ public class ManagerController {
 	public Map<String, Object> managerPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
 		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, beginDate, endDate);
 		Map<String, Object> map = new HashMap<String, Object>();
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		List<userTrans> list = new ArrayList<userTrans>();
+		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		int totlePage = Constants.ZERO;
-		List<user> userList = userService.getLikeUsername(userNameCondition, userType, page, Constants.ROW);
+		List<Map<String,Object>> list = workerService.getLikeRealName(userNameCondition,page, Constants.ROW);
 		
-		for (Iterator<user> iterator = userList.iterator(); iterator.hasNext();) {
-			user user = (user) iterator.next();
-			userTrans trans = new userTrans();
-			if (user.getUsertype() == 4) {
-				int count = workerService.getCountWorkerIdByUserId(user.getUserId());
-				if (count == 0) {
-					continue;
-				}
-//				int workerId = workerService.getWorkerIdByUserId(user.getUserId());
-//				Double taskMarkTimeMonth = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, beginDate, endDate, userNameCondition, 1, 1, dateType);
-//				if (taskUpload == 1) {
-//					if (taskMarkTimeMonth == null || taskMarkTimeMonth == 0) {
-//						continue;
-//					}
-//				} else if (taskUpload == 0) {
-//					if (taskMarkTimeMonth != null && taskMarkTimeMonth > 0) {
-//						continue;
-//					}
-//				}
-//				if (taskMarkTimeMonth == null) {
-//					trans.setTaskMarkTimeMonth(0.00);
-//				} else {
-//					trans.setTaskMarkTimeMonth(taskMarkTimeMonth);
-//				}
-				trans.setUserId(user.getUserId());
-				if (user.getUserStatus()) {
-					trans.setUserStatus(1);
-				} else {
-					trans.setUserStatus(0);
-				}
-				trans.setUsername(user.getUsername());
-				worker worker = workerService.getWorkerByUserId(user.getUserId());
-				// 真名
-				trans.setRealName(worker.getWorkerRealName());
-				// 电话
-				trans.setPhone(worker.getWorkerPhone());
-				if (user.getCreateTime() == null) {
-					trans.setCreateTime("");
-				} else {
-					trans.setCreateTime(sdf.format(user.getCreateTime()));
-				}
-				if (user.getUpdateTime() == null) {
-					trans.setUpdateTime("");
-				} else {
-					trans.setUpdateTime(sdf.format(user.getUpdateTime()));
-				}
-			}
-			list.add(trans);
-		}
 		map.clear();
-		int totle = userService.getCountLikeUsername(userNameCondition, userType);
+		int totle = workerService.getCountLikeRealname(userNameCondition);
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
-		// manager manager = managerService.selectByPrimaryKey(1);
-		// map.put("manager", manager);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
@@ -212,14 +155,14 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/workerSalary", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerSalaryPost(String userNameCondition, int page, String beginDate, String endDate, int dateType) {
+	public Map<String, Object> workerSalaryPost(String userNameCondition, int page, String beginDate, String endDate, int dateType,int salaryLine) {
 		logger.debug("page:{},userNameCondition:{},year:{},month:{},dateType:{}", page, userNameCondition, beginDate, endDate,dateType);
 		int pre = (int) System.currentTimeMillis();
 		Map<String, Object> map = new HashMap<String, Object>();
 		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		int totlePage = Constants.ZERO;
-		List<Map<String,Object>> salaryList = salaryService.getSalary(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition);
+		List<Map<String,Object>> salaryList = salaryService.getSalary(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition,salaryLine);
 		if(salaryList == null){
 			map.put(Constants.LIST, "");
 			return map;
@@ -243,7 +186,7 @@ public class ManagerController {
 		}
 		map.clear();
 		int pre11 = (int) System.currentTimeMillis();
-		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition);
+		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition,salaryLine);
 		int pre12 = (int) System.currentTimeMillis();
 		logger.debug("totle:{}",(pre12 - pre11));
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
@@ -303,10 +246,10 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/getSumSalary", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getSumSalaryPost(String userNameCondition, String beginDate, String endDate,int dateType) {
+	public Map<String, Object> getSumSalaryPost(String userNameCondition, String beginDate, String endDate,int dateType,int salaryLine) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		Double sumSalary = salaryService.getSUMSalary(dateType, beginDate, endDate, userNameCondition);	
+		Double sumSalary = salaryService.getSUMSalary(dateType, beginDate, endDate, userNameCondition,salaryLine);	
 		if(sumSalary == null){
 			map.put("sumSalary", 0);
 		}else{

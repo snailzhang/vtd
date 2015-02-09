@@ -98,4 +98,8 @@ public interface workerRecordMapper {
 	Date selectTaskUploadTimeByWorkerId(int workerId);
 	
 	List<workerRecord> selectTaskByWorkerId(Map<String, Object> map);
+	
+	int updateAduitByWorkerId2(Map<String, Object> map);
+	
+	List<Integer> selectPackIdByDateTime2(Map<String, Object> map);
 }

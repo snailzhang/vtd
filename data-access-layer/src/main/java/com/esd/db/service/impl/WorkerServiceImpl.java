@@ -1,5 +1,9 @@
 package com.esd.db.service.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -101,6 +105,36 @@ public class WorkerServiceImpl implements WorkerService {
 	public String getDownCOuntByWorkerId(int workerId) {
 
 		return workerMapper.selectDownCountByWorkerId(workerId);
+	}
+
+	@Override
+	public List<Map<String, Object>> getLikeRealName(String name,int page ,int row){
+		Map<String,Object> map = new HashMap<String, Object>();
+		if (page == 0) {
+			map.put("begin", null);
+			map.put("end", null);
+		} else {
+			map.put("begin", ((page - 1) * row));
+			map.put("end", row);
+		}
+		if(name.trim().length() == 0){
+			map.put("userNameCondition", null);
+		}else{
+			map.put("userNameCondition", name);
+		}
+		
+		return workerMapper.selectLikeRealName(map);
+	}
+
+	@Override
+	public int getCountLikeRealname(String name) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		if(name.trim().length() == 0){
+			map.put("userNameCondition", null);
+		}else{
+			map.put("userNameCondition", name);
+		}
+		return workerMapper.selectCountLikeRealname(map);
 	}
 	
 }

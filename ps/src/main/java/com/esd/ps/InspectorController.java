@@ -27,6 +27,7 @@ import com.esd.db.model.workerRecord;
 import com.esd.db.service.InspectorRecordService;
 import com.esd.db.service.InspectorService;
 import com.esd.db.service.PackService;
+import com.esd.db.service.SalaryService;
 import com.esd.db.service.TaskService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
@@ -37,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.slf4j.Logger;
@@ -66,6 +66,8 @@ public class InspectorController {
 	private InspectorRecordService inspectorRecordService;
 	@Autowired
 	private InspectorService inspectorService;
+	@Autowired
+	private SalaryService salaryService;
 	
 	/**
 	 * 审核管理员
@@ -108,7 +110,7 @@ public class InspectorController {
 			count = 1;
 		}
 		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(inspectorId,userName, timeMark, 1, 3, page, Constants.ROW,Constants.LIMIT_MIN);
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String, Object>> list1 = new ArrayList<>();
 		for (Iterator<Map<String, Object>> iterator = list.iterator(); iterator.hasNext();) {
 			Map<String, Object> map1 = (Map<String, Object>) iterator.next();
@@ -171,7 +173,7 @@ public class InspectorController {
 			count = 1;
 		}
 		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(inspectorId,userName, timeMark, 1, 3, page, Constants.ROW,Constants.LIMIT_MIN);
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String, Object>> list1 = new ArrayList<>();
 		for (Iterator<Map<String, Object>> iterator = list.iterator(); iterator.hasNext();) {
 			Map<String, Object> map1 = (Map<String, Object>) iterator.next();
@@ -361,13 +363,13 @@ public class InspectorController {
 	 */
 	@RequestMapping(value = "/auditing", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> auditingPost(int taskEffective, int day, int workerId, String firstDate, String lastDate, HttpSession session, String note) {
+	public  Map<String, Object> auditingPost(int taskEffective, int day, int workerId,HttpSession session, String note) {
 		Map<String, Object> map = new HashMap<>();
 		int userId = Integer.parseInt(session.getAttribute("userId").toString());
 		int inspectorrecordId = 0;
-		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		int m = taskService.updateByWorkerId(userId, taskEffective, userId, items[1].toString(), workerId, firstDate, lastDate);
-		System.out.println(m);
+		//StackTraceElement[] items = Thread.currentThread().getStackTrace();
+		int m = taskService.updateAduitByWorkerId(workerId, taskEffective);
+		List<Integer> packList = null;
 		if(m > 0){
 			if (taskEffective == 0 && note.length() > 0) {
 				inspectorrecord inspectorrecord = new inspectorrecord();
@@ -383,21 +385,25 @@ public class InspectorController {
 			}else{
 				insId = 0;
 			}
-			workerRecordService.updateByWorkerId(taskEffective, day, workerId, firstDate,insId, lastDate, inspectorrecordId);
+			//插入工资单
+			if(taskEffective == 1){
+				salaryService.insertTimer(workerId);
+				packList = workerRecordService.getPackIdByDateTime2(workerId);
+			}
+			if(day>0){
+				day = 3600*1000*day;
+			}
+			workerRecordService.updateAduitByWorkerId2(workerId, taskEffective, day, insId, inspectorrecordId);
 		}else{
 			map.clear();
 			map.put(Constants.REPLAY, 0);
 			map.put(Constants.MESSAGE, "审核失败!");
 			return map;
-		}
-		
-		
-		
+		}		
 		/**
 		 * 查看任务包的任务完成情况,当任务数等于已完成时更新pack表的pack_status
 		 */
 		if (taskEffective == 1) {
-			List<Integer> packList = workerRecordService.getPackIdByDateTime(workerId, firstDate, lastDate);
 			for (Iterator<Integer> iterator = packList.iterator(); iterator.hasNext();) {
 				Integer packId = (Integer) iterator.next();
 				// pack中的任务数 = (完成的任务数 + 无效任务数 )+ wav.length为0的数
@@ -407,7 +413,6 @@ public class InspectorController {
 					pack.setPackStatus(1);
 					packService.updateByPrimaryKeySelective(pack);
 				}
-
 			}
 		}
 

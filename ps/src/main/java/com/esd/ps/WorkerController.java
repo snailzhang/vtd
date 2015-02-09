@@ -44,7 +44,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.esd.db.model.inspectorrecord;
 import com.esd.db.model.manager;
 import com.esd.db.model.markTimeMethod;
-import com.esd.db.model.packWithBLOBs;
 import com.esd.db.model.task;
 import com.esd.db.model.worker;
 import com.esd.db.model.workerRecord;
@@ -128,12 +127,13 @@ public class WorkerController {
 		manager manager = managerService.selectByPrimaryKey(1);
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		String nowMonth = sdf.format(new Date());
-		Double aduited = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, nowMonth, nowMonth, "", 1, 1, 2);
+		Double aduited = salaryService.getSumMarkTime2(workerId, nowMonth);
 		if (aduited == null) {
 			aduited = 0.00;
 		}
 		DecimalFormat df = new DecimalFormat("#.00");
 		session.setAttribute("salary", df.format(aduited * manager.getSalary() / 3600));
+		
 		session.setAttribute("aduiting", workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 0, 1, 0));
 		session.setAttribute("aduited", aduited);
 		worker worker = workerService.selectByPrimaryKey(workerId);
@@ -289,13 +289,13 @@ public class WorkerController {
 		task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		task.setTaskId(taskId);
 		taskService.updateByTaskId(task);
-		int packId = workerRecordService.getPackIdByTaskId(taskId);
-		if (taskService.getUndoTaskCountByPackId(packId) > 0) {
-			packWithBLOBs pack = new packWithBLOBs();
-			pack.setPackId(packId);
-			pack.setPackStatus(0);
-			packService.updateByPrimaryKeySelective(pack);
-		}
+//		int packId = workerRecordService.getPackIdByTaskId(taskId);
+//		if (taskService.getUndoTaskCountByPackId(packId) > 0) {
+//			packWithBLOBs pack = new packWithBLOBs();
+//			pack.setPackId(packId);
+//			pack.setPackStatus(0);
+//			packService.updateByPrimaryKeySelective(pack);
+//		}
 		map.put(Constants.REPLAY, 1);
 		return map;
 	}
@@ -561,6 +561,7 @@ public class WorkerController {
 		}
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		String realName = workerService.getWorkerRealNameByWorkerId(workerId);
 		// int packId = packService.getPackIdOrderByPackLvl();
 		// 更新工作者下载状态
 		worker worker = new worker();
@@ -621,6 +622,7 @@ public class WorkerController {
 				// 更新worker_record 工作者的任务记录
 				workerRecord workerRecord = new workerRecord();
 				workerRecord.setCreateTime(new Date());
+				workerRecord.setTaskOverTime(new Date());
 				workerRecord.setDownPackName(downPackName);
 				workerRecord.setDownUrl(wrongPath);
 				workerRecord.setPackId(taskWithBLOBs.getPackId());
@@ -632,6 +634,8 @@ public class WorkerController {
 					workerRecord.setTaskLockTime(packLockTime);
 				}
 				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
+				//真名
+				workerRecord.setRealName(realName);
 				workerRecord.setTaskStatu(0);
 				workerRecord.setWorkerId(workerId);
 				workerRecord.setUserName(session.getAttribute(Constants.USER_NAME).toString());
@@ -755,6 +759,7 @@ public class WorkerController {
 							// 更新workerRecord表
 							workerRecord workerRecord = new workerRecord();
 							workerRecord.setTaskUploadTime(new Date());
+							workerRecord.setTaskOverTime(new Date());
 							workerRecord.setTaskStatu(1);
 							workerRecord.setTaskEffective(0);
 							workerRecord.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
@@ -862,5 +867,8 @@ public class WorkerController {
 			e.printStackTrace();
 		}
 		return "";
+	}
+	public void test (){
+		System.out.println(salaryService.getWorkerSalaryByWorkerId(25));
 	}
 }

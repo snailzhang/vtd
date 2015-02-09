@@ -1,6 +1,9 @@
 package com.esd.db.service;
 
 
+import java.util.List;
+import java.util.Map;
+
 import com.esd.db.model.worker;
 
 public interface WorkerService {
@@ -33,5 +36,9 @@ public interface WorkerService {
     
     String getWorkerRealNameByWorkerId(int workerId);
     
-    String getDownCOuntByWorkerId(int workerId);    
+    String getDownCOuntByWorkerId(int workerId);  
+    
+    List<Map<String,Object>> getLikeRealName(String name,int page,int row);
+    
+    int getCountLikeRealname(String name);
 }

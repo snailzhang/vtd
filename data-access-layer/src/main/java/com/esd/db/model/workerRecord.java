@@ -15,6 +15,8 @@ public class workerRecord {
     private String userName;
 
     private String taskName;
+    
+    private String realName;
 
     private String packName;
     
@@ -25,6 +27,8 @@ public class workerRecord {
     private Date taskDownTime;
 
     private Date taskUploadTime;
+    
+    private Date taskOverTime;
 
     private Integer taskStatu;
 
@@ -96,8 +100,16 @@ public class workerRecord {
     public void setTaskName(String taskName) {
         this.taskName = taskName == null ? null : taskName.trim();
     }
+    
+    public String getRealName() {
+		return realName;
+	}
 
-    public String getPackName() {
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getPackName() {
         return packName;
     }
 
@@ -120,8 +132,16 @@ public class workerRecord {
     public void setTaskUploadTime(Date taskUploadTime) {
         this.taskUploadTime = taskUploadTime;
     }
+      
+    public Date getTaskOverTime() {
+		return taskOverTime;
+	}
 
-    public Integer getTaskStatu() {
+	public void setTaskOverTime(Date taskOverTime) {
+		this.taskOverTime = taskOverTime;
+	}
+
+	public Integer getTaskStatu() {
         return taskStatu;
     }
 
