@@ -79,8 +79,8 @@
   			worker_id = ${workerId}
   		</if>
   	</where>  
-  	GROUP BY timer
-  	order by timer
+  	GROUP BY DATE_FORMAT(timer,"%Y-%m")
+  	order by DATE_FORMAT(timer,"%Y-%m") desc
   </select>
   <select id="selectSUMSalary" resultType="java.lang.Double" parameterType="java.util.Map" >
      select sum(markTime) from
