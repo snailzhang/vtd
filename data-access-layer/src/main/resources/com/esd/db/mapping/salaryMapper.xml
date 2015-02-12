@@ -90,15 +90,17 @@
   </select>
   <!-- 指定工作者工资单 -->
   <select id="selectWorkerSalaryByWorkerId" resultType="java.util.Map" parameterType="java.util.Map">
-  	SELECT SUM(mark_time_totle) totle,DATE_FORMAT(timer,"%Y-%m") timer FROM salary 
-  	<where>
-  		<if test="workerId != null">
-  			worker_id = ${workerId}
-  			and mark_time_totle > 0
-  		</if>
-  	</where>  
-  	GROUP BY DATE_FORMAT(timer,"%Y-%m")
-  	order by DATE_FORMAT(timer,"%Y-%m") desc
+  	SELECT SUM(s.mark_time_totle) totle,DATE_FORMAT(s.timer,"%Y-%m") timer,s1.totle1  FROM salary s
+		LEFT JOIN
+		(SELECT SUM(mark_time_totle) totle1,DATE_FORMAT(timer,"%Y-%m") timer1 FROM salary  WHERE
+			<![CDATA[worker_id = ${workerId} AND mark_time_totle < 0]]>		 
+		  	GROUP BY DATE_FORMAT(timer,"%Y-%m")
+		) s1
+		ON DATE_FORMAT(s.timer,"%Y-%m") = timer1
+		  	WHERE
+		s.worker_id = ${workerId} AND s.mark_time_totle > 0 
+  	GROUP BY DATE_FORMAT(s.timer,"%Y-%m")	
+  	ORDER BY DATE_FORMAT(s.timer,"%Y-%m") DESC 
   </select>
   <select id="selectSUMSalary" resultType="java.lang.Double" parameterType="java.util.Map" >
      select sum(markTime) from

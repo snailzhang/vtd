@@ -48,6 +48,7 @@
 							<th>日期</th>
 							<th>有效时间(秒)</th>
 							<th>薪金(元)</th>
+							<th>已结(元)</th>
 						</tr>
 					</thead>
 					<tbody id="packHistoryTable" role="tablist" aria-multiselectable="true"></tbody>
@@ -151,13 +152,19 @@
 						$("tbody").append("<tr class='text-danger'><td colspan='4'>无内容</td></tr>");
 					}else{
 						$("tbody").empty();
+						var totle1 = 0;
 						$.each(data.list,function(i,item){
+							if(item.totle1 != null){
+								totle1 = item.totle1;
+							}
+							
 							$("tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.timer+"</td>"+
 									"<td>"+item.totle+"</td>"+
 									"<td>"+(item.totle*data.salary/3600).toFixed(2)+"</td>"+
+									"<td>"+(totle1*data.salary/3600).toFixed(2)+"</td>"+
 								"</tr>"
 							);
 						});
