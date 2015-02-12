@@ -78,7 +78,7 @@
 										<div class="input-group-addon">类别</div>
 										<select class="form-control" id="dateTypeCheck">
 											<option value="1">日</option>
-											<option value="2" selected="selected">月</option>
+											<option value="2">月</option>
 											<option value="3">年</option>
 										</select>
 									</div>
@@ -132,9 +132,9 @@
 					</div>
 					<div class="panel-body">
 						<form class="form-inline" role="form">					
-							<div class="col-sm-3" style="width: 225px;">
+							<div class="col-sm-3" style="width: 175px;">
 								<div class="form-group">
-									<div class="input-group" style="width: 220px;"> 
+									<div class="input-group" style="width: 170px;"> 
 										<div class="input-group-addon"> 用户名</div>
 										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameCondition1" type="text" placeholder="查询用户">
 									</div>
@@ -168,28 +168,29 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-sm-3" style="width: 121px;">
+							<div class="col-sm-3" style="width: 101px;">
 								<div class="form-group">
-									<div class="input-group" style="width: 116px;"> 
+									<div class="input-group" style="width: 96px;"> 
 										<div class="input-group-addon"> 金额</div>
-										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="salaryLine" type="text" placeholder="输入金额" value="100">
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="salaryLine" type="text" placeholder="输入金额" value="0">
 									</div>
 								</div>							
 							</div>
-					<!--  <div class="col-xs-2" style="width: 101px;">
+					  		<div class="col-xs-2" style="width: 111px;">
 								<div class="form-group">
-									<div class="input-group" style="width: 96px;">
-										<div class="input-group-addon">状态</div>
-										<select class="form-control" id="taskUpload1">
-											<option value="2">全</option>
-											<option value="1">有</option>
-											<option value="0">无</option>
+									<div class="input-group" style="width: 105px;">
+										<div class="input-group-addon">结算</div>
+										<select class="form-control" id="payOffType">
+											<option value="2">全部</option>
+											<option value="1">已结</option>
+											<option value="0">未结</option>
 										</select>
 									</div>
 								</div>				
-							</div>-->
+							</div>
 							<div class="btn2" style="float: right;">
 								<button type="button" id="searchSalaryBtn" class="btn btn-default" >查询</button>
+								<button type="button" id="payOffBtn" class="btn btn-default" >结算</button>
 							</div>			
 						</form>
 						<div style="clear: both;"></div>
@@ -202,6 +203,7 @@
 								<th width='12%'>银行卡号</th>
 								<th width='15%'>标注时间</th>
 								<th width='15%'>金额</th>
+								<th width='10%'><a href="#" id="choose"><span id="choose-p">全选</span></a></th>
 							</tr>
 						</thead>
 						<tbody id = "workerSalary-tbody"></tbody>
@@ -299,7 +301,8 @@
 		var dateType1 = 2;
 		var beginDate1 = "";
 		var endDate1 = "";
-		var salaryLine = 100;
+		var salaryLine = 0;
+		var payOffType = 2;//2:常规 0:未结 1:已结
 		$(document).ready(function(){
 			
 			var date = new Date();
@@ -311,6 +314,8 @@
 			$("#beginDate,#endDate").val(todayDate);
 			$("#beginDate1,#endDate1").val(todayDate);
 			chooseUserType(1);
+			//结算按钮
+			$("#payOffBtn").attr("disabled","disabled");
 			workerSalaryList(1);
 			/*-------------------------------datepicker-----------------------------------------*/
 			$.datepicker.regional[ "ch" ];
@@ -362,11 +367,18 @@
 				beginDate1 = $("#beginDate1").val();
 				endDate1 = $("#endDate1").val();
 				salaryLine = $("#salaryLine").val();
+				payOffType = $("#payOffType").val();
 				if(salaryLine.length == 0){
 					salaryLine = 0;
 				}
-				//taskUpload1 = $("#taskUpload1").val();
 				userNameCondition1 = $("#userNameCondition1").val();
+				//
+				var noPay = $("#payOffType").val();
+				if(noPay == 0){
+					$("#payOffBtn").removeAttr("disabled");
+				}else{
+					$("#payOffBtn").attr("disabled","disabled");
+				}	
 				workerSalaryList(1);
 			});
 			/*--------------------------------------cx点击设置按钮-------------------------------------------------------*/
@@ -492,14 +504,15 @@
 		workerSalaryList = function(pageNum){
 			$.ajax({
 				type:'POST',
-				data:{"page":pageNum,"userNameCondition":userNameCondition1,"dateType":dateType1,"beginDate":beginDate1,"endDate":endDate1,"salaryLine":salaryLine},
+				data:{"page":pageNum,"userNameCondition":userNameCondition1,"dateType":dateType1,"beginDate":beginDate1,"endDate":endDate1,"salaryLine":salaryLine,"payOffType":payOffType},
 				url:'${contextPath}/security/workerSalary',
 				dataType:'json',
 				success:function(data){
 					$("#workerSalary-tbody").empty();			
 					if(data.list == ""){
 						$("#workerSalary-tbody").empty();
-						$("#workerSalary-tbody").append("<tr class='text-danger'><td colspan='5'>无内容</td></tr>");
+						$("#workerSalarList .pageGoBtn").empty();
+						$("#workerSalary-tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
 						pageTotal = data.totlePage; 
 						$.each(data.list,function(i,item){
@@ -510,10 +523,11 @@
 								"<td>"+item.bankCard+"</td>"+
 								"<td>"+item.taskMarkTimeMonth  +"</td>"+
 								"<td>"+item.salary+"</td>"+
+								"<td><input type='checkbox' class='checkbox1' name='checkbox1' value='"+item.workerId+"'/></td>"+
 							"</tr>"
 							);			
 						});
-						getSumSalary(userNameCondition1,dateType1,beginDate1,endDate1,salaryLine);
+						getSumSalary(userNameCondition1,dateType1,beginDate1,endDate1,salaryLine,payOffType);
 						var pageDom = $("#workerSalarList .pagination");
 							pageDom.empty();
 							page.creatPageHTML(pageNum,pageTotal,pageDom,"workerSalaryList");
@@ -527,6 +541,60 @@
 							});					
 					}
 				}
+			});
+		};
+		/*--------------------------------------全选-----------------------------------------------------------------*/
+		$("#choose").click(function(){
+			var choose = $("#choose-p").text();
+			if(choose == "全选"){
+				$(".checkbox1").prop("checked",true);
+				$("#choose-p").text("取消");
+			}else{
+				$(".checkbox1").prop("checked",false);
+				$("#choose-p").text("全选");
+			}
+		});
+		/*---------------------------------------结算---------------------------------------------------------------*/
+		$("#payOffBtn").click(function(){
+			payOffType = $("#payOffType").val();
+			if(payOffType == 0){
+				var conWin = confirm("确定要执行结算吗？");
+				if(conWin){
+					var checkList = $(".checkbox1");
+					var l = checkList.length;
+					var str="";
+					for(var i=0;i<l;i++){
+						if (checkList[i].checked == true) {
+							var workerId = checkList[i].value;
+							str = workerId +"/"+str;
+		        		}
+					}
+					
+					dateType1 = $("#dateTypeCheck1").val();
+					beginDate1 = $("#beginDate1").val();
+					endDate1 = $("#endDate1").val();				
+					payOff(str);	
+				}
+			}else{
+				alert("现在显示的不是未结数据,不能进行结算!!");
+			}	
+		});
+		/*--------------------------------------结算工资-------------------------------------------*/
+		payOff = function(str){
+			$.ajax({
+				type:'POST',
+				data:{"workerIds":str,"dateType":dateType1,"beginDate":beginDate1,"endDate":endDate1},
+				url:'${contextPath}/security/payOff',
+				dataType:'json',
+				success:function(data){
+					var replay = data.replay;
+					if(replay>0){
+						alert("结算工资完成!");
+					}else{
+						alert("结算工资出错!");
+					}
+					workerSalaryList(1);	
+				}	
 			});
 		};
 		/*--------------------------------------获得语音标注总和-------------------------------------------*/
@@ -544,10 +612,10 @@
 				}
 			});
 		};
-		getSumSalary = function(userNameCondition,dateType,beginDate,endDate,salaryLine){
+		getSumSalary = function(userNameCondition,dateType,beginDate,endDate,salaryLine,payOffType){
 			$.ajax({
 				type:'POST',
-				data:{"userNameCondition":userNameCondition,"dateType":dateType,"beginDate":beginDate,"endDate":endDate,"salaryLine":salaryLine},
+				data:{"userNameCondition":userNameCondition,"dateType":dateType,"beginDate":beginDate,"endDate":endDate,"salaryLine":salaryLine,"payOffType":payOffType},
 				url:'${contextPath}/security/getSumSalary',
 				dataType:'json',
 				success:function(data){

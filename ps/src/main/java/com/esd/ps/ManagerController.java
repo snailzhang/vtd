@@ -151,18 +151,19 @@ public class ManagerController {
 	 * @param endDate
 	 * @param taskUpload
 	 * @param dateType
+	 * @param payOffType  0:未结 1:已结 2 常规
 	 * @return
 	 */
 	@RequestMapping(value = "/workerSalary", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerSalaryPost(String userNameCondition, int page, String beginDate, String endDate, int dateType,int salaryLine) {
+	public Map<String, Object> workerSalaryPost(String userNameCondition, int page, String beginDate, String endDate, int dateType,int salaryLine,int payOffType) {
 		logger.debug("page:{},userNameCondition:{},year:{},month:{},dateType:{}", page, userNameCondition, beginDate, endDate,dateType);
 		int pre = (int) System.currentTimeMillis();
 		Map<String, Object> map = new HashMap<String, Object>();
 		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		int totlePage = Constants.ZERO;
-		List<Map<String,Object>> salaryList = salaryService.getSalary(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition,salaryLine);
+		List<Map<String,Object>> salaryList = salaryService.getSalary(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition,salaryLine,payOffType);
 		if(salaryList == null){
 			map.put(Constants.LIST, "");
 			return map;
@@ -179,14 +180,18 @@ public class ManagerController {
 				map2.put("salary", 0.00);
 			} else {
 				d = Double.parseDouble(map2.get("markTime").toString());
-				map2.put("taskMarkTimeMonth", d);
+				if(d<0){
+					map2.put("taskMarkTimeMonth", -d);
+				}else{
+					map2.put("taskMarkTimeMonth", d);
+				}				
 				map2.put("salary", Double.parseDouble(df.format(d * manager.getSalary() / 3600)));								
 			}
 			list.add(map2);
 		}
 		map.clear();
 		int pre11 = (int) System.currentTimeMillis();
-		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition,salaryLine);
+		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition,salaryLine,payOffType);
 		int pre12 = (int) System.currentTimeMillis();
 		logger.debug("totle:{}",(pre12 - pre11));
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
@@ -195,7 +200,37 @@ public class ManagerController {
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
-	
+	/**
+	 * 结算
+	 * @param userNameCondition
+	 * @param beginDate
+	 * @param endDate
+	 * @param dateType
+	 * @param salaryLine
+	 * @return
+	 */
+	@RequestMapping(value = "/payOff", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> payOffPost(String workerIds,String beginDate, String endDate,int dateType) {
+		Map<String, Object> map = new HashMap<String, Object>();
+//		  String str[] = endDate.split("-");
+//		  int month = Integer.parseInt(str[1]);
+//		  int year = Integer.parseInt(str[0]);
+//		  if(month == 1){
+//			  year = year - 1;
+//			  month = 12;
+//		  }else{
+//			  month = month - 1;
+//		  }
+//		  String month1 = "00" + month;
+//		  month1 = month1.substring((month1.length() - 2),month1.length());
+//		  String timer = year + "-" + month1 + "-" +"10";
+		  
+		  String workerId[] = workerIds.split("/");
+		  int replay = salaryService.insertPayOffInfor1(dateType, beginDate, endDate,workerId, endDate);	
+		  map.put(Constants.REPLAY, replay);
+		return map;
+	}
 	/**
 	 * 获得语音标注总和
 	 * 
@@ -246,14 +281,18 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/getSumSalary", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getSumSalaryPost(String userNameCondition, String beginDate, String endDate,int dateType,int salaryLine) {
+	public Map<String, Object> getSumSalaryPost(String userNameCondition, String beginDate, String endDate,int dateType,int salaryLine,int payOffType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		Double sumSalary = salaryService.getSUMSalary(dateType, beginDate, endDate, userNameCondition,salaryLine);	
+		Double sumSalary = salaryService.getSUMSalary(dateType, beginDate, endDate, userNameCondition,salaryLine,payOffType);	
 		if(sumSalary == null){
 			map.put("sumSalary", 0);
 		}else{
-			map.put("sumSalary", sumSalary);
+			if(sumSalary<0){
+				map.put("sumSalary", -sumSalary);
+			}else{
+				map.put("sumSalary", sumSalary);
+			}
 		}
 		manager manager = managerService.selectByPrimaryKey(1);
 		if(manager.getSalary()>0){

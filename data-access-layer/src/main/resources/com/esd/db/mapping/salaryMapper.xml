@@ -7,6 +7,7 @@
     <result column="worker_id" property="workerId" jdbcType="INTEGER" />
     <result column="mark_time_totle" property="markTimeTotle" jdbcType="DOUBLE" />
     <result column="timer" property="timer" jdbcType="TIMESTAMP" />
+    <result column="payOff_time" property="payOffTime" jdbcType="TIMESTAMP" />
     <result column="create_id" property="createId" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_method" property="createMethod" jdbcType="VARCHAR" />
@@ -15,7 +16,7 @@
     <result column="update_method" property="updateMethod" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, worker_id, mark_time_totle, timer, create_id, create_time, create_method, 
+    id, user_id, worker_id, mark_time_totle, timer,payOff_time, create_id, create_time, create_method, 
     update_id, update_time, update_method
   </sql>
   <!-- 榜单查询 -->
@@ -24,12 +25,13 @@
 			LEFT JOIN 
 			(SELECT worker_id ,worker_real_name realName FROM worker) w 
 			ON s.worker_id = w.worker_id
-			WHERE 
+			WHERE
+			 s.mark_time_totle > 0
 			<if test="month != null">
-            	<![CDATA[(DATE_FORMAT(timer,'%Y-%m') = DATE_FORMAT('${month}','%Y-%m'))]]>
+            	<![CDATA[and (DATE_FORMAT(timer,'%Y-%m') = DATE_FORMAT('${month}','%Y-%m'))]]>
             </if>
             <if test="beginDate != null">
-            	<![CDATA[(DATE_FORMAT(timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') 
+            	<![CDATA[and (DATE_FORMAT(timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') 
             	and DATE_FORMAT(timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
             </if>
 			GROUP BY s.worker_id
@@ -39,7 +41,7 @@
 	<!-- 工作者当月有效时间ByWorkerId -->
 	<select id="selectSumMarkTime2" resultType="java.lang.Double" parameterType="java.util.Map">
 		select sum(mark_time_totle) month from salary
-		where worker_id = ${workerId}
+		where worker_id = ${workerId} and mark_time_totle > 0
 			 and DATE_FORMAT(timer,'%Y-%m') >= DATE_FORMAT('${nowMonth}','%Y-%m')
 	</select>
   <!-- 工资单 -->
@@ -49,7 +51,12 @@
 	LEFT JOIN (SELECT worker_real_name realName,worker_bank_card bankCard,worker_id FROM worker) w 
 	ON s.worker_id = w.worker_id
 	<where>
-		3 > 2
+		<if test="payOffType == 2">
+			<![CDATA[s.mark_time_totle > 0]]>
+		</if>
+		<if test="payOffType == 1">
+			<![CDATA[s.mark_time_totle < 0]]>
+		</if>
 		<if test="dateType == 1">
 			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 		</if>
@@ -66,9 +73,19 @@
 	group by s.worker_id) m where 
 	3 > 2
 	<if test="salaryLine != null">
-		and <![CDATA[markTime >= ${salaryLine}]]>
-	</if> 
-	order by markTime desc 
+		<if test="payOffType == 2 or payOffType == 0">
+			and <![CDATA[markTime >= ${salaryLine}]]>
+		</if>
+		<if test="payOffType == 1">
+			and <![CDATA[markTime <= -${salaryLine}]]>
+		</if>
+	</if>
+	<if test="payOffType == 2 or payOffType == 0">
+		order by markTime desc
+	</if>
+	<if test="payOffType == 1">
+		order by markTime 
+	</if>	 
 	limit ${begin},${end} 
   </select>
   <!-- 指定工作者工资单 -->
@@ -77,6 +94,7 @@
   	<where>
   		<if test="workerId != null">
   			worker_id = ${workerId}
+  			and mark_time_totle > 0
   		</if>
   	</where>  
   	GROUP BY DATE_FORMAT(timer,"%Y-%m")
@@ -88,6 +106,12 @@
 	LEFT JOIN (SELECT worker_real_name realName,worker_id FROM worker) w 
 	ON s.worker_id = w.worker_id
 	<where>
+		<if test="payOffType == 2">
+			<![CDATA[s.mark_time_totle > 0]]>
+		</if>
+		<if test="payOffType == 1">
+			<![CDATA[s.mark_time_totle < 0]]>
+		</if>
 		<if test="dateType == 1">
 			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 		</if>
@@ -106,7 +130,12 @@
 	where 
 	3 > 2
 	<if test="salaryLine != null">
-		and <![CDATA[markTime >= ${salaryLine}]]>
+		<if test="payOffType == 2 or payOffType == 0">
+			and <![CDATA[markTime >= ${salaryLine}]]>
+		</if>
+		<if test="payOffType == 1">
+			and <![CDATA[markTime <= -${salaryLine}]]>
+		</if>
 	</if> 
   </select>
   <select id="selectSalary100Count" resultType="java.lang.Integer" parameterType="java.util.Map" >
@@ -115,6 +144,12 @@
 	LEFT JOIN (SELECT worker_real_name realName,worker_id FROM worker) w 
 	ON s.worker_id = w.worker_id
 	<where>
+		<if test="payOffType == 2">
+			<![CDATA[s.mark_time_totle > 0]]>
+		</if>
+		<if test="payOffType == 1">
+			<![CDATA[s.mark_time_totle < 0]]>
+		</if>
 		<if test="dateType == 1">
 			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
 		</if>
@@ -132,18 +167,78 @@
 	) m where 
 	3 > 2
 	<if test="salaryLine != null">
-		and <![CDATA[markTime >= ${salaryLine}]]>
+		<if test="payOffType == 2 or payOffType == 0">
+			and <![CDATA[markTime >= ${salaryLine}]]>
+		</if>
+		<if test="payOffType == 1">
+			and <![CDATA[markTime <= -${salaryLine}]]>
+		</if>
 	</if> 
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from salary
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <!-- 定时insert数据 -->
+  <!--合格的worker_record数据insert into salary-->
   <insert id="insertTimer" parameterType="java.util.Map">
     INSERT INTO salary (worker_id,mark_time_totle,timer)
 	(SELECT ${workerId}, SUM(task_mark_time),NOW() FROM worker_record 
 	WHERE worker_id = ${workerId} AND task_statu = 1 AND (task_effective = 0 or task_effective = 2))
+  </insert>
+   <!-- 结算salary -->
+  <insert id="insertPayOffInfor" parameterType="java.util.Map">
+    INSERT INTO salary (worker_id,mark_time_totle,timer,payOff_time)
+	(SELECT worker_id,markTime,${timer},NOW() 
+	FROM 
+	(SELECT s.worker_id,-SUM(s.mark_time_totle) markTime,w.wrn 
+	FROM salary s
+	LEFT JOIN
+	(SELECT worker_real_name wrn,worker_id FROM worker) w
+	ON w.worker_id = s.worker_id   
+	<where> 
+		<if test="dateType == 1">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+		</if>
+		<if test="dateType == 2">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(s.timer,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
+		</if>
+		<if test="dateType == 3">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(s.timer,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
+		</if>
+		<if test="realName != null">
+			and w.wrn like '%${realName}%'
+		</if>
+	</where> 
+	GROUP BY s.worker_id
+	) m 
+	WHERE <![CDATA[markTime < ${salaryLine}]]> )
+  </insert>
+  <!-- 结算salary -->
+  <insert id="insertPayOffInfor1" parameterType="java.util.Map">
+    INSERT INTO salary (worker_id,mark_time_totle,timer,payOff_time)
+	(SELECT worker_id,markTime,'${timer}',NOW() 
+	FROM 
+	(SELECT s.worker_id,-SUM(s.mark_time_totle) markTime,w.wrn 
+	FROM salary s
+	LEFT JOIN
+	(SELECT worker_real_name wrn,worker_id FROM worker) w
+	ON w.worker_id = s.worker_id   
+	<where>
+		<foreach collection="workerId" item="item" open="(" close=")" separator="OR">  
+	   		s.worker_id = #{item}  
+	  	</foreach> 
+		<if test="dateType == 1">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m-%d') >= DATE_FORMAT('${beginDate}','%Y-%m-%d') and DATE_FORMAT(s.timer,'%Y-%m-%d') <= DATE_FORMAT('${endDate}','%Y-%m-%d'))]]>
+		</if>
+		<if test="dateType == 2">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y-%m') >= DATE_FORMAT('${beginDate}','%Y-%m') and DATE_FORMAT(s.timer,'%Y-%m') <= DATE_FORMAT('${endDate}','%Y-%m'))]]>
+		</if>
+		<if test="dateType == 3">
+			and <![CDATA[(DATE_FORMAT(s.timer,'%Y') >= DATE_FORMAT('${beginDate}','%Y') and DATE_FORMAT(s.timer,'%Y') <= DATE_FORMAT('${endDate}','%Y'))]]>
+		</if>
+	</where> 
+	GROUP BY s.worker_id
+	) m )
   </insert>
   <insert id="insert" parameterType="com.esd.db.model.salary" >
     insert into salary (id, user_id, worker_id, 

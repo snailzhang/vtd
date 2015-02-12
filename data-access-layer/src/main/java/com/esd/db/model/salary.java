@@ -13,7 +13,9 @@ public class salary {
     private Double markTimeTotle;
 
     private Date timer;
-
+    
+    private Date payOffTime;
+    
     private Integer createId;
 
     private Date createTime;
@@ -65,8 +67,16 @@ public class salary {
     public void setTimer(Date timer) {
         this.timer = timer;
     }
+    
+    public Date getPayOffTime() {
+		return payOffTime;
+	}
 
-    public Integer getCreateId() {
+	public void setPayOffTime(Date payOffTime) {
+		this.payOffTime = payOffTime;
+	}
+
+	public Integer getCreateId() {
         return createId;
     }
 

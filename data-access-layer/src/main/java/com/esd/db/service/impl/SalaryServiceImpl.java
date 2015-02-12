@@ -58,9 +58,10 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalary(int dateType, int page, int row, String beginDate, String endDate, String realName,int salaryLine) {
+	public List<Map<String, Object>> getSalary(int dateType, int page, int row, String beginDate, String endDate, String realName,int salaryLine,int payOffType) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("dateType", dateType);
+		map.put("payOffType",payOffType);
 		if (page == 0) {
 			map.put("begin", null);
 			map.put("end", null);
@@ -84,9 +85,10 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public int getSalary100Count(int dateType, String beginDate, String endDate, String realName,int salaryLine) {
+	public int getSalary100Count(int dateType, String beginDate, String endDate, String realName,int salaryLine,int payOffType) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("dateType", dateType);
+		map.put("payOffType",payOffType);
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);
 		if(salaryLine >= 0){
@@ -103,9 +105,10 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public Double getSUMSalary(int dateType, String beginDate, String endDate, String realName,int salaryLine) {
+	public Double getSUMSalary(int dateType, String beginDate, String endDate, String realName,int salaryLine,int payOffType) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("dateType", dateType);
+		map.put("payOffType",payOffType);
 		map.put("beginDate", beginDate);
 		map.put("endDate", endDate);
 		if(salaryLine >= 0){
@@ -146,6 +149,33 @@ public class SalaryServiceImpl implements SalaryService {
 		map.put("workerId", workerId);
 		map.put("nowMonth", nowMonth);
 		return salaryMapper.selectSumMarkTime2(map);
+	}
+
+	//插入结算数据
+	public int insertPayOffInfor(int dateType, String beginDate, String endDate, String realName, int salaryLine, String payOffTime) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("dateType", dateType);
+		map.put("beginDate", beginDate);
+		map.put("endDate", endDate);
+		if(realName.trim().length()>0){
+			map.put("realName", realName);
+		}else{
+			map.put("realName", null);
+		}	
+		map.put("salaryLine", salaryLine);
+		map.put("payOffTime", payOffTime);
+		return salaryMapper.insertPayOffInfor(map);
+	}
+
+	@Override
+	public int insertPayOffInfor1(int dateType, String beginDate, String endDate, String[] workerId, String timer) {
+		Map<String,Object> map = new HashMap<>();
+			map.put("dateType", dateType);
+			map.put("beginDate", beginDate);
+			map.put("endDate", endDate);
+			map.put("workerId", workerId);
+			map.put("timer", timer);
+		return salaryMapper.insertPayOffInfor1(map);
 	}
 
 }

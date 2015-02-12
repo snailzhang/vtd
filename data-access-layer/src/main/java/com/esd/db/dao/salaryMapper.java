@@ -32,4 +32,8 @@ public interface salaryMapper {
     List<Map<String, Object>> selectMoneyList2(Map<String, Object> map);
     
     Double selectSumMarkTime2(Map<String, Object> map);
+    
+    int insertPayOffInfor(Map<String,Object> map);
+    
+    int insertPayOffInfor1(Map<String,Object> map);
 }
