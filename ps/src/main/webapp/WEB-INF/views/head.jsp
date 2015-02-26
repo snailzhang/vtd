@@ -20,6 +20,9 @@ switch(userType){
 	case 5:
 		ut = "administrator";
 		break;
+	case 6:
+		ut = "inspectorManager";
+		break;
 }
 %>
 <nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">
