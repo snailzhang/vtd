@@ -102,13 +102,14 @@ public class InspectorController {
 		int insCount = inspectorService.getCount();
 		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(inspectorId,userName, timeMark, 1, 3,Constants.LIMIT_MIN);
 		int count = 0;
-		if(totle == 0){
-			return null;
-		}
-		count = totle/insCount;
-		if(count == 0){
-			count = 1;
-		}
+		count = totle;
+//		if(totle == 0){
+//			return null;
+//		}
+//		count = totle/insCount;
+//		if(count == 0){
+//			count = 1;
+//		}
 		List<Map<String, Object>> list = workerRecordService.getWorkerIdGroupByWorkerId(inspectorId,userName, timeMark, 1, 3, page, Constants.ROW,Constants.LIMIT_MIN);
 		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<Map<String, Object>> list1 = new ArrayList<>();
