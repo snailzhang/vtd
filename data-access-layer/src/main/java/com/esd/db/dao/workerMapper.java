@@ -42,4 +42,6 @@ public interface workerMapper {
     List<Map<String,Object>> selectLikeRealName(Map<String,Object> map);
     
     int  selectCountLikeRealname(Map<String,Object> map);
+    
+    int selectWorkerCount();
 }

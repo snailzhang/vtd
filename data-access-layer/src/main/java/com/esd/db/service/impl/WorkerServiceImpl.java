@@ -136,5 +136,11 @@ public class WorkerServiceImpl implements WorkerService {
 		}
 		return workerMapper.selectCountLikeRealname(map);
 	}
+
+	//工作者人数
+	public int getWorkerCount() {
+		
+		return workerMapper.selectWorkerCount();
+	}
 	
 }

@@ -288,8 +288,9 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public  int getWorkerIdZeroCountByPackId(Integer packId) {
-		
-		return taskMapper.selectWorkerIdZeroCountByPackId(packId);
+		Map<String,Object> map = new HashMap<>();
+		map.put("packId", packId);
+		return taskMapper.selectWorkerIdZeroCountByPackId(map);
 	}
 
 	//更新审核结果

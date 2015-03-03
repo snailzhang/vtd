@@ -136,7 +136,8 @@ public class SalaryServiceImpl implements SalaryService {
 		Map<String,Object> map = new HashMap<>();
 		if(month.trim().length()>0){
 			map.put("month",month);
-		}else{
+		}
+		if(endDate.trim().length()>0){
 			map.put("beginDate", beginDate);
 			map.put("endDate", endDate);
 		}
@@ -176,6 +177,13 @@ public class SalaryServiceImpl implements SalaryService {
 			map.put("workerId", workerId);
 			map.put("timer", timer);
 		return salaryMapper.insertPayOffInfor1(map);
+	}
+
+	@Override
+	public Double getMoneyTotle(int today) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("today", today);		
+		return salaryMapper.selectMoneyTotle(map);
 	}
 
 }

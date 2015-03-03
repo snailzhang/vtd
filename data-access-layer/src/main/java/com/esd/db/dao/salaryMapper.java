@@ -36,4 +36,6 @@ public interface salaryMapper {
     int insertPayOffInfor(Map<String,Object> map);
     
     int insertPayOffInfor1(Map<String,Object> map);
+    
+    Double selectMoneyTotle(Map<String,Object> map);
 }

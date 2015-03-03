@@ -18,20 +18,52 @@
 <script type="text/javascript" src="${contextPath}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${contextPath}/js/common.js"></script>
 <style type="text/css">
-	.login-list{float: left; padding-left:3%;width:30%;}
-	.login-page{float: right;width:30%; padding-right: 5%;}
-	body{font-family: Microsoft YaHei;}
-	caption{font-weight: bold;font-size:20px;};
+	.datas{padding:0 0 60px 0;}
+	.datass{padding-top:15px;background-color:#D2B48C;height: 50px;font-size:17px;font-weight: bold;}
+	.datas1{padding:0 0 20px 11%;}
+	.login-list{float: left; padding-left:3%;width:22.5%;}
+	.login-page{float: right;width:260px; padding-right: 1%;}
+	body{font-family: Microsoft YaHei;padding-top: 0;background:#FAFAD2;}
+	.section{font-weight: bold;font-size:17px;}
+
 </style>
 </head>
 <body>
-		
+					
+<div class="topArea">
+	<div  class = "datas">
+		<div class = "datass">
+			<span id = "peopleCountTotle" class="datas1"></span>
+			<span id = "moneyTotle" class="datas1"></span>
+			<span id = "taskCountTotle" class="datas1"></span>
+			<span id = "moneyToday" class="datas1"></span>
+		</div>
+	</div>
+	<div style="clear: both;"></div>
+</div>
 <div class="container">
+	<div class="login-list">
+		<div class="totleList">
+			<div class="totleList">
+				<table class="table table-striped table-bordered">
+				 <caption><span class="section">总榜</span><br><span class = "date-section">(20141226至今)</span></caption>
+					<thead>
+						<tr align="center" style="font-weight: bold;">
+							<td >序号</td>
+							<td >姓名</td>
+							<td >金额(元)</td>
+						</tr>
+					</thead>
+					<tbody id="totle-list"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 	<div class="login-list">
 		<div class="moneyList">
 			<div class="monthList">
 				<table class="table table-striped table-bordered">
-				 <caption>月榜</caption>
+				 <caption><span class="section">月榜</span><br><span id = "monthTime" class = "date-section"></span></caption>
 					<thead>
 						<tr align="center" style="font-weight: bold;">
 							<td >序号</td>
@@ -48,7 +80,7 @@
 		<div class="moneyList">
 			<div class="weekList">
 				<table class="table table-striped table-bordered">
-				 <caption>周榜</caption>
+				 <caption><span class="section">周榜</span><br><span id = "dateTime" class = "date-section"></span></caption>
 					<thead>
 						<tr align="center" style="font-weight: bold;">
 							<td>序号</td>
@@ -81,10 +113,9 @@
 	</div>
 	<div style="clear: both;"></div>
 </div>
-
-
 <script type="text/javascript">
 	$(document).ready(function(){
+		datas();
 		moneyList();
 		checkUserName = function(){
 			var user = $("#username");
@@ -127,18 +158,56 @@
 		});
 		
 	});
-	
-		/*-----------------------------------------cx20140108---------------------------------------------------*/
+	/*-------------------------------------------总人数,总金额,任务总量,今日金额--------------------------------------------------------*/
+	datas = function(){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/datas',
+				dataType:'json',
+				success:function(data){
+					$("#peopleCountTotle").text("总人数 : "+data.peopleCountTotle+"位");
+					$("#moneyTotle").text("总金额 : "+data.moneyTotle+"元");
+					$("#taskCountTotle").text("任务数量 : "+data.taskCountTotle+"个");
+					$("#moneyToday").text("今日金额 : "+data.moneyToday+"元");
+				}		
+			});
+			
+		};
+	/*-----------------------------------------cx20140108---------------------------------------------------*/
 	moneyList = function(){
 		$.ajax({
 				type:'POST',
 				url:'${contextPath}/moneyList',
 				dataType:'json',
 				success:function(data){
+					var date=new Date;
+					var year=date.getFullYear(); 
+					var month=date.getMonth()+1;
+					month =(month<10 ? "0"+month:month); 
+					var mydate = (year.toString()+month.toString());
+					if(data.totleList == ""){
+						$("#totle-list").empty();
+						$("#totle-list").append("<tr class='text-danger'><td colspan='3'>无内容</td></tr>");
+					}else{
+						$.each(data.totleList,function(i,item){
+							var tr = "<tr style='color: red;' align='center'>";
+							if(i>2){
+								var tr = "<tr align='center'>"; 
+							}
+							$("#totle-list").append(
+								tr+
+									"<td>"+(i+1)+"</td>"+
+									"<td>"+item.realName+"</td>"+
+									"<td>"+(item.sumMarkTime*data.salary/3600).toFixed(2)+"</td>"+
+								"</tr>"
+							);
+						});
+					}
 					if(data.monthList == ""){
 						$("#month-list").empty();
 						$("#month-list").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
-					}else{
+					}else{					
+						$("#monthTime").text("("+mydate+")");
 						$.each(data.monthList,function(i,item){
 							var tr = "<tr style='color: red;' align='center'>";
 							if(i>2){
@@ -157,6 +226,7 @@
 						$("#week-list").empty();
 						$("#week-list").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
 					}else{
+						$("#dateTime").text("("+data.weekDate+")");
 						$.each(data.weekList,function(i,item){
 							var tr = "<tr style='color: red;' align='center'>";
 							if(i>2){

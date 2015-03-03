@@ -19,6 +19,17 @@
     id, user_id, worker_id, mark_time_totle, timer,payOff_time, create_id, create_time, create_method, 
     update_id, update_time, update_method
   </sql>
+  <!-- 总金额 -->
+	<select id="selectMoneyTotle" resultType="java.lang.Double" parameterType="java.util.Map">
+		select sum(mark_time_totle) month from salary
+		<where>
+			mark_time_totle > 0
+			<if test="today == 1">
+				and DATE_FORMAT(timer,'%Y-%m-%d') >= DATE_FORMAT(now(),'%Y-%m-%d')
+			</if>
+		</where> 
+			 
+	</select>
   <!-- 榜单查询 -->
 	<select id="selectMoneyList2" resultType="java.util.Map" parameterType="java.util.Map">
 		SELECT w.realName,SUM(s.mark_time_totle) sumMarkTime FROM salary s

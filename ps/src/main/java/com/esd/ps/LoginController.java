@@ -6,6 +6,7 @@
 package com.esd.ps;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -358,18 +359,52 @@ public class LoginController {
 	    gc.setTime(new Date());
 	    // 在当前日期上减
 	    gc.add(5, -week);
-	    // 获得三个月后的日期
+	    // 
 	    String beginDate = sdf.format(gc.getTime());
 	    String endDate = sdf.format(new Date());
+	    SimpleDateFormat sdf1 = new SimpleDateFormat("MMdd");
+	    String beginDate1 = sdf1.format(gc.getTime());
+	    String endDate1 = sdf1.format(new Date());
 	    logger.debug("beginDate:{},endDate:{}",beginDate,endDate);
 	    manager manager = managerService.selectByPrimaryKey(1);
 	    List<Map<String, Object>> monthList = salaryService.getMoneyList("","", endDate);
 	    List<Map<String, Object>> weekList = salaryService.getMoneyList(beginDate,endDate,"");
-		
+	    List<Map<String, Object>> totleList = salaryService.getMoneyList("","","");
+	   
 	    map.put("salary", manager.getSalary());
 	    map.put("monthList", monthList);
 	    map.put("weekList", weekList);
+	    map.put("totleList", totleList);
+	    map.put("weekDate",beginDate1+"-"+endDate1);
 	    return map;
 	}
+	/**
+	 * 总人数,总金额,任务总量,今日金额
+	 * @return
+	 */
+	@RequestMapping(value = "/datas", method = RequestMethod.POST)
+	@ResponseBody
+	public  Map<String, Object> datasPost() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int peopleCountTotle = workerService.getWorkerCount();
+		double moneyTotle = salaryService.getMoneyTotle(0);
+		int taskCountTotle = taskService.getWorkerIdZeroCountByPackId(0);
+		double moneyToday = 0.00;
+		try{
+			moneyToday = salaryService.getMoneyTotle(1);
+		}catch(NullPointerException n){
+			 moneyToday = 0.00;
+		}	
+		BigDecimal b = new  BigDecimal(moneyTotle/18);  
+		moneyTotle = b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+		
+		BigDecimal b1 = new  BigDecimal(moneyToday/18);  
+		moneyToday = b1.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
 
+	    map.put("peopleCountTotle", peopleCountTotle);
+	    map.put("moneyTotle", moneyTotle);
+	    map.put("taskCountTotle", taskCountTotle);
+	    map.put("moneyToday", moneyToday);
+	    return map;
+	}
 }

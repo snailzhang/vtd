@@ -35,5 +35,7 @@ public interface SalaryService {
     int insertPayOffInfor(int dateType,String beginDate,String endDate,String realName,int salaryLine,String payOffTime);
     
     int insertPayOffInfor1(int dateType,String beginDate,String endDate,String workerId[],String payOffTime);
+    
+    Double getMoneyTotle(int today);
 }
 

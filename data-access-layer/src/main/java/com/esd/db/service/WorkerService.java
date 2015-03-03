@@ -41,4 +41,6 @@ public interface WorkerService {
     List<Map<String,Object>> getLikeRealName(String name,int page,int row);
     
     int getCountLikeRealname(String name);
+    
+    int getWorkerCount();
 }

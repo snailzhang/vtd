@@ -78,7 +78,7 @@ public interface taskMapper {
     
 	int selectTaskLvlByPackId(int packId);
 	
-	int selectWorkerIdZeroCountByPackId(Integer packId);
+	int selectWorkerIdZeroCountByPackId(Map<String, Object> map);
 	
 	int updateAduitByWorkerId(Map<String, Object> map);
 	

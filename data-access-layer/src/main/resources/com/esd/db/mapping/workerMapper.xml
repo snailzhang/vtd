@@ -32,6 +32,10 @@
 	<sql id="Blob_Column_List">
 		worker_image
 	</sql>
+	<!-- 工作者人数 -->
+	<select id="selectWorkerCount" resultType = "java.lang.Integer">
+		SELECT COUNT(worker_id) FROM worker WHERE worker_id > 0
+	</select>
 	<!-- 工作者管理员 -->
 	<select id="selectLikeRealName" resultType = "java.util.Map" parameterType="java.util.Map">
 		SELECT

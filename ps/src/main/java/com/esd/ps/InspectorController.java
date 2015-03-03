@@ -99,7 +99,7 @@ public class InspectorController {
 		}catch(BindingException n){
 			inspectorId = -1;
 		}	
-		int insCount = inspectorService.getCount();
+		//int insCount = inspectorService.getCount();
 		int totle = workerRecordService.getWorkerIdCountGroupByWorkerId(inspectorId,userName, timeMark, 1, 3,Constants.LIMIT_MIN);
 		int count = 0;
 		count = totle;
@@ -272,11 +272,11 @@ public class InspectorController {
 		} else {
 			map.put("firstDate", list2.get(0).getTaskUploadTime());
 			map.put("lastDate", list2.get(list2.size() - 1).getTaskUploadTime());
-			if (taskMarkTime > 600) {
+			if (taskMarkTime >= 600) {
 				List<WorkerRecordTrans> list1 = new ArrayList<>();
 				// 随机生成10个上传任务压入list1中
 				Set<Integer> set = new HashSet<Integer>();
-				taskMarkTime = 0.00;
+				double markTime = 0.00;
 				boolean panduan = true;
 				while (true) {
 					int z = (int) (Math.random() * (list2.size()+1) + 1);
@@ -289,10 +289,9 @@ public class InspectorController {
 						}
 						list1.add(list2.get(z));
 
-						taskMarkTime = taskMarkTime + Double.parseDouble(list2.get(z).getTaskMarkTime().toString());
-					}
-					
-					if (taskMarkTime > 599) {
+						markTime = markTime + Double.parseDouble(list2.get(z).getTaskMarkTime().toString());
+					}		
+					if (markTime > 596) {
 						break;
 					}
 					// if (set.size() >= 10) {

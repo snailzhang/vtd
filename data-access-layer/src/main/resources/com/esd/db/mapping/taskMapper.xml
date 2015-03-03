@@ -36,10 +36,12 @@
 	<sql id="Blob_Column_List">
 		task_wav, task_tag, task_textgrid
 	</sql>
-	<select id="selectWorkerIdZeroCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	<select id="selectWorkerIdZeroCountByPackId" resultType="java.lang.Integer" parameterType="java.util.Map">
 		select count(task_id) count from task
 		<where>
-			worker_id = 0 and task_mark_time IS NULL and pack_id = #{packId}
+			<if test="packId != 0">
+				worker_id = 0 and task_mark_time IS NULL and pack_id = ${packId}
+			</if>	
 		</where>
 	</select>
 	<select id="selectTaskLvlByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
