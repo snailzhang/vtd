@@ -34,6 +34,22 @@
 		create_method, update_time,
 		update_method, task_effective,inspector_id,inspectorrecord_id,version
 	</sql>
+	<!-- 工作者历史 -->
+	<select id="selectWorkerHis" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT a.downPackName,a.taskCount,b.packStatu,a.taskDownTime 
+		FROM (SELECT down_pack_name downPackName,COUNT(task_id) taskCount,task_down_time taskDownTime
+		FROM worker_record
+		WHERE
+		worker_id = ${workerId}
+		GROUP BY down_pack_name ORDER BY record_id DESC) a
+		LEFT  JOIN 
+		(SELECT
+		COUNT(record_id) packStatu,down_pack_name 
+		FROM worker_record
+		WHERE task_statu = 0 AND worker_id = ${workerId} GROUP BY down_pack_name) b
+		ON  a.downPackName = b.down_pack_name
+		limit ${begin},${end}	 
+	</select>
 	<!--  -->
 	<select id="selectTaskByWorkerId" resultMap="BaseResultMap" parameterType="java.util.Map">
 		select

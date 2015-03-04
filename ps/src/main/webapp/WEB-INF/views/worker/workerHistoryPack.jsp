@@ -158,23 +158,38 @@
 							var ps = "";
 							var downloadTD = "<td></td>";
 							var packDetailTR = "<tr role='tabpanel' class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='1' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
-							if(item.packStatu == 0){
+							if(item.packStatu > 0){
 								ps = "未完成";
 								var pName = "";
 								 pName= item.downPackName;
 								//pName = pName.substring(0,item.downPackName.indexOf(".zip"));
 								downloadTD = "<td><a class='downloadPack' onClick='downloadPack(\""+pName+"\")'>下载</a></td>";
 								packDetailTR = "<tr role='tabpanel' class='packDetailTr collapse' packName='"+item.downPackName+"' isfinish='0' id='collapse"+(i+1)+"'><td colspan='6'></td></tr>";
-							}else if(item.packStatu == 1){
+							}else if(item.packStatu == 0 || item.packStatu == null){
 								ps = "已完成";
-							}else if(item.packStatu == 2){
-								ps = "已超时";
 							}
+							//else if(item.packStatu == 2){
+							//	ps = "已超时";
+							//}
+							var date=new Date();
+							date.setTime(item.taskDownTime);
+							var year=date.getFullYear(); 
+							var month=date.getMonth()+1;
+							month =(month<10 ? "0"+month:month);
+							var day = date.getDate();
+							day =(day<10 ? "0"+day:day);
+				            var hour = date.getHours();
+				            hour =(hour<10 ? "0"+hour:hour);
+				            var minute  = date.getMinutes();
+				            minute =(minute<10 ? "0"+minute:minute);
+				            var second = date.getSeconds();
+				            second =(second<10 ? "0"+second:second);  
+							var myDate = (year.toString()+"-"+month.toString()+"-"+day.toString()+" "+hour+":"+minute+":"+second);
 							$("tbody").append(
 								"<tr>"+
 									"<td>"+(i+1)+"</td>"+
 									"<td><a data-toggle='collapse' data-parent='#packHistoryTable' href='#collapse"+(i+1)+"' aria-expanded='true' aria-controls='collapse"+(i+1)+"' class='showPackDetail'>"+item.downPackName+"</a><span class='badge'>"+item.taskCount+"</span></td>"+
-									"<td>"+item.downTime+"</td>"+
+									"<td>"+myDate+"</td>"+
 									"<td>"+item.taskCount+"</td>"+
 									"<td>"+ps+"</td>"+
 									downloadTD+

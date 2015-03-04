@@ -504,4 +504,18 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectPackIdByDateTime2(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> getWorkerHis(int workerId, int page, int row) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		if (page == 0) {
+			map.put("begin", null);
+			map.put("end", null);
+		} else {
+			map.put("begin", ((page - 1) * row));
+			map.put("end", row);
+		}
+		return workerRecordMapper.selectWorkerHis(map);
+	}
+
 }

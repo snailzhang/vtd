@@ -357,36 +357,37 @@ public class WorkerController {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId, downPackName);
-		List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
+		//List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
 		int totlePage = 0;
 		if (totle == 0) {
 			map.clear();
 			map.put(Constants.TOTLE, totle);
 			map.put(Constants.TOTLE_PAGE, totlePage);
-			map.put(Constants.LIST, list);
+			map.put(Constants.LIST, null);
 			return map;
 		}
-		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(workerId, page, downPackName, Constants.ROW);
-		logger.debug("workerRecordList:{}", workerRecordList);
-		for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
-			workerRecord workerRecord = (workerRecord) iterator.next();
-			WorkerDownPackHistoryTrans workerDownPackHistoryTrans = new WorkerDownPackHistoryTrans();
-			workerDownPackHistoryTrans.setTaskCount(workerRecordService.getTaskCountByDownPackName(workerRecord.getDownPackName()));
-			workerDownPackHistoryTrans.setDownPackName(workerRecord.getDownPackName());
-			logger.debug("status:{}", workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()));
-			if (workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()) > 0) {
-				workerDownPackHistoryTrans.setPackStatu(Constants.ZERO);
-			} else {
-				workerDownPackHistoryTrans.setPackStatu(Constants.ONE);
-			}
-
-			if (workerRecord.getTaskDownTime() == null) {
-				workerDownPackHistoryTrans.setDownTime(Constants.EMPTY);
-			} else {
-				workerDownPackHistoryTrans.setDownTime(sdf.format(workerRecord.getTaskDownTime()));
-			}
-			list.add(workerDownPackHistoryTrans);
-		}
+		List<Map<String,Object>> list = workerRecordService.getWorkerHis(workerId, page, Constants.ROW);
+//		List<workerRecord> workerRecordList = workerRecordService.getWorkerRecordLikeDownPackName(workerId, page, downPackName, Constants.ROW);
+//		logger.debug("workerRecordList:{}", workerRecordList);
+//		for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
+//			workerRecord workerRecord = (workerRecord) iterator.next();
+//			WorkerDownPackHistoryTrans workerDownPackHistoryTrans = new WorkerDownPackHistoryTrans();
+//			workerDownPackHistoryTrans.setTaskCount(workerRecordService.getTaskCountByDownPackName(workerRecord.getDownPackName()));
+//			workerDownPackHistoryTrans.setDownPackName(workerRecord.getDownPackName());
+//			logger.debug("status:{}", workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()));
+//			if (workerRecordService.getPackStatuByDownPackName(workerRecord.getDownPackName()) > 0) {
+//				workerDownPackHistoryTrans.setPackStatu(Constants.ZERO);
+//			} else {
+//				workerDownPackHistoryTrans.setPackStatu(Constants.ONE);
+//			}
+//
+//			if (workerRecord.getTaskDownTime() == null) {
+//				workerDownPackHistoryTrans.setDownTime(Constants.EMPTY);
+//			} else {
+//				workerDownPackHistoryTrans.setDownTime(sdf.format(workerRecord.getTaskDownTime()));
+//			}
+//			list.add(workerDownPackHistoryTrans);
+//		}
 		map.clear();
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.TOTLE, totle);

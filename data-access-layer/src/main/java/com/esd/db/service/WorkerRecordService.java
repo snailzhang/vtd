@@ -101,4 +101,6 @@ public interface WorkerRecordService {
 	int updateAduitByWorkerId2(int workerId,int taskEffective,int taskLockTime,int inspectorId,int inspectorrecordId);
 
 	List<Integer> getPackIdByDateTime2(int workerId);
+	
+	List<Map<String, Object>> getWorkerHis(int workerId,int page,int row);
 }
