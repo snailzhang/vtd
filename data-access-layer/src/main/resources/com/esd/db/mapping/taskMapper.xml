@@ -164,7 +164,7 @@
 		from task
 		where worker_id IS NULL
 		and pack_id IN (select pack_id from pack where pack_status=0 and unzip = 1)
-		order by task_lvl,create_time
+		order by task_lvl,task_id
 		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
@@ -631,8 +631,9 @@
 			<if test="workerId == 0">
 				worker_id = null,
 				task_effective = null,
+				task_mark_time = null,
 			</if>
-			<if test="taskMarkTime == 0">
+			<if test="taskMarkTime == 0.00">
 				task_mark_time = null,
 			</if>
 			<if test="taskMarkTime > 0">
@@ -646,9 +647,6 @@
 			</if>
 			<if test="updateMethod != null">
 				update_method = #{updateMethod,jdbcType=VARCHAR},
-			</if>
-			<if test="version != null">
-				version = #{version,jdbcType=INTEGER},
 			</if>
 		</set>
 		where 3 > 2
@@ -824,5 +822,81 @@
 		</where>
 			order by task_lvl
 			limit #{downTaskCount}
+	</update>
+	<!-- chen20150319 -->
+	<update id="updateFileByTaskId" parameterType="java.util.Map">
+		update task
+		<set>
+			<if test="packId != null">
+				pack_id = #{packId,jdbcType=INTEGER},
+			</if>
+			<if test="inspectorId != null">
+				inspector_id = #{inspectorId,jdbcType=INTEGER},
+			</if>
+			<if test="faultId != null">
+				fault_id = #{faultId,jdbcType=INTEGER},
+			</if>
+			<if test="workerId != null">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="taskDir != null">
+				task_dir = #{taskDir,jdbcType=VARCHAR},
+			</if>
+			<if test="taskName != null">
+				task_name = #{taskName,jdbcType=VARCHAR},
+			</if>
+			<if test="taskMarkTime != null">
+				task_mark_time = #{taskMarkTime,jdbcType=DOUBLE},
+			</if>
+			<if test="taskEffective != null">
+				task_effective = #{taskEffective,jdbcType=BIT},
+			</if>
+			<if test="taskEffective == null">
+				task_effective = null,
+			</if>
+			<if test="taskUpload != null">
+				task_upload = #{taskUpload,jdbcType=BIT},
+			</if>
+			<if test="taskLvl != null">
+				task_lvl = #{taskLvl,jdbcType=INTEGER},
+			</if>
+			<if test="taskDownloadTime != null">
+				task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="taskUploadTime != null">
+				task_upload_time = #{taskUploadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createId != null">
+				create_id = #{createId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createMethod != null">
+				create_method = #{createMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				version = #{version,jdbcType=INTEGER},
+			</if>
+			<if test="taskWav != null">
+				task_wav = #{taskWav,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="tag != null">
+				task_tag = #{tag,jdbcType=LONGVARBINARY},
+			</if>
+			<if test="textGrid != null">
+				task_textgrid = #{textGrid,jdbcType=LONGVARBINARY},
+			</if>
+		</set>
+		where task_id = #{taskId,jdbcType=INTEGER}
 	</update>
 </mapper>
