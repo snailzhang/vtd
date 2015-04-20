@@ -272,6 +272,7 @@ public class InspectorController {
 		} else {
 			map.put("firstDate", list2.get(0).getTaskUploadTime());
 			map.put("lastDate", list2.get(list2.size() - 1).getTaskUploadTime());
+			System.out.println(taskMarkTime);
 			if (taskMarkTime >= 600) {
 				List<WorkerRecordTrans> list1 = new ArrayList<>();
 				// 随机生成10个上传任务压入list1中
@@ -290,8 +291,9 @@ public class InspectorController {
 						list1.add(list2.get(z));
 
 						markTime = markTime + Double.parseDouble(list2.get(z).getTaskMarkTime().toString());
-					}		
-					if (markTime > 596) {
+					}
+					System.out.println(markTime);
+					if (markTime > 580) {
 						break;
 					}
 					// if (set.size() >= 10) {
