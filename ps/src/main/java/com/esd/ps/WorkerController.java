@@ -131,7 +131,7 @@ public class WorkerController {
 		if (aduited == null) {
 			aduited = 0.00;
 		}
-		DecimalFormat df = new DecimalFormat("#.00");
+		DecimalFormat df = new DecimalFormat("#");
 		session.setAttribute("salary", df.format(aduited * manager.getSalary() / 3600));
 		
 		session.setAttribute("aduiting", workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(workerId, "", "", "", 0, 1, 0));
@@ -869,7 +869,7 @@ public class WorkerController {
 		}
 		return "";
 	}
-	public void test (){
-		System.out.println(salaryService.getWorkerSalaryByWorkerId(25));
-	}
+//	public void test (){
+//		System.out.println(salaryService.getWorkerSalaryByWorkerId(25));
+//	}
 }

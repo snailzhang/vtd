@@ -163,8 +163,8 @@
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.timer+"</td>"+
 									"<td>"+item.totle+"</td>"+
-									"<td>"+(item.totle*data.salary/3600).toFixed(2)+"</td>"+
-									"<td>"+(totle1*data.salary/3600).toFixed(2)+"</td>"+
+									"<td>"+(item.totle*data.salary/3600).toFixed(0)+"</td>"+
+									"<td>"+(totle1*data.salary/3600).toFixed(0)+"</td>"+
 								"</tr>"
 							);
 						});

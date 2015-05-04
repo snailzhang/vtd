@@ -168,16 +168,16 @@ public class ManagerController {
 			map.put(Constants.LIST, "");
 			return map;
 		}
-		int pre1 = (int) System.currentTimeMillis();
-		logger.debug("userList:{}",(pre1 - pre));
+		//int pre1 = (int) System.currentTimeMillis();
+		//logger.debug("userList:{}",(pre1 - pre));
 		manager manager = managerService.selectByPrimaryKey(1);
-		DecimalFormat df = new DecimalFormat("#.00");
+		DecimalFormat df = new DecimalFormat("#");
 		Double d = 0.00;
 		for (Iterator<Map<String, Object>> iterator = salaryList.iterator(); iterator.hasNext();) {
 			Map<String, Object> map2 = (Map<String, Object>) iterator.next();
 			if (map2.get("markTime") == null) {
 				map2.put("taskMarkTimeMonth", 0.00);
-				map2.put("salary", 0.00);
+				map2.put("salary", 0);
 			} else {
 				d = Double.parseDouble(map2.get("markTime").toString());
 				if(d<0){
@@ -185,15 +185,15 @@ public class ManagerController {
 				}else{
 					map2.put("taskMarkTimeMonth", d);
 				}				
-				map2.put("salary", Double.parseDouble(df.format(d * manager.getSalary() / 3600)));								
+				map2.put("salary", df.format(d * manager.getSalary() / 3600));								
 			}
 			list.add(map2);
 		}
 		map.clear();
-		int pre11 = (int) System.currentTimeMillis();
+		//int pre11 = (int) System.currentTimeMillis();
 		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition,salaryLine,payOffType);
-		int pre12 = (int) System.currentTimeMillis();
-		logger.debug("totle:{}",(pre12 - pre11));
+//		int pre12 = (int) System.currentTimeMillis();
+//		logger.debug("totle:{}",(pre12 - pre11));
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);

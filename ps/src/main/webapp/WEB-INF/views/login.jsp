@@ -107,7 +107,8 @@
 			<div id = "message"  align="left" style="font-size: 14px;color:red;">${message}</div>
 			<div class="form-group">
 				<!-- <button type="button" class="btn btn-lg btn-primary btn-block">登录</button> -->
-				<button type="button" class="btn btn-primary">登录</button>
+				<button id = "login-btn" type="button" class="btn btn-primary">登录</button>
+				<!--  <button id = "task" type="button" class="btn btn-primary">序列化测试</button>-->
 			</div>	
 		</form>
 	</div>
@@ -132,7 +133,7 @@
 			}
 			return true;
 		};
-		checkOldTask();
+		//checkOldTask();
 		$("#username").blur(function(){
 			checkUserName();
 			var user = $("#username");
@@ -151,12 +152,21 @@
 				}
 			});
 		});
-		$("button[type=button]").click(function(){
+		$("button[id=login-btn]").click(function(){
 			var formName = $("#login");
 			if(checkUserName()&&checkUserPWD())formName.submit();
 			
 		});
-		
+		/*---------------------------------------测试语音波-----------------------------------------------------------*/
+		$("button[id=task]").click(function(){
+			$.ajax({
+				type:'POST',
+				url:'${contextPath}/serializeWav',
+				dataType:'json',
+				success:function(data){
+				}		
+			});
+		});
 	});
 	/*-------------------------------------------总人数,总金额,任务总量,今日金额--------------------------------------------------------*/
 	datas = function(){
@@ -198,7 +208,7 @@
 								tr+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.realName+"</td>"+
-									"<td>"+(item.sumMarkTime*data.salary/3600).toFixed(2)+"</td>"+
+									"<td>"+(item.sumMarkTime*data.salary/3600).toFixed(0)+"</td>"+
 								"</tr>"
 							);
 						});
@@ -217,7 +227,7 @@
 								tr+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.realName+"</td>"+
-									"<td>"+(item.sumMarkTime*data.salary/3600).toFixed(2)+"</td>"+
+									"<td>"+(item.sumMarkTime*data.salary/3600).toFixed(0)+"</td>"+
 								"</tr>"
 							);
 						});
@@ -236,7 +246,7 @@
 								tr+
 									"<td>"+(i+1)+"</td>"+
 									"<td>"+item.realName+"</td>"+
-									"<td>"+(item.sumMarkTime*data.salary/3600).toFixed(2)+"</td>"+
+									"<td>"+(item.sumMarkTime*data.salary/3600).toFixed(0)+"</td>"+
 								"</tr>"
 							);
 						});
