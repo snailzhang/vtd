@@ -272,15 +272,22 @@ public class InspectorController {
 		} else {
 			map.put("firstDate", list2.get(0).getTaskUploadTime());
 			map.put("lastDate", list2.get(list2.size() - 1).getTaskUploadTime());
-			System.out.println(taskMarkTime);
+			//System.out.println(taskMarkTime);
 			if (taskMarkTime >= 600) {
 				List<WorkerRecordTrans> list1 = new ArrayList<>();
 				// 随机生成10个上传任务压入list1中
 				Set<Integer> set = new HashSet<Integer>();
 				double markTime = 0.00;
 				boolean panduan = true;
+				int m = 0;
 				while (true) {
-					int z = (int) (Math.random() * (list2.size()+1) + 1);
+					m++;
+					//防止死循环
+					if(m > 50000){
+						break;
+					}
+					int z = (int) (Math.random() * (list2.size()+1));
+					//System.out.println(z);
 					panduan = set.add(z);// 检验重复数
 					if (!panduan || z >= list2.size()) {
 						continue;
@@ -292,10 +299,11 @@ public class InspectorController {
 
 						markTime = markTime + Double.parseDouble(list2.get(z).getTaskMarkTime().toString());
 					}
-					System.out.println(markTime);
-					if (markTime > 580) {
+					//System.out.println(markTime);
+					if (markTime > 599) {
 						break;
 					}
+
 					// if (set.size() >= 10) {
 					// break;
 					// }
