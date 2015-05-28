@@ -283,7 +283,7 @@ public class InspectorController {
 				while (true) {
 					m++;
 					//防止死循环
-					if(m > 50000){
+					if(m > 100000){
 						break;
 					}
 					int z = (int) (Math.random() * (list2.size()+1));
