@@ -35,6 +35,7 @@
 		<ul class="nav nav-tabs" role="tablist">
 			<li class="active"><a href="#workerList" role="tab" data-toggle="tab">用户列表</a></li>
 			<li><a href="#workerSalarList" role="tab" data-toggle="tab">工资列表</a></li>
+			<li><a href="#workerLvlList" role="tab" data-toggle="tab">等级列表</a></li>
 		</ul>
 	<!--------------------------------------------------------------------------------------->
 		<div class="tab-content">
@@ -212,6 +213,53 @@
 				</div>
 			</div>
 			<!-- ------------------------------------------------------------------------------------------------- -->
+			<!-- ----------------------------------------------等级列表--------------------------------------------------- -->
+			<div class="tab-pane" id="workerLvlList">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<form class="form-inline" role="form">					
+							<div class="col-sm-3" style="width: 175px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 170px;"> 
+										<div class="input-group-addon"> 用户名</div>
+										<input class="form-control" onkeydown="if(event.keyCode==13){return false;}" id="userNameConditionWorkerLvl" type="text" placeholder="查询用户">
+									</div>
+								</div>							
+							</div>
+							<div class="col-xs-2" style="width: 101px;">
+								<div class="form-group">
+									<div class="input-group" style="width: 105px;">	
+										<div class="input-group-addon">等级</div>
+										<select class="form-control" id="userLvl">
+											<option value="0" selected="selected">全部</option>
+											<option value="1">一级</option>
+											<option value="2">二级</option>
+										</select>
+									</div>
+								</div>
+							</div>					
+							<div class="btn2" style="float: right;">
+								<button type="button" id="searchWorkerLvlBtn" class="btn btn-default" >查询</button>
+								<button type="button" id="updateWorkerLvlBtn" class="btn btn-default" >设置</button>
+							</div>			
+						</form>
+						<div style="clear: both;"></div>
+					</div>
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th width='4%'>序号</th>
+								<th width='12%'>姓名</th>
+								<th width='15%'>等级</th>
+								<th width='10%'><a href="#" id="chooseLvl"><span id="choose-lvl">全选</span></a></th>
+							</tr>
+						</thead>
+						<tbody id = "workerLvl-tbody"></tbody>
+					</table>
+					<ul class="pagination"></ul>
+				</div>
+			</div>
+			<!-- ------------------------------------------------------------------------------------------------- -->
 		</div>
 		
 		<div class="modal fade" id="changeUserStatusModal">
@@ -290,13 +338,17 @@
 		var nowUserType = 4;
 		var nowPage = 0;
 		var userNameCondition = "";
+		
 		var taskUpload = 2;
 		var userId = 0;
 		var pageTotal = 0;
 		var dateType = 1;
 		var beginDate = "";
 		var endDate = "";
-		
+		//等级条件
+		var userNameConditionWorkerLvl = "";
+		var userLvl = 0;
+		//
 		var userNameCondition1 = "";	
 		var dateType1 = 2;
 		var beginDate1 = "";
@@ -317,6 +369,7 @@
 			//结算按钮
 			$("#payOffBtn").attr("disabled","disabled");
 			workerSalaryList(1);
+			workerLvlList(1);
 			/*-------------------------------datepicker-----------------------------------------*/
 			$.datepicker.regional[ "ch" ];
 			$("#beginDate").datepicker({
@@ -380,6 +433,12 @@
 					$("#payOffBtn").attr("disabled","disabled");
 				}	
 				workerSalaryList(1);
+			});
+			/*---------------------查询等级列表-------------------------------*/
+			$("#searchWorkerLvlBtn").click(function(){
+				userNameConditionWorkerLvl = $("#userNameConditionWorkerLvl").val();
+				userLvl = $("#userLvl").val();	
+				workerLvlList(1);
 			});
 			/*--------------------------------------cx点击设置按钮-------------------------------------------------------*/
 			$("#changeBtn").click(function(){
@@ -543,6 +602,48 @@
 				}
 			});
 		};
+		/*----------------------------------------------用户等级页----------------------------------------------------------------*/
+		workerLvlList = function(pageNum){
+			userLvl = $("#userLvl").val();
+			$.ajax({
+				type:'POST',
+				data:{"page":pageNum,"userNameCondition":userNameConditionWorkerLvl,"userLvl":userLvl},
+				url:'${contextPath}/security/workerLvl',
+				dataType:'json',
+				success:function(data){
+					$("#workerLvl-tbody").empty();			
+					if(data.list == ""){
+						$("#workerLvl-tbody").empty();
+						$("#workerLvlList .pageGoBtn").empty();
+						$("#workerLvl-tbody").append("<tr class='text-danger'><td colspan='6'>无内容</td></tr>");
+					}else{
+						pageTotal = data.totlePage; 
+						$.each(data.list,function(i,item){
+							$("#workerLvl-tbody").append(
+							"<tr>"+
+								"<td>"+(i + 1)+"</td>"+
+								"<td>"+item.wrn+"</td>"+
+								"<td>"+item.uln+"</td>"+
+								"<td><input type='checkbox' class='checkbox1Lvl' name='checkbox1Lvl' value='"+item.workerId+"'/></td>"+
+							"</tr>"
+							);			
+						});
+						//getSumSalary(userNameCondition1,dateType1,beginDate1,endDate1,salaryLine,payOffType);
+						var pageDom = $("#workerLvlList .pagination");
+							pageDom.empty();
+							page.creatPageHTML(pageNum,pageTotal,pageDom,"workerLvlList");
+							/*--------------------------------------跳转页-------------------------------------------------------*/
+							$("#workerLvlList .pageGoBtn").click(function(){
+								var pageNum = 0;
+								pageNum = $("#workerLvlList .pageGoText").val();
+								if(pageNum !=0&&0<pageNum&&pageNum<pageTotal+1){
+									workerLvlList(pageNum);
+								}
+							});					
+					}
+				}
+			});
+		};
 		/*--------------------------------------全选-----------------------------------------------------------------*/
 		$("#choose").click(function(){
 			var choose = $("#choose-p").text();
@@ -554,6 +655,61 @@
 				$("#choose-p").text("全选");
 			}
 		});
+		/*****************等级**********************/
+		$("#chooseLvl").click(function(){
+			var choose = $("#choose-lvl").text();
+			if(choose == "全选"){
+				$(".checkbox1Lvl").prop("checked",true);
+				$("#choose-lvl").text("取消");
+			}else{
+				$(".checkbox1Lvl").prop("checked",false);
+				$("#choose-lvl").text("全选");
+			}
+		});
+		/*---------------------------------------等级设置---------------------------------------------------------------*/
+		$("#updateWorkerLvlBtn").click(function(){
+			userLvl = $("#userLvl").val();
+			var userLavlName = $("#userLvl option[value="+userLvl+"]").text();	
+				if(userLvl > 0){
+					var conWin = confirm("确定要设置到"+userLavlName+"吗?");
+					if(conWin){
+						var checkList = $(".checkbox1Lvl");
+						var l = checkList.length;
+						var str="";
+						for(var i=0;i<l;i++){
+							if (checkList[i].checked == true) {
+								var workerId = checkList[i].value;
+								str =workerId +"/"+str;
+			        		}
+						}		
+						if(str.length == 0){
+							alert("请选择要设置用户!!!");
+						}else{
+							updateWorkerLvl(str);
+						}
+					}
+				}else{
+					alert("请选择要设置的等级!!!");
+				}
+				
+		});
+		updateWorkerLvl= function(str){
+			$.ajax({
+				type:'POST',
+				data:{"workerIds":str,"userLvl":userLvl},
+				url:'${contextPath}/security/updateWorkerLvl',
+				dataType:'json',
+				success:function(data){
+					var replay = data.replay;
+					if(replay>0){
+						alert("等级设置完成!");
+					}else{
+						alert("等级设置失败!");
+					}
+					workerLvlList(1);	
+				}	
+			});
+		};
 		/*---------------------------------------结算---------------------------------------------------------------*/
 		$("#payOffBtn").click(function(){
 			payOffType = $("#payOffType").val();

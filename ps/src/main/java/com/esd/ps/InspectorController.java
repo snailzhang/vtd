@@ -34,6 +34,7 @@ import com.esd.db.service.WorkerService;
 import com.esd.ps.model.WorkerRecordTrans;
 
 import org.apache.ibatis.binding.BindingException;
+import org.apache.poi.ss.formula.functions.Now;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -259,7 +260,11 @@ public class InspectorController {
 			}
 			workerRecordTrans.setTaskName(workerRecord.getTaskName());
 			workerRecordTrans.setTaskId(workerRecord.getTaskId());
-			workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
+			if(workerRecord.getTaskUploadTime() == null){
+				workerRecordTrans.setTaskUploadTime(sdf.format(new Date()));
+			}else{
+				workerRecordTrans.setTaskUploadTime(sdf.format(workerRecord.getTaskUploadTime()));
+			}	
 			workerRecordTrans.setTaskMarkTime(workerRecord.getTaskMarkTime());
 			taskMarkTime = taskMarkTime + workerRecord.getTaskMarkTime();
 			list2.add(workerRecordTrans);
@@ -328,7 +333,7 @@ public class InspectorController {
 	@ResponseBody
 	public  Map<String, Object> downAuditTaskPost(String list, int workerId, HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
-		String url = request.getServletContext().getRealPath(Constants.SLASH);
+		String url = request.getSession().getServletContext().getRealPath(Constants.SLASH);
 		url = url + "auditTemp";
 		File f = new File(url);
 		if (!f.exists()) {

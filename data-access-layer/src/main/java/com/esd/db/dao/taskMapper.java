@@ -50,7 +50,7 @@ public interface taskMapper {
     
     int selectFirstPackIdOrderByTaskLvl();
     
-    int selectUndoTaskCountByPackId(Integer packId);
+    int selectUndoTaskCountByPackId(Map<String,Object> map);
     
     List<taskWithBLOBs> selectTaskByTaskName(String taskName);
     
@@ -82,4 +82,7 @@ public interface taskMapper {
 	
 	int updateAduitByWorkerId(Map<String, Object> map);
 	
+	int updateFileByTaskId(Map<String, Object> map);
+	//回收任务
+	int updateWorkerIdByWorkerId(Map<String, Object> map);
 }

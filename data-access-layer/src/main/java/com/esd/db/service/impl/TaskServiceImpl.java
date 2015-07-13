@@ -85,11 +85,12 @@ public class TaskServiceImpl implements TaskService {
 	/**
 	 * worker下载任务,更新task
 	 */
-	public synchronized List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId,int userId,int workerId) {
+	public synchronized List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId,int userId,int workerId,int packType) {
 		Map<String, Object> map = new HashMap<>();
  		
  		map.clear();
  		map.put("downTaskCount", downTaskCount);
+ 		map.put("packType", packType);
  		List<taskWithBLOBs> list = taskMapper.selectTaskOrderByTaskLvl(map);
  		//map.put("packId", packId);
  		if(list != null){
@@ -124,13 +125,17 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.selectAllHistoryTaskByWorkerId(workerId);
 	}
 
-	@Override
-	public  int getCountTaskDoing() {
+	/**
+	 * 查询可做任务数
+	 */	  
+	public  int getCountTaskDoing(int packType) {
+		  Map<String, Object> map = new HashMap<String, Object>();
+		  map.put("packType",packType);
 		try {
 			int packId = packMapper.selectPackIdOrderByPackLvl();
-			return taskMapper.selectUndoTaskCountByPackId(packId);
+			return taskMapper.selectUndoTaskCountByPackId(map);
 		} catch (BindingException b) {
-			return taskMapper.selectUndoTaskCountByPackId(0);
+			return taskMapper.selectUndoTaskCountByPackId(map);
 		}
 	}
 
@@ -263,8 +268,9 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public  int getUndoTaskCountByPackId(int packId) {
-		
-		return taskMapper.selectUndoTaskCountByPackId(packId);
+		Map<String, Object> map = new HashMap<>();
+		map.put("packId", packId);
+		return taskMapper.selectUndoTaskCountByPackId(map);
 	}
 
 	@Override
@@ -299,6 +305,24 @@ public class TaskServiceImpl implements TaskService {
 		map.put("workerId", workerId);
 		map.put("taskEffective", taskEffective);
 		return taskMapper.updateAduitByWorkerId(map);
+	}
+
+	@Override
+	public int updateFileByTaskId(int taskId, byte[] textGrid,byte[] tag,double taskMarkTime) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("taskId", taskId);
+		map.put("textGrid", textGrid);
+		map.put("tag", tag);
+		map.put("taskMarkTime", taskMarkTime);
+		return taskMapper.updateFileByTaskId(map);
+	}
+
+	//回收任务
+	public int updateWorkerIdByWorkerId(int workerId,int taskId) {
+		Map<String,Object> map = new HashMap<>();
+		map.put("workerId", workerId);
+		map.put("taskId", taskId);
+		return taskMapper.updateWorkerIdByWorkerId(map);
 	}
 
 

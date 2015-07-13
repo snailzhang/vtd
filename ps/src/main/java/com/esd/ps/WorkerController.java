@@ -138,6 +138,12 @@ public class WorkerController {
 		session.setAttribute("aduited", aduited);
 		worker worker = workerService.selectByPrimaryKey(workerId);
 		session.setAttribute("downing", worker.getDowning());
+		int userLvl =Integer.parseInt(session.getAttribute(Constants.USER_LVL).toString());
+		int typeCount = 1;
+		if(userLvl>1){
+			typeCount = 2;
+		}
+		session.setAttribute("typeCount", typeCount);	
 		return new ModelAndView(Constants.WORKER + Constants.SLASH + Constants.WORKER);
 	}
 
@@ -150,35 +156,31 @@ public class WorkerController {
 	 */
 	@RequestMapping(value = "/worker", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerPost(HttpSession session, HttpServletRequest request, int taskEffective) {
-		int pre = (int) System.currentTimeMillis();  
+	public Map<String, Object> workerPost(HttpSession session, HttpServletRequest request, int taskEffective,int packType) {
+
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		int pre1 = (int) System.currentTimeMillis();
-		logger.debug("workerId:{}",(pre1 - pre));
-		logger.debug("workerId:{}", workerId);
+
 		List<workerRecord> listAll = workerRecordService.getByWorkerIdAndEffective(workerId, 3, 0);
-		int pre2 = (int) System.currentTimeMillis();
-		logger.debug("listAll:{}",(pre2 - pre1));
+
 		// 没有正在进行的任务
 		if (listAll == null || listAll.isEmpty()) {
+			int userLvl =Integer.parseInt(session.getAttribute(Constants.USER_LVL).toString());
 			workerMark = 0;
 			int downMaxCount = 0;
 			int downOneCount = 0;
 			// 可做任务的包数
 			// int countPackDoing = taskService.getFreePackCount();
 			// 当前下载的包的任务数
-			int countTaskDoing = taskService.getCountTaskDoing();
-			int pre3 = (int) System.currentTimeMillis();
-			logger.debug("countTaskDoing:{}",(pre3 - pre2));
-			// taskEffective = 4 查询未审核和不合格的
+			int countTaskDoing = taskService.getCountTaskDoing(1);
 			int auditingCount = workerRecordService.getCountByWorkerId(workerId, 1, 4);
-			int pre4 = (int) System.currentTimeMillis();
-			logger.debug("countTaskDoing:{}",(pre4 - pre3));
+			int countTaskDoing2 = 0 ;
+			if(userLvl > 1){
+				countTaskDoing2 = taskService.getCountTaskDoing(2);
+			}	
 			worker worker = workerService.selectByPrimaryKey(workerId);
-			int pre5 = (int) System.currentTimeMillis();
-			logger.debug("countTaskDoing:{}",(pre5 - pre4));
+
 			if(worker.getDownCount() != null){
 				String downc = worker.getDownCount();
 				String str[] = downc.split("/");
@@ -199,11 +201,25 @@ public class WorkerController {
 			if (downCount > countTaskDoing) {
 				downCount = countTaskDoing;
 			}
-
+			//
+			int downCount2 = 0;
+			if ((downMaxCount - auditingCount) > downOneCount) {
+				downCount2 = downOneCount;
+			} else {
+				downCount2 = (downMaxCount - auditingCount);
+			}
+			if (downCount2 > countTaskDoing2) {
+				downCount2 = countTaskDoing2;
+			}
+			//
 			String noteId = packService.getNoteIdByPackId(0);
 			// map.put(Constants.COUNTPACKDOING, countPackDoing);
 			map.put(Constants.COUNTTASKDOING, countTaskDoing);
 			map.put("downCount", downCount);
+			
+			map.put("countTaskDoing2", countTaskDoing2);
+			map.put("downCount2", downCount2);
+			
 			map.put("noteId", noteId);
 			map.put(Constants.WORKERMARK, 0);
 			return map;
@@ -541,18 +557,21 @@ public class WorkerController {
 
 	/**
 	 * 下载任务(wav格式)
-	 * 
-	 * @param req
+	 * @param response
+	 * @param downTaskCount
+	 * @param session
+	 * @param request
+	 * @param packType
 	 * @return
 	 */
 	@RequestMapping(value = "/downTask", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request) {
+	public Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request,int packType) {
 		session.setAttribute("downing", 1);
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		logger.debug("downTaskCount:{}", downTaskCount);
-		int countTaskDoing = taskService.getCountTaskDoing();
+		int countTaskDoing = taskService.getCountTaskDoing(packType);
 		// 查看先可做任务数是否小于需求
 		if (countTaskDoing < downTaskCount) {
 			// String nowCountTaskDoing=countTaskDoing + "";
@@ -570,7 +589,7 @@ public class WorkerController {
 		worker.setDowning(1);
 		workerService.updateByPrimaryKeySelective(worker);
 
-		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0, userId, workerId);
+		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0, userId, workerId,packType);
 		if (list == null) {
 			session.setAttribute("downing", 0);
 			return null;
@@ -815,7 +834,7 @@ public class WorkerController {
 	 * @return
 	 */
 	public static String url(HttpServletRequest request) {
-		String url = request.getServletContext().getRealPath(Constants.SLASH);
+		String url = request.getSession().getServletContext().getRealPath(Constants.SLASH);
 		url = url + Constants.WORKERTEMP;
 		File f = new File(url);
 		if (f.exists()) {

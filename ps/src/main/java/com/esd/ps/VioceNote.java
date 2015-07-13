@@ -211,7 +211,7 @@ public class VioceNote {
 			return map;
 		}
 		try {
-			String url = request.getServletContext().getRealPath(Constants.SLASH);
+			String url = request.getSession().getServletContext().getRealPath(Constants.SLASH);
 			url = url + Constants.IMAGE;
 			File f = new File(url);
 			if (!f.exists()) {

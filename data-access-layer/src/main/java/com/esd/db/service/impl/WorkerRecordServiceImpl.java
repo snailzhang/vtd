@@ -343,7 +343,7 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		map.put("taskStatu", 3);
 		map.put("updateMethod", updateMethod);
 		map.put("workerId", workerId);
-		map.put("taskId", taskId);
+		map.put("taskId", taskId);	
 		if (version == 0) {
 			map.put("version", null);
 		} else if (version > 0) {

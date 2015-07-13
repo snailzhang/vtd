@@ -163,8 +163,13 @@
 		<include refid="Blob_Column_List" />
 		from task
 		where worker_id IS NULL
-		and pack_id IN (select pack_id from pack where pack_status=0 and unzip = 1)
-		order by task_lvl,task_id
+		and pack_id IN (select pack_id from pack where pack_status=0 and unzip = 1
+		<if test="packType != null">
+		and pack_type = ${packType}
+		</if>
+		order by pack_lvl
+		)
+		order by task_id
 		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
@@ -182,11 +187,19 @@
 		where worker_id is null order by task_lvl,pack_id limit 1
 	</select>
 	<!-- pack_id = #{packId,jdbcType=INTEGER} and -->
-	<select id="selectUndoTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	<select id="selectUndoTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.util.Map">
 		select
 		count(task_id) total
 		from task
-		where worker_id IS NULL AND pack_id IN (SELECT pack_id FROM pack WHERE pack_status=0 AND unzip = 1)
+		where worker_id IS NULL 
+		AND
+		pack_id IN (SELECT pack_id FROM pack WHERE pack_status=0 AND unzip = 1
+		<if test="packType != null">
+			AND pack_type = ${packType} 
+		</if> 
+		)
+		
+		
 	</select>
 	<select id="selectTaskCountByPackId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
@@ -898,5 +911,16 @@
 			</if>
 		</set>
 		where task_id = #{taskId,jdbcType=INTEGER}
+	</update>
+	<!-- 回收工作者任务 -->
+	<update id="updateWorkerIdByWorkerId" parameterType="java.util.Map">
+		update task
+		<set>
+			worker_id = null
+		</set>
+		where 
+			worker_id = ${workerId}
+			and
+			task_id = ${taskId}
 	</update>
 </mapper>

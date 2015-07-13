@@ -15,6 +15,7 @@ public interface Constants {
 	public static final String LOGIN = "login";//
 	public static final String ID = "Id";//
 	public static final String USER_ID = "userId";//用户id manager
+	public static final String USER_LVL = "userLvl";//用户等级
 	public static final String ADMIN = "admin";//管理员
 	public static final String MANAGER = "manager";//
 	public static final String ADMIN_NAME = "管理员";//管理员

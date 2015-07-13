@@ -42,4 +42,6 @@ public interface userMapper {
     int selectCountLikeUsername(Map<String,Object> map);
     
     List<Map<String,Object>> selectWorkerSalary(Map<String,Object> map);
+    
+    int updateWorkerLvl(Map<String,Object> map);
 }

@@ -143,7 +143,7 @@ public class RegListController {
 		SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_HAVE_LINE);
 		try {
 			// 下载全部
-			String url = request.getServletContext().getRealPath("/");
+			String url = request.getSession().getServletContext().getRealPath("/");
 			// 创建导出文件夹
 			File downloadPath = new File(url + Constants.EXCELTEMP);
 			if (!(downloadPath.exists())) {

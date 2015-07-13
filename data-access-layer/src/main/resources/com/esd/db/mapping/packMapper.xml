@@ -12,6 +12,7 @@
 		<result column="pack_lock_time" property="packLockTime" jdbcType="INTEGER" />
 		<result column="unzip" property="unzip" jdbcType="INTEGER" />
 		<result column="unzip_time" property="unzipTime" jdbcType="TIMESTAMP" />
+		<result column="pack_type" property="packType" jdbcType="INTEGER" />
 		<result column="pack_lvl" property="packLvl" jdbcType="INTEGER" />
 		<result column="create_id" property="createId" jdbcType="INTEGER" />
 		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -35,7 +36,7 @@
 	</sql>
 	<!-- pack查询 -->
 		<select id="selectEmployerPage" resultType="java.util.Map" parameterType="java.util.Map">
-		SELECT	p.pack_id packId,p.pack_name packName,p.down_count downCount,p.pack_lvl taskLvl,p.pack_status packStatus,p.pack_lock_time packLockTime,p.unzip,p.unzip_time createTime,p.taskMarkTimeId,p.taskMarkTimeName, 
+		SELECT	p.pack_id packId,p.pack_name packName,p.down_count downCount,p.pack_lvl taskLvl,p.pack_type packType,p.pack_status packStatus,p.pack_lock_time packLockTime,p.unzip,p.unzip_time createTime,p.taskMarkTimeId,p.taskMarkTimeName, 
 				a.taskCount,b.finishTaskCount,c.invalid,d.wavZero,e.taskMarkTime
 				FROM pack p
 				LEFT JOIN (SELECT COUNT(task_id) taskCount,pack_id FROM task GROUP BY pack_id) a ON p.pack_id = a.pack_id
@@ -292,6 +293,9 @@
 			<if test="unzip != null">
 				unzip,
 			</if>
+			<if test="packType != null">
+				pack_type,
+			</if>
 			<if test="packLvl != null">
 				pack_lvl,
 			</if>
@@ -354,6 +358,9 @@
 			<if test="unzip != null">
 				#{unzip,jdbcType=INTEGER},
 			</if>
+			<if test="packType != null">
+				#{packType,jdbcType=INTEGER},
+			</if>
 			<if test="packLvl != null">
 				#{packLvl,jdbcType=INTEGER},
 			</if>
@@ -409,6 +416,9 @@
 			</if>
 			<if test="packStatus != null">
 				pack_status = #{packStatus,jdbcType=INTEGER},
+			</if>
+			<if test="packType != null">
+				pack_type = #{packType,jdbcType=INTEGER},
 			</if>
 			<if test="packLockTime != null">
 				pack_lock_time = #{packLockTime,jdbcType=INTEGER},

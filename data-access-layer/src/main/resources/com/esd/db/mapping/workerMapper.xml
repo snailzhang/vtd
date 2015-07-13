@@ -26,26 +26,27 @@
 	</resultMap>
 	<sql id="Base_Column_List">
 		worker_id, user_id, worker_real_name, worker_id_card, worker_disability_card, worker_phone,
-		worker_mac, worker_bank_card, worker_paypal,downing,downCount, create_id, create_time, create_method,
+		worker_mac, worker_bank_card, worker_paypal,downing,downCount, create_id, create_time,
+		create_method,
 		update_id, update_time, update_method, version
 	</sql>
 	<sql id="Blob_Column_List">
 		worker_image
 	</sql>
 	<!-- 工作者人数 -->
-	<select id="selectWorkerCount" resultType = "java.lang.Integer">
+	<select id="selectWorkerCount" resultType="java.lang.Integer">
 		SELECT COUNT(worker_id) FROM worker WHERE worker_id > 0
 	</select>
 	<!-- 工作者管理员 -->
-	<select id="selectLikeRealName" resultType = "java.util.Map" parameterType="java.util.Map">
+	<select id="selectLikeRealName" resultType="java.util.Map" parameterType="java.util.Map">
 		SELECT
-			u.username,u.user_id userId,u.user_status userStatus,w.worker_id workerId,w.worker_real_name realName,w.worker_phone phone
+		u.username,u.user_id userId,u.user_status userStatus,w.worker_id workerId,w.worker_real_name realName,w.worker_phone phone
 		FROM worker w
-		LEFT JOIN 
-		(SELECT 
-			username,user_id,user_status
-		FROM USER ) u 
-		ON  w.user_id = u.user_id
+		LEFT JOIN
+		(SELECT
+		username,user_id,user_status
+		FROM USER ) u
+		ON w.user_id = u.user_id
 		<where>
 			worker_id > 3
 			<if test="userNameCondition != null">
@@ -54,18 +55,53 @@
 		</where>
 		limit ${begin},${end}
 	</select>
+	<!-- 工作者等级 -->
+	<select id="selectWorkerLvl" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT w.worker_id workerId,w.worker_real_name wrn,u.user_lvl lvl,u.uln FROM worker w
+		JOIN (SELECT uu.user_lvl,uu.user_id,uu.username,l.user_lvl_name uln FROM USER uu
+		JOIN (SELECT user_lvl,user_lvl_name FROM userlvl) l
+		ON uu.user_lvl = l.user_lvl
+		) u
+		ON u.user_id = w.user_id
+		<where>
+			<if test="userNameCondition != null">
+				(w.worker_real_name LIKE "%${userNameCondition}%"  or  u.username LIKE "%${userNameCondition}%")
+			</if>
+			<if test="userLvl != null">
+				AND u.user_lvl = ${userLvl}
+			</if>
+		</where> 
+		limit ${begin},${end}
+	</select>
+	<!-- 工作者等级个数 -->
+	<select id="selectWorkerLvlCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT count(worker_id) count FROM worker w
+		JOIN (SELECT uu.user_lvl,uu.user_id,uu.username,l.user_lvl_name uln FROM USER uu
+		JOIN (SELECT user_lvl,user_lvl_name FROM userlvl) l
+		ON uu.user_lvl = l.user_lvl
+		) u
+		ON u.user_id = w.user_id
+		<where>
+			<if test="userNameCondition != null">
+				(w.worker_real_name LIKE "%${userNameCondition}%"  or  u.username LIKE "%${userNameCondition}%")
+			</if>
+			<if test="userLvl != null">
+				AND u.user_lvl = ${userLvl}
+			</if>
+		</where> 
+	</select>
 	<select id="selectCountLikeRealname" resultType="java.lang.Integer" parameterType="java.util.Map">
 		SELECT
-			COUNT(worker_id)
+		COUNT(worker_id)
 		FROM worker w
-		LEFT JOIN 
-		(SELECT 
-			username,user_id
-		FROM USER ) u 
-		ON  w.user_id = u.user_id
+		LEFT JOIN
+		(SELECT
+		username,user_id
+		FROM USER ) u
+		ON w.user_id = u.user_id
 		WHERE
-			worker_id > 3
-			AND (username LIKE "%${userNameCondition}%" OR worker_real_name LIKE "%${userNameCondition}%")
+		worker_id > 3
+		AND (username LIKE "%${userNameCondition}%" OR worker_real_name LIKE "%${userNameCondition}%")
 	</select>
 	<select id="selectWorkerRealNameByWorkerId" resultType="java.lang.String" parameterType="java.lang.Integer">
 		select worker_real_name from worker where worker_id = #{workerId}
@@ -126,11 +162,14 @@
 		create_id, create_time, create_method,
 		update_id, update_time, update_method,
 		version, worker_image)
-		values (#{workerId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{workerRealName,jdbcType=VARCHAR},
+		values (#{workerId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{workerRealName,jdbcType=VARCHAR},
 		#{workerIdCard,jdbcType=VARCHAR}, #{workerDisabilityCard,jdbcType=VARCHAR}, #{workerPhone,jdbcType=VARCHAR},
-		#{workerMac,jdbcType=VARCHAR}, #{workerBankCard,jdbcType=VARCHAR}, #{workerPaypal,jdbcType=VARCHAR},
+		#{workerMac,jdbcType=VARCHAR},
+		#{workerBankCard,jdbcType=VARCHAR}, #{workerPaypal,jdbcType=VARCHAR},
 		#{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createMethod,jdbcType=VARCHAR},
-		#{updateId,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
+		#{updateId,jdbcType=INTEGER},
+		#{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
 		#{version,jdbcType=INTEGER}, #{workerImage,jdbcType=LONGVARBINARY})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.worker">
@@ -364,7 +403,8 @@
 		set user_id = #{userId,jdbcType=INTEGER},
 		worker_real_name = #{workerRealName,jdbcType=VARCHAR},
 		worker_id_card = #{workerIdCard,jdbcType=VARCHAR},
-		worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
+		worker_disability_card =
+		#{workerDisabilityCard,jdbcType=VARCHAR},
 		worker_phone = #{workerPhone,jdbcType=VARCHAR},
 		worker_mac = #{workerMac,jdbcType=VARCHAR},
 		worker_bank_card = #{workerBankCard,jdbcType=VARCHAR},
@@ -372,11 +412,13 @@
 		create_id = #{createId,jdbcType=INTEGER},
 		create_time = #{createTime,jdbcType=TIMESTAMP},
 		create_method = #{createMethod,jdbcType=VARCHAR},
-		update_id = #{updateId,jdbcType=INTEGER},
+		update_id =
+		#{updateId,jdbcType=INTEGER},
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
 		version = #{version,jdbcType=INTEGER},
-		worker_image = #{workerImage,jdbcType=LONGVARBINARY}
+		worker_image =
+		#{workerImage,jdbcType=LONGVARBINARY}
 		where worker_id = #{workerId,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.worker">
@@ -385,7 +427,8 @@
 		set user_id = #{userId,jdbcType=INTEGER},
 		worker_real_name = #{workerRealName,jdbcType=VARCHAR},
 		worker_id_card = #{workerIdCard,jdbcType=VARCHAR},
-		worker_disability_card = #{workerDisabilityCard,jdbcType=VARCHAR},
+		worker_disability_card =
+		#{workerDisabilityCard,jdbcType=VARCHAR},
 		worker_phone = #{workerPhone,jdbcType=VARCHAR},
 		worker_mac = #{workerMac,jdbcType=VARCHAR},
 		worker_bank_card = #{workerBankCard,jdbcType=VARCHAR},
@@ -393,10 +436,12 @@
 		create_id = #{createId,jdbcType=INTEGER},
 		create_time = #{createTime,jdbcType=TIMESTAMP},
 		create_method = #{createMethod,jdbcType=VARCHAR},
-		update_id = #{updateId,jdbcType=INTEGER},
+		update_id =
+		#{updateId,jdbcType=INTEGER},
 		update_time = #{updateTime,jdbcType=TIMESTAMP},
 		update_method = #{updateMethod,jdbcType=VARCHAR},
 		version = #{version,jdbcType=INTEGER}
-		where worker_id = #{workerId,jdbcType=INTEGER}
+		where worker_id =
+		#{workerId,jdbcType=INTEGER}
 	</update>
 </mapper>

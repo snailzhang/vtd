@@ -191,8 +191,8 @@ public class EmployerController {
 		}
 		int pre = (int) System.currentTimeMillis();
 		List<Map<String, Object>> listPack = packService.getEmployerPage(page, packStuts, packNameCondition, employerId, Constants.ROW, unzip);
-		int pre1 = (int) System.currentTimeMillis();
-		System.out.println("listPack:"+ (pre1 - pre));
+		//int pre1 = (int) System.currentTimeMillis();
+		//System.out.println("listPack:"+ (pre1 - pre));
 
 		for (Iterator<Map<String, Object>> iterator = listPack.iterator(); iterator.hasNext();) {
 			Map<String, Object> map2 = (Map<String, Object>) iterator.next();
@@ -200,6 +200,15 @@ public class EmployerController {
 				map2.put("createTime","");
 			}else{
 				map2.put("createTime",sdf.format((Date) map2.get("createTime")));
+			}
+			if(map2.get("packType") == null){
+				map2.put("packType","");
+			}else{
+				if(Integer.parseInt(map2.get("packType").toString()) == 1 ){
+					map2.put("packType","一层");
+				}else{
+					map2.put("packType","三层");
+				}
 			}
 			if(map2.get("invalid") == null){
 				map2.put("invalid",0);
@@ -221,8 +230,8 @@ public class EmployerController {
 			}
 			list.add(map2);
 		}
-		int pre2 = (int) System.currentTimeMillis();
-		System.out.println("for:"+ (pre2 - pre1));
+		//int pre2 = (int) System.currentTimeMillis();
+		//System.out.println("for:"+ (pre2 - pre1));
 		map.clear();
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, Math.ceil((double) totle / (double) Constants.ROW));
@@ -262,6 +271,20 @@ public class EmployerController {
 		pack.setTaskMarkTimeName(markTimeMethod.getName());
 
 		packService.updateByPrimaryKeySelective( pack);
+		map.clear();
+		map.put(Constants.REPLAY, 1);
+		return map;
+	}
+	@RequestMapping(value = "/updatePackTypeId", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updatePackTypeIdPOST(int packId,int packTypeId) {		
+		Map<String, Object> map = new HashMap<>();
+
+		packWithBLOBs pack = new packWithBLOBs();
+		pack.setPackId(packId);
+		pack.setPackType(packTypeId);
+
+		packService.updateByPrimaryKeySelective(pack);
 		map.clear();
 		map.put(Constants.REPLAY, 1);
 		return map;
@@ -370,6 +393,7 @@ public class EmployerController {
 
 	/**
 	 * 上传未解压的任务包
+	 * 扫描未上传任务包
 	 * 
 	 * @param session
 	 * @return
@@ -381,11 +405,13 @@ public class EmployerController {
 		int userId = userService.getUserIdByUserName(session.getAttribute(Constants.USER_NAME).toString());
 		int employerId = employerService.getEmployerIdByUserId(userId);
 		session.setAttribute(Constants.EMPLOYER_ID, employerId);
+		
 		String url = employerService.getUploadUrlByEmployerId(employerId);
 		List<String> list = new ArrayList<>();
 		if (url != null && url.isEmpty() == false && url.trim().length() > 0) {
 			File fold = new File(url);
 			if (fold.exists()) {
+				//文件组
 				File[] file = fold.listFiles();
 				for (int i = 0; i < file.length; i++) {
 					String zipName = new String();
@@ -544,7 +570,8 @@ public class EmployerController {
 	 */
 	@RequestMapping(value = "/unzip", method = RequestMethod.POST)
 	@ResponseBody
-	public  Map<String, Object> unzip(String packName, String noteId, int taskLvl, int packLockTime, int markTimeMethod, HttpSession session) {
+	public  Map<String, Object> unzip(String packName, String noteId,int taskType, int taskLvl, int packLockTime, int markTimeMethod, HttpSession session) {
+		System.out.println("进来没!!!");
 		Map<String, Object> map = new HashMap<String, Object>();
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
 		int employerId = Integer.parseInt(session.getAttribute(Constants.EMPLOYER_ID).toString());
@@ -593,6 +620,7 @@ public class EmployerController {
 				packWithBLOBs.setTaskMarkTimeId(markTimeMethod);
 				markTimeMethod markTimeMethod1 = markTimeMethodService.getByPrimaryKey(markTimeMethod);
 				packWithBLOBs.setTaskMarkTimeName(markTimeMethod1.getName());
+				packWithBLOBs.setPackType(taskType);
 				packWithBLOBs.setPackLvl(taskLvl);
 				packWithBLOBs.setVersion(1);
 				packWithBLOBs.setCreateId(userId);
@@ -739,7 +767,7 @@ public class EmployerController {
 	 * @return
 	 */
 	public static String url(HttpServletRequest request) {
-		String url = request.getServletContext().getRealPath(Constants.SLASH);
+		String url = request.getSession().getServletContext().getRealPath(Constants.SLASH);
 		url = url + Constants.EMPLOYERTEMP;
 		File f = new File(url);
 		if (f.exists()) {
@@ -793,7 +821,7 @@ public class EmployerController {
 	}
 
 	/**
-	 * txt文件压入zip
+	 * 说明文件txt文件压入zip
 	 * 
 	 * @param zos
 	 * @param url

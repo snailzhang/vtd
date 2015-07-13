@@ -31,6 +31,7 @@ import com.esd.db.model.workerRecord;
 import com.esd.db.service.EmployerService;
 import com.esd.db.service.ManagerService;
 import com.esd.db.service.SalaryService;
+import com.esd.db.service.UserService;
 import com.esd.db.service.WorkerRecordService;
 import com.esd.db.service.WorkerService;
 import com.esd.ps.model.WorkerRecordTrans;
@@ -48,6 +49,8 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/security")
 public class ManagerController {
 	private static final Logger logger = LoggerFactory.getLogger(ManagerController.class);
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private EmployerService employerService;
 	@Autowired
@@ -129,10 +132,11 @@ public class ManagerController {
 	public Map<String, Object> managerPost(String userNameCondition, int userType, int page, String beginDate, String endDate, int taskUpload, int dateType) {
 		logger.debug("userType:{},page:{},userNameCondition:{},year:{},month:{}", userType, page, userNameCondition, beginDate, endDate);
 		Map<String, Object> map = new HashMap<String, Object>();
-		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		// SimpleDateFormat sdf = new
+		// SimpleDateFormat(Constants.DATETIME_FORMAT);
 		int totlePage = Constants.ZERO;
-		List<Map<String,Object>> list = workerService.getLikeRealName(userNameCondition,page, Constants.ROW);
-		
+		List<Map<String, Object>> list = workerService.getLikeRealName(userNameCondition, page, Constants.ROW);
+
 		map.clear();
 		int totle = workerService.getCountLikeRealname(userNameCondition);
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
@@ -142,8 +146,10 @@ public class ManagerController {
 
 		return map;
 	}
+
 	/**
 	 * 工资列表
+	 * 
 	 * @param userNameCondition
 	 * @param userType
 	 * @param page
@@ -151,25 +157,27 @@ public class ManagerController {
 	 * @param endDate
 	 * @param taskUpload
 	 * @param dateType
-	 * @param payOffType  0:未结 1:已结 2 常规
+	 * @param payOffType
+	 *            0:未结 1:已结 2 常规
 	 * @return
 	 */
 	@RequestMapping(value = "/workerSalary", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> workerSalaryPost(String userNameCondition, int page, String beginDate, String endDate, int dateType,int salaryLine,int payOffType) {
-		logger.debug("page:{},userNameCondition:{},year:{},month:{},dateType:{}", page, userNameCondition, beginDate, endDate,dateType);
+	public Map<String, Object> workerSalaryPost(String userNameCondition, int page, String beginDate, String endDate, int dateType, int salaryLine, int payOffType) {
+		logger.debug("page:{},userNameCondition:{},year:{},month:{},dateType:{}", page, userNameCondition, beginDate, endDate, dateType);
 		int pre = (int) System.currentTimeMillis();
 		Map<String, Object> map = new HashMap<String, Object>();
-		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
-		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		// SimpleDateFormat sdf = new
+		// SimpleDateFormat(Constants.DATETIME_FORMAT);
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		int totlePage = Constants.ZERO;
-		List<Map<String,Object>> salaryList = salaryService.getSalary(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition,salaryLine,payOffType);
-		if(salaryList == null){
+		List<Map<String, Object>> salaryList = salaryService.getSalary(dateType, page, Constants.ROW, beginDate, endDate, userNameCondition, salaryLine, payOffType);
+		if (salaryList == null) {
 			map.put(Constants.LIST, "");
 			return map;
 		}
-		//int pre1 = (int) System.currentTimeMillis();
-		//logger.debug("userList:{}",(pre1 - pre));
+		// int pre1 = (int) System.currentTimeMillis();
+		// logger.debug("userList:{}",(pre1 - pre));
 		manager manager = managerService.selectByPrimaryKey(1);
 		DecimalFormat df = new DecimalFormat("#");
 		Double d = 0.00;
@@ -180,28 +188,57 @@ public class ManagerController {
 				map2.put("salary", 0);
 			} else {
 				d = Double.parseDouble(map2.get("markTime").toString());
-				if(d<0){
+				if (d < 0) {
 					map2.put("taskMarkTimeMonth", -d);
-				}else{
+				} else {
 					map2.put("taskMarkTimeMonth", d);
-				}				
-				map2.put("salary", df.format(d * manager.getSalary() / 3600));								
+				}
+				map2.put("salary", df.format(d * manager.getSalary() / 3600));
 			}
 			list.add(map2);
 		}
 		map.clear();
-		//int pre11 = (int) System.currentTimeMillis();
-		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition,salaryLine,payOffType);
-//		int pre12 = (int) System.currentTimeMillis();
-//		logger.debug("totle:{}",(pre12 - pre11));
+		// int pre11 = (int) System.currentTimeMillis();
+		int totle = salaryService.getSalary100Count(dateType, beginDate, endDate, userNameCondition, salaryLine, payOffType);
+		// int pre12 = (int) System.currentTimeMillis();
+		// logger.debug("totle:{}",(pre12 - pre11));
 		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
 		map.put(Constants.LIST, list);
 		map.put(Constants.TOTLE, totle);
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
+
+	/**
+	 * 等级列表
+	 * 
+	 * @param userNameCondition
+	 * @param page
+	 * @param userLvl
+	 * @return
+	 */
+	@RequestMapping(value = "/workerLvl", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> workerLvlPost(String userNameCondition, int page, int userLvl) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int totlePage = Constants.ZERO;
+		List<Map<String, Object>> list = workerService.getWorkerLvl(userNameCondition, userLvl, page, Constants.ROW);
+		if (list == null) {
+			map.put(Constants.LIST, "");
+			return map;
+		}
+		map.clear();
+		int totle = workerService.getWorkerLvlCount(userNameCondition, userLvl);
+		totlePage = (int) Math.ceil((double) totle / (double) Constants.ROW);
+		map.put(Constants.LIST, list);
+		map.put(Constants.TOTLE, totle);
+		map.put(Constants.TOTLE_PAGE, totlePage);
+		return map;
+	}
+
 	/**
 	 * 结算
+	 * 
 	 * @param userNameCondition
 	 * @param beginDate
 	 * @param endDate
@@ -211,26 +248,42 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/payOff", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> payOffPost(String workerIds,String beginDate, String endDate,int dateType) {
+	public Map<String, Object> payOffPost(String workerIds, String beginDate, String endDate, int dateType) {
 		Map<String, Object> map = new HashMap<String, Object>();
-//		  String str[] = endDate.split("-");
-//		  int month = Integer.parseInt(str[1]);
-//		  int year = Integer.parseInt(str[0]);
-//		  if(month == 1){
-//			  year = year - 1;
-//			  month = 12;
-//		  }else{
-//			  month = month - 1;
-//		  }
-//		  String month1 = "00" + month;
-//		  month1 = month1.substring((month1.length() - 2),month1.length());
-//		  String timer = year + "-" + month1 + "-" +"10";
-		  
-		  String workerId[] = workerIds.split("/");
-		  int replay = salaryService.insertPayOffInfor1(dateType, beginDate, endDate,workerId, endDate);	
-		  map.put(Constants.REPLAY, replay);
+		// String str[] = endDate.split("-");
+		// int month = Integer.parseInt(str[1]);
+		// int year = Integer.parseInt(str[0]);
+		// if(month == 1){
+		// year = year - 1;
+		// month = 12;
+		// }else{
+		// month = month - 1;
+		// }
+		// String month1 = "00" + month;
+		// month1 = month1.substring((month1.length() - 2),month1.length());
+		// String timer = year + "-" + month1 + "-" +"10";
+
+		String workerId[] = workerIds.split("/");
+		int replay = salaryService.insertPayOffInfor1(dateType, beginDate, endDate, workerId, endDate);
+		map.put(Constants.REPLAY, replay);
 		return map;
 	}
+	/**
+	 * 
+	 * @param workerIds
+	 * @param userLvl
+	 * @return
+	 */
+	@RequestMapping(value = "/updateWorkerLvl", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateWorkerLvlPost(String workerIds,int userLvl) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String workerId[] = workerIds.split("/");
+		int replay = userService.updateWorkerLvl(workerId,userLvl);
+		map.put(Constants.REPLAY, replay);
+		return map;
+	}
+
 	/**
 	 * 获得语音标注总和
 	 * 
@@ -253,26 +306,28 @@ public class ManagerController {
 			taskMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, beginDate, endDate, userNameCondition, 1, 1, dateType);
 			aduitingMarkTimeMonthTotle = workerRecordService.getTaskMarkTimeMonthByWorkerIdAndMonth(0, beginDate, endDate, userNameCondition, 0, 1, dateType);
 		}
-		if(taskMarkTimeMonthTotle == null){
+		if (taskMarkTimeMonthTotle == null) {
 			map.put("taskMarkTimeMonthTotle", 0);
-		}else{
+		} else {
 			map.put("taskMarkTimeMonthTotle", taskMarkTimeMonthTotle);
 		}
-		if(aduitingMarkTimeMonthTotle == null){
+		if (aduitingMarkTimeMonthTotle == null) {
 			map.put("aduitingMarkTimeMonthTotle", 0);
-		}else{
+		} else {
 			map.put("aduitingMarkTimeMonthTotle", aduitingMarkTimeMonthTotle);
 		}
 		manager manager = managerService.selectByPrimaryKey(1);
-		if(manager.getSalary()>0){
+		if (manager.getSalary() > 0) {
 			map.put("salary", manager.getSalary());
-		}else{
+		} else {
 			map.put("salary", 0.00);
-		}		
+		}
 		return map;
 	}
+
 	/**
 	 * 工资单合计
+	 * 
 	 * @param userNameCondition
 	 * @param beginDate
 	 * @param endDate
@@ -281,29 +336,31 @@ public class ManagerController {
 	 */
 	@RequestMapping(value = "/getSumSalary", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> getSumSalaryPost(String userNameCondition, String beginDate, String endDate,int dateType,int salaryLine,int payOffType) {
+	public Map<String, Object> getSumSalaryPost(String userNameCondition, String beginDate, String endDate, int dateType, int salaryLine, int payOffType) {
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		Double sumSalary = salaryService.getSUMSalary(dateType, beginDate, endDate, userNameCondition,salaryLine,payOffType);	
-		if(sumSalary == null){
+		Double sumSalary = salaryService.getSUMSalary(dateType, beginDate, endDate, userNameCondition, salaryLine, payOffType);
+		if (sumSalary == null) {
 			map.put("sumSalary", 0);
-		}else{
-			if(sumSalary<0){
+		} else {
+			if (sumSalary < 0) {
 				map.put("sumSalary", -sumSalary);
-			}else{
+			} else {
 				map.put("sumSalary", sumSalary);
 			}
 		}
 		manager manager = managerService.selectByPrimaryKey(1);
-		if(manager.getSalary()>0){
+		if (manager.getSalary() > 0) {
 			map.put("salary", manager.getSalary());
-		}else{
+		} else {
 			map.put("salary", 0.00);
-		}		
+		}
 		return map;
 	}
+
 	/**
 	 * 获得标注时间通过userId
+	 * 
 	 * @param userId
 	 * @param userNameCondition
 	 * @param userType
@@ -327,7 +384,7 @@ public class ManagerController {
 			map.put("markTime", markTime);
 		}
 		// 下载
-		int  downCount = workerRecordService.getdownCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate);
+		int downCount = workerRecordService.getdownCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate);
 		// 放弃
 		int giveUpCount = workerRecordService.getCountByWorkerIdAndDate(workerId, dateType, beginDate, endDate, 3, 0);
 		// 合格
@@ -351,7 +408,7 @@ public class ManagerController {
 		map.put("unUpLoadCount", waitingUpLoadCount);
 		map.put("waitingEffectiveCount", waitingEffective);
 		map.put("waitMarkTime", waitMarkTime);
-		
+
 		return map;
 	}
 
@@ -397,28 +454,31 @@ public class ManagerController {
 		}
 		return map;
 	}
+
 	/**
 	 * 更新个人的下载量
+	 * 
 	 * @param downCount
 	 * @param userId
 	 * @return
 	 */
 	@RequestMapping(value = "/updateDownCount", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> updateDownCountPost(String downCount,int userId) {
+	public Map<String, Object> updateDownCountPost(String downCount, int userId) {
 		Map<String, Object> map = new HashMap<String, Object>();
-			int workerId = workerService.getWorkerIdByUserId(userId);
-			worker worker = new worker();
-			worker.setWorkerId(workerId);
-			if(downCount.equals("0")){
-				worker.setDownCount(null);
-			}else{
-				worker.setDownCount(downCount);
-			}			
-			workerService.updateByPrimaryKeySelective(worker);
-			map.put(Constants.REPLAY,1);
+		int workerId = workerService.getWorkerIdByUserId(userId);
+		worker worker = new worker();
+		worker.setWorkerId(workerId);
+		if (downCount.equals("0")) {
+			worker.setDownCount(null);
+		} else {
+			worker.setDownCount(downCount);
+		}
+		workerService.updateByPrimaryKeySelective(worker);
+		map.put(Constants.REPLAY, 1);
 		return map;
 	}
+
 	/**
 	 * 工作者工作信息
 	 * 

@@ -6,6 +6,7 @@
 		<result column="user_status" property="userStatus" jdbcType="BIT" />
 		<result column="username" jdbcType="VARCHAR" property="username" />
 		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="user_lvl" jdbcType="INTEGER" property="userLvl" />
 		<result column="usertype" jdbcType="INTEGER" property="usertype" />
 		<result column="create_id" jdbcType="INTEGER" property="createId" />
 		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -16,7 +17,7 @@
 		<result column="version" jdbcType="INTEGER" property="version" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		user_id,user_status, username, password, usertype, create_id, create_time, create_method, update_id,
+		user_id,user_status, username, password,user_lvl, usertype, create_id, create_time, create_method, update_id,
 		update_time, update_method, version
 	</sql>
 	<!-- 工资列表 -->
@@ -275,6 +276,20 @@
 			</if>
 		</set>
 		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+	<update id="updateWorkerLvl" parameterType="java.util.Map">
+		update user
+		<set>
+			user_lvl = ${userLvl}
+		</set>
+		<where>
+			user_id in (select user_id from worker 
+			where
+			<foreach collection="workerId" item="item" open="(" close=")" separator="OR">  
+	   		 	worker_id = #{item}  
+	  		</foreach>  
+			)
+		</where>
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.esd.db.model.user">
 		update user

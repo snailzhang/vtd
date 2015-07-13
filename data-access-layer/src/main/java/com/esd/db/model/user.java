@@ -11,7 +11,9 @@ public class user {
     private String username;
 
     private String password;
-
+    
+    private Integer userLvl;
+    
     private Integer usertype;
 
     private Integer createId;
@@ -123,4 +125,12 @@ public class user {
     public void setVersion(int version) {
         this.version = version;
     }
+
+	public Integer getUserLvl() {
+		return userLvl;
+	}
+
+	public void setUserLvl(Integer userLvl) {
+		this.userLvl = userLvl;
+	}
 }

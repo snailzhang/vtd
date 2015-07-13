@@ -142,5 +142,44 @@ public class WorkerServiceImpl implements WorkerService {
 		
 		return workerMapper.selectWorkerCount();
 	}
+
+	//工作者等级查询
+	public List<Map<String, Object>> getWorkerLvl(String userNameCondition, int userLvl, int page,int row) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		if(userNameCondition.trim().length() == 0){
+			map.put("userNameCondition", null);
+		}else{
+			map.put("userNameCondition", userNameCondition);
+		}
+		if (page == 0) {
+			map.put("begin", null);
+			map.put("end", null);
+		} else {
+			map.put("begin", ((page - 1) * row));
+			map.put("end", row);
+		}
+		if(userLvl == 0){
+			map.put("userLvl", null);
+		}else{
+			map.put("userLvl", userLvl);
+		}
+		return workerMapper.selectWorkerLvl(map);
+	}
+
+	//工作者等级查询个数
+	public int getWorkerLvlCount(String userNameCondition, int userLvl) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		if(userNameCondition.trim().length() == 0){
+			map.put("userNameCondition", null);
+		}else{
+			map.put("userNameCondition", userNameCondition);
+		}
+		if(userLvl == 0){
+			map.put("userLvl", null);
+		}else{
+			map.put("userLvl", userLvl);
+		}
+		return workerMapper.selectWorkerLvlCount(map);
+	}
 	
 }

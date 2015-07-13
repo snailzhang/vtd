@@ -803,10 +803,11 @@
 				update_method = "${updateMethod}"
 			</if>
 		</set>
-		where task_statu = 0 and worker_id = ${workerId} and task_id = ${taskId}
-		<if test="version != null">
-			and version = ${version},
-		</if>
+		<where> task_statu = 0 and worker_id = ${workerId}  
+		<if test="taskId != 0">
+			and task_id = ${taskId}
+		</if>		
+		</where>
 	</update>
 	<update id="updateByInvalid" parameterType="java.util.Map">
 		update worker_record

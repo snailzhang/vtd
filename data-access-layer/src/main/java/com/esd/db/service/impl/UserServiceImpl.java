@@ -13,7 +13,7 @@ import com.esd.db.service.UserService;
 @Service("UserService")
 public class UserServiceImpl implements UserService {
 	@Autowired
-	userMapper userMapper;
+	private userMapper userMapper;
 
 	@Override
 	public synchronized int deleteByPrimaryKey(Integer userId) {
@@ -143,6 +143,14 @@ public class UserServiceImpl implements UserService {
 		map.put("dateType", dateType);
 		
 		return userMapper.selectWorkerSalary(map);
+	}
+
+	//设置用户等级
+	public int updateWorkerLvl(String[] workerId, int userLvl) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("workerId", workerId);
+		map.put("userLvl", userLvl);
+		return userMapper.updateWorkerLvl(map);
 	}
 
 }

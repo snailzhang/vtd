@@ -59,6 +59,7 @@ import com.esd.db.service.WorkerService;
  */
 @Controller
 public class LoginController {
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	@Autowired
 	private UserService userService;
@@ -128,6 +129,8 @@ public class LoginController {
 	@RequestMapping(value = "/quit", method = RequestMethod.GET)
 	public  ModelAndView quitGet(HttpSession session, HttpServletRequest request) {
 		session.removeAttribute(Constants.USER_ID);
+		session.removeAttribute(Constants.USER_LVL);
+		session.removeAttribute("typeCount");
 		session.removeAttribute(Constants.USER_TYPE);
 		session.removeAttribute(Constants.ADD_USER_ID);
 		session.removeAttribute("aduiting");
@@ -194,15 +197,16 @@ public class LoginController {
 			}
 			UsernameAndPasswordMd5 md5 = new UsernameAndPasswordMd5();
 			String md5Password = md5.getMd5(username, password);
-			logger.debug("md5Password:{}", md5Password);
+			//logger.debug("md5Password:{}", md5Password);
 			// 密码比较
 			if (md5Password.equals(user.getPassword())) {
-				//this.checkOldTask(request);
+				
 				session.setAttribute(Constants.USER_NAME, user.getUsername());
 				session.setAttribute(Constants.USER_ID, user.getUserId());
+				session.setAttribute(Constants.USER_LVL, user.getUserLvl());
 				session.setAttribute(Constants.USER_TYPE, user.getUsertype());
 				usertype userType = userTypeService.getUserTypeById(user.getUsertype());
-				logger.debug("typeName:{}", userType.getUserTypeNameEnglish());
+				//logger.debug("typeName:{}", userType.getUserTypeNameEnglish());
 				String typeName = userType.getUserTypeNameEnglish();
 				if (typeName.equals(Constants.MANAGER)) {
 					if (managerService.getCountManagerIdByUserId(user.getUserId()) == 0) {
@@ -251,7 +255,7 @@ public class LoginController {
 					end = sdf.parse(sdf.format(new Date()));
 					long between = (end.getTime() - begin.getTime());// 毫秒
 					int packLockTime = workerRecord.getTaskLockTime();
-					logger.debug("时间差:{}", (packLockTime - between));
+					//logger.debug("时间差:{}", (packLockTime - between));
 					if ((packLockTime - between) == 0 || (packLockTime - between) < 0) {
 						// 更新worker_record表
 						workerRecord update = new workerRecord();
@@ -277,7 +281,7 @@ public class LoginController {
 						packService.updateByPrimaryKeySelective(pack);
 
 						// 删除任务的下载备份
-						String url = request.getServletContext().getRealPath(Constants.SLASH);
+						String url = request.getSession().getServletContext().getRealPath(Constants.SLASH);
 						File fold = new File(url + Constants.WORKERTEMP);
 						if (fold.exists()) {
 							File zipFile = new File(url + Constants.SLASH + workerRecord.getDownPackName());
@@ -350,7 +354,7 @@ public class LoginController {
 	    if(week == 7){
 	    	week = 0;
 	    }
-	    logger.debug("week:{}",week);
+	    //logger.debug("week:{}",week);
 	    //日期范围计算
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		  // 创建(日历)格式化
@@ -365,7 +369,7 @@ public class LoginController {
 	    SimpleDateFormat sdf1 = new SimpleDateFormat("MMdd");
 	    String beginDate1 = sdf1.format(gc.getTime());
 	    String endDate1 = sdf1.format(new Date());
-	    logger.debug("beginDate:{},endDate:{}",beginDate,endDate);
+	    //logger.debug("beginDate:{},endDate:{}",beginDate,endDate);
 	    manager manager = managerService.selectByPrimaryKey(1);
 	    List<Map<String, Object>> monthList = salaryService.getMoneyList("","", endDate);
 	    List<Map<String, Object>> weekList = salaryService.getMoneyList(beginDate,endDate,"");
@@ -387,7 +391,13 @@ public class LoginController {
 	public  Map<String, Object> datasPost() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int peopleCountTotle = workerService.getWorkerCount();
-		double moneyTotle = salaryService.getMoneyTotle(0);
+		double moneyTotle = 0.00;
+		try{
+			moneyTotle = salaryService.getMoneyTotle(0);
+		}catch(NullPointerException n){
+			
+		}
+		
 		int taskCountTotle = taskService.getWorkerIdZeroCountByPackId(0);
 		double moneyToday = 0.00;
 		try{

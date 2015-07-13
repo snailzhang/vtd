@@ -29,7 +29,7 @@ public interface TaskService {
 
 	List<task> getAllTaskByPackId(Integer packId);
 
-	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId,int userId,int workerId);
+	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId,int userId,int workerId,int packType);
 
 	int updateByPrimaryKeySelective(taskWithBLOBs record);
 	
@@ -45,7 +45,7 @@ public interface TaskService {
 	
 	int getUndoTaskCount();
 
-	int getCountTaskDoing();
+	int getCountTaskDoing(int packType);
 
 	List<taskWithBLOBs> get1TaskByTaskName(String taskName);
 
@@ -80,4 +80,8 @@ public interface TaskService {
 	//int updateByLimit(Map<String, Object> map);
 	
 	int updateAduitByWorkerId(int workerId,int taskEffective);
+	
+	int updateFileByTaskId(int taskId,byte[] textGrid,byte[] tag,double taskMarkTime);
+	//回收任务
+	int updateWorkerIdByWorkerId(int workerId,int taskId);
 }

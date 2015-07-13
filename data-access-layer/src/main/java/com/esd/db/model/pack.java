@@ -24,6 +24,8 @@ public class pack {
 	
 	private Date unzipTime;
 	
+	private Integer packType;
+	
 	private Integer packLvl;
 
 	private Integer createId;
@@ -192,6 +194,14 @@ public class pack {
 
 	public void setDownCount(Integer downCount) {
 		this.downCount = downCount;
+	}
+
+	public Integer getPackType() {
+		return packType;
+	}
+
+	public void setPackType(Integer packType) {
+		this.packType = packType;
 	}
 
 }

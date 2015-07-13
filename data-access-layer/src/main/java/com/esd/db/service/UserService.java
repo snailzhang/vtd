@@ -39,4 +39,6 @@ public interface UserService {
 	int getCountLikeUsername(String userNameCondition, int userType);
 	
 	List<Map<String,Object>> getWorkerSalary(String beginDate, String endDate, String userNameCondition, int taskEffective, int taskStatus, int dateType,int page,int row);
+
+	int updateWorkerLvl(String workerId[],int userLvl);
 }
