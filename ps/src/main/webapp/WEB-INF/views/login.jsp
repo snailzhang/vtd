@@ -108,7 +108,7 @@
 			<div class="form-group">
 				<!-- <button type="button" class="btn btn-lg btn-primary btn-block">登录</button> -->
 				<button id = "login-btn" type="button" class="btn btn-primary">登录</button>
-				<!--  <button id = "task" type="button" class="btn btn-primary">序列化测试</button>-->
+				<!-- <button id = "task" type="button" class="btn btn-primary">序列化测试</button> -->
 			</div>	
 		</form>
 	</div>
@@ -133,7 +133,7 @@
 			}
 			return true;
 		};
-		//checkOldTask();
+		checkOldTask();
 		$("#username").blur(function(){
 			checkUserName();
 			var user = $("#username");
