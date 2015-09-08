@@ -399,6 +399,7 @@ public class LoginController {
 		}
 		
 		int taskCountTotle = taskService.getWorkerIdZeroCountByPackId(0);
+		int taskCount = taskService.getCountTaskDoing(1);
 		double moneyToday = 0.00;
 		try{
 			moneyToday = salaryService.getMoneyTotle(1);
@@ -414,6 +415,7 @@ public class LoginController {
 	    map.put("peopleCountTotle", peopleCountTotle);
 	    map.put("moneyTotle", moneyTotle);
 	    map.put("taskCountTotle", taskCountTotle);
+	    map.put("taskCount", taskCount);
 	    map.put("moneyToday", moneyToday);
 	    return map;
 	}

@@ -20,7 +20,7 @@
 <style type="text/css">
 	.datas{padding:0 0 60px 0;}
 	.datass{padding-top:15px;background-color:#D2B48C;height: 50px;font-size:17px;font-weight: bold;}
-	.datas1{padding:0 0 20px 11%;}
+	.datas1{padding:0 0 20px 7%;}
 	.login-list{float: left; padding-left:3%;width:22.5%;}
 	.login-page{float: right;width:260px; padding-right: 1%;}
 	body{font-family: Microsoft YaHei;padding-top: 0;background:#FAFAD2;}
@@ -36,6 +36,7 @@
 			<span id = "peopleCountTotle" class="datas1"></span>
 			<span id = "moneyTotle" class="datas1"></span>
 			<span id = "taskCountTotle" class="datas1"></span>
+			<span id = "taskCount" class="datas1"></span>
 			<span id = "moneyToday" class="datas1"></span>
 		</div>
 	</div>
@@ -177,7 +178,8 @@
 				success:function(data){
 					$("#peopleCountTotle").text("总人数 : "+data.peopleCountTotle+"位");
 					$("#moneyTotle").text("总金额 : "+data.moneyTotle+"元");
-					$("#taskCountTotle").text("任务数量 : "+data.taskCountTotle+"个");
+					$("#taskCountTotle").text("总任务数 : "+data.taskCountTotle+"个");
+					$("#taskCount").text("可做任务 : "+data.taskCount+"个");
 					$("#moneyToday").text("今日金额 : "+data.moneyToday+"元");
 				}		
 			});
