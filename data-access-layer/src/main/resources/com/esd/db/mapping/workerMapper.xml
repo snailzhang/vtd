@@ -312,7 +312,9 @@
 			<if test="downing != null">
 				downing = #{downing,jdbcType=INTEGER},
 			</if>
-			downCount = #{downCount,jdbcType=VARCHAR},
+			<if test="downCount != null">
+				downCount = #{downCount,jdbcType=VARCHAR},
+			</if>
 			<if test="createId != null">
 				create_id = #{createId,jdbcType=INTEGER},
 			</if>
