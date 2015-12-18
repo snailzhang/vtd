@@ -567,9 +567,23 @@ public class WorkerController {
 	@RequestMapping(value = "/downTask", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request,int packType) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
+		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		worker w = workerService.getWorkerByUserId(userId);
+		if(w.getDowning() == 1){
+			map.put("replay",1);
+			return map;
+		}else{
+			int doingtaskcount = workerRecordService.getDoingTaskCountByWorkerId(workerId);
+			if(doingtaskcount>0){
+				map.put("replay",1);
+				return map;
+			}
+		}
 		session.setAttribute("downing", 1);
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		
 		logger.debug("downTaskCount:{}", downTaskCount);
 		int countTaskDoing = taskService.getCountTaskDoing(packType);
 		// 查看先可做任务数是否小于需求
@@ -579,8 +593,7 @@ public class WorkerController {
 			session.setAttribute("downing", 0);
 			return map;
 		}
-		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		
 		String realName = workerService.getWorkerRealNameByWorkerId(workerId);
 		// int packId = packService.getPackIdOrderByPackLvl();
 		// 更新工作者下载状态
@@ -686,6 +699,7 @@ public class WorkerController {
 		// }
 		logger.debug("wrongPath:{}", wrongPath);
 		map.put(Constants.WRONGPATH, wrongPath);
+		map.put("replay", 0);
 		session.setAttribute("downing", 0);
 		// 更新工作者下载状态
 		worker.setDowning(0);
