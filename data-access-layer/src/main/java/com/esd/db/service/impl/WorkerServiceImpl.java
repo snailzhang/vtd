@@ -181,5 +181,11 @@ public class WorkerServiceImpl implements WorkerService {
 		}
 		return workerMapper.selectWorkerLvlCount(map);
 	}
+	//获得发展的工作者工作号
+	@Override
+	public List<worker> getWorkerIdByUpdateId(int workerId) {
+		
+		return workerMapper.selectWorkerIdByUpdateId(workerId);
+	}
 	
 }

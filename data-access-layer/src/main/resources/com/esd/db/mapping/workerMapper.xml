@@ -151,6 +151,16 @@
 		from worker
 		where worker_phone = #{workerPhone,jdbcType=VARCHAR}
 	</select>
+	<!-- 发展工作者的id -->
+	<select id="selectWorkerIdByUpdateId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+			worker_id
+		from worker
+		<where>
+			update_id = #{workerId,jdbcType=INTEGER}
+		</where>  
+	</select>
+	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from worker
 		where worker_id = #{workerId,jdbcType=INTEGER}

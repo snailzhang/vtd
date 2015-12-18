@@ -48,4 +48,6 @@ public interface workerMapper {
 	int selectWorkerLvlCount(Map<String, Object> map);
 
 	int selectWorkerCount();
+	
+	List<worker> selectWorkerIdByUpdateId(int workerId);
 }
