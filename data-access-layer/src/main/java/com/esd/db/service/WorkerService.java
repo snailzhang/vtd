@@ -47,4 +47,6 @@ public interface WorkerService {
     List<Map<String,Object>> getWorkerLvl(String userNameCondition,int userLvl,int page,int row);
 
     int getWorkerLvlCount(String userNameCondition,int userLvl);
+    
+    List<worker> getWorkerIdByUpdateId(int workerId);
 }

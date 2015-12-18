@@ -371,10 +371,15 @@ form {
 												dataType : 'json',
 												success : function(
 														data) {
-													if (data.wrongPath != "") {
-														window.open("${contextPath}"+ data.wrongPath);
-														loadPage();
+													if(data.replay == 0){
+														if (data.wrongPath != "") {
+															window.open("${contextPath}"+ data.wrongPath);
+															loadPage();
+														}
+													}else{
+														alert("您有任务没有完成，不能下载新任务！");
 													}
+													
 												}
 											});
 										}
