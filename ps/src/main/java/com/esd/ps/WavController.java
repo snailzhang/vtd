@@ -119,7 +119,12 @@ public class WavController {
 		String listStr = null;
 		if (list1 == null || list1.size() == 0) {
 			int packType = 1;
-			List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(1, 0, userId, workerId,packType);
+			//downPackName,wrongPath,realName,session.getAttribute(Constants.USER_NAME).toString()
+			SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
+			String date = sdf.format(new Date());
+			String downPackName = workerId+"_polt_"+date;
+			String realName = workerService.getWorkerRealNameByWorkerId(workerId);
+			List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(1, 0, userId, workerId,packType,downPackName,"",realName,userName);
 			if (list == null) {
 				w.setTaskId(0);
 				return w;
@@ -129,32 +134,31 @@ public class WavController {
 			taskName = list.get(0).getTaskName();
 			bytes = list.get(0).getTaskWav();
 			// 更新worker_record 工作者的任务记录
-			workerRecord workerRecord = new workerRecord();
-			workerRecord.setCreateTime(new Date());
-			workerRecord.setTaskOverTime(new Date());
-			SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
-			String date = sdf.format(new Date());
-			workerRecord.setDownPackName(workerId+"_polt_"+date);
-			workerRecord.setDownUrl(null);
+//			workerRecord workerRecord = new workerRecord();
+//			workerRecord.setCreateTime(new Date());
+//			workerRecord.setTaskOverTime(new Date());
+//			workerRecord.setDownPackName(workerId+"_polt_"+date);
+//			workerRecord.setDownUrl(null);
+//			
+//			workerRecord.setPackId(packId);
+//			workerRecord.setPackName(packService.getPackNameByPackId(packId));
+//			workerRecord.setTaskDownTime(new Date());
+//			workerRecord.setTaskId(list.get(0).getTaskId());
+//			int packLockTime = packService.getPackLockTime(packId);
+//			if (packLockTime > 0) {
+//				workerRecord.setTaskLockTime(packLockTime);
+//			}
+//			workerRecord.setTaskName(taskName);
+//			// 真名
+//			String realName = workerService.getWorkerRealNameByWorkerId(workerId);
+//			workerRecord.setRealName(realName);
+//			workerRecord.setTaskStatu(0);
+//			workerRecord.setWorkerId(workerId);
+//			workerRecord.setUserName(userName);
+//			StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+//			workerRecord.setCreateMethod(items1[1].toString());
+//			workerRecordService.insertSelective(workerRecord);
 			
-			workerRecord.setPackId(packId);
-			workerRecord.setPackName(packService.getPackNameByPackId(packId));
-			workerRecord.setTaskDownTime(new Date());
-			workerRecord.setTaskId(list.get(0).getTaskId());
-			int packLockTime = packService.getPackLockTime(packId);
-			if (packLockTime > 0) {
-				workerRecord.setTaskLockTime(packLockTime);
-			}
-			workerRecord.setTaskName(taskName);
-			// 真名
-			String realName = workerService.getWorkerRealNameByWorkerId(workerId);
-			workerRecord.setRealName(realName);
-			workerRecord.setTaskStatu(0);
-			workerRecord.setWorkerId(workerId);
-			workerRecord.setUserName(userName);
-			StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
-			workerRecord.setCreateMethod(items1[1].toString());
-			workerRecordService.insertSelective(workerRecord);
 		} else {
 			taskEffect = 1;
 			taskId = list1.get(0).getTaskId();

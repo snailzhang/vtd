@@ -103,4 +103,6 @@ public interface WorkerRecordService {
 	List<Integer> getPackIdByDateTime2(int workerId);
 	
 	List<Map<String, Object>> getWorkerHis(int workerId,int page,int row);
+	
+	int getDoingCountByTaskId(int taskId);
 }

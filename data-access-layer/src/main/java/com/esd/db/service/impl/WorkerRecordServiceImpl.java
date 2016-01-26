@@ -518,4 +518,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectWorkerHis(map);
 	}
 
+	//通过taskId查询是否有正在进行中的任务（cx-20160126）
+	public int getDoingCountByTaskId(int taskId) {
+
+		return workerRecordMapper.selectDoingCountByTaskId(taskId);
+	}
+
 }

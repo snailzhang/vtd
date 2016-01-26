@@ -366,7 +366,7 @@ public class InspectorController {
 	}
 
 	/**
-	 * 审核
+	 * 审核任务
 	 * 
 	 * @param taskEffective
 	 * @param day

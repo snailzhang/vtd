@@ -2,7 +2,7 @@
  * Copyright (c) 2013 哈尔滨亿时代数码科技开发有限公司（www.hrbesd.com）. All rights reserved.
  * 
  * HRBESD PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
+ */ 
 package com.esd.ps;
 
 import java.io.IOException;
@@ -164,7 +164,7 @@ public class AdministratorController {
 	@RequestMapping(value = "/administrator", method = RequestMethod.POST)
 	@ResponseBody
 	public  Map<String, Object> administratorPost(String userNameCondition, int userType, int page) {
-		logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
+		//logger.debug("userType:{},page:{},userNameCondition:{}", userType, page, userNameCondition);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		List<userTrans> list = new ArrayList<userTrans>();
@@ -260,7 +260,7 @@ public class AdministratorController {
 	@RequestMapping(value = "/userStatus", method = RequestMethod.POST)
 	@ResponseBody
 	public  Map<String, Object> userStatus(int userId, int userStatus) {
-		logger.debug("userId:{},userStatus:{}", userId, userStatus);
+		//logger.debug("userId:{},userStatus:{}", userId, userStatus);
 		Map<String, Object> map = new HashMap<>();
 		user user = new user();
 		user.setUserId(userId);
@@ -305,7 +305,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
 	public  ModelAndView addUserPost(String username, String password, int usertype, RedirectAttributes redirectAttributes, HttpSession session) {
-		logger.debug("username:{},password:{},usertype:{}", username, password, usertype);
+		//logger.debug("username:{},password:{},usertype:{}", username, password, usertype);
 		int replay = 0;
 		if (StringUtils.isBlank(username)) {
 			redirectAttributes.addFlashAttribute(Constants.MESSAGE, MSG_USER_NOT_EMPTY);
@@ -350,7 +350,7 @@ public class AdministratorController {
 			}
 			String page = userTypeService.getUserTypeNameEnglish(usertype);
 			session.setAttribute(Constants.ADD_USER_ID, userService.getUserIdByUserName(username));
-			logger.debug("page:{}", page);
+			//logger.debug("page:{}", page);
 			return new ModelAndView(Constants.MANAGER + Constants.SLASH + page + Constants.UNDERLINE + Constants.ADD, Constants.USER_REGISTED, 1);
 		}
 		return new ModelAndView(Constants.REDIRECT + Constants.COLON + Constants.ADD_USER);

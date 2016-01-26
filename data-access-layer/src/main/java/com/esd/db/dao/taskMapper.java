@@ -30,7 +30,7 @@ public interface taskMapper {
     
     List<task> selectAllTaskByPackId(Integer packId);
     
-    List<taskWithBLOBs> selectTaskOrderByTaskLvl(Map<String, Object> map);
+    List<taskWithBLOBs>  selectTaskOrderByTaskLvl(Map<String, Object> map);
 
     int updateByPrimaryKeySelective(taskWithBLOBs record);
     

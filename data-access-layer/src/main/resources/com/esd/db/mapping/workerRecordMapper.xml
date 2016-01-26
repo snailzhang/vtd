@@ -395,6 +395,12 @@
 		from worker_record
 		where task_id = #{taskId,jdbcType=INTEGER} and task_statu = 0
 	</select>
+	<select id="selectDoingCountByTaskId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select
+		count(task_id)
+		from worker_record
+		where task_id = #{taskId,jdbcType=INTEGER} and task_statu = 0
+	</select>
 	<select id="selectPackIdByTaskId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
 		select
 		pack_id

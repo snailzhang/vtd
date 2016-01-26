@@ -239,6 +239,7 @@ public class LoginController {
 
 	/**
 	 * 登录检测是否有过时的任务
+	 * 超时
 	 * 
 	 * @param request
 	 */
@@ -250,6 +251,7 @@ public class LoginController {
 			for (Iterator<workerRecord> iterator = workerRecordList.iterator(); iterator.hasNext();) {
 				workerRecord workerRecord = (workerRecord) iterator.next();
 				Date begin, end;
+				int m = 0;
 				try {
 					begin = sdf.parse(sdf.format(workerRecord.getTaskDownTime()));
 					end = sdf.parse(sdf.format(new Date()));
@@ -265,20 +267,21 @@ public class LoginController {
 						update.setRecordId(workerRecord.getRecordId());
 						StackTraceElement[] items = Thread.currentThread().getStackTrace();
 						update.setUpdateMethod(items[1].toString());
-						workerRecordService.updateByPrimaryKeySelective(update);
-						// 更新task表
-						task task = new task();
-						task.setWorkerId(0);
-						task.setTaskMarkTime(0.00);
-						task.setTaskId(workerRecord.getTaskId());
-						StackTraceElement[] item = Thread.currentThread().getStackTrace();
-						task.setUpdateMethod(item[1].toString());
-						taskService.updateByTaskId(task);
-
-						packWithBLOBs pack = new packWithBLOBs();
-						pack.setPackStatus(0);
-						pack.setPackId(workerRecord.getPackId());
-						packService.updateByPrimaryKeySelective(pack);
+						m = workerRecordService.updateByPrimaryKeySelective(update);
+						if(m>0){
+							// 更新task表
+							task task = new task();
+							task.setWorkerId(0);
+							task.setTaskMarkTime(0.00);
+							task.setTaskId(workerRecord.getTaskId());
+							StackTraceElement[] item = Thread.currentThread().getStackTrace();
+							task.setUpdateMethod(item[1].toString());
+							taskService.updateByTaskId(task);
+						}
+//						packWithBLOBs pack = new packWithBLOBs();
+//						pack.setPackStatus(0);
+//						pack.setPackId(workerRecord.getPackId());
+//						packService.updateByPrimaryKeySelective(pack);
 
 						// 删除任务的下载备份
 						String url = request.getSession().getServletContext().getRealPath(Constants.SLASH);

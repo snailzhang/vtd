@@ -104,4 +104,6 @@ public interface workerRecordMapper {
 	List<Integer> selectPackIdByDateTime2(Map<String, Object> map);
 	
 	List<Map<String, Object>> selectWorkerHis(Map<String, Object> map);
+	
+	int selectDoingCountByTaskId(int taskId);
 }

@@ -208,7 +208,26 @@ public class ManagerController {
 		map.put(Constants.TOTLE_PAGE, totlePage);
 		return map;
 	}
-
+	/**
+	 * 获得薪金
+	 * 
+	 * @param workerId
+	 * */
+	@RequestMapping(value = "/salaryByWorkerId",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> salaryByWorkerId(int workerId){
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<worker> listw = workerService.getWorkerIdByUpdateId(workerId);
+		if(listw == null){
+		   return null;	
+		}
+		for (Iterator<worker> iterator = listw.iterator(); iterator.hasNext();) {
+			worker worker = (worker) iterator.next();
+			worker.getWorkerId();
+		}
+		//salaryService.getSalary(dateType, page, row, beginDate, endDate, realName, salaryLine, payOffType)
+		return map;	
+	}
 	/**
 	 * 等级列表
 	 * 

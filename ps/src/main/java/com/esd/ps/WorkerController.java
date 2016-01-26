@@ -47,7 +47,6 @@ import com.esd.db.model.markTimeMethod;
 import com.esd.db.model.task;
 import com.esd.db.model.worker;
 import com.esd.db.model.workerRecord;
-import com.esd.ps.model.WorkerDownPackHistoryTrans;
 import com.esd.ps.model.WorkerRecordTrans;
 import com.esd.ps.model.taskTrans;
 import com.esd.ps.util.TaskMarkTime;
@@ -297,14 +296,19 @@ public class WorkerController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
-		workerRecordService.updateByGiveUp(workerId, taskId, 0, items[1].toString());
-		task task = new task();
-		task.setWorkerId(0);
-		task.setVersion(1);
-		task.setTaskMarkTime(0.00);
-		task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
-		task.setTaskId(taskId);
-		taskService.updateByTaskId(task);
+		if(workerRecordService.updateByGiveUp(workerId, taskId, 0, items[1].toString())>0){
+			task task = new task();
+			task.setWorkerId(0);
+			task.setVersion(1);
+			task.setTaskMarkTime(0.00);
+			task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+			task.setTaskId(taskId);
+			taskService.updateByTaskId(task);
+		}else{
+			map.put(Constants.REPLAY, 0);
+			return map;
+		}
+		
 //		int packId = workerRecordService.getPackIdByTaskId(taskId);
 //		if (taskService.getUndoTaskCountByPackId(packId) > 0) {
 //			packWithBLOBs pack = new packWithBLOBs();
@@ -371,7 +375,7 @@ public class WorkerController {
 
 		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
+		//SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_FORMAT);
 		int totle = workerRecordService.getDownPackNameCountByworkerIdGroupByDownPackName(workerId, downPackName);
 		//List<WorkerDownPackHistoryTrans> list = new ArrayList<>();
 		int totlePage = 0;
@@ -568,23 +572,34 @@ public class WorkerController {
 	@ResponseBody
 	public Map<String, Object> downTask(final HttpServletResponse response, int downTaskCount, HttpSession session, HttpServletRequest request,int packType) {
 		Map<String, Object> map = new HashMap<String, Object>();
+		//在session里取得user_id
 		int userId = Integer.parseInt(session.getAttribute(Constants.USER_ID).toString());
-		int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
+		//int workerId = workerService.getWorkerIdByUserId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));		
+		//在worker表通过user_id获得worker对象
 		worker w = workerService.getWorkerByUserId(userId);
+		if(w == null){
+			map.put("replay",1);
+			return map;
+		}
+		//获得worker_id
+		int workerId = w.getWorkerId();
+		//通过worker表的downing字段判断此worker的下载状态
+		//downing = 1 表示 现在中
 		if(w.getDowning() == 1){
 			map.put("replay",1);
 			return map;
 		}else{
+			//worker_record表通过worker_id查询此worker正在做的任务数量
 			int doingtaskcount = workerRecordService.getDoingTaskCountByWorkerId(workerId);
 			if(doingtaskcount>0){
 				map.put("replay",1);
 				return map;
 			}
 		}
-		session.setAttribute("downing", 1);
-
-		
+		//更改session中downing参数的为1
+		session.setAttribute("downing", 1);	
 		logger.debug("downTaskCount:{}", downTaskCount);
+		//通过表task中pack_type字段查询现在可做任务数
 		int countTaskDoing = taskService.getCountTaskDoing(packType);
 		// 查看先可做任务数是否小于需求
 		if (countTaskDoing < downTaskCount) {
@@ -594,27 +609,35 @@ public class WorkerController {
 			return map;
 		}
 		
-		String realName = workerService.getWorkerRealNameByWorkerId(workerId);
+		//String realName = workerService.getWorkerRealNameByWorkerId(workerId);
+		//获取worker的真实名字
+		String realName = w.getWorkerRealName();
 		// int packId = packService.getPackIdOrderByPackLvl();
 		// 更新工作者下载状态
 		worker worker = new worker();
 		worker.setWorkerId(workerId);
 		worker.setDowning(1);
+		//更新worker表的downing
 		workerService.updateByPrimaryKeySelective(worker);
-
-		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0, userId, workerId,packType);
+		//获得根目录地址
+		String url = WorkerController.url(request);
+		logger.debug("url:{}", url);
+		//获得时间点
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+		//生成下载任务的压缩包名
+		String downPackName = sdf.format(new Date()) + Constants.UNDERLINE + downTaskCount + Constants.UNDERLINE + userId + Constants.POINT + Constants.ZIP;
+		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		//查询他时刻表可下载任务的list  String downPackName,String wrongPath,String realName,String userName
+		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0, userId, workerId,packType,downPackName,wrongPath,realName,session.getAttribute(Constants.USER_NAME).toString());
 		if (list == null) {
 			session.setAttribute("downing", 0);
 			return null;
 		}
-		String url = WorkerController.url(request);
-		logger.debug("url:{}", url);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-		String downPackName = sdf.format(new Date()) + Constants.UNDERLINE + downTaskCount + Constants.UNDERLINE + userId + Constants.POINT + Constants.ZIP;
 		File f = new File(url);
 		if (f.exists() == false) {
 			f.mkdir();
 		}
+		//生成压缩包文件
 		File zipFile = new File(url + Constants.SLASH + downPackName);
 		if (zipFile.exists()) {
 			zipFile.delete();
@@ -626,20 +649,26 @@ public class WorkerController {
 		// String wrongPath = Constants.HTTP + serverAndProjectPath +
 		// Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH +
 		// downPackName;
-		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
+		
+		//任务包地址（任务包的下载地址）
+		
 		logger.debug("wrongPath:{}", wrongPath);
 		try {
 			zipFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
 			byte[] bufs = new byte[1024 * 10];
+			int m = 0;
 			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+				//获得任务名
 				String fileName = taskWithBLOBs.getTaskName() == null ? "Task.wav" : taskWithBLOBs.getTaskName();
-				// 创建ZIP实体,并添加进压缩包
+				// 创建ZIP实体,并任务添加进压缩包
 				ZipEntry zipEntry = new ZipEntry(fileName);
 				zos.putNextEntry(zipEntry);
+				//从task表获取任务流
 				byte[] data = taskWithBLOBs.getTaskWav();
+				//转成字节流
 				InputStream is = new ByteArrayInputStream(data);
 				// 读取待压缩的文件并写进压缩包里
 				BufferedInputStream bis = new BufferedInputStream(is, 1024);
@@ -653,28 +682,28 @@ public class WorkerController {
 				// 更新task表
 
 				// 更新worker_record 工作者的任务记录
-				workerRecord workerRecord = new workerRecord();
-				workerRecord.setCreateTime(new Date());
-				workerRecord.setTaskOverTime(new Date());
-				workerRecord.setDownPackName(downPackName);
-				workerRecord.setDownUrl(wrongPath);
-				workerRecord.setPackId(taskWithBLOBs.getPackId());
-				workerRecord.setPackName(packService.getPackNameByPackId(taskWithBLOBs.getPackId()));
-				workerRecord.setTaskDownTime(new Date());
-				workerRecord.setTaskId(taskWithBLOBs.getTaskId());
-				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
-				if (packLockTime > 0) {
-					workerRecord.setTaskLockTime(packLockTime);
-				}
-				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
-				//真名
-				workerRecord.setRealName(realName);
-				workerRecord.setTaskStatu(0);
-				workerRecord.setWorkerId(workerId);
-				workerRecord.setUserName(session.getAttribute(Constants.USER_NAME).toString());
-				StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
-				workerRecord.setCreateMethod(items1[1].toString());
-				workerRecordService.insertSelective(workerRecord);
+//				workerRecord workerRecord = new workerRecord();
+//				workerRecord.setCreateTime(new Date());
+//				workerRecord.setTaskOverTime(new Date());
+//				workerRecord.setDownPackName(downPackName);
+//				workerRecord.setDownUrl(wrongPath);
+//				workerRecord.setPackId(taskWithBLOBs.getPackId());
+//				workerRecord.setPackName(packService.getPackNameByPackId(taskWithBLOBs.getPackId()));
+//				workerRecord.setTaskDownTime(new Date());
+//				workerRecord.setTaskId(taskWithBLOBs.getTaskId());
+//				int packLockTime = packService.getPackLockTime(taskWithBLOBs.getPackId());
+//				if (packLockTime > 0) {
+//					workerRecord.setTaskLockTime(packLockTime);
+//				}
+//				workerRecord.setTaskName(taskWithBLOBs.getTaskName());
+//				//真名
+//				workerRecord.setRealName(realName);
+//				workerRecord.setTaskStatu(0);
+//				workerRecord.setWorkerId(workerId);
+//				workerRecord.setUserName(session.getAttribute(Constants.USER_NAME).toString());
+//				StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+//				workerRecord.setCreateMethod(items1[1].toString());
+//				workerRecordService.insertSelective(workerRecord);
 			}
 			session.setAttribute(Constants.WORKERMARK, 1);
 			zos.close();// 必须关闭,否则最后一个文件写入为0kb

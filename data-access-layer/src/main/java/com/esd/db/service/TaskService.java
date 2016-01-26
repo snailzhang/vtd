@@ -29,7 +29,7 @@ public interface TaskService {
 
 	List<task> getAllTaskByPackId(Integer packId);
 
-	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId,int userId,int workerId,int packType);
+	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId,int userId,int workerId,int packType,String downPackName,String wrongPath,String realName,String userName);
 
 	int updateByPrimaryKeySelective(taskWithBLOBs record);
 	

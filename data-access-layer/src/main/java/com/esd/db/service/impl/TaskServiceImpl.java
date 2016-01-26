@@ -12,9 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.esd.db.dao.taskMapper;
 import com.esd.db.dao.packMapper;
+import com.esd.db.dao.workerRecordMapper;
 import com.esd.db.model.task;
 import com.esd.db.model.taskWithBLOBs;
+import com.esd.db.model.workerRecord;
 import com.esd.db.service.TaskService;
+
+
 
 @Service("TaskService")
 public class TaskServiceImpl implements TaskService {
@@ -22,6 +26,8 @@ public class TaskServiceImpl implements TaskService {
 	private taskMapper taskMapper;
 	@Autowired
 	private packMapper packMapper;
+	@Autowired
+	private workerRecordMapper workerRecordMapper;
 	@Override
 	public  int deleteByPrimaryKey(Integer taskId) {
 
@@ -85,7 +91,8 @@ public class TaskServiceImpl implements TaskService {
 	/**
 	 * worker下载任务,更新task
 	 */
-	public synchronized List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId,int userId,int workerId,int packType) {
+	public synchronized List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount,int packId,int userId,int workerId,int packType,
+			String downPackName,String wrongPath,String realName,String userName) {
 		Map<String, Object> map = new HashMap<>();
  		
  		map.clear();
@@ -93,15 +100,69 @@ public class TaskServiceImpl implements TaskService {
  		map.put("packType", packType);
  		List<taskWithBLOBs> list = taskMapper.selectTaskOrderByTaskLvl(map);
  		//map.put("packId", packId);
+ 		int m = 0,taskId;
  		if(list != null){
  			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+ 				taskId = 0;
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
-				taskWithBLOBs.setTaskDownloadTime(new Date());
-				taskWithBLOBs.setWorkerId(workerId);
-				taskWithBLOBs.setUpdateId(userId);
+				taskId = taskWithBLOBs.getTaskId();
+				
+				if( workerRecordMapper.selectDoingCountByTaskId(taskId) > 0 ){
+					iterator.remove();
+					continue;
+				}
+				
+//				taskWithBLOBs.setTaskDownloadTime(new Date());
+//				taskWithBLOBs.setWorkerId(workerId);
+//				taskWithBLOBs.setUpdateId(userId);
+//				StackTraceElement[] items = Thread.currentThread().getStackTrace();
+//				taskWithBLOBs.setUpdateMethod(items[1].toString());
+				taskWithBLOBs twbs = new taskWithBLOBs();
+				twbs.setTaskId(taskId);
+				twbs.setTaskDownloadTime(new Date());
+				twbs.setWorkerId(workerId);
+				twbs.setUpdateId(userId);
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
-				taskWithBLOBs.setUpdateMethod(items[1].toString());
-				taskMapper.updateByPrimaryKeySelective(taskWithBLOBs);
+				twbs.setUpdateMethod(items[1].toString());
+				m = taskMapper.updateByPrimaryKeySelective(twbs);
+				if(m == 1){
+					workerRecord workerRecord = new workerRecord();
+					workerRecord.setCreateTime(new Date());
+					workerRecord.setTaskOverTime(new Date());
+					workerRecord.setDownPackName(downPackName);
+					workerRecord.setDownUrl(wrongPath);
+					workerRecord.setPackId(taskWithBLOBs.getPackId());
+					workerRecord.setPackName(packMapper.selectPackNameByPackId(taskWithBLOBs.getPackId()));
+					workerRecord.setTaskDownTime(new Date());
+					workerRecord.setTaskId(taskId);
+					int packLockTime = packMapper.selectPackLockTime(taskWithBLOBs.getPackId());
+					if (packLockTime > 0) {
+						workerRecord.setTaskLockTime(packLockTime);
+					}
+					workerRecord.setTaskName(taskWithBLOBs.getTaskName());
+					//真名
+					workerRecord.setRealName(realName);
+					workerRecord.setTaskStatu(0);
+					workerRecord.setWorkerId(workerId);
+					workerRecord.setUserName(userName);
+					StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+					workerRecord.setCreateMethod(items1[1].toString());
+					m = workerRecordMapper.insertSelective(workerRecord);
+					if(m != 1){
+						task task = new task();
+						task.setWorkerId(0);
+						task.setVersion(1);
+						task.setTaskMarkTime(0.00);
+						task.setUpdateId(userId);
+						task.setTaskId(taskId);
+						taskMapper.updateByTaskId(task);
+						iterator.remove();
+					}
+				}else{
+					iterator.remove();
+					continue;
+				}
+				
 			}
 // 	 		map.put("taskDownloadTime",new Date());
 // 	 		map.put("workerId", workerId);
@@ -132,7 +193,7 @@ public class TaskServiceImpl implements TaskService {
 		  Map<String, Object> map = new HashMap<String, Object>();
 		  map.put("packType",packType);
 		try {
-			int packId = packMapper.selectPackIdOrderByPackLvl();
+			//int packId = packMapper.selectPackIdOrderByPackLvl();
 			return taskMapper.selectUndoTaskCountByPackId(map);
 		} catch (BindingException b) {
 			return taskMapper.selectUndoTaskCountByPackId(map);
@@ -324,6 +385,4 @@ public class TaskServiceImpl implements TaskService {
 		map.put("taskId", taskId);
 		return taskMapper.updateWorkerIdByWorkerId(map);
 	}
-
-
 }

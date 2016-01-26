@@ -581,12 +581,14 @@
 								"<td>"+item.realName+"</td>"+
 								"<td>"+item.bankCard+"</td>"+
 								"<td>"+item.taskMarkTimeMonth  +"</td>"+
-								"<td>"+item.salary+"</td>"+
+								"<td id = salary"+ item.workerId +">"+item.salary+"</td>"+
 								"<td><input type='checkbox' class='checkbox1' name='checkbox1' value='"+item.workerId+"'/></td>"+
 							"</tr>"
-							);			
+							);
+							getSalary(item.workerId,item.salary);			
 						});
 						getSumSalary(userNameCondition1,dateType1,beginDate1,endDate1,salaryLine,payOffType);
+						
 						var pageDom = $("#workerSalarList .pagination");
 							pageDom.empty();
 							page.creatPageHTML(pageNum,pageTotal,pageDom,"workerSalaryList");
@@ -599,6 +601,18 @@
 								}
 							});					
 					}
+				}
+			});
+		};
+		/*-----------------------------------------------获得薪金---------------------------------------------------------------*/
+		getSalary = function(workerId,salary){
+			$.ajax({
+				type:'POST',
+				data:{"workerId":workerId},
+				url:'${contextPath}/security/salaryByWorkerId',
+				dataType:'json',
+				success:function(data){
+					$("salary"+workerId).text(data);
 				}
 			});
 		};
