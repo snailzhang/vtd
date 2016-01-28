@@ -28,9 +28,13 @@ public interface TaskService {
 	List<task> getAllHistoryTaskByWorkerId(Integer workerId);
 
 	List<task> getAllTaskByPackId(Integer packId);
-
+	//worker下载任务
 	List<taskWithBLOBs> getTaskOrderByTaskLvl(int downTaskCount, int packId,int userId,int workerId,int packType,String downPackName,String wrongPath,String realName,String userName);
 
+	List<taskWithBLOBs> updateWorkerIdDowningTask(int downTaskCount, int packId,int userId,int workerId,int packType,String downPackName,String wrongPath,String realName,String userName);
+	
+	List<taskWithBLOBs> getTaskbyWorkerIdTaskUpload(int workerId,int task_upload);
+	//----------------------------------------------------------------------------
 	int updateByPrimaryKeySelective(taskWithBLOBs record);
 	
 	int updateDownTaskByTaskId(taskWithBLOBs record);
@@ -84,4 +88,6 @@ public interface TaskService {
 	int updateFileByTaskId(int taskId,byte[] textGrid,byte[] tag,double taskMarkTime);
 	//回收任务
 	int updateWorkerIdByWorkerId(int workerId,int taskId);
+	
+	int updateByWorkerIdAndTaskUpload(int workerId,int taskUpload);
 }

@@ -550,6 +550,24 @@
 		delete from worker_record
 		where record_id = #{recordId,jdbcType=INTEGER}
 	</delete>
+	<!-- 批量insert数据 (cx-20160128)-->
+		<insert id="inserts" parameterType="java.util.List">
+    		insert into worker_record (
+    			 worker_id, pack_id,task_id,user_name, task_name, pack_name,
+    			 down_pack_name,down_url,task_down_time,task_statu,task_over_time,
+				 task_lock_time, create_time,create_method
+			)
+    		values 
+    		<foreach collection="list" item="item" index="index" separator="," >
+       		(
+       		 #{item.workerId},#{item.packId},#{item.taskId},#{item.userName},
+			 #{item.taskName},#{item.packName},#{item.downPackName},#{item.downUrl},
+			 #{item.taskDownTime},#{item.taskStatu},#{item.taskOverTime},#{item.taskLockTime},
+			 #{item.createTime},#{item.createMethod}
+       		)
+    		</foreach>
+		</insert>
+	<!-- ******************************************************** -->
 	<insert id="insert" parameterType="com.esd.db.model.workerRecord">
 		insert into worker_record (record_id, worker_id, pack_id,
 		task_id,user_name, task_name, pack_name,down_pack_name,down_url
@@ -561,14 +579,17 @@
 		values (#{recordId,jdbcType=INTEGER},
 		#{workerId,jdbcType=INTEGER},
 		#{packId,jdbcType=INTEGER},
-		#{taskId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},#{taskName,jdbcType=VARCHAR}, #{packName,jdbcType=VARCHAR},
+		#{taskId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR},#{taskName,jdbcType=VARCHAR}, 
+		#{packName,jdbcType=VARCHAR},
 		#{downPackName,jdbcType=VARCHAR},#{downUrl,jdbcType=VARCHAR},
 		#{taskDownTime,jdbcType=TIMESTAMP},
 		#{taskUploadTime,jdbcType=TIMESTAMP}, #{taskStatu,jdbcType=INTEGER},
 		#{taskLockTime,jdbcType=INTEGER},
 		#{taskMarkTime,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
-		#{createMethod,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateMethod,jdbcType=VARCHAR},
-		#{taskEffective,jdbcType=INTEGER},#{inspectorId,jdbcType=INTEGER},#{inspectorrecordId,jdbcType=INTEGER},#{version,jdbcType=INTEGER})
+		#{createMethod,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+		#{updateMethod,jdbcType=VARCHAR},
+		#{taskEffective,jdbcType=INTEGER},#{inspectorId,jdbcType=INTEGER},
+		#{inspectorrecordId,jdbcType=INTEGER},#{version,jdbcType=INTEGER})
 	</insert>
 	<insert id="insertSelective" parameterType="com.esd.db.model.workerRecord">
 		insert into worker_record

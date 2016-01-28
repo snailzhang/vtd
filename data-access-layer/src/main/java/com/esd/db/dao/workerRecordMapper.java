@@ -15,6 +15,8 @@ public interface workerRecordMapper {
 	int insert(workerRecord record);
 
 	int insertSelective(workerRecord record);
+	
+	int inserts(List<workerRecord> list);
 
 	workerRecord selectByPrimaryKey(Integer recordId);
 

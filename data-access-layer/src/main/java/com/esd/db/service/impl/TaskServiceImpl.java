@@ -1,5 +1,6 @@
 package com.esd.db.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -125,6 +126,7 @@ public class TaskServiceImpl implements TaskService {
 				StackTraceElement[] items = Thread.currentThread().getStackTrace();
 				twbs.setUpdateMethod(items[1].toString());
 				m = taskMapper.updateByPrimaryKeySelective(twbs);
+				
 				if(m == 1){
 					workerRecord workerRecord = new workerRecord();
 					workerRecord.setCreateTime(new Date());
@@ -161,8 +163,7 @@ public class TaskServiceImpl implements TaskService {
 				}else{
 					iterator.remove();
 					continue;
-				}
-				
+				}		
 			}
 // 	 		map.put("taskDownloadTime",new Date());
 // 	 		map.put("workerId", workerId);
@@ -173,7 +174,101 @@ public class TaskServiceImpl implements TaskService {
  		}	
 		return list;
 	}
+	/**
+	 * worker下载任务,更新task
+	 * 新（cx-20160128）
+	 */
+	public synchronized List<taskWithBLOBs> updateWorkerIdDowningTask(int downTaskCount, int packId, int userId, int workerId, int packType, String downPackName, String wrongPath, String realName, String userName) {
+		Map<String, Object> map = new HashMap<>();
 
+		map.clear();
+ 		map.put("downTaskCount", downTaskCount);
+ 		map.put("packType", packType);
+ 		map.put("workerId", workerId);
+ 		map.put("updateId", userId);
+ 		map.put("taskDownloadTime", new Date());
+ 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
+ 		map.put("updateMethod", items[1].toString());
+ 		int m = 0;
+ 		m = taskMapper.updateWorkerIdDowningTask(map);
+ 		List<taskWithBLOBs> list =null;
+ 		if(m < 1){
+ 			return null;
+ 		}
+		map.clear();
+		map.put("workerId", workerId);
+		map.put("taskUpload", 0);
+		list = taskMapper.selectTaskbyWorkerIdTaskUpload(map);
+		if(list == null){
+			return null;
+		}
+		int taskId;
+		List<workerRecord> workerRecordList = new  ArrayList<>();
+		for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
+			taskId = 0;
+			taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
+			taskId = taskWithBLOBs.getTaskId();
+			
+			if( workerRecordMapper.selectDoingCountByTaskId(taskId) > 0 ){
+				iterator.remove();
+				continue;
+			}
+			workerRecord workerRecord = new workerRecord();
+			workerRecord.setCreateTime(new Date());
+			workerRecord.setTaskOverTime(new Date());
+			workerRecord.setDownPackName(downPackName);
+			workerRecord.setDownUrl(wrongPath);
+			workerRecord.setPackId(taskWithBLOBs.getPackId());
+			workerRecord.setPackName(packMapper.selectPackNameByPackId(taskWithBLOBs.getPackId()));
+			workerRecord.setTaskDownTime(new Date());
+			workerRecord.setTaskId(taskId);
+			int packLockTime = packMapper.selectPackLockTime(taskWithBLOBs.getPackId());
+			if (packLockTime > 0) {
+				workerRecord.setTaskLockTime(packLockTime);
+			}
+			workerRecord.setTaskName(taskWithBLOBs.getTaskName());
+			//真名
+			workerRecord.setRealName(realName);
+			workerRecord.setTaskStatu(0);
+			workerRecord.setWorkerId(workerId);
+			workerRecord.setUserName(userName);
+			StackTraceElement[] items1 = Thread.currentThread().getStackTrace();
+			workerRecord.setCreateMethod(items1[1].toString());
+			workerRecordList.add(workerRecord);
+		}
+//		if(workerRecordList == null){
+//			map.clear();
+//			map.put("workerId", workerId);
+//			map.put("taskUpload", 0);
+//			taskMapper.updateByWorkerIdAndTaskUpload(map);
+//			return null;
+//		}
+		//批量插入worker_record表，worker的下载任务数据
+		m = workerRecordMapper.inserts(workerRecordList);
+		//插入失败
+		if(m < 1){
+			map.clear();
+			map.put("workerId", workerId);
+			map.put("taskUpload", 0);
+			taskMapper.updateByWorkerIdAndTaskUpload(map);
+			return null;
+		}
+		return list;
+	}
+	/**
+	 * 通过workerId和taskUpload查询task（cx-20160128）
+	 */
+	@Override
+	public List<taskWithBLOBs> getTaskbyWorkerIdTaskUpload(int workerId, int taskUpload) {
+		Map<String,Object> map = new HashMap<>();
+		
+		map.clear();
+ 		map.put("workerId", workerId);
+ 		map.put("taskUpload", taskUpload);
+ 		
+		return taskMapper.selectTaskbyWorkerIdTaskUpload(map);
+	}
+	/********************************************************************************/
 	@Override
 	public  int getUndoTaskCount() {
 
@@ -384,5 +479,13 @@ public class TaskServiceImpl implements TaskService {
 		map.put("workerId", workerId);
 		map.put("taskId", taskId);
 		return taskMapper.updateWorkerIdByWorkerId(map);
+	}
+
+	@Override
+	public int updateByWorkerIdAndTaskUpload(int workerId, int taskUpload) {
+		Map<String,Object> map = new HashMap<>();
+			map.put("workerId", workerId);
+			map.put("taskUpload", taskUpload);
+		return taskMapper.updateByWorkerIdAndTaskUpload(map);
 	}
 }

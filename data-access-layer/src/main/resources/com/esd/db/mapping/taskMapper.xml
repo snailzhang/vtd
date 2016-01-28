@@ -165,13 +165,55 @@
 		where worker_id IS NULL
 		and pack_id IN (select pack_id from pack where pack_status=0 and unzip = 1
 		<if test="packType != null">
-		and pack_type = ${packType}
+			and pack_type = ${packType}
 		</if>
 		order by pack_lvl
 		)
 		order by task_id
 		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
+	<!-- 直接更新task表worker_id (cx_20160127)-->
+	<update id="updateWorkerIdDowningTask" parameterType="java.util.Map">
+		update task
+		<set>
+			<if test="workerId != null">
+				worker_id = #{workerId,jdbcType=INTEGER},
+			</if>
+			<if test="taskDownloadTime != null">
+				task_download_time = #{taskDownloadTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateId != null">
+				update_id = #{updateId,jdbcType=INTEGER},
+			</if>
+			<if test="updateMethod != null">
+				update_method = #{updateMethod,jdbcType=VARCHAR},
+			</if>	
+		</set>	
+		<where>
+			worker_id IS NULL
+				AND pack_id IN (SELECT pack_id FROM pack WHERE pack_status=0 AND unzip = 1 
+								<if test="packType != null">
+									and pack_type = ${packType}
+								</if>						
+								ORDER BY pack_lvl )
+		</where>	
+			ORDER BY task_id
+			LIMIT #{downTaskCount,jdbcType=INTEGER} 
+	</update>
+	<!-- 工作者下载任务 通过 workerId 和 task_upload -->
+	<select id="selectTaskbyWorkerIdTaskUpload" resultMap="ResultMapWithBLOBs" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from task
+		<where>
+			worker_id = ${workerId}
+			and
+			task_upload = ${taskUpload} 
+		</where> 
+	</select>
+	<!-- *********************************************************** -->
 	<select id="selectFinishTaskByPackId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
 		select
 		<include refid="Base_Column_List" />
@@ -655,6 +697,9 @@
 			<if test="taskEffective != null">
 				task_effective = #{taskEffective,jdbcType=BIT},
 			</if>
+			<if test="taskUpload != null">
+				task_upload = #{taskUpload,jdbcType=BIT},
+			</if>
 			<if test="updateTime != null">
 				update_time = #{updateTime,jdbcType=TIMESTAMP},
 			</if>
@@ -734,7 +779,7 @@
 			<if test="taskEffective == 0">
 				task_mark_time = null,
 				task_upload_time = null,
-				task_effective = null,
+				task_effective = false,
 			</if>
 			<if test="taskEffective == 1">
 				task_effective = true
@@ -922,5 +967,16 @@
 			worker_id = ${workerId}
 			and
 			task_id = ${taskId}
+	</update>
+	<!-- 回收下载错误任务 -->
+	<update id="updateByWorkerIdAndTaskUpload" parameterType="java.util.Map">
+		update task
+		<set>
+			worker_id = null,task_upload = 0
+		</set>
+		where 
+			worker_id = ${workerId}
+			and
+			task_upload = ${taskUpload}
 	</update>
 </mapper>

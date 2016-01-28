@@ -524,4 +524,10 @@ public class WorkerRecordServiceImpl implements WorkerRecordService {
 		return workerRecordMapper.selectDoingCountByTaskId(taskId);
 	}
 
+	@Override
+	public int inserts(List<workerRecord> list) {
+		
+		return workerRecordMapper.inserts(list);
+	}
+
 }

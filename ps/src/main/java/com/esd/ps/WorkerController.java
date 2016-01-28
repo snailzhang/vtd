@@ -301,6 +301,7 @@ public class WorkerController {
 			task.setWorkerId(0);
 			task.setVersion(1);
 			task.setTaskMarkTime(0.00);
+			task.setTaskUpload(false);
 			task.setUpdateId(Integer.parseInt(session.getAttribute(Constants.USER_ID).toString()));
 			task.setTaskId(taskId);
 			taskService.updateByTaskId(task);
@@ -628,7 +629,7 @@ public class WorkerController {
 		String downPackName = sdf.format(new Date()) + Constants.UNDERLINE + downTaskCount + Constants.UNDERLINE + userId + Constants.POINT + Constants.ZIP;
 		String wrongPath = Constants.SLASH + Constants.WORKERTEMP + Constants.SLASH + downPackName;
 		//查询他时刻表可下载任务的list  String downPackName,String wrongPath,String realName,String userName
-		List<taskWithBLOBs> list = taskService.getTaskOrderByTaskLvl(downTaskCount, 0, userId, workerId,packType,downPackName,wrongPath,realName,session.getAttribute(Constants.USER_NAME).toString());
+		List<taskWithBLOBs> list = taskService.updateWorkerIdDowningTask(downTaskCount, 0, userId, workerId,packType,downPackName,wrongPath,realName,session.getAttribute(Constants.USER_NAME).toString());
 		if (list == null) {
 			session.setAttribute("downing", 0);
 			return null;
@@ -658,7 +659,6 @@ public class WorkerController {
 			FileOutputStream fos = new FileOutputStream(zipFile);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(fos));
 			byte[] bufs = new byte[1024 * 10];
-			int m = 0;
 			for (Iterator<taskWithBLOBs> iterator = list.iterator(); iterator.hasNext();) {
 				taskWithBLOBs taskWithBLOBs = (taskWithBLOBs) iterator.next();
 				//获得任务名
@@ -834,6 +834,7 @@ public class WorkerController {
 							taskWithBLOBs.setTaskMarkTime(Double.parseDouble(String.format(Constants.SPILT_TWELVE, taskMarkTime)));
 							taskWithBLOBs.setTaskTextgrid(bytes);
 							taskWithBLOBs.setTaskId(taskId);
+							taskWithBLOBs.setTaskUpload(true);
 							taskWithBLOBs.setTaskUploadTime(new Date());
 							StackTraceElement[] items = Thread.currentThread().getStackTrace();
 							taskWithBLOBs.setUpdateMethod(items[1].toString());

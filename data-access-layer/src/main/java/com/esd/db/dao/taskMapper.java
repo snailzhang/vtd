@@ -29,9 +29,13 @@ public interface taskMapper {
     List<task> selectAllHistoryTaskByWorkerId(Integer workerId);
     
     List<task> selectAllTaskByPackId(Integer packId);
-    
+    //worker下载任务
     List<taskWithBLOBs>  selectTaskOrderByTaskLvl(Map<String, Object> map);
-
+    
+    int updateWorkerIdDowningTask(Map<String, Object> map);
+    
+    List<taskWithBLOBs> selectTaskbyWorkerIdTaskUpload(Map<String, Object> map);
+    //-------------------------------------------------------------------------
     int updateByPrimaryKeySelective(taskWithBLOBs record);
     
     int updateDownTaskByTaskId(taskWithBLOBs record);
@@ -85,4 +89,6 @@ public interface taskMapper {
 	int updateFileByTaskId(Map<String, Object> map);
 	//回收任务
 	int updateWorkerIdByWorkerId(Map<String, Object> map);
+	
+	int updateByWorkerIdAndTaskUpload(Map<String, Object> map);
 }

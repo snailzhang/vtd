@@ -15,6 +15,8 @@ public interface WorkerRecordService {
 	int insert(workerRecord record);
 
 	int insertSelective(workerRecord record);
+	
+	int inserts(List<workerRecord> list);
 
 	workerRecord getByPrimaryKey(Integer recordId);
 
