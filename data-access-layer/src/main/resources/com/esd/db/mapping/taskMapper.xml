@@ -169,9 +169,10 @@
 		</if>
 		order by pack_lvl
 		)
-		order by task_id
+		
 		limit #{downTaskCount,jdbcType=INTEGER}
 	</select>
+	<!-- order by task_id -->
 	<!-- 直接更新task表worker_id (cx_20160127)-->
 	<update id="updateWorkerIdDowningTask" parameterType="java.util.Map">
 		update task
